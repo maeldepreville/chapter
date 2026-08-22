@@ -37,7 +37,7 @@ Dernière mise à jour : 22 août 2026
 - Phase 6 — déclinaison mobile : **terminée et validée**.
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
-- État actuel : **transition vers la phase 9**, non encore ouverte ; synchronisation du dépôt GitHub en attente.
+- État actuel : **transition vers la phase 9**, non encore ouverte ; synchronisation du dépôt GitHub achevée.
 - La première interface fonctionnelle de la page d’une œuvre est disponible sur desktop et mobile ; elle utilise des données simulées et ne constitue pas encore la consolidation des composants de la phase 9.
 - Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
