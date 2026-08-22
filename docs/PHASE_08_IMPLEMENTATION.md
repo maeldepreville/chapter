@@ -84,12 +84,13 @@ La tranche verticale est centrée sur les pages de trois œuvres fictives, avec 
 
 Le site fonctionnel et ses corrections de navigation ont été évalués puis confirmés. La phase 8 est donc officiellement clôturée. Les demandes portant sur le dessin détaillé des composants, le contenu complet du Journal et de la Bibliothèque ou la consolidation de l’espace personnel restent affectées à la phase 9.
 
-La phase 9 n’est pas ouverte dans cette conversation. La transition convenue consiste d’abord à synchroniser le projet et ses documents vers le dépôt GitHub fourni par l’utilisateur, puis à commencer la phase 9 dans une nouvelle conversation du même projet.
+La phase 9 n’est pas ouverte dans cette conversation. La synchronisation GitHub convenue est désormais achevée ; la prochaine étape consiste à commencer la phase 9 dans une nouvelle conversation du même projet.
 
 ## Continuité et archivage
 
-- le code dispose déjà d’un historique Git propre associé au déploiement du site ;
-- un dépôt GitHub secondaire sera ajouté après réception de son URL, sans remplacer le dépôt de déploiement existant ;
-- le premier envoi GitHub devra inclure le code, les ressources nécessaires et les documents de décision dans `docs/` ;
+- le dépôt partagé du projet est `https://github.com/maeldepreville/chapter` ;
+- le code conserve un dépôt technique associé au déploiement comme `origin`, tandis que GitHub est configuré comme dépôt distant secondaire `github` ;
+- le premier envoi GitHub est terminé et comprend le code, les ressources nécessaires, un README de projet et les documents de décision dans `docs/` ;
+- le commit initial du dépôt distant a été conservé et suivi des quatre jalons significatifs de la tranche verticale, afin de rendre l’historique lisible sans écraser l’existant ;
 - une nouvelle conversation dans le même projet est recommandée au passage à la phase 9, après synchronisation du dépôt et des documents ;
 - cette conversation distincte devra s’appuyer sur les fichiers du projet comme source de vérité, plutôt que supposer que chaque détail du présent historique sera reproduit à l’identique.
