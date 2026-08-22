@@ -6,6 +6,14 @@ import Image from "next/image";
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library";
+type LibraryFilter = "Toutes" | ReadingStatus;
+type LibrarySort = "activity" | "title" | "author";
+type StatusOrigin = "opening" | "journal" | "library";
+type Feedback = {
+  kind: "publication" | "removal";
+  label: string;
+  detail: string;
+};
 
 type PersonalEntry = {
   readingStatus: ReadingStatus | null;
@@ -16,6 +24,7 @@ type PersonalEntry = {
 };
 
 const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 };
+const UNDO_DURATION_MS = 5000;
 
 const works = [
   {
@@ -34,7 +43,7 @@ const works = [
       "À mesure qu’elle reprend son ancien métier, Ana comprend que cartographier un lieu consiste parfois moins à en fixer les contours qu’à accepter ce qui nous échappe.",
     ],
     cover: true,
-    coverTone: "indigo",
+    coverTone: "slate",
   },
   {
     id: "rivage",
@@ -52,7 +61,7 @@ const works = [
       "Entre archives incomplètes et récits contradictoires, elle découvre une communauté qui a choisi de mesurer le passé autrement que par les dates.",
     ],
     cover: false,
-    coverTone: "clay",
+    coverTone: "brick",
   },
   {
     id: "atlas",
@@ -70,9 +79,156 @@ const works = [
       "Son inventaire devient alors un atlas sensible des solitudes, des attentes et des gestes minuscules qui empêchent la ville de dormir tout à fait.",
     ],
     cover: false,
-    coverTone: "night",
+    coverTone: "petrol",
+  },
+  {
+    id: "lucioles",
+    title: "La Saison des lucioles",
+    author: "Élise Varenne",
+    meta: "Roman · 2018",
+    year: "2018",
+    genre: "Roman initiatique",
+    language: "Français",
+    rating: "4,0",
+    ratingCount: "719 évaluations",
+    lede: "Dans une vallée où les lucioles ont disparu, deux sœurs rouvrent l’observatoire abandonné de leur père.",
+    synopsis: [
+      "Mila revient à Valcroix au début d’un été trop silencieux. Sa sœur a conservé les carnets de leur père, remplis de relevés sur les lumières qui animaient autrefois les prés.",
+      "Leur enquête transforme peu à peu un deuil familial en exploration sensible de ce qui persiste lorsque les signes familiers s’éteignent.",
+    ],
+    cover: false,
+    coverTone: "sage",
+  },
+  {
+    id: "miroirs",
+    title: "La Maison des miroirs lents",
+    author: "Samuel Ardent",
+    meta: "Roman · 2020",
+    year: "2020",
+    genre: "Fiction littéraire",
+    language: "Français",
+    rating: "4,2",
+    ratingCount: "947 évaluations",
+    lede: "Un restaurateur découvre que les miroirs d’une demeure normande ne renvoient jamais tout à fait le présent.",
+    synopsis: [
+      "Chargé de restaurer une maison promise à la vente, Jonas remarque que certaines pièces semblent conserver les gestes de leurs anciens habitants.",
+      "Au fil des reflets, l’architecture devient une mémoire instable où chaque réparation révèle une absence nouvelle.",
+    ],
+    cover: false,
+    coverTone: "plum",
+  },
+  {
+    id: "sel",
+    title: "Un Peu de sel dans la brume",
+    author: "Diane Kermor",
+    meta: "Récit · 2023",
+    year: "2023",
+    genre: "Récit contemporain",
+    language: "Français",
+    rating: "3,9",
+    ratingCount: "381 évaluations",
+    lede: "Une cuisinière embarque sur le dernier ferry d’une ligne condamnée et recueille les recettes de ses passagers.",
+    synopsis: [
+      "Pendant les trois dernières semaines de la traversée, Maud cuisine avec ce que les voyageurs lui confient : une épice, un souvenir, parfois seulement un nom.",
+      "Son carnet compose le portrait d’un passage maritime autant que celui des vies qui l’ont emprunté.",
+    ],
+    cover: false,
+    coverTone: "ochre",
   },
 ] as const;
+
+type WorkId = (typeof works)[number]["id"];
+type Work = (typeof works)[number];
+
+const coverTitleTier = (title: string) => {
+  if (title.length <= 18) return "cover-title-short";
+  if (title.length <= 31) return "cover-title-medium";
+  return "cover-title-long";
+};
+
+function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" | "journal" | "mini" }) {
+  const className = `${variant === "book" ? "book-cover" : `${variant}-cover`} ${work.cover ? "cover-image" : `typographic-cover ${work.coverTone}`}`;
+  const sizes = variant === "book" ? "(max-width: 899px) 160px, 320px" : variant === "library" ? "(max-width: 899px) 45vw, 240px" : "96px";
+
+  return (
+    <span className={className} aria-label={`Couverture de ${work.title}, de ${work.author}`}>
+      {work.cover ? (
+        <Image src="/chapter-cover-art.png" alt="" fill priority={variant === "book"} sizes={sizes} />
+      ) : variant === "mini" ? (
+        <strong aria-hidden="true">{work.title.slice(0, 1)}</strong>
+      ) : (
+        <span className="cover-copy" aria-hidden="true">
+          {variant !== "library" && <span className="cover-mark">CHAPTER</span>}
+          <strong className={coverTitleTier(work.title)}>{work.title}</strong>
+          <small>{work.author}</small>
+        </span>
+      )}
+    </span>
+  );
+}
+
+type JournalTrace = {
+  id: string;
+  workId: WorkId;
+  date: string;
+  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée";
+  text?: string;
+  action?: "note" | "review";
+};
+
+const journalTraces: JournalTrace[] = [
+  {
+    id: "trace-note-cartographies",
+    workId: "cartographies",
+    date: "22 août 2026",
+    kind: "Note privée",
+    text: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
+    action: "note",
+  },
+  {
+    id: "trace-finished-lucioles",
+    workId: "lucioles",
+    date: "19 août 2026",
+    kind: "Lecture terminée",
+  },
+  {
+    id: "trace-review-miroirs",
+    workId: "miroirs",
+    date: "17 août 2026",
+    kind: "Critique publique",
+    text: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
+    action: "review",
+  },
+  {
+    id: "trace-start-rivage",
+    workId: "rivage",
+    date: "12 août 2026",
+    kind: "Lecture commencée",
+  },
+  {
+    id: "trace-note-atlas",
+    workId: "atlas",
+    date: "8 août 2026",
+    kind: "Note privée",
+    text: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue.",
+    action: "note",
+  },
+  {
+    id: "trace-finished-miroirs",
+    workId: "miroirs",
+    date: "2 août 2026",
+    kind: "Lecture terminée",
+  },
+];
+
+const activityOrder: Record<WorkId, number> = {
+  cartographies: 6,
+  rivage: 5,
+  atlas: 4,
+  lucioles: 3,
+  miroirs: 2,
+  sel: 1,
+};
 
 const communityReviews = [
   {
@@ -100,41 +256,86 @@ const communityReviews = [
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<View>("work");
-  const [selectedWorkId, setSelectedWorkId] = useState<(typeof works)[number]["id"]>(works[0].id);
+  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0].id);
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>({
-    rivage: { ...emptyEntry, readingStatus: "En cours", readingDate: "16 août 2026" },
-    atlas: { ...emptyEntry, readingStatus: "À lire" },
+    cartographies: {
+      ...emptyEntry,
+      readingStatus: "En cours",
+      readingDate: "4 août 2026",
+      note: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
+    },
+    rivage: { ...emptyEntry, readingStatus: "En cours", readingDate: "12 août 2026", note: "Observer comment les différentes heures deviennent une manière de raconter les désaccords du village." },
+    atlas: { ...emptyEntry, readingStatus: "En cours", readingDate: "8 août 2026", note: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue." },
+    lucioles: { ...emptyEntry, readingStatus: "Lu", readingDate: "19 août 2026", rating: 4 },
+    miroirs: {
+      ...emptyEntry,
+      readingStatus: "Lu",
+      readingDate: "2 août 2026",
+      review: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
+      rating: 4,
+    },
+    sel: { ...emptyEntry, readingStatus: "À lire" },
   });
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
-  const [statusOrigin, setStatusOrigin] = useState<"opening" | "journal">("opening");
+  const [statusOrigin, setStatusOrigin] = useState<StatusOrigin>("opening");
+  const [statusWorkId, setStatusWorkId] = useState<WorkId>(works[0].id);
   const [datePrompt, setDatePrompt] = useState<DatePrompt>(null);
   const [customDateOpen, setCustomDateOpen] = useState(false);
+  const [removeConfirmWorkId, setRemoveConfirmWorkId] = useState<WorkId | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteCloseConfirm, setNoteCloseConfirm] = useState(false);
   const [reviewDraft, setReviewDraft] = useState("");
   const [ratingDraft, setRatingDraft] = useState(0);
+  const [ratingPreview, setRatingPreview] = useState<number | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewCloseConfirm, setReviewCloseConfirm] = useState(false);
-  const [publicationUndo, setPublicationUndo] = useState(false);
-  const [publicationLabel, setPublicationLabel] = useState("Critique publiée");
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [feedbackPaused, setFeedbackPaused] = useState(false);
   const [activeSection, setActiveSection] = useState("journal");
   const [expandedReviews, setExpandedReviews] = useState<string[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
-  const previousPublication = useRef({ review: "", rating: 0 });
-  const latestPublication = useRef({ review: "", rating: 0 });
+  const [expandedJournalTraces, setExpandedJournalTraces] = useState<string[]>([]);
+  const [olderJournalVisible, setOlderJournalVisible] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
+  const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
+  const [libraryQuery, setLibraryQuery] = useState("");
+  const previousPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
+  const latestPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
+  const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const selectedWork = works.find((work) => work.id === selectedWorkId) ?? works[0];
   const entry = entries[selectedWork.id] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
+  const libraryWorks = works
+    .filter((work) => entries[work.id]?.readingStatus)
+    .filter((work) => libraryFilter === "Toutes" || entries[work.id]?.readingStatus === libraryFilter)
+    .filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(libraryQuery.trim().toLocaleLowerCase("fr")))
+    .sort((a, b) => {
+      if (librarySort === "title") return a.title.localeCompare(b.title, "fr");
+      if (librarySort === "author") return a.author.localeCompare(b.author, "fr");
+      return activityOrder[b.id] - activityOrder[a.id];
+    });
+  const libraryCounts = {
+    Toutes: works.filter((work) => entries[work.id]?.readingStatus).length,
+    "À lire": works.filter((work) => entries[work.id]?.readingStatus === "À lire").length,
+    "En cours": works.filter((work) => entries[work.id]?.readingStatus === "En cours").length,
+    Lu: works.filter((work) => entries[work.id]?.readingStatus === "Lu").length,
+  } satisfies Record<LibraryFilter, number>;
+  const currentReadings = works
+    .filter((work) => entries[work.id]?.readingStatus === "En cours")
+    .sort((a, b) => activityOrder[b.id] - activityOrder[a.id])
+    .slice(0, 3);
+  const visibleTimelineTraces = olderJournalVisible ? journalTraces.slice(1) : journalTraces.slice(1, 4);
 
-  const updateEntry = (changes: Partial<PersonalEntry>) => {
+  const updateEntryFor = (workId: WorkId, changes: Partial<PersonalEntry>) => {
     setEntries((current) => ({
       ...current,
-      [selectedWork.id]: { ...(current[selectedWork.id] ?? emptyEntry), ...changes },
+      [workId]: { ...(current[workId] ?? emptyEntry), ...changes },
     }));
   };
+  const updateEntry = (changes: Partial<PersonalEntry>) => updateEntryFor(selectedWork.id, changes);
 
   const openView = (view: View) => {
     setCurrentView(view);
@@ -142,13 +343,14 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const selectWork = (id: (typeof works)[number]["id"]) => {
+  const selectWork = (id: WorkId) => {
     setSelectedWorkId(id);
     setCurrentView("work");
     setSearchOpen(false);
     setSearchQuery("");
     setStatusMenuOpen(false);
     setDatePrompt(null);
+    setRemoveConfirmWorkId(null);
     setExpandedReviews([]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -157,15 +359,32 @@ export default function Home() {
     const sections = ["journal", "about", "reviews"]
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveSection(visible.target.id);
-      },
-      { rootMargin: "-25% 0px -55% 0px", threshold: [0, 0.15, 0.4] },
-    );
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    if (!sections.length || currentView !== "work") return;
+
+    let animationFrame = 0;
+    const updateActiveSection = () => {
+      const readingLine = Math.min(window.innerHeight * 0.3, 220);
+      let nextSection = sections[0].id;
+
+      sections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= readingLine) nextSection = section.id;
+      });
+
+      setActiveSection((current) => current === nextSection ? current : nextSection);
+    };
+    const scheduleUpdate = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
   }, [currentView, selectedWorkId]);
 
   useEffect(() => {
@@ -175,10 +394,10 @@ export default function Home() {
   }, [noteOpen, reviewOpen, searchOpen, accountOpen, noteCloseConfirm, reviewCloseConfirm]);
 
   useEffect(() => {
-    if (!publicationUndo) return;
-    const timer = window.setTimeout(() => setPublicationUndo(false), 8000);
+    if (!feedback || feedbackPaused) return;
+    const timer = window.setTimeout(() => setFeedback(null), UNDO_DURATION_MS);
     return () => window.clearTimeout(timer);
-  }, [publicationUndo]);
+  }, [feedback, feedbackPaused]);
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
@@ -200,6 +419,7 @@ export default function Home() {
       if (statusMenuOpen || datePrompt) {
         setStatusMenuOpen(false);
         setDatePrompt(null);
+        setRemoveConfirmWorkId(null);
       }
     };
     document.addEventListener("keydown", onEscape);
@@ -207,19 +427,45 @@ export default function Home() {
   });
 
   const chooseStatus = (status: ReadingStatus) => {
-    updateEntry({ readingStatus: status });
+    updateEntryFor(statusWorkId, { readingStatus: status, ...(status === "À lire" ? { readingDate: "" } : {}) });
     setStatusMenuOpen(false);
+    setRemoveConfirmWorkId(null);
     setCustomDateOpen(false);
     setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
   };
 
   const setToday = () => {
-    updateEntry({ readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()) });
+    updateEntryFor(statusWorkId, { readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()) });
     setDatePrompt(null);
+  };
+
+  const requestRemoval = (workId: WorkId) => {
+    const targetEntry = entries[workId] ?? emptyEntry;
+    if (targetEntry.note || targetEntry.review) {
+      setRemoveConfirmWorkId(workId);
+      return;
+    }
+    removeFromLibrary(workId);
+  };
+
+  const removeFromLibrary = (workId: WorkId) => {
+    const targetEntry = entries[workId] ?? emptyEntry;
+    removedEntry.current = { workId, entry: targetEntry };
+    updateEntryFor(workId, { readingStatus: null, readingDate: "" });
+    setStatusMenuOpen(false);
+    setDatePrompt(null);
+    setRemoveConfirmWorkId(null);
+    setFeedback({ kind: "removal", label: "Œuvre retirée de la bibliothèque", detail: "Vos écrits et votre évaluation sont conservés." });
   };
 
   const openNote = () => {
     setNoteDraft(entry.note);
+    setNoteOpen(true);
+  };
+  const openNoteForWork = (id: WorkId) => {
+    const targetEntry = entries[id] ?? emptyEntry;
+    setSelectedWorkId(id);
+    setNoteDraft(targetEntry.note);
     setNoteOpen(true);
   };
   const requestNoteClose = () => {
@@ -234,6 +480,15 @@ export default function Home() {
   const openReview = () => {
     setReviewDraft(entry.review);
     setRatingDraft(entry.rating);
+    setRatingPreview(null);
+    setReviewOpen(true);
+  };
+  const openReviewForWork = (id: WorkId) => {
+    const targetEntry = entries[id] ?? emptyEntry;
+    setSelectedWorkId(id);
+    setReviewDraft(targetEntry.review);
+    setRatingDraft(targetEntry.rating);
+    setRatingPreview(null);
     setReviewOpen(true);
   };
   const requestReviewClose = () => {
@@ -243,25 +498,138 @@ export default function Home() {
   const publishReview = () => {
     const cleanReview = reviewDraft.trim();
     if (!cleanReview) return;
-    previousPublication.current = { review: entry.review, rating: entry.rating };
-    latestPublication.current = { review: cleanReview, rating: ratingDraft };
-    setPublicationLabel(entry.review ? "Critique mise à jour" : "Critique publiée");
+    previousPublication.current = { workId: selectedWork.id, review: entry.review, rating: entry.rating };
+    latestPublication.current = { workId: selectedWork.id, review: cleanReview, rating: ratingDraft };
+    const publicationLabel = entry.review ? "Critique mise à jour" : "Critique publiée";
     updateEntry({ review: cleanReview, rating: ratingDraft });
     setReviewOpen(false);
-    setPublicationUndo(true);
+    setReviewCloseConfirm(false);
+    setFeedback({ kind: "publication", label: publicationLabel, detail: "Elle est maintenant visible publiquement." });
   };
-  const undoPublication = () => {
-    updateEntry({ review: previousPublication.current.review, rating: previousPublication.current.rating });
-    setReviewDraft(latestPublication.current.review);
-    setRatingDraft(latestPublication.current.rating);
-    setPublicationUndo(false);
-    setReviewOpen(true);
+  const undoFeedback = () => {
+    if (feedback?.kind === "publication") {
+      const previous = previousPublication.current;
+      setSelectedWorkId(previous.workId);
+      updateEntryFor(previous.workId, { review: previous.review, rating: previous.rating });
+      setReviewDraft(latestPublication.current.review);
+      setRatingDraft(latestPublication.current.rating);
+      setReviewOpen(true);
+    } else if (feedback?.kind === "removal" && removedEntry.current) {
+      updateEntryFor(removedEntry.current.workId, removedEntry.current.entry);
+    }
+    setFeedback(null);
   };
 
   const dateLabel = datePrompt === "start" ? "date de début" : "date de fin";
   const displayReadingDate = entry.readingDate && /^\d{4}-\d{2}-\d{2}$/.test(entry.readingDate)
     ? new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${entry.readingDate}T12:00:00`))
     : entry.readingDate;
+
+  const openStatusMenu = (origin: StatusOrigin, workId: WorkId) => {
+    setStatusOrigin(origin);
+    setStatusWorkId(workId);
+    setDatePrompt(null);
+    setCustomDateOpen(false);
+    setRemoveConfirmWorkId(null);
+    setStatusMenuOpen((open) => !(open && statusOrigin === origin && statusWorkId === workId));
+  };
+
+  const renderStatusPopover = (origin: StatusOrigin, workId: WorkId) => {
+    if (!statusMenuOpen || statusOrigin !== origin || statusWorkId !== workId) return null;
+    const targetEntry = entries[workId] ?? emptyEntry;
+
+    return (
+      <div className="status-popover" role="dialog" aria-label="Choisir un statut de lecture">
+        {removeConfirmWorkId === workId ? (
+          <div className="remove-confirmation" role="alertdialog" aria-labelledby={`remove-${workId}`}>
+            <strong id={`remove-${workId}`}>Retirer cette œuvre ?</strong>
+            <p>La note, la critique et l’évaluation resteront dans votre Journal.</p>
+            <button className="primary-action" type="button" onClick={() => setRemoveConfirmWorkId(null)}>Conserver l’œuvre</button>
+            <button className="destructive-action" type="button" onClick={() => removeFromLibrary(workId)}>Retirer de la bibliothèque</button>
+          </div>
+        ) : (
+          <>
+            <div className="popover-heading">
+              <strong>Où en êtes-vous ?</strong>
+              <button type="button" aria-label="Fermer" onClick={() => setStatusMenuOpen(false)}>×</button>
+            </div>
+            {(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => (
+              <button className={status === targetEntry.readingStatus ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>
+            ))}
+            {targetEntry.readingStatus && (
+              <div className="popover-danger-zone">
+                <button className="destructive-action" type="button" onClick={() => requestRemoval(workId)}>Retirer de la bibliothèque</button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
+
+  const renderDateInvitation = (origin: StatusOrigin, workId: WorkId) => {
+    if (!datePrompt || statusOrigin !== origin || statusWorkId !== workId) return null;
+
+    return (
+      <div className="date-invitation" role="region" aria-label={`Ajouter une ${dateLabel}`}>
+        <div>
+          <strong>Ajouter une {dateLabel} ?</strong>
+          <span>Cette étape restera modifiable.</span>
+        </div>
+        {!customDateOpen ? (
+          <div className="date-invitation-actions">
+            <button className="text-action" type="button" onClick={setToday}>Aujourd’hui</button>
+            <button className="text-action" type="button" onClick={() => setCustomDateOpen(true)}>Choisir</button>
+            <button className="text-action muted-action" type="button" onClick={() => setDatePrompt(null)}>Plus tard</button>
+          </div>
+        ) : (
+          <label className="date-field">
+            <span>{datePrompt === "start" ? "Début de lecture" : "Fin de lecture"}</span>
+            <input type="date" onChange={(event) => updateEntryFor(workId, { readingDate: event.target.value })} />
+            <button type="button" onClick={() => setDatePrompt(null)}>Enregistrer la date</button>
+          </label>
+        )}
+      </div>
+    );
+  };
+
+  const renderJournalTrace = (trace: JournalTrace, featured = false) => {
+    const work = works.find((candidate) => candidate.id === trace.workId) ?? works[0];
+    const expanded = expandedJournalTraces.includes(trace.id);
+    const expandable = Boolean(trace.text && trace.text.length > 145);
+    const visibleText = trace.text && !expanded && expandable ? `${trace.text.slice(0, 145).trim()}…` : trace.text;
+
+    return (
+      <article className={`personal-trace ${featured ? "featured-trace" : ""}`} key={trace.id}>
+        <time>{trace.date}</time>
+        <div className="personal-trace-body">
+          <button className="trace-work-link" type="button" onClick={() => selectWork(work.id)}>
+            <WorkCover work={work} variant="mini" />
+            <span><strong>{work.title}</strong><small>{work.author}</small></span>
+          </button>
+          <p className="trace-kind">{trace.kind}{trace.kind === "Note privée" ? " · visible uniquement par vous" : ""}</p>
+          {visibleText && <p className="trace-copy">{visibleText}</p>}
+          <div className="trace-actions">
+            {expandable && (
+              <button
+                className="text-action"
+                type="button"
+                aria-expanded={expanded}
+                onClick={() => setExpandedJournalTraces((ids) => ids.includes(trace.id) ? ids.filter((id) => id !== trace.id) : [...ids, trace.id])}
+              >
+                {expanded ? "Réduire" : "Lire la suite"}
+              </button>
+            )}
+            {trace.action && (
+              <button className="text-action" type="button" onClick={() => trace.action === "note" ? openNoteForWork(trace.workId) : openReviewForWork(trace.workId)}>
+                Modifier
+              </button>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  };
 
   return (
     <div className="site-shell">
@@ -286,8 +654,6 @@ export default function Home() {
           {accountOpen && (
             <div className="account-menu">
               <p><strong>Maël Depréville</strong><span>Lecteur</span></p>
-              <button type="button">Voir mon profil</button>
-              <button type="button">Paramètres</button>
               <button type="button">Se déconnecter</button>
             </div>
           )}
@@ -301,56 +667,147 @@ export default function Home() {
 
       <main id="top">
         {currentView === "journal" ? (
-          <section className="destination-page" aria-labelledby="personal-journal-title">
-            <header className="destination-heading">
+          <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
+            <header className="destination-heading journal-heading">
               <p className="eyebrow">Votre espace personnel</p>
               <h1 id="personal-journal-title">Journal</h1>
-              <p>Retrouvez vos lectures récentes et reprenez là où vous vous étiez arrêté.</p>
+              <p>Vos lectures du moment et les pensées qui construisent votre parcours.</p>
             </header>
-            <div className="destination-list">
-              {works.filter((work) => entries[work.id]?.readingStatus).map((work) => (
-                <button className="destination-row" type="button" key={work.id} onClick={() => selectWork(work.id)}>
-                  <span className={`mini-cover ${work.coverTone}`} aria-hidden="true">{work.title.slice(0, 1)}</span>
-                  <span><strong>{work.title}</strong><small>{work.author}</small></span>
-                  <span className="status-label">{entries[work.id]?.readingStatus}</span>
-                </button>
-              ))}
+
+            <div className="journal-opening-grid">
+              <section className="current-readings" aria-labelledby="current-readings-title">
+                <div className="personal-section-heading">
+                  <div>
+                    <p className="eyebrow">En ce moment</p>
+                    <h2 id="current-readings-title">Lectures en cours</h2>
+                  </div>
+                  {libraryCounts["En cours"] > 3 && <button className="text-action" type="button" onClick={() => { setLibraryFilter("En cours"); openView("library"); }}>Voir les {libraryCounts["En cours"]}</button>}
+                </div>
+                <div className="current-reading-rail">
+                  {currentReadings.length > 0 ? currentReadings.map((work) => (
+                    <article className="current-reading" key={work.id}>
+                      <button className="current-reading-main" type="button" onClick={() => selectWork(work.id)}>
+                        <WorkCover work={work} variant="journal" />
+                        <span className="current-reading-copy">
+                          <strong>{work.title}</strong>
+                          <small>{work.author}</small>
+                          <span>{entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
+                        </span>
+                      </button>
+                      <button className="text-action current-note-action" type="button" onClick={() => openNoteForWork(work.id)}>
+                        {entries[work.id]?.note ? "Modifier ma note" : "Ajouter une note"}
+                      </button>
+                    </article>
+                  )) : (
+                    <div className="journal-empty">
+                      <p>Aucune lecture en cours pour le moment.</p>
+                      <button className="text-action" type="button" onClick={() => { setLibraryFilter("À lire"); openView("library"); }}>Choisir ma prochaine lecture</button>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              <section className="latest-trace" aria-labelledby="latest-trace-title">
+                <div className="personal-section-heading">
+                  <div>
+                    <p className="eyebrow">Dernière trace</p>
+                    <h2 id="latest-trace-title">À retenir</h2>
+                  </div>
+                </div>
+                {renderJournalTrace(journalTraces[0], true)}
+              </section>
             </div>
+
+            <section className="journal-timeline" aria-labelledby="journal-timeline-title">
+              <div className="personal-section-heading timeline-heading">
+                <div>
+                  <p className="eyebrow">Chronologie personnelle</p>
+                  <h2 id="journal-timeline-title">La suite du journal</h2>
+                </div>
+              </div>
+              <div className="timeline-list">{visibleTimelineTraces.map((trace) => renderJournalTrace(trace))}</div>
+              {!olderJournalVisible && journalTraces.length > 4 && (
+                <button className="quiet-action older-traces-action" type="button" onClick={() => setOlderJournalVisible(true)}>Afficher les entrées précédentes</button>
+              )}
+            </section>
           </section>
         ) : currentView === "library" ? (
-          <section className="destination-page" aria-labelledby="library-title">
+          <section className="destination-page library-page" aria-labelledby="library-title">
             <header className="destination-heading">
               <p className="eyebrow">Votre collection</p>
               <h1 id="library-title">Bibliothèque</h1>
-              <p>Toutes les œuvres que vous avez ajoutées, regroupées par état de lecture.</p>
+              <p>Toutes les œuvres que vous avez ajoutées, réunies dans une collection personnelle.</p>
             </header>
-            <div className="library-filters" aria-label="Filtrer la bibliothèque">
-              <button className="active" type="button">Toutes</button>
-              <button type="button">À lire</button>
-              <button type="button">En cours</button>
-              <button type="button">Lu</button>
-            </div>
-            <div className="library-grid">
-              {works.filter((work) => entries[work.id]?.readingStatus).map((work) => (
-                <button className="library-work" type="button" key={work.id} onClick={() => selectWork(work.id)}>
-                  <span className={`library-cover ${work.coverTone}`} aria-hidden="true"><strong>{work.title}</strong><small>{work.author}</small></span>
-                  <span><strong>{work.title}</strong><small>{work.author} · {entries[work.id]?.readingStatus}</small></span>
-                </button>
+
+            {libraryCounts.Toutes > 0 ? (
+              <>
+                <div className="library-toolbar">
+                  <div className="library-filters" aria-label="Filtrer la bibliothèque">
+                    {(["Toutes", "À lire", "En cours", "Lu"] as LibraryFilter[]).map((filter) => (
+                      <button className={libraryFilter === filter ? "active" : ""} type="button" key={filter} aria-pressed={libraryFilter === filter} onClick={() => setLibraryFilter(filter)}>
+                        {filter} <span>{libraryCounts[filter]}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="library-tools">
+                    <label className="library-search">
+                      <span className="sr-only">Rechercher dans ma bibliothèque</span>
+                      <input type="search" placeholder="Rechercher dans ma bibliothèque" value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} />
+                    </label>
+                    <label className="library-sort">
+                      <span>Trier par</span>
+                      <select value={librarySort} onChange={(event) => setLibrarySort(event.target.value as LibrarySort)}>
+                        <option value="activity">Activité récente</option>
+                        <option value="title">Titre</option>
+                        <option value="author">Auteur</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+
+                {statusOrigin === "library" && datePrompt && !libraryWorks.some((work) => work.id === statusWorkId) && (
+                  <div className="library-date-relay">{renderDateInvitation("library", statusWorkId)}</div>
+                )}
+
+                {libraryWorks.length > 0 ? (
+              <div className="library-grid" aria-live="polite">
+              {libraryWorks.map((work) => (
+                <article className="library-work" key={work.id}>
+                  <button className="library-work-main" type="button" onClick={() => selectWork(work.id)}>
+                    <WorkCover work={work} variant="library" />
+                    <span className="library-work-copy"><strong>{work.title}</strong><small>{work.author}</small></span>
+                  </button>
+                  <div className="library-status-control">
+                    <button className="library-status-trigger" type="button" aria-expanded={statusOrigin === "library" && statusWorkId === work.id && statusMenuOpen} onClick={() => openStatusMenu("library", work.id)}>
+                      <span>{entries[work.id]?.readingStatus}</span><span aria-hidden="true">⌄</span>
+                    </button>
+                    {renderStatusPopover("library", work.id)}
+                  </div>
+                  {renderDateInvitation("library", work.id)}
+                </article>
               ))}
-            </div>
+              </div>
+                ) : (
+                  <div className="library-empty" aria-live="polite">
+                    <h2>{libraryQuery.trim() && libraryFilter !== "Toutes" ? `Aucun résultat pour « ${libraryQuery.trim()} » parmi les œuvres ${libraryFilter.toLocaleLowerCase("fr")}.` : libraryQuery.trim() ? `Aucun résultat pour « ${libraryQuery.trim()} ».` : `Aucune œuvre dans « ${libraryFilter} ».`}</h2>
+                    <p>{libraryQuery.trim() && libraryFilter !== "Toutes" ? "La recherche et le filtre sont tous deux actifs." : libraryQuery.trim() ? "Essayez un autre titre ou auteur." : "Vos autres catégories restent inchangées."}</p>
+                    <button className="text-action" type="button" onClick={() => libraryQuery.trim() ? setLibraryQuery("") : setLibraryFilter("Toutes")}>{libraryQuery.trim() ? "Effacer la recherche" : "Voir toutes les œuvres"}</button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="library-empty library-empty-whole">
+                <h2>Votre bibliothèque attend sa première œuvre</h2>
+                <p>Ajoutez une œuvre pour commencer à organiser vos lectures.</p>
+                <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>
+              </div>
+            )}
           </section>
         ) : (
           <>
         <section className="book-opening" aria-labelledby="book-title">
-          <div className="cover-stage" aria-label={`Couverture de ${selectedWork.title}`}>
-            <div className={`book-cover ${selectedWork.cover ? "" : `typographic-cover ${selectedWork.coverTone}`}`}>
-              {selectedWork.cover && <Image src="/chapter-cover-art.png" alt="" fill priority sizes="(max-width: 899px) 160px, 320px" />}
-              <div className="book-cover-copy">
-                <span className="cover-mark">CHAPTER</span>
-                <strong>{selectedWork.title}</strong>
-                <span>{selectedWork.author}</span>
-              </div>
-            </div>
+          <div className="cover-stage">
+            <WorkCover work={selectedWork} variant="book" />
           </div>
 
           <div className="book-identity">
@@ -360,44 +817,14 @@ export default function Home() {
             <p className="book-lede">{selectedWork.lede}</p>
             <div className="opening-actions">
               <div className="status-control">
-                <button className="primary-action" type="button" aria-expanded={statusMenuOpen || Boolean(datePrompt)} onClick={() => { setStatusOrigin("opening"); setDatePrompt(null); setStatusMenuOpen((open) => !open); }}>
+                <button className="primary-action" type="button" aria-expanded={statusOrigin === "opening" && statusMenuOpen} onClick={() => openStatusMenu("opening", selectedWork.id)}>
                   {entry.readingStatus ?? "Ajouter au journal"}
                 </button>
-                {statusOrigin === "opening" && statusMenuOpen && (
-                  <div className="status-popover" role="dialog" aria-label="Choisir un statut de lecture">
-                    <div className="popover-heading">
-                      <strong>Où en êtes-vous ?</strong>
-                      <button type="button" aria-label="Fermer" onClick={() => setStatusMenuOpen(false)}>×</button>
-                    </div>
-                    {(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => (
-                      <button className={status === entry.readingStatus ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>
-                    ))}
-                  </div>
-                )}
-                {statusOrigin === "opening" && datePrompt && (
-                  <div className="status-popover date-popover" role="dialog" aria-label={`Ajouter une ${dateLabel}`}>
-                    <div className="popover-heading">
-                      <strong>Ajouter une {dateLabel} ?</strong>
-                      <button type="button" aria-label="Fermer" onClick={() => setDatePrompt(null)}>×</button>
-                    </div>
-                    {!customDateOpen ? (
-                      <>
-                        <button type="button" onClick={setToday}>Aujourd’hui</button>
-                        <button type="button" onClick={() => setCustomDateOpen(true)}>Choisir une date</button>
-                        <button type="button" onClick={() => setDatePrompt(null)}>Plus tard</button>
-                      </>
-                    ) : (
-                      <label className="date-field">
-                        <span>{datePrompt === "start" ? "Début de lecture" : "Fin de lecture"}</span>
-                        <input type="date" onChange={(event) => updateEntry({ readingDate: event.target.value })} />
-                        <button type="button" onClick={() => setDatePrompt(null)}>Enregistrer la date</button>
-                      </label>
-                    )}
-                  </div>
-                )}
+                {renderStatusPopover("opening", selectedWork.id)}
               </div>
               <button className="quiet-action" type="button" onClick={openReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button>
             </div>
+            {renderDateInvitation("opening", selectedWork.id)}
             <div className="community-rating" aria-label={`Note moyenne de ${selectedWork.rating} sur 5`}>
               <span aria-hidden="true">★★★★☆</span>
               <strong>{selectedWork.rating}</strong>
@@ -429,41 +856,11 @@ export default function Home() {
                 {displayReadingDate && <p className="privacy-note">Date enregistrée · {displayReadingDate}</p>}
               </div>
               <div className="status-control journal-status-control">
-                <button className="text-action" type="button" onClick={() => { setStatusOrigin("journal"); setDatePrompt(null); setStatusMenuOpen(true); }}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
-                {statusOrigin === "journal" && statusMenuOpen && (
-                  <div className="status-popover" role="dialog" aria-label="Choisir un statut de lecture">
-                    <div className="popover-heading">
-                      <strong>Où en êtes-vous ?</strong>
-                      <button type="button" aria-label="Fermer" onClick={() => setStatusMenuOpen(false)}>×</button>
-                    </div>
-                    {(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => (
-                      <button className={status === entry.readingStatus ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>
-                    ))}
-                  </div>
-                )}
-                {statusOrigin === "journal" && datePrompt && (
-                  <div className="status-popover date-popover" role="dialog" aria-label={`Ajouter une ${dateLabel}`}>
-                    <div className="popover-heading">
-                      <strong>Ajouter une {dateLabel} ?</strong>
-                      <button type="button" aria-label="Fermer" onClick={() => setDatePrompt(null)}>×</button>
-                    </div>
-                    {!customDateOpen ? (
-                      <>
-                        <button type="button" onClick={setToday}>Aujourd’hui</button>
-                        <button type="button" onClick={() => setCustomDateOpen(true)}>Choisir une date</button>
-                        <button type="button" onClick={() => setDatePrompt(null)}>Plus tard</button>
-                      </>
-                    ) : (
-                      <label className="date-field">
-                        <span>{datePrompt === "start" ? "Début de lecture" : "Fin de lecture"}</span>
-                        <input type="date" onChange={(event) => updateEntry({ readingDate: event.target.value })} />
-                        <button type="button" onClick={() => setDatePrompt(null)}>Enregistrer la date</button>
-                      </label>
-                    )}
-                  </div>
-                )}
+                <button className="text-action" type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
+                {renderStatusPopover("journal", selectedWork.id)}
               </div>
             </div>
+            {renderDateInvitation("journal", selectedWork.id)}
             <div className="journal-row">
               <div>
                 <p className="row-label">Ma note</p>
@@ -537,7 +934,7 @@ export default function Home() {
       </main>
 
       {(statusMenuOpen || datePrompt) && (
-        <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => { setStatusMenuOpen(false); setDatePrompt(null); }} />
+        <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => { setStatusMenuOpen(false); setDatePrompt(null); setRemoveConfirmWorkId(null); }} />
       )}
 
       <nav className="mobile-nav" aria-label="Navigation principale mobile">
@@ -554,8 +951,6 @@ export default function Home() {
               <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
-            <button type="button">Voir mon profil</button>
-            <button type="button">Paramètres</button>
             <button type="button">Se déconnecter</button>
           </section>
         </div>
@@ -589,7 +984,7 @@ export default function Home() {
       {noteOpen && (
         <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="note-title">
           <button className="overlay-backdrop" type="button" aria-label="Fermer la note" onClick={requestNoteClose} />
-          <section className="editor-modal private-editor">
+          <section className={`editor-modal private-editor ${noteCloseConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Privée · visible uniquement par vous</p>
@@ -599,12 +994,22 @@ export default function Home() {
             </div>
             <label className="editor-field">
               <span>Ce que vous souhaitez retenir</span>
-              <textarea autoFocus rows={8} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
+              <textarea autoFocus={!noteCloseConfirm} readOnly={noteCloseConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
             </label>
-            <div className="modal-actions">
-              <button className="quiet-action" type="button" onClick={requestNoteClose}>Annuler</button>
-              <button className="primary-action" type="button" onClick={saveNote}>Enregistrer</button>
-            </div>
+            {noteCloseConfirm ? (
+              <div className="editor-confirmation" role="alertdialog" aria-labelledby="note-confirm-title">
+                <div><strong id="note-confirm-title">Quitter sans enregistrer ?</strong><p>Les modifications apportées à votre note seront perdues.</p></div>
+                <div className="protection-actions">
+                  <button className="primary-action" type="button" onClick={() => setNoteCloseConfirm(false)}>Revenir à la note</button>
+                  <button className="destructive-action" type="button" onClick={() => { setNoteCloseConfirm(false); setNoteOpen(false); setNoteDraft(entry.note); }}>Ignorer les modifications</button>
+                </div>
+              </div>
+            ) : (
+              <div className="modal-actions">
+                <button className="quiet-action" type="button" onClick={requestNoteClose}>Annuler</button>
+                <button className="primary-action" type="button" onClick={saveNote}>Enregistrer</button>
+              </div>
+            )}
           </section>
         </div>
       )}
@@ -612,7 +1017,7 @@ export default function Home() {
       {reviewOpen && (
         <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="review-title">
           <button className="overlay-backdrop" type="button" aria-label="Fermer la critique" onClick={requestReviewClose} />
-          <section className="editor-modal review-editor">
+          <section className={`editor-modal review-editor ${reviewCloseConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Publique</p>
@@ -622,59 +1027,63 @@ export default function Home() {
             </div>
             <label className="editor-field">
               <span>Votre critique</span>
-              <textarea autoFocus rows={9} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
+              <textarea autoFocus={!reviewCloseConfirm} readOnly={reviewCloseConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
               <small>{reviewDraft.length.toLocaleString("fr-FR")} / 3 000 caractères</small>
             </label>
             <fieldset className="rating-field">
               <legend>Votre évaluation <span>— facultative</span></legend>
-              <div className="star-row" role="radiogroup" aria-label="Évaluation sur cinq étoiles">
+              <div className="star-row" role="radiogroup" aria-label="Évaluation sur cinq étoiles" onMouseLeave={() => setRatingPreview(null)}>
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <button type="button" role="radio" aria-checked={ratingDraft === value} aria-label={`${value} étoile${value > 1 ? "s" : ""}`} key={value} onClick={() => setRatingDraft(ratingDraft === value ? 0 : value)}>
-                    {value <= ratingDraft ? "★" : "☆"}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={ratingDraft === value}
+                    aria-label={`${value} étoile${value > 1 ? "s" : ""}`}
+                    key={value}
+                    disabled={reviewCloseConfirm}
+                    onMouseEnter={() => setRatingPreview(value)}
+                    onFocus={() => setRatingPreview(value)}
+                    onBlur={() => setRatingPreview(null)}
+                    onClick={() => setRatingDraft(value)}
+                    onKeyDown={(event) => {
+                      if (["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp", "Home", "End"].includes(event.key)) event.preventDefault();
+                      if (event.key === "ArrowLeft" || event.key === "ArrowDown") setRatingDraft((rating) => Math.max(1, rating - 1 || 1));
+                      if (event.key === "ArrowRight" || event.key === "ArrowUp") setRatingDraft((rating) => Math.min(5, rating + 1));
+                      if (event.key === "Home") setRatingDraft(1);
+                      if (event.key === "End") setRatingDraft(5);
+                    }}
+                  >
+                    {value <= (ratingPreview ?? ratingDraft) ? "★" : "☆"}
                   </button>
                 ))}
-                <span>{ratingDraft ? `${ratingDraft} sur 5` : "Aucune évaluation"}</span>
+                <span>{ratingPreview ? `${ratingPreview} sur 5` : ratingDraft ? `${ratingDraft} sur 5` : "Aucune évaluation"}</span>
+                {ratingDraft > 0 && !reviewCloseConfirm && <button className="rating-remove" type="button" onClick={() => { setRatingDraft(0); setRatingPreview(null); }}>Retirer</button>}
               </div>
             </fieldset>
-            <div className="modal-actions">
-              <button className="quiet-action" type="button" onClick={requestReviewClose}>Annuler</button>
-              <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{entry.review ? "Enregistrer les modifications" : "Publier la critique"}</button>
-            </div>
+            {reviewCloseConfirm ? (
+              <div className="editor-confirmation" role="alertdialog" aria-labelledby="review-confirm-title">
+                <div><strong id="review-confirm-title">Quitter sans enregistrer ?</strong><p>Les modifications apportées à votre critique seront perdues.</p></div>
+                <div className="protection-actions">
+                  <button className="primary-action" type="button" onClick={() => setReviewCloseConfirm(false)}>Revenir à la critique</button>
+                  <button className="destructive-action" type="button" onClick={() => { setReviewCloseConfirm(false); setReviewOpen(false); setReviewDraft(entry.review); setRatingDraft(entry.rating); }}>Ignorer les modifications</button>
+                </div>
+              </div>
+            ) : (
+              <div className="modal-actions">
+                <button className="quiet-action" type="button" onClick={requestReviewClose}>Annuler</button>
+                <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{entry.review ? "Enregistrer les modifications" : "Publier la critique"}</button>
+              </div>
+            )}
           </section>
         </div>
       )}
 
-      {noteCloseConfirm && (
-        <div className="overlay confirmation-overlay" role="alertdialog" aria-modal="true" aria-labelledby="note-confirm-title">
-          <div className="confirmation-dialog">
-            <h2 id="note-confirm-title">Quitter sans enregistrer ?</h2>
-            <p>Les modifications apportées à votre note seront perdues.</p>
-            <div className="modal-actions">
-              <button className="primary-action" type="button" onClick={() => setNoteCloseConfirm(false)}>Revenir à la note</button>
-              <button className="quiet-action" type="button" onClick={() => { setNoteCloseConfirm(false); setNoteOpen(false); setNoteDraft(entry.note); }}>Ignorer les modifications</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {reviewCloseConfirm && (
-        <div className="overlay confirmation-overlay" role="alertdialog" aria-modal="true" aria-labelledby="review-confirm-title">
-          <div className="confirmation-dialog">
-            <h2 id="review-confirm-title">Quitter sans enregistrer ?</h2>
-            <p>Les modifications apportées à votre critique seront perdues.</p>
-            <div className="modal-actions">
-              <button className="primary-action" type="button" onClick={() => setReviewCloseConfirm(false)}>Revenir à la critique</button>
-              <button className="quiet-action" type="button" onClick={() => { setReviewCloseConfirm(false); setReviewOpen(false); setReviewDraft(entry.review); setRatingDraft(entry.rating); }}>Ignorer les modifications</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {publicationUndo && (
-        <div className="publication-toast" role="status">
-          <span><strong>{publicationLabel}</strong><small>Elle est maintenant visible publiquement.</small></span>
-          <button type="button" onClick={undoPublication}>Annuler</button>
-          <button type="button" aria-label="Fermer" onClick={() => setPublicationUndo(false)}>×</button>
+      {feedback && (
+        <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
+          <span><strong>{feedback.label}</strong><small>{feedback.detail}</small></span>
+          <span className="feedback-separator" aria-hidden="true" />
+          <button type="button" onClick={undoFeedback}>Annuler</button>
+          <button type="button" aria-label="Fermer" onClick={() => setFeedback(null)}>×</button>
         </div>
       )}
     </div>
