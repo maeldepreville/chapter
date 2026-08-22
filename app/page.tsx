@@ -6,6 +6,8 @@ import Image from "next/image";
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library";
+type LibraryFilter = "Toutes" | ReadingStatus;
+type LibrarySort = "activity" | "title" | "author";
 
 type PersonalEntry = {
   readingStatus: ReadingStatus | null;
@@ -72,7 +74,126 @@ const works = [
     cover: false,
     coverTone: "night",
   },
+  {
+    id: "lucioles",
+    title: "La Saison des lucioles",
+    author: "Élise Varenne",
+    meta: "Roman · 2018",
+    year: "2018",
+    genre: "Roman initiatique",
+    language: "Français",
+    rating: "4,0",
+    ratingCount: "719 évaluations",
+    lede: "Dans une vallée où les lucioles ont disparu, deux sœurs rouvrent l’observatoire abandonné de leur père.",
+    synopsis: [
+      "Mila revient à Valcroix au début d’un été trop silencieux. Sa sœur a conservé les carnets de leur père, remplis de relevés sur les lumières qui animaient autrefois les prés.",
+      "Leur enquête transforme peu à peu un deuil familial en exploration sensible de ce qui persiste lorsque les signes familiers s’éteignent.",
+    ],
+    cover: false,
+    coverTone: "moss",
+  },
+  {
+    id: "miroirs",
+    title: "La Maison des miroirs lents",
+    author: "Samuel Ardent",
+    meta: "Roman · 2020",
+    year: "2020",
+    genre: "Fiction littéraire",
+    language: "Français",
+    rating: "4,2",
+    ratingCount: "947 évaluations",
+    lede: "Un restaurateur découvre que les miroirs d’une demeure normande ne renvoient jamais tout à fait le présent.",
+    synopsis: [
+      "Chargé de restaurer une maison promise à la vente, Jonas remarque que certaines pièces semblent conserver les gestes de leurs anciens habitants.",
+      "Au fil des reflets, l’architecture devient une mémoire instable où chaque réparation révèle une absence nouvelle.",
+    ],
+    cover: false,
+    coverTone: "plum",
+  },
+  {
+    id: "sel",
+    title: "Un Peu de sel dans la brume",
+    author: "Diane Kermor",
+    meta: "Récit · 2023",
+    year: "2023",
+    genre: "Récit contemporain",
+    language: "Français",
+    rating: "3,9",
+    ratingCount: "381 évaluations",
+    lede: "Une cuisinière embarque sur le dernier ferry d’une ligne condamnée et recueille les recettes de ses passagers.",
+    synopsis: [
+      "Pendant les trois dernières semaines de la traversée, Maud cuisine avec ce que les voyageurs lui confient : une épice, un souvenir, parfois seulement un nom.",
+      "Son carnet compose le portrait d’un passage maritime autant que celui des vies qui l’ont emprunté.",
+    ],
+    cover: false,
+    coverTone: "ochre",
+  },
 ] as const;
+
+type WorkId = (typeof works)[number]["id"];
+
+type JournalTrace = {
+  id: string;
+  workId: WorkId;
+  date: string;
+  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée";
+  text?: string;
+  action?: "note" | "review";
+};
+
+const journalTraces: JournalTrace[] = [
+  {
+    id: "trace-note-cartographies",
+    workId: "cartographies",
+    date: "22 août 2026",
+    kind: "Note privée",
+    text: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
+    action: "note",
+  },
+  {
+    id: "trace-finished-lucioles",
+    workId: "lucioles",
+    date: "19 août 2026",
+    kind: "Lecture terminée",
+  },
+  {
+    id: "trace-review-miroirs",
+    workId: "miroirs",
+    date: "17 août 2026",
+    kind: "Critique publique",
+    text: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
+    action: "review",
+  },
+  {
+    id: "trace-start-rivage",
+    workId: "rivage",
+    date: "12 août 2026",
+    kind: "Lecture commencée",
+  },
+  {
+    id: "trace-note-atlas",
+    workId: "atlas",
+    date: "8 août 2026",
+    kind: "Note privée",
+    text: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue.",
+    action: "note",
+  },
+  {
+    id: "trace-finished-miroirs",
+    workId: "miroirs",
+    date: "2 août 2026",
+    kind: "Lecture terminée",
+  },
+];
+
+const activityOrder: Record<WorkId, number> = {
+  cartographies: 6,
+  rivage: 5,
+  atlas: 4,
+  lucioles: 3,
+  miroirs: 2,
+  sel: 1,
+};
 
 const communityReviews = [
   {
@@ -100,10 +221,25 @@ const communityReviews = [
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<View>("work");
-  const [selectedWorkId, setSelectedWorkId] = useState<(typeof works)[number]["id"]>(works[0].id);
+  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0].id);
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>({
-    rivage: { ...emptyEntry, readingStatus: "En cours", readingDate: "16 août 2026" },
-    atlas: { ...emptyEntry, readingStatus: "À lire" },
+    cartographies: {
+      ...emptyEntry,
+      readingStatus: "En cours",
+      readingDate: "4 août 2026",
+      note: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
+    },
+    rivage: { ...emptyEntry, readingStatus: "En cours", readingDate: "12 août 2026", note: "Observer comment les différentes heures deviennent une manière de raconter les désaccords du village." },
+    atlas: { ...emptyEntry, readingStatus: "En cours", readingDate: "8 août 2026", note: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue." },
+    lucioles: { ...emptyEntry, readingStatus: "Lu", readingDate: "19 août 2026", rating: 4 },
+    miroirs: {
+      ...emptyEntry,
+      readingStatus: "Lu",
+      readingDate: "2 août 2026",
+      review: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
+      rating: 4,
+    },
+    sel: { ...emptyEntry, readingStatus: "À lire" },
   });
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [statusOrigin, setStatusOrigin] = useState<"opening" | "journal">("opening");
@@ -123,11 +259,36 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const [expandedJournalTraces, setExpandedJournalTraces] = useState<string[]>([]);
+  const [olderJournalVisible, setOlderJournalVisible] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
+  const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
+  const [libraryQuery, setLibraryQuery] = useState("");
   const previousPublication = useRef({ review: "", rating: 0 });
   const latestPublication = useRef({ review: "", rating: 0 });
   const selectedWork = works.find((work) => work.id === selectedWorkId) ?? works[0];
   const entry = entries[selectedWork.id] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
+  const libraryWorks = works
+    .filter((work) => entries[work.id]?.readingStatus)
+    .filter((work) => libraryFilter === "Toutes" || entries[work.id]?.readingStatus === libraryFilter)
+    .filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(libraryQuery.trim().toLocaleLowerCase("fr")))
+    .sort((a, b) => {
+      if (librarySort === "title") return a.title.localeCompare(b.title, "fr");
+      if (librarySort === "author") return a.author.localeCompare(b.author, "fr");
+      return activityOrder[b.id] - activityOrder[a.id];
+    });
+  const libraryCounts = {
+    Toutes: works.filter((work) => entries[work.id]?.readingStatus).length,
+    "À lire": works.filter((work) => entries[work.id]?.readingStatus === "À lire").length,
+    "En cours": works.filter((work) => entries[work.id]?.readingStatus === "En cours").length,
+    Lu: works.filter((work) => entries[work.id]?.readingStatus === "Lu").length,
+  } satisfies Record<LibraryFilter, number>;
+  const currentReadings = works
+    .filter((work) => entries[work.id]?.readingStatus === "En cours")
+    .sort((a, b) => activityOrder[b.id] - activityOrder[a.id])
+    .slice(0, 3);
+  const visibleTimelineTraces = olderJournalVisible ? journalTraces.slice(1) : journalTraces.slice(1, 4);
 
   const updateEntry = (changes: Partial<PersonalEntry>) => {
     setEntries((current) => ({
@@ -142,7 +303,7 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const selectWork = (id: (typeof works)[number]["id"]) => {
+  const selectWork = (id: WorkId) => {
     setSelectedWorkId(id);
     setCurrentView("work");
     setSearchOpen(false);
@@ -222,6 +383,12 @@ export default function Home() {
     setNoteDraft(entry.note);
     setNoteOpen(true);
   };
+  const openNoteForWork = (id: WorkId) => {
+    const targetEntry = entries[id] ?? emptyEntry;
+    setSelectedWorkId(id);
+    setNoteDraft(targetEntry.note);
+    setNoteOpen(true);
+  };
   const requestNoteClose = () => {
     if (noteDraft !== entry.note) setNoteCloseConfirm(true);
     else setNoteOpen(false);
@@ -234,6 +401,13 @@ export default function Home() {
   const openReview = () => {
     setReviewDraft(entry.review);
     setRatingDraft(entry.rating);
+    setReviewOpen(true);
+  };
+  const openReviewForWork = (id: WorkId) => {
+    const targetEntry = entries[id] ?? emptyEntry;
+    setSelectedWorkId(id);
+    setReviewDraft(targetEntry.review);
+    setRatingDraft(targetEntry.rating);
     setReviewOpen(true);
   };
   const requestReviewClose = () => {
@@ -263,6 +437,44 @@ export default function Home() {
     ? new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${entry.readingDate}T12:00:00`))
     : entry.readingDate;
 
+  const renderJournalTrace = (trace: JournalTrace, featured = false) => {
+    const work = works.find((candidate) => candidate.id === trace.workId) ?? works[0];
+    const expanded = expandedJournalTraces.includes(trace.id);
+    const expandable = Boolean(trace.text && trace.text.length > 145);
+    const visibleText = trace.text && !expanded && expandable ? `${trace.text.slice(0, 145).trim()}…` : trace.text;
+
+    return (
+      <article className={`personal-trace ${featured ? "featured-trace" : ""}`} key={trace.id}>
+        <time>{trace.date}</time>
+        <div className="personal-trace-body">
+          <button className="trace-work-link" type="button" onClick={() => selectWork(work.id)}>
+            <span className={`mini-cover ${work.coverTone}`} aria-hidden="true">{work.title.slice(0, 1)}</span>
+            <span><strong>{work.title}</strong><small>{work.author}</small></span>
+          </button>
+          <p className="trace-kind">{trace.kind}{trace.kind === "Note privée" ? " · visible uniquement par vous" : ""}</p>
+          {visibleText && <p className="trace-copy">{visibleText}</p>}
+          <div className="trace-actions">
+            {expandable && (
+              <button
+                className="text-action"
+                type="button"
+                aria-expanded={expanded}
+                onClick={() => setExpandedJournalTraces((ids) => ids.includes(trace.id) ? ids.filter((id) => id !== trace.id) : [...ids, trace.id])}
+              >
+                {expanded ? "Réduire" : "Lire la suite"}
+              </button>
+            )}
+            {trace.action && (
+              <button className="text-action" type="button" onClick={() => trace.action === "note" ? openNoteForWork(trace.workId) : openReviewForWork(trace.workId)}>
+                Modifier
+              </button>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  };
+
   return (
     <div className="site-shell">
       <header className="desktop-header">
@@ -286,8 +498,6 @@ export default function Home() {
           {accountOpen && (
             <div className="account-menu">
               <p><strong>Maël Depréville</strong><span>Lecteur</span></p>
-              <button type="button">Voir mon profil</button>
-              <button type="button">Paramètres</button>
               <button type="button">Se déconnecter</button>
             </div>
           )}
@@ -301,43 +511,114 @@ export default function Home() {
 
       <main id="top">
         {currentView === "journal" ? (
-          <section className="destination-page" aria-labelledby="personal-journal-title">
-            <header className="destination-heading">
+          <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
+            <header className="destination-heading journal-heading">
               <p className="eyebrow">Votre espace personnel</p>
               <h1 id="personal-journal-title">Journal</h1>
-              <p>Retrouvez vos lectures récentes et reprenez là où vous vous étiez arrêté.</p>
+              <p>Vos lectures du moment et les pensées qui construisent votre parcours.</p>
             </header>
-            <div className="destination-list">
-              {works.filter((work) => entries[work.id]?.readingStatus).map((work) => (
-                <button className="destination-row" type="button" key={work.id} onClick={() => selectWork(work.id)}>
-                  <span className={`mini-cover ${work.coverTone}`} aria-hidden="true">{work.title.slice(0, 1)}</span>
-                  <span><strong>{work.title}</strong><small>{work.author}</small></span>
-                  <span className="status-label">{entries[work.id]?.readingStatus}</span>
-                </button>
-              ))}
+
+            <div className="journal-opening-grid">
+              <section className="current-readings" aria-labelledby="current-readings-title">
+                <div className="personal-section-heading">
+                  <div>
+                    <p className="eyebrow">En ce moment</p>
+                    <h2 id="current-readings-title">Lectures en cours</h2>
+                  </div>
+                  {libraryCounts["En cours"] > 3 && <button className="text-action" type="button" onClick={() => { setLibraryFilter("En cours"); openView("library"); }}>Voir les {libraryCounts["En cours"]}</button>}
+                </div>
+                <div className="current-reading-rail">
+                  {currentReadings.map((work) => (
+                    <article className="current-reading" key={work.id}>
+                      <button className="current-reading-main" type="button" onClick={() => selectWork(work.id)}>
+                        <span className={`journal-cover ${work.coverTone}`} aria-hidden="true">
+                          <span>CHAPTER</span><strong>{work.title}</strong><small>{work.author}</small>
+                        </span>
+                        <span className="current-reading-copy">
+                          <strong>{work.title}</strong>
+                          <small>{work.author}</small>
+                          <span>{entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
+                        </span>
+                      </button>
+                      <button className="text-action current-note-action" type="button" onClick={() => openNoteForWork(work.id)}>
+                        {entries[work.id]?.note ? "Modifier ma note" : "Ajouter une note"}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="latest-trace" aria-labelledby="latest-trace-title">
+                <div className="personal-section-heading">
+                  <div>
+                    <p className="eyebrow">Dernière trace</p>
+                    <h2 id="latest-trace-title">À retenir</h2>
+                  </div>
+                </div>
+                {renderJournalTrace(journalTraces[0], true)}
+              </section>
             </div>
+
+            <section className="journal-timeline" aria-labelledby="journal-timeline-title">
+              <div className="personal-section-heading timeline-heading">
+                <div>
+                  <p className="eyebrow">Chronologie personnelle</p>
+                  <h2 id="journal-timeline-title">La suite du journal</h2>
+                </div>
+              </div>
+              <div className="timeline-list">{visibleTimelineTraces.map((trace) => renderJournalTrace(trace))}</div>
+              {!olderJournalVisible && journalTraces.length > 4 && (
+                <button className="quiet-action older-traces-action" type="button" onClick={() => setOlderJournalVisible(true)}>Afficher les entrées précédentes</button>
+              )}
+            </section>
           </section>
         ) : currentView === "library" ? (
-          <section className="destination-page" aria-labelledby="library-title">
+          <section className="destination-page library-page" aria-labelledby="library-title">
             <header className="destination-heading">
               <p className="eyebrow">Votre collection</p>
               <h1 id="library-title">Bibliothèque</h1>
-              <p>Toutes les œuvres que vous avez ajoutées, regroupées par état de lecture.</p>
+              <p>Toutes les œuvres que vous avez ajoutées, réunies dans une collection personnelle.</p>
             </header>
-            <div className="library-filters" aria-label="Filtrer la bibliothèque">
-              <button className="active" type="button">Toutes</button>
-              <button type="button">À lire</button>
-              <button type="button">En cours</button>
-              <button type="button">Lu</button>
+
+            <div className="library-toolbar">
+              <div className="library-filters" aria-label="Filtrer la bibliothèque">
+                {(["Toutes", "À lire", "En cours", "Lu"] as LibraryFilter[]).map((filter) => (
+                  <button className={libraryFilter === filter ? "active" : ""} type="button" key={filter} aria-pressed={libraryFilter === filter} onClick={() => setLibraryFilter(filter)}>
+                    {filter} <span>{libraryCounts[filter]}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="library-tools">
+                <label className="library-search">
+                  <span className="sr-only">Rechercher dans ma bibliothèque</span>
+                  <input type="search" placeholder="Rechercher dans ma bibliothèque" value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} />
+                </label>
+                <label className="library-sort">
+                  <span>Trier par</span>
+                  <select value={librarySort} onChange={(event) => setLibrarySort(event.target.value as LibrarySort)}>
+                    <option value="activity">Activité récente</option>
+                    <option value="title">Titre</option>
+                    <option value="author">Auteur</option>
+                  </select>
+                </label>
+              </div>
             </div>
-            <div className="library-grid">
-              {works.filter((work) => entries[work.id]?.readingStatus).map((work) => (
+
+            {libraryWorks.length > 0 ? (
+              <div className="library-grid" aria-live="polite">
+              {libraryWorks.map((work) => (
                 <button className="library-work" type="button" key={work.id} onClick={() => selectWork(work.id)}>
                   <span className={`library-cover ${work.coverTone}`} aria-hidden="true"><strong>{work.title}</strong><small>{work.author}</small></span>
-                  <span><strong>{work.title}</strong><small>{work.author} · {entries[work.id]?.readingStatus}</small></span>
+                  <span><strong>{work.title}</strong><small>{work.author}</small><span className="library-status">{entries[work.id]?.readingStatus}</span></span>
                 </button>
               ))}
-            </div>
+              </div>
+            ) : (
+              <div className="library-empty">
+                <p>Aucune œuvre ne correspond à cette recherche dans votre bibliothèque.</p>
+                <button className="text-action" type="button" onClick={() => { setLibraryQuery(""); setLibraryFilter("Toutes"); }}>Effacer les filtres</button>
+              </div>
+            )}
           </section>
         ) : (
           <>
@@ -554,8 +835,6 @@ export default function Home() {
               <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
-            <button type="button">Voir mon profil</button>
-            <button type="button">Paramètres</button>
             <button type="button">Se déconnecter</button>
           </section>
         </div>

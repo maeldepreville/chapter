@@ -37,9 +37,10 @@ Dernière mise à jour : 22 août 2026
 - Phase 6 — déclinaison mobile : **terminée et validée**.
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
-- État actuel : **transition vers la phase 9**, non encore ouverte ; synchronisation du dépôt GitHub achevée.
+- Phase 9 — consolidation des composants et espace personnel : **ouverte**.
+- État actuel : cadrage du rôle complémentaire du Journal et de la Bibliothèque avant tout travail d’interface ; synchronisation du dépôt GitHub achevée.
 - La première interface fonctionnelle de la page d’une œuvre est disponible sur desktop et mobile ; elle utilise des données simulées et ne constitue pas encore la consolidation des composants de la phase 9.
-- Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
+- Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
 ## Décisions validées
 
@@ -378,6 +379,36 @@ Leur forme exacte — page, panneau, dialogue ou autre interaction — n’est p
 - Séparation explicite de la navigation globale et de la navigation locale : « Journal » et « Bibliothèque » ouvrent leurs espaces personnels, tandis que « Mon journal », « À propos » et « Critiques » restent les repères internes à la page d’une œuvre.
 - Des vues fonctionnelles légères du Journal et de la Bibliothèque sont intégrées pour rendre cette navigation cohérente ; leur composition détaillée et leur consolidation demeurent prévues en phase 9.
 - Les œuvres sans image utilisent la couverture typographique M1M2 déjà validée ; ses règles typographiques extrêmes restent à stabiliser en phase 9.
+- Ouverture de la phase 9 — consolidation des composants et développement de l’espace personnel — sans autorisation d’implémentation à ce stade.
+- Le premier arbitrage de la phase porte sur la complémentarité du Journal, orienté vers l’activité personnelle de lecture, et de la Bibliothèque, orientée vers l’organisation de la collection.
+- Validation d’une priorité équilibrée dans le Journal entre les lectures en cours et les traces personnelles récentes ; la Bibliothèque conserve le rôle de collection exhaustive organisée.
+- Exclusion explicite d’un Journal réduit à un tableau de statistiques, à une copie de la Bibliothèque ou à un fil social anticipant la phase 10.
+- Validation de J2 « Journal composé » : lectures du moment et trace personnelle la plus récente partagent l’ouverture, puis une chronologie prolonge la page.
+- Rejet de J1, trop rigide et difficile à équilibrer sur mobile, ainsi que de J3, qui ralentit le repérage des lectures en cours.
+- La chronologie de J2 retient les écrits et les étapes marquantes : début ou fin de lecture, note privée ajoutée ou significativement modifiée, critique publique publiée ou significativement modifiée.
+- Les corrections mineures, les ajustements techniques et l’ajout à « À lire » ne créent pas d’entrée chronologique ; la confidentialité privée ou publique de chaque écrit reste explicite.
+- L’ouverture de J2 affiche jusqu’à trois lectures en cours, classées selon l’activité personnelle la plus récente, avec des actions rapides pour ouvrir l’œuvre ou ajouter une note.
+- Au-delà de trois lectures, un accès mène à la Bibliothèque déjà filtrée sur « En cours » ; aucune notion distincte de lecture principale n’est introduite.
+- Validation de O1 « Face-à-face » pour l’ouverture desktop de J2 : les lectures en cours et la dernière trace occupent deux zones de poids comparable, avant une chronologie en pleine largeur.
+- O2 est rejetée pour sa proximité excessive avec une vue de collection ; O3 est rejetée parce qu’elle rend la trace dominante et relègue les lectures.
+- Validation de OM3 « Rail horizontal » pour l’adaptation mobile de O1 : les lectures en cours précèdent la dernière trace dans une étagère tactile compacte.
+- Le rail utilise un défilement natif sans lecture automatique, laisse entrevoir l’élément suivant, sépare l’ouverture de l’œuvre de l’action de note et conserve un accès vers la Bibliothèque filtrée.
+- Validation de C1 « Marges datées » pour la chronologie : date en marge sur desktop et au-dessus de l’entrée sur mobile, sans ligne temporelle continue.
+- C2 est rejetée pour son allure de fil d’activité ; C3 est rejetée car ses regroupements mensuels diluent les dates précises et alourdissent le rythme.
+- Confirmation du maintien de la méthode documentaire : `CHAPTER_DECISIONS.md` reste la source de vérité transversale, tandis que le livrable détaillé de phase 9 est tenu dans `PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md` ; les deux sont mis à jour après chaque interaction de conception au niveau de détail qui leur revient.
+- Validation de E2 « Entrée éditoriale » pour les traces C1 : date, œuvre, type et confidentialité, aperçu léger de l’écrit et action de modification ; les étapes sans texte restent plus compactes.
+- Les écrits longs utilisent « Lire la suite » puis « Réduire » pour une expansion locale ; aucune page autonome d’entrée de journal n’est créée.
+- La dernière trace de l’ouverture O1 n’est pas dupliquée en tête de chronologie ; les archives plus anciennes sont chargées par l’action explicite « Afficher les entrées précédentes », sans défilement infini.
+- Plusieurs entrées peuvent rester développées simultanément et « Modifier » réutilise l’éditeur contextuel existant avec ses protections de saisie.
+- Validation des trois états vides du Journal : absence de lecture avec traces existantes, absence de trace avec lectures existantes, et absence totale fusionnée en une invitation unique à rechercher une œuvre.
+- Sur mobile, aucun rail vide n’est rendu ; l’action « Voir mes livres à lire » devient « Rechercher une œuvre » lorsque la liste « À lire » est vide.
+- Clôture fonctionnelle de la conception détaillée du Journal en phase 9, sous réserve de la validation consolidée précédant l’implémentation.
+- Ouverture de la conception détaillée de la Bibliothèque ; le premier arbitrage porte sur sa macrostructure.
+- Validation de B2 « Collection filtrée » pour la Bibliothèque : grille unique avec « Toutes » par défaut, puis filtres « À lire », « En cours » et « Lu », accompagnés de leurs nombres d’œuvres.
+- Le filtre et la position sont restaurés au retour d’une œuvre ; B1 est rejetée pour ses sections déséquilibrées et B3 parce qu’elle duplique la mise en avant des lectures en cours du Journal.
+- Ouverture de l’arbitrage sur l’ordre, le tri et la recherche interne de la collection.
+- Autorisation explicite d’un jalon d’implémentation de phase 9 afin d’évaluer en contexte le Journal validé et la Bibliothèque B2 avant la validation consolidée.
+- Le jalon présente provisoirement une recherche interne, « Activité récente » par défaut, les tris « Titre » et « Auteur », la restauration du contexte et une grille unique ; ces outils restent à confirmer après évaluation.
 - Demande d’archivage du projet dans un dépôt GitHub créé par l’utilisateur. Le site possède déjà un historique Git et un dépôt distant réservé à son déploiement ; la stratégie proposée consiste à conserver ce dépôt technique comme `origin` et à ajouter GitHub comme dépôt distant secondaire, sans écrasement ni réinitialisation de l’historique.
 - Le futur dépôt GitHub doit contenir le code de l’interface ainsi qu’une copie versionnée des documents de décision dans un dossier `docs/`, afin que la continuité du projet ne dépende pas exclusivement d’une conversation ou de la mémoire du produit.
 - L’ajout et le premier envoi vers GitHub restent en attente de l’URL exacte du dépôt et d’un accès configuré ; aucune mutation distante n’a été effectuée à ce stade.
