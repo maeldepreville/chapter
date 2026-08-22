@@ -87,7 +87,33 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   font-weight: 600;
   cursor: pointer;
 }
+.account-control { position: relative; justify-self: end; }
+.account-menu {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  z-index: 60;
+  width: 14rem;
+  padding: 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  box-shadow: 0 1rem 2rem rgb(36 33 31 / 0.12);
+}
+.account-menu p { display: grid; margin: 0 0 0.5rem; padding: 0.5rem; }
+.account-menu p span { color: var(--muted); font-size: 0.76rem; }
+.account-menu button {
+  width: 100%;
+  padding: 0.55rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+.account-menu button:hover { background: var(--paper); }
 .mobile-header, .mobile-nav { display: none; }
+.mobile-account-overlay { display: none; }
 
 .book-opening {
   display: grid;
@@ -119,7 +145,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgb(21 29 35 / 0.14), rgb(21 29 35 / 0.15) 45%, rgb(12 20 27 / 0.78));
+  background: rgb(12 20 27 / 0.46);
 }
 .book-cover-copy {
   position: absolute;
@@ -171,6 +197,48 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   line-height: 1.55;
 }
 .opening-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.status-control { position: relative; }
+.status-backdrop { position: fixed; inset: 0; z-index: 45; width: 100%; height: 100%; background: transparent; border: 0; }
+.status-popover {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  left: 0;
+  z-index: 50;
+  width: min(19rem, calc(100vw - 2.2rem));
+  padding: 0.65rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  box-shadow: 0 1rem 2.4rem rgb(36 33 31 / 0.14);
+}
+.status-popover > button:not(.popover-heading button) {
+  width: 100%;
+  padding: 0.65rem 0.7rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+.status-popover > button:hover, .status-popover > button.selected { background: var(--paper); color: var(--brick); }
+.popover-heading { display: flex; justify-content: space-between; align-items: center; padding: 0.45rem 0.7rem 0.55rem; }
+.popover-heading button, .close-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.35rem;
+}
+.popover-heading button:hover, .close-button:hover { background: var(--paper); }
+.date-field { display: grid; gap: 0.5rem; padding: 0.45rem 0.7rem 0.7rem; }
+.date-field span { color: var(--muted); font-size: 0.78rem; }
+.date-field input { padding: 0.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.3rem; }
+.date-field button { padding: 0.65rem; color: #fffaf5; background: var(--brick); border: 0; border-radius: 0.3rem; cursor: pointer; }
 .primary-action, .quiet-action, .text-action {
   border: 0;
   cursor: pointer;
@@ -183,6 +251,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   border-radius: 0.32rem;
 }
 .primary-action:hover { background: var(--brick-dark); }
+.primary-action:disabled { cursor: not-allowed; opacity: 0.45; }
 .quiet-action {
   padding: 0.72rem 1rem;
   background: transparent;
@@ -266,6 +335,111 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .review-header p { margin: 0; color: var(--muted); font-size: 0.74rem; }
 .review-stars { color: var(--brick); font-size: 0.8rem; letter-spacing: 0.06em; }
 .review-copy { margin: 1.15rem 0 0 3.35rem; font-family: var(--font-editorial); font-size: 1.13rem; line-height: 1.7; }
+.review-expand { margin: 0.35rem 0 0 3.35rem; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(36 33 31 / 0.48);
+  border: 0;
+  cursor: default;
+}
+.editor-modal, .search-panel, .confirmation-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 42rem);
+  max-height: calc(100vh - 2.5rem);
+  overflow: auto;
+  padding: clamp(1.3rem, 4vw, 2.3rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2);
+}
+.private-editor { width: min(100%, 36rem); }
+.modal-heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 1.8rem; }
+.modal-heading .eyebrow { margin-bottom: 0.35rem; }
+.modal-heading h2, .confirmation-dialog h2 {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: 2.2rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.editor-field { display: grid; gap: 0.55rem; }
+.editor-field > span, .rating-field legend { font-size: 0.82rem; font-weight: 600; }
+.editor-field textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.9rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  font-family: var(--font-editorial);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+.editor-field small { justify-self: end; color: var(--muted); }
+.rating-field { margin: 1.6rem 0 0; padding: 0; border: 0; }
+.rating-field legend span { color: var(--muted); font-weight: 400; }
+.star-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.1rem; margin-top: 0.4rem; }
+.star-row button {
+  min-width: 2.5rem;
+  min-height: 2.75rem;
+  padding: 0;
+  color: var(--brick);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 1.75rem;
+}
+.star-row span { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem; }
+.confirmation-overlay { z-index: 100; background: rgb(36 33 31 / 0.5); }
+.confirmation-dialog { width: min(100%, 31rem); }
+.confirmation-dialog p { color: var(--muted); }
+.search-panel { width: min(100%, 42rem); }
+.search-panel input {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+.search-results { display: grid; margin-top: 0.8rem; }
+.search-results button { display: grid; gap: 0.05rem; padding: 0.9rem 0.2rem; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.search-results button span { color: var(--muted); font-family: var(--font-editorial); }
+.publication-toast {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: calc(100vw - 2.5rem);
+  padding: 0.9rem 1rem;
+  color: #fffaf5;
+  background: var(--ink);
+  border-radius: 0.4rem;
+  box-shadow: 0 1rem 2.5rem rgb(36 33 31 / 0.22);
+}
+.publication-toast span { display: grid; }
+.publication-toast small { color: #d9d1c7; }
+.publication-toast button { color: #fffaf5; background: transparent; border: 0; cursor: pointer; font-weight: 600; }
+.publication-toast button:first-of-type { text-decoration: underline; text-underline-offset: 0.2rem; }
 
 @media (max-width: 899px) {
   html { scroll-padding-top: 7.5rem; }
@@ -285,6 +459,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
     backdrop-filter: blur(12px);
   }
   .book-opening { grid-template-columns: minmax(7.5rem, 10rem) minmax(0, 1fr); gap: 1.4rem; min-height: auto; padding: 2rem 1.1rem 2.5rem; align-items: start; }
+  .cover-stage { grid-column: 1; grid-row: 1 / 4; }
+  .book-identity { display: contents; }
+  .book-identity > .eyebrow, .book-identity > h1, .book-identity > .author { grid-column: 2; }
   .book-cover-copy { padding: 0.8rem; }
   .book-cover-copy strong { font-size: clamp(1.2rem, 5vw, 1.7rem); }
   .book-cover-copy > span:last-child { font-size: 0.68rem; }
@@ -328,8 +505,57 @@ button:focus-visible, a:focus-visible, input:focus-visible {
     border-top: 1px solid var(--line);
   }
   .mobile-nav a { display: grid; place-items: center; align-content: center; gap: 0.1rem; color: var(--muted); font-size: 0.7rem; }
+  .mobile-nav button { display: grid; place-items: center; align-content: center; gap: 0.1rem; padding: 0; color: var(--muted); background: transparent; border: 0; font-size: 0.7rem; }
   .mobile-nav a span { font-size: 1.15rem; }
+  .mobile-nav button span { font-size: 1.15rem; }
   .mobile-nav a.active { color: var(--brick); }
+  .mobile-account-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    align-items: end;
+  }
+  .mobile-account-sheet {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 100%;
+    padding: 1.3rem 1.1rem calc(1.3rem + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-radius: 0.7rem 0.7rem 0 0;
+  }
+  .mobile-account-sheet h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
+  .mobile-account-sheet > button { padding: 0.8rem 0; text-align: left; background: transparent; border: 0; border-top: 1px solid var(--line); }
+  .status-popover {
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: calc(4.4rem + env(safe-area-inset-bottom));
+    left: 0;
+    z-index: 70;
+    width: 100%;
+    padding: 0.8rem 1.1rem 1.1rem;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0.7rem 0.7rem 0 0;
+  }
+  .status-backdrop { z-index: 60; background: rgb(36 33 31 / 0.28); }
+  .overlay { align-items: end; padding: 0; }
+  .editor-modal, .search-panel {
+    width: 100%;
+    max-height: calc(100vh - 1rem);
+    padding: 1.3rem 1.1rem calc(1.3rem + env(safe-area-inset-bottom));
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0.7rem 0.7rem 0 0;
+  }
+  .review-editor { min-height: min(46rem, calc(100vh - 1rem)); }
+  .confirmation-overlay { place-items: center; padding: 1rem; }
+  .confirmation-dialog { border-radius: 0.5rem; }
+  .publication-toast { right: 0.75rem; bottom: calc(5.1rem + env(safe-area-inset-bottom)); left: 0.75rem; }
 }
 
 @media (max-width: 520px) {
@@ -339,6 +565,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   .journal-row { display: grid; }
   .journal-row .text-action { justify-self: start; }
   .work-facts { grid-template-columns: 1fr 1fr; }
+  .modal-actions { display: grid; grid-template-columns: 1fr; }
+  .modal-actions .primary-action { grid-row: 1; }
+  .modal-actions button { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
