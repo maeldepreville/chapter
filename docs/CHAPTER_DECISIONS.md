@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 22 août 2026
+Dernière mise à jour : 23 août 2026
 
 ## Cadre de collaboration
 
@@ -11,6 +11,7 @@ Dernière mise à jour : 22 août 2026
 - Cycle de travail : discussion → analyse UX → proposition → ajustements → validation → implémentation.
 - Les décisions sont consignées ici après chaque interaction de conception. Une décision révisée doit être remplacée explicitement, jamais contredite silencieusement.
 - Lorsqu’un sujet est évoqué, il doit être situé explicitement dans le plan : phase actuelle, phase ultérieure identifiée, hors du premier lot ou nouveau sujet à intégrer.
+- Chaque jalon final publié doit être accompagné d’une checklist exhaustive des points à tester : écrans, parcours, interactions, responsive, états limites, fermetures, annulations, restauration du contexte et reports connus.
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
 
 ## Plan de développement de référence
@@ -37,9 +38,10 @@ Dernière mise à jour : 22 août 2026
 - Phase 6 — déclinaison mobile : **terminée et validée**.
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
-- État actuel : **transition vers la phase 9**, non encore ouverte ; synchronisation du dépôt GitHub achevée.
-- La première interface fonctionnelle de la page d’une œuvre est disponible sur desktop et mobile ; elle utilise des données simulées et ne constitue pas encore la consolidation des composants de la phase 9.
-- Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
+- Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
+- État actuel : correction finale du jalon de phase 9 publiée ; prochaine étape, ouverture de la phase 10 consacrée à la découverte et aux interactions sociales.
+- L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
+- Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
 ## Décisions validées
 
@@ -378,6 +380,89 @@ Leur forme exacte — page, panneau, dialogue ou autre interaction — n’est p
 - Séparation explicite de la navigation globale et de la navigation locale : « Journal » et « Bibliothèque » ouvrent leurs espaces personnels, tandis que « Mon journal », « À propos » et « Critiques » restent les repères internes à la page d’une œuvre.
 - Des vues fonctionnelles légères du Journal et de la Bibliothèque sont intégrées pour rendre cette navigation cohérente ; leur composition détaillée et leur consolidation demeurent prévues en phase 9.
 - Les œuvres sans image utilisent la couverture typographique M1M2 déjà validée ; ses règles typographiques extrêmes restent à stabiliser en phase 9.
+- Ouverture de la phase 9 — consolidation des composants et développement de l’espace personnel — sans autorisation d’implémentation à ce stade.
+- Le premier arbitrage de la phase porte sur la complémentarité du Journal, orienté vers l’activité personnelle de lecture, et de la Bibliothèque, orientée vers l’organisation de la collection.
+- Validation d’une priorité équilibrée dans le Journal entre les lectures en cours et les traces personnelles récentes ; la Bibliothèque conserve le rôle de collection exhaustive organisée.
+- Exclusion explicite d’un Journal réduit à un tableau de statistiques, à une copie de la Bibliothèque ou à un fil social anticipant la phase 10.
+- Validation de J2 « Journal composé » : lectures du moment et trace personnelle la plus récente partagent l’ouverture, puis une chronologie prolonge la page.
+- Rejet de J1, trop rigide et difficile à équilibrer sur mobile, ainsi que de J3, qui ralentit le repérage des lectures en cours.
+- La chronologie de J2 retient les écrits et les étapes marquantes : début ou fin de lecture, note privée ajoutée ou significativement modifiée, critique publique publiée ou significativement modifiée.
+- Les corrections mineures, les ajustements techniques et l’ajout à « À lire » ne créent pas d’entrée chronologique ; la confidentialité privée ou publique de chaque écrit reste explicite.
+- L’ouverture de J2 affiche jusqu’à trois lectures en cours, classées selon l’activité personnelle la plus récente, avec des actions rapides pour ouvrir l’œuvre ou ajouter une note.
+- Au-delà de trois lectures, un accès mène à la Bibliothèque déjà filtrée sur « En cours » ; aucune notion distincte de lecture principale n’est introduite.
+- Validation de O1 « Face-à-face » pour l’ouverture desktop de J2 : les lectures en cours et la dernière trace occupent deux zones de poids comparable, avant une chronologie en pleine largeur.
+- O2 est rejetée pour sa proximité excessive avec une vue de collection ; O3 est rejetée parce qu’elle rend la trace dominante et relègue les lectures.
+- Validation de OM3 « Rail horizontal » pour l’adaptation mobile de O1 : les lectures en cours précèdent la dernière trace dans une étagère tactile compacte.
+- Le rail utilise un défilement natif sans lecture automatique, laisse entrevoir l’élément suivant, sépare l’ouverture de l’œuvre de l’action de note et conserve un accès vers la Bibliothèque filtrée.
+- Validation de C1 « Marges datées » pour la chronologie : date en marge sur desktop et au-dessus de l’entrée sur mobile, sans ligne temporelle continue.
+- C2 est rejetée pour son allure de fil d’activité ; C3 est rejetée car ses regroupements mensuels diluent les dates précises et alourdissent le rythme.
+- Confirmation du maintien de la méthode documentaire : `CHAPTER_DECISIONS.md` reste la source de vérité transversale, tandis que le livrable détaillé de phase 9 est tenu dans `PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md` ; les deux sont mis à jour après chaque interaction de conception au niveau de détail qui leur revient.
+- Validation de E2 « Entrée éditoriale » pour les traces C1 : date, œuvre, type et confidentialité, aperçu léger de l’écrit et action de modification ; les étapes sans texte restent plus compactes.
+- Les écrits longs utilisent « Lire la suite » puis « Réduire » pour une expansion locale ; aucune page autonome d’entrée de journal n’est créée.
+- La dernière trace de l’ouverture O1 n’est pas dupliquée en tête de chronologie ; les archives plus anciennes sont chargées par l’action explicite « Afficher les entrées précédentes », sans défilement infini.
+- Plusieurs entrées peuvent rester développées simultanément et « Modifier » réutilise l’éditeur contextuel existant avec ses protections de saisie.
+- Validation des trois états vides du Journal : absence de lecture avec traces existantes, absence de trace avec lectures existantes, et absence totale fusionnée en une invitation unique à rechercher une œuvre.
+- Sur mobile, aucun rail vide n’est rendu ; l’action « Voir mes livres à lire » devient « Rechercher une œuvre » lorsque la liste « À lire » est vide.
+- Clôture fonctionnelle de la conception détaillée du Journal en phase 9, sous réserve de la validation consolidée précédant l’implémentation.
+- Ouverture de la conception détaillée de la Bibliothèque ; le premier arbitrage porte sur sa macrostructure.
+- Validation de B2 « Collection filtrée » pour la Bibliothèque : grille unique avec « Toutes » par défaut, puis filtres « À lire », « En cours » et « Lu », accompagnés de leurs nombres d’œuvres.
+- Le filtre et la position sont restaurés au retour d’une œuvre ; B1 est rejetée pour ses sections déséquilibrées et B3 parce qu’elle duplique la mise en avant des lectures en cours du Journal.
+- Ouverture de l’arbitrage sur l’ordre, le tri et la recherche interne de la collection.
+- Autorisation explicite d’un jalon d’implémentation de phase 9 afin d’évaluer en contexte le Journal validé et la Bibliothèque B2 avant la validation consolidée.
+- Le jalon présente provisoirement une recherche interne, « Activité récente » par défaut, les tris « Titre » et « Auteur », la restauration du contexte et une grille unique ; ces outils restent à confirmer après évaluation.
+- Évaluation positive du jalon de phase 9 et validation en contexte du Journal J2/O1/OM3/C1/E2 ainsi que de la Bibliothèque B2.
+- Validation de la recherche interne, de l’ordre « Activité récente », des tris « Titre » et « Auteur », de la restauration du contexte et de la grille unique.
+- Ouverture de l’arbitrage sur l’anatomie et les actions de chaque élément de collection, dont la modification éventuelle du statut depuis la Bibliothèque.
+- Validation de I2b « Statut typographique » : contrôle texte–flèche sans capsule visible afin de préserver la sobriété éditoriale de la grille. La zone entière reste interactive, avec un retour discret au survol et au focus ainsi qu’une cible tactile confortable.
+- Ouverture de l’arbitrage sur la densité informative de l’élément : trio essentiel titre–auteur–statut, ajout d’un repère de date contextuel, ou suivi plus riche.
+- Validation de D1 « Essentielle » : chaque élément de la Bibliothèque se limite à la couverture, au titre, à l’auteur et au statut interactif I2b ; dates, progression et notation ne sont pas affichées dans la grille.
+- Ouverture de l’arbitrage sur l’emplacement de l’action « Retirer de ma bibliothèque », sans réintroduire de menu d’actions sur la vignette.
+- Validation de R1 « Dans le sélecteur » : « Retirer de ma bibliothèque » est placé sous les trois statuts, séparé visuellement et traité comme une action destructive, sans ajouter de menu sur la vignette.
+- Ouverture de l’arbitrage sur les effets du retrait, la conservation des écrits et de l’historique, ainsi que les mécanismes de confirmation et d’annulation.
+- Validation du retrait organisationnel : l’œuvre et son statut quittent la collection, tandis que notes privées, critiques publiées et traces historiques sont conservées ; aucun événement de retrait n’est ajouté au Journal.
+- Sans écrit associé, le retrait est immédiat avec « Annuler » ; en présence d’un écrit, une confirmation explicite sa conservation avant le retrait, puis l’annulation reste proposée. L’effacement complet des données demeure une action distincte hors du sélecteur.
+- Ouverture de l’arbitrage sur les états vides de la Bibliothèque : collection vide, filtre vide et recherche locale sans résultat.
+- Validation des états vides contextualisés de la Bibliothèque : invitation à rechercher une première œuvre lorsque la collection est vide, réinitialisation du seul filtre pour un statut vide, et effacement de la seule requête pour une recherche sans résultat.
+- Les outils inutiles sont masqués uniquement lorsque toute la Bibliothèque est vide ; ils restent disponibles dans les autres états. Les messages combinent filtre et requête lorsque nécessaire, sans illustration décorative.
+- Clôture fonctionnelle de la conception détaillée de la Bibliothèque en phase 9 et ouverture de la consolidation des composants communs.
+- Le premier arbitrage de consolidation porte sur les règles typographiques des titres longs dans la couverture de remplacement M1M2.
+- Validation de L2 « Paliers équilibrés » pour les titres longs de M1M2 : trois paliers selon le nombre de lignes, limite de quatre lignes avec ellipse, titre intégral conservé hors de la couverture et dans son nom accessible.
+- M1M2 et L2 s’appliquent exclusivement aux œuvres sans couverture réelle exploitable ou après un échec durable de chargement. Une couverture valide conserve toujours C1, tandis que son chargement utilise un état neutre temporaire pour éviter un clignotement du remplacement typographique.
+- Ouverture de l’arbitrage sur la palette déterministe et restreinte des couvertures typographiques, sans codage du genre littéraire.
+- Validation de CP2 « Nuancier éditorial » : six teintes sourdes de force visuelle comparable, inspirées des familles brique, ocre, sauge, bleu pétrole, prune et ardoise.
+- La teinte de remplacement est dérivée de l’identifiant canonique de l’œuvre et reste stable sur tous les écrans ; elle ne code jamais le genre, le statut, l’auteur ou l’ordre d’affichage.
+- Ouverture de la consolidation graphique des cinq étoiles entières EV1, déjà validées fonctionnellement sans encadrement permanent.
+- Validation de ES1 « Accent plein » : étoiles sélectionnées remplies avec l’accent brique atténué, étoiles restantes en contour neutre, sans fond ni encadrement permanent.
+- Ouverture de l’arbitrage sur les états interactifs de l’évaluation et sur le mécanisme explicite de retrait d’une valeur existante.
+- Validation des états ES1 : repos en contours neutres, prévisualisation temporaire au survol ou au focus, sélection entière stable, modification directe et action textuelle « Retirer » uniquement lorsqu’une valeur existe.
+- Un second clic sur l’étoile active ne supprime pas l’évaluation ; les zones interactives dépassent le dessin visible et seule une transition de couleur discrète est utilisée.
+- Ouverture de la consolidation du retour temporaire annulable commun à PB3 et au retrait organisationnel.
+- Rejet des extrêmes N1, jugé trop proche d’une pilule générique, et N2, jugé trop rigide ; validation de N2C « Capsule éditoriale », qui combine la structure lisible de N2 avec un rayon intermédiaire d’environ 12 px, une hauteur d’environ 46 px et une présence flottante légère.
+- N2C organise le message, un séparateur discret et l’action « Annuler » sans dégradé ni icône décorative ; le composant reste compact sur desktop et devient presque pleine largeur au-dessus de la navigation mobile.
+- La durée du retour annulable est validée à 5 secondes, avec suspension au survol et au focus ; elle doit rester centralisée et facilement ajustable dans l’implémentation.
+- Validation de A2 « Hiérarchie éditoriale » : une seule action principale remplie par groupe, des actions secondaires transparentes sans encadrement permanent et des actions contextuelles traitées comme du texte.
+- Les actions destructives restent isolées ; une surface destructive remplie est réservée à la confirmation finale d’une opération irréversible. Le retrait organisationnel annulable demeure textuel.
+- Les boutons courants adoptent un rayon modéré d’environ 5 à 6 px, afin que le rayon de 12 px de N2C reste une exception expressive liée au retour flottant.
+- Validation de G2 « Équilibré » pour le gabarit des boutons : 40 px de hauteur sur desktop, 44 px sur mobile et rayon commun de 6 px.
+- Les valeurs de G2 définissent la hauteur perçue ; l’audit de phase 11 pourra augmenter la cible interactive invisible si nécessaire sans épaissir visuellement le composant.
+- Validation de S2 « Retours fonctionnels » : variation tonale au survol, anneau externe au focus, tonalité renforcée à la pression et aucune animation de déplacement, réduction ou rebond.
+- En chargement, le libellé et la largeur restent stables avec un indicateur adjacent et le blocage des activations répétées ; l’état indisponible demeure lisible et sans retour de survol.
+- Les transitions des boutons sont courtes, limitées aux couleurs et respectent les préférences de réduction du mouvement. A2, G2 et S2 clôturent la consolidation du système commun d’actions.
+- Validation de SD2 « Relais discret » pour AJ2–DT2 : le statut s’applique et le sélecteur se ferme avant qu’une invitation distincte et proche ne propose une date facultative.
+- « À lire » ne sollicite aucune date ; « En cours » propose une date de début et « Lu » une date de fin avec « Aujourd’hui », « Choisir une date » et « Plus tard ». La fermeture conserve le statut sans date.
+- Sur desktop, SD2 reste lié au contrôle d’origine ; sur mobile, il prolonge le panneau inférieur sans devenir bloquant. N2C n’est pas réutilisé pour cette saisie secondaire.
+- Validation de EM2 « Surface adaptative » pour NP2 et CR2R : modale courte pour la note et surface plus ample pour la critique sur desktop.
+- Sur mobile, la note utilise un panneau inférieur ajusté au contenu, tandis que la critique peut approcher le plein écran ; les deux éditeurs conservent une structure et des composants communs.
+- Validation de NSV2 « Alerte intégrée » pour la protection NS1 : l’éditeur et le texte modifié restent visibles, tandis que les actions ordinaires sont remplacées par le choix de revenir à l’écrit ou d’ignorer les modifications.
+- « Revenir à la note » ou « Revenir à la critique » est l’action principale sûre ; « Ignorer les modifications » demeure destructive et textuelle. Aucun dialogue supplémentaire ne s’empile sur la modale ou le panneau mobile.
+- La conception détaillée de la phase 9 est complète et son implémentation consolidée a été autorisée afin de produire un jalon d’évaluation.
+- Autorisation explicite reçue pour implémenter l’ensemble des choix validés de la phase 9 et publier un nouveau jalon d’évaluation.
+- Implémentation consolidée du Journal J2/O1/OM3/C1/E2, de la Bibliothèque B2/I2b/D1/R1 et des composants L2/CP2/ES1/N2C/A2/G2/S2/SD2/EM2/NSV2.
+- Le jalon inclut les retraits organisationnels protégés et annulables, les états vides contextualisés, les relais de date distincts, les éditeurs adaptatifs avec protection intégrée et les retours responsives associés.
+- Premier retour sur le jalon de phase 9 : l’ensemble est jugé correct, à l’exception d’un bref retour visuel vers l’onglet précédent dans la navigation locale de la page d’une œuvre lors d’un défilement descendant entre deux sections.
+- Le défaut provenait du choix instantané de la section active parmi plusieurs intersections concurrentes. La navigation utilise désormais une ligne de lecture verticale stable, ce qui supprime le retour transitoire vers l’onglet précédent.
+- Le panneau de compte desktop ne se ferme pas encore lors d’un clic extérieur ou de la sélection d’un autre élément. Ce comportement est enregistré pour la phase 11, avec l’harmonisation transversale des fermetures, du focus et des surfaces superposées ; il ne déclenche aucune modification du jalon de phase 9.
+- Aucun autre défaut n’a été relevé lors de l’évaluation. La phase 9 est clôturée et la méthode de travail impose désormais une checklist exhaustive avec chaque jalon final pour guider la validation utilisateur.
 - Demande d’archivage du projet dans un dépôt GitHub créé par l’utilisateur. Le site possède déjà un historique Git et un dépôt distant réservé à son déploiement ; la stratégie proposée consiste à conserver ce dépôt technique comme `origin` et à ajouter GitHub comme dépôt distant secondaire, sans écrasement ni réinitialisation de l’historique.
 - Le futur dépôt GitHub doit contenir le code de l’interface ainsi qu’une copie versionnée des documents de décision dans un dossier `docs/`, afin que la continuité du projet ne dépende pas exclusivement d’une conversation ou de la mémoire du produit.
 - L’ajout et le premier envoi vers GitHub restent en attente de l’URL exacte du dépôt et d’un accès configuré ; aucune mutation distante n’a été effectuée à ce stade.
