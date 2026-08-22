@@ -359,15 +359,32 @@ export default function Home() {
     const sections = ["journal", "about", "reviews"]
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveSection(visible.target.id);
-      },
-      { rootMargin: "-25% 0px -55% 0px", threshold: [0, 0.15, 0.4] },
-    );
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    if (!sections.length || currentView !== "work") return;
+
+    let animationFrame = 0;
+    const updateActiveSection = () => {
+      const readingLine = Math.min(window.innerHeight * 0.3, 220);
+      let nextSection = sections[0].id;
+
+      sections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= readingLine) nextSection = section.id;
+      });
+
+      setActiveSection((current) => current === nextSection ? current : nextSection);
+    };
+    const scheduleUpdate = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
   }, [currentView, selectedWorkId]);
 
   useEffect(() => {

@@ -11,6 +11,7 @@ Dernière mise à jour : 23 août 2026
 - Cycle de travail : discussion → analyse UX → proposition → ajustements → validation → implémentation.
 - Les décisions sont consignées ici après chaque interaction de conception. Une décision révisée doit être remplacée explicitement, jamais contredite silencieusement.
 - Lorsqu’un sujet est évoqué, il doit être situé explicitement dans le plan : phase actuelle, phase ultérieure identifiée, hors du premier lot ou nouveau sujet à intégrer.
+- Chaque jalon final publié doit être accompagné d’une checklist exhaustive des points à tester : écrans, parcours, interactions, responsive, états limites, fermetures, annulations, restauration du contexte et reports connus.
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
 
 ## Plan de développement de référence
@@ -37,8 +38,8 @@ Dernière mise à jour : 23 août 2026
 - Phase 6 — déclinaison mobile : **terminée et validée**.
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
-- Phase 9 — consolidation des composants et espace personnel : **implémentée, jalon d’évaluation publié**.
-- État actuel : revue en contexte du Journal, de la Bibliothèque et des composants consolidés avant clôture formelle de la phase 9.
+- Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
+- État actuel : correction finale du jalon de phase 9 publiée ; prochaine étape, ouverture de la phase 10 consacrée à la découverte et aux interactions sociales.
 - L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
 - Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
@@ -458,6 +459,10 @@ Leur forme exacte — page, panneau, dialogue ou autre interaction — n’est p
 - Autorisation explicite reçue pour implémenter l’ensemble des choix validés de la phase 9 et publier un nouveau jalon d’évaluation.
 - Implémentation consolidée du Journal J2/O1/OM3/C1/E2, de la Bibliothèque B2/I2b/D1/R1 et des composants L2/CP2/ES1/N2C/A2/G2/S2/SD2/EM2/NSV2.
 - Le jalon inclut les retraits organisationnels protégés et annulables, les états vides contextualisés, les relais de date distincts, les éditeurs adaptatifs avec protection intégrée et les retours responsives associés.
+- Premier retour sur le jalon de phase 9 : l’ensemble est jugé correct, à l’exception d’un bref retour visuel vers l’onglet précédent dans la navigation locale de la page d’une œuvre lors d’un défilement descendant entre deux sections.
+- Le défaut provenait du choix instantané de la section active parmi plusieurs intersections concurrentes. La navigation utilise désormais une ligne de lecture verticale stable, ce qui supprime le retour transitoire vers l’onglet précédent.
+- Le panneau de compte desktop ne se ferme pas encore lors d’un clic extérieur ou de la sélection d’un autre élément. Ce comportement est enregistré pour la phase 11, avec l’harmonisation transversale des fermetures, du focus et des surfaces superposées ; il ne déclenche aucune modification du jalon de phase 9.
+- Aucun autre défaut n’a été relevé lors de l’évaluation. La phase 9 est clôturée et la méthode de travail impose désormais une checklist exhaustive avec chaque jalon final pour guider la validation utilisateur.
 - Demande d’archivage du projet dans un dépôt GitHub créé par l’utilisateur. Le site possède déjà un historique Git et un dépôt distant réservé à son déploiement ; la stratégie proposée consiste à conserver ce dépôt technique comme `origin` et à ajouter GitHub comme dépôt distant secondaire, sans écrasement ni réinitialisation de l’historique.
 - Le futur dépôt GitHub doit contenir le code de l’interface ainsi qu’une copie versionnée des documents de décision dans un dossier `docs/`, afin que la continuité du projet ne dépende pas exclusivement d’une conversation ou de la mémoire du produit.
 - L’ajout et le premier envoi vers GitHub restent en attente de l’URL exacte du dépôt et d’un accès configuré ; aucune mutation distante n’a été effectuée à ce stade.

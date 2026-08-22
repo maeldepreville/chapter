@@ -1,6 +1,6 @@
 # Chapter — Phase 9 : composants et espace personnel
 
-Statut : **implémentée — jalon d’évaluation publié**
+Statut : **terminée et validée — correction finale publiée**
 
 Dernière mise à jour : 23 août 2026
 
@@ -8,7 +8,7 @@ Dernière mise à jour : 23 août 2026
 
 Transformer les vues légères du Journal et de la Bibliothèque introduites en phase 8 en un espace personnel cohérent, puis consolider les composants révélés par ces écrans et par la page d’une œuvre.
 
-La phase a suivi le cycle validé : discussion → analyse UX → proposition → ajustements → validation explicite → implémentation. Le jalon d’évaluation rassemble désormais le Journal, la Bibliothèque et les composants consolidés afin de permettre une revue en contexte.
+La phase a suivi le cycle validé : discussion → analyse UX → proposition → ajustements → validation explicite → implémentation. Le Journal, la Bibliothèque et les composants consolidés ont été évalués en contexte, puis validés après correction du dernier défaut relevé.
 
 ## État de l’implémentation
 
@@ -22,6 +22,26 @@ Le jalon publié le 23 août 2026 comprend :
 - les états vides contextualisés du Journal et de la Bibliothèque ainsi que les adaptations desktop et mobile correspondantes.
 
 Les données restent simulées : ce jalon sert à évaluer la composition, les états et les interactions avant l’ouverture de la phase suivante.
+
+## Retours sur le jalon d’évaluation
+
+### Navigation locale de la page d’une œuvre
+
+Un léger clignotement de l’onglet actif a été observé lors du défilement descendant entre « Mon journal », « À propos » et « Critiques » : pendant une fraction de seconde, le soulignement revient sur la section précédente avant de sélectionner la suivante.
+
+La cause identifiée était la concurrence momentanée de plusieurs sections dans l’`IntersectionObserver`. Le choix fondé sur leur ratio visible pouvait changer deux fois autour de la frontière, car les notifications successives ne représentaient pas toujours exactement le même ensemble d’intersections.
+
+La correction remplace cette comparaison par une ligne de lecture verticale stable sous la navigation. La section active change uniquement lorsque le début de la section suivante franchit ce repère, ce qui évite le retour transitoire à la sélection précédente. Aucun autre défaut n’a été relevé lors de l’évaluation finale.
+
+### Fermeture du panneau de compte — reportée en phase 11
+
+Sur desktop, le panneau ouvert depuis l’avatar ne se ferme actuellement qu’en réactivant le contrôle ou en appuyant sur `Échap`. Un clic à l’extérieur ou la sélection d’un autre élément de l’interface devrait également le refermer.
+
+Ce point ne modifie pas la conception du Journal, de la Bibliothèque ou des composants propres à la phase 9. Il est donc rattaché à la phase 11, avec l’harmonisation transversale des comportements de fermeture, du focus, de la navigation au clavier et des surfaces superposées. Aucune modification n’est appliquée dans le jalon actuel.
+
+## Règle de validation des prochains jalons
+
+Chaque jalon final devra être accompagné d’une checklist exhaustive et directement testable. Elle couvrira les écrans concernés, les parcours principaux et secondaires, les interactions souris, tactiles et clavier, les comportements responsive, les états vides ou temporaires, les mécanismes de fermeture et d’annulation, la restauration du contexte ainsi que les éventuels points explicitement reportés à une phase ultérieure.
 
 ## Périmètre de travail proposé
 
