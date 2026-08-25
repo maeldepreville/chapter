@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1 terminée — jalon d’évaluation en préparation**  
+Statut : **implémentation JI1 publiée — évaluation utilisateur ouverte**
 Dernière mise à jour : 25 août 2026
 
 ## Objectif de la phase
@@ -843,7 +843,7 @@ Les validations automatisées comprennent le lint, les tests, le build de produc
 
 Ce périmètre n’étend pas le lot à l’authentification réelle, la persistance distante, la messagerie privée, les notifications complètes, les listes collaboratives, les classements globaux, le backend de recommandation ni l’administration de modération.
 
-**Statut : autorisation reçue ; implémentation locale terminée ; publication du jalon et évaluation utilisateur en préparation.**
+**Statut : autorisation reçue ; implémentation terminée et publiée ; évaluation utilisateur ouverte avec la checklist exhaustive.**
 
 ## Arbitrages à mener
 

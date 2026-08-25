@@ -689,7 +689,8 @@ Dernière mise à jour : 25 août 2026
 - L’authentification réelle, la persistance distante, la messagerie privée, les notifications complètes, les listes collaboratives, les classements, le backend de recommandation et l’administration de modération restent hors périmètre.
 - L’autorisation explicite a été reçue. Le jalon a été implémenté dans ses six tranches, avec données simulées, vingt-et-un badges intégrés en dérivés web, contrôle statique, tests et build de production.
 - La recette utilisateur est définie dans `PHASE_10_IMPLEMENTATION_CHECKLIST.md` ; la persistance distante et les services backend restent hors périmètre.
-- Statut : **validé et implémenté ; jalon d’évaluation en préparation**.
+- Le checkpoint de version 7 a été publié avec succès sur le site Chapter ; l’évaluation utilisateur peut commencer depuis la version en ligne.
+- Statut : **validé, implémenté et publié ; évaluation utilisateur ouverte**.
 
 ## Décisions validées
 
