@@ -2,15 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileView, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
-type View = "work" | "journal" | "library";
+type View = "work" | "journal" | "library" | "discover" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
 type LibrarySort = "activity" | "title" | "author";
 type StatusOrigin = "opening" | "journal" | "library";
 type Feedback = {
-  kind: "publication" | "removal";
+  kind: "publication" | "removal" | "saved";
   label: string;
   detail: string;
 };
@@ -230,30 +231,6 @@ const activityOrder: Record<WorkId, number> = {
   sel: 1,
 };
 
-const communityReviews = [
-  {
-    initials: "LM",
-    name: "Lina Morel",
-    rating: 5,
-    date: "18 août 2026",
-    text: "Un roman qui avance comme une carte que l’on dessine en marchant. J’ai aimé la précision des images, la façon dont le vent devient presque un personnage, et surtout cette sensation persistante que nos souvenirs ne sont jamais aussi fixes qu’on le croit.",
-  },
-  {
-    initials: "TR",
-    name: "Théo Renaud",
-    rating: 4,
-    date: "12 août 2026",
-    text: "Une écriture ample, parfois exigeante, mais toujours habitée. Le dernier tiers donne une profondeur inattendue à tout ce qui précédait.",
-  },
-  {
-    initials: "IN",
-    name: "Inès Naël",
-    rating: 4,
-    date: "3 août 2026",
-    text: "J’y suis entré lentement, puis je n’ai plus voulu quitter cet univers. Une très belle réflexion sur les lieux que l’on emporte avec soi.",
-  },
-];
-
 export default function Home() {
   const [currentView, setCurrentView] = useState<View>("work");
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0].id);
@@ -293,7 +270,6 @@ export default function Home() {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [feedbackPaused, setFeedbackPaused] = useState(false);
   const [activeSection, setActiveSection] = useState("journal");
-  const [expandedReviews, setExpandedReviews] = useState<string[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
@@ -302,9 +278,18 @@ export default function Home() {
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
+  const [profileOwner, setProfileOwner] = useState<"self" | "lina">("self");
+  const [followingLina, setFollowingLina] = useState(false);
+  const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
+  const [showcaseBadges, setShowcaseBadges] = useState<BadgeId[]>(["reading2", "exploration2", "expression2"]);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [photoCropOpen, setPhotoCropOpen] = useState(false);
+  const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
+  const accountControlRef = useRef<HTMLDivElement>(null);
   const previousPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
   const latestPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
+  const discoverySavedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const selectedWork = works.find((work) => work.id === selectedWorkId) ?? works[0];
   const entry = entries[selectedWork.id] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
@@ -343,6 +328,29 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const openProfile = (owner: "self" | "lina") => {
+    setProfileOwner(owner);
+    openView("profile");
+  };
+
+  const openDiscoverWithQuery = (query: string) => {
+    setDiscoverInitialQuery(query.trim());
+    setSearchOpen(false);
+    setCurrentView("discover");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const addDiscoveryToRead = (id: string) => {
+    const workId = id as WorkId;
+    discoverySavedEntry.current = { workId, entry: entries[workId] ?? emptyEntry };
+    updateEntryFor(workId, { readingStatus: "À lire", readingDate: "" });
+    setFeedback({ kind: "saved", label: "Ajouté à « À lire »", detail: "Aucune activité publique n’a été créée." });
+  };
+
+  const toggleShowcase = (id: BadgeId) => {
+    setShowcaseBadges((current) => current.includes(id) ? current.filter((badgeId) => badgeId !== id) : current.length < 3 ? [...current, id] : current);
+  };
+
   const selectWork = (id: WorkId) => {
     setSelectedWorkId(id);
     setCurrentView("work");
@@ -351,7 +359,6 @@ export default function Home() {
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
-    setExpandedReviews([]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -388,10 +395,19 @@ export default function Home() {
   }, [currentView, selectedWorkId]);
 
   useEffect(() => {
-    const hasOverlay = noteOpen || reviewOpen || searchOpen || accountOpen || noteCloseConfirm || reviewCloseConfirm;
+    const hasOverlay = noteOpen || reviewOpen || searchOpen || photoCropOpen || accountOpen || noteCloseConfirm || reviewCloseConfirm;
     document.body.style.overflow = hasOverlay ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [noteOpen, reviewOpen, searchOpen, accountOpen, noteCloseConfirm, reviewCloseConfirm]);
+  }, [noteOpen, reviewOpen, searchOpen, photoCropOpen, accountOpen, noteCloseConfirm, reviewCloseConfirm]);
+
+  useEffect(() => {
+    const closeAccountOutside = (event: PointerEvent) => {
+      if (!accountOpen || !accountControlRef.current || accountControlRef.current.contains(event.target as Node)) return;
+      setAccountOpen(false);
+    };
+    document.addEventListener("pointerdown", closeAccountOutside);
+    return () => document.removeEventListener("pointerdown", closeAccountOutside);
+  }, [accountOpen]);
 
   useEffect(() => {
     if (!feedback || feedbackPaused) return;
@@ -415,6 +431,7 @@ export default function Home() {
         return;
       }
       if (searchOpen) return setSearchOpen(false);
+      if (photoCropOpen) return setPhotoCropOpen(false);
       if (accountOpen) return setAccountOpen(false);
       if (statusMenuOpen || datePrompt) {
         setStatusMenuOpen(false);
@@ -516,6 +533,8 @@ export default function Home() {
       setReviewOpen(true);
     } else if (feedback?.kind === "removal" && removedEntry.current) {
       updateEntryFor(removedEntry.current.workId, removedEntry.current.entry);
+    } else if (feedback?.kind === "saved" && discoverySavedEntry.current) {
+      updateEntryFor(discoverySavedEntry.current.workId, discoverySavedEntry.current.entry);
     }
     setFeedback(null);
   };
@@ -637,6 +656,7 @@ export default function Home() {
         <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir le journal" onClick={() => openView("journal")}>Chapter<span>.</span></button>
         <nav aria-label="Navigation principale">
           <button className={currentView === "journal" ? "active" : ""} type="button" onClick={() => openView("journal")}>Journal</button>
+          <button className={currentView === "discover" ? "active" : ""} type="button" onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
           <button className={currentView === "library" ? "active" : ""} type="button" onClick={() => openView("library")}>Bibliothèque</button>
         </nav>
         <label className="header-search">
@@ -647,13 +667,15 @@ export default function Home() {
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             onFocus={() => setSearchOpen(true)}
+            onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); openDiscoverWithQuery(searchQuery); } }}
           />
         </label>
-        <div className="account-control">
+        <div className="account-control" ref={accountControlRef}>
           <button className="account-button" type="button" aria-label="Ouvrir le compte de Maël" aria-expanded={accountOpen} onClick={() => setAccountOpen((open) => !open)}>MD</button>
           {accountOpen && (
             <div className="account-menu">
-              <p><strong>Maël Depréville</strong><span>Lecteur</span></p>
+              <p><strong>Maël Depréville</strong><span>{equippedTitle}</span></p>
+              <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
               <button type="button">Se déconnecter</button>
             </div>
           )}
@@ -666,7 +688,39 @@ export default function Home() {
       </header>
 
       <main id="top">
-        {currentView === "journal" ? (
+        {currentView === "discover" ? (
+          <DiscoverView
+            key={discoverInitialQuery}
+            works={works}
+            statuses={Object.fromEntries(works.map((work) => [work.id, entries[work.id]?.readingStatus]))}
+            onOpenWork={(id) => selectWork(id as WorkId)}
+            onAddToRead={addDiscoveryToRead}
+            onOpenProfile={openProfile}
+            onOpenList={() => openView("list")}
+            followingLina={followingLina}
+            onToggleFollow={() => setFollowingLina((value) => !value)}
+            initialQuery={discoverInitialQuery}
+          />
+        ) : currentView === "profile" ? (
+          <ProfileView
+            owner={profileOwner}
+            works={works}
+            following={followingLina}
+            onToggleFollow={() => setFollowingLina((value) => !value)}
+            onOpenWork={(id) => selectWork(id as WorkId)}
+            onOpenHonors={() => openView("honors")}
+            onOpenList={() => openView("list")}
+            photo={profilePhoto}
+            onEditPhoto={() => setPhotoCropOpen(true)}
+            onRemovePhoto={() => setProfilePhoto(null)}
+            equippedTitle={equippedTitle}
+            showcase={showcaseBadges}
+          />
+        ) : currentView === "honors" ? (
+          <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
+        ) : currentView === "list" ? (
+          <PublicListView works={works} following={followingLina} onToggleFollow={() => setFollowingLina((value) => !value)} onOpenProfile={() => openProfile("lina")} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => openView("discover")} />
+        ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
               <p className="eyebrow">Votre espace personnel</p>
@@ -905,28 +959,7 @@ export default function Home() {
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list">
-              {communityReviews.map((review) => (
-                <article className="review" key={review.name}>
-                  <header className="review-header">
-                    <span className="avatar" aria-hidden="true">{review.initials}</span>
-                    <div>
-                      <h3>{review.name}</h3>
-                      <p>{review.date}</p>
-                    </div>
-                    <span className="review-stars" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
-                  </header>
-                  <p className="review-copy">
-                    {expandedReviews.includes(review.name) || review.text.length < 185 ? review.text : `${review.text.slice(0, 185)}…`}
-                  </p>
-                  {review.text.length >= 185 && (
-                    <button className="text-action review-expand" type="button" aria-expanded={expandedReviews.includes(review.name)} onClick={() => setExpandedReviews((names) => names.includes(review.name) ? names.filter((name) => name !== review.name) : [...names, review.name])}>
-                      {expandedReviews.includes(review.name) ? "Réduire" : "Lire la suite"}
-                    </button>
-                  )}
-                </article>
-              ))}
-            </div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} onOpenProfile={() => openProfile("lina")} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
@@ -939,7 +972,7 @@ export default function Home() {
 
       <nav className="mobile-nav" aria-label="Navigation principale mobile">
         <button className={currentView === "journal" ? "active" : ""} type="button" onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>
-        <button type="button" onClick={() => setSearchOpen(true)}><span aria-hidden="true">⌕</span>Recherche</button>
+        <button className={currentView === "discover" ? "active" : ""} type="button" onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
         <button className={currentView === "library" ? "active" : ""} type="button" onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
       </nav>
 
@@ -948,9 +981,10 @@ export default function Home() {
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
           <section className="mobile-account-sheet" aria-label="Compte de Maël">
             <div className="modal-heading">
-              <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2></div>
+              <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2><span className="account-title">{equippedTitle}</span></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
+            <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
             <button type="button">Se déconnecter</button>
           </section>
         </div>
@@ -977,6 +1011,7 @@ export default function Home() {
               ))}
               {filteredWorks.length === 0 && <p className="search-empty">Aucune œuvre ne correspond à cette recherche.</p>}
             </div>
+            <button className="primary-action search-discover-action" type="button" onClick={() => openDiscoverWithQuery(searchQuery)}>{searchQuery.trim() ? "Voir les résultats dans Découvrir" : "Ouvrir Découvrir"}</button>
           </section>
         </div>
       )}
@@ -1077,6 +1112,8 @@ export default function Home() {
           </section>
         </div>
       )}
+
+      {photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}
 
       {feedback && (
         <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>

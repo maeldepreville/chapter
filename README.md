@@ -2,7 +2,7 @@
 
 Chapter is a social reading platform where every book becomes part of your story — track what you read, share what you think, and connect with readers who inspire your next chapter.
 
-The current version is the validated frontend vertical slice completed at the end of phase 8. It focuses on the personal reading journal before the later introduction of richer discovery and social interactions.
+The current version is the integrated phase 10 frontend milestone, extending the personal reading experience with discovery, reader profiles, honors and lightweight social conversations.
 
 ## Live version
 
@@ -20,8 +20,13 @@ The current version is the validated frontend vertical slice completed at the en
 - optional one-to-five-star ratings;
 - immediate publication with a temporary undo action;
 - lightweight Journal and Library views.
+- an editorial Discover space with intent-based recommendations and approximate search;
+- public reader profiles, following and standalone public lists;
+- a private/public honors gallery using 21 production badge assets;
+- optional profile-photo cropping with mouse, touch, wheel and pinch controls;
+- followed-reader prioritization and flat, reversible review conversations.
 
-The interface currently uses simulated data and session-local state. Authentication, remote persistence, advanced personal-space components and social interactions are intentionally outside this milestone.
+The interface currently uses simulated data and session-local state. Authentication, remote persistence, production recommendation services and complete moderation remain outside this milestone.
 
 ## Stack
 
@@ -51,10 +56,15 @@ npm test
 
 Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with:
 
+- [`AGENTS.md`](./AGENTS.md) — mandatory continuity and documentation rules for every project conversation;
 - [`CHAPTER_DECISIONS.md`](./docs/CHAPTER_DECISIONS.md) — project-wide source of truth;
+- [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./docs/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) — detailed record of the active design phase;
+- [`PHASE_10_IMPLEMENTATION_CHECKLIST.md`](./docs/PHASE_10_IMPLEMENTATION_CHECKLIST.md) — exhaustive evaluation checklist for the integrated milestone;
 - [`PHASE_08_IMPLEMENTATION.md`](./docs/PHASE_08_IMPLEMENTATION.md) — validated implementation milestone;
 - [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./docs/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md) — product-growth principles and safeguards.
 
+Every chat working on this repository must read the transversal log and the active phase document, then update both after each validated, refined or revised decision. Conversation history is supplementary context, never the sole project memory.
+
 ## Roadmap status
 
-Phases 1 through 8 are complete. Phase 9 will consolidate the component system and develop the personal space before the later social phase.
+Phases 1 through 9 are complete. The phase 10 integrated frontend milestone is implemented and awaiting user evaluation.
