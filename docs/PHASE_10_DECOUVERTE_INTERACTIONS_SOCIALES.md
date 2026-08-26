@@ -845,6 +845,17 @@ Ce périmètre n’étend pas le lot à l’authentification réelle, la persist
 
 **Statut : autorisation reçue ; implémentation terminée et publiée ; évaluation utilisateur ouverte avec la checklist exhaustive.**
 
+## Révision post-recette — badges, accès mobile, carte de lecteur et recherche
+
+La première recette du jalon a révélé quatre ajustements immédiatement applicables :
+
+- les images des distinctions doivent être servies directement depuis les assets WebP publics, sans dépendre du service d’optimisation d’images du framework ; cette règle couvre le profil et le mur des Chapitres d’honneur ;
+- le clic extérieur du menu de compte ne doit pas intercepter les commandes situées dans sa feuille mobile : « Voir mon profil » ferme désormais la feuille après avoir effectué la navigation ;
+- la photo, « Votre portrait », le nom, le titre équipé et l’introduction sont réunis dans une **carte de lecteur** inspirée d’une carte de visite éditoriale sur papier épais. Les Chapitres d’honneur restent hors de la carte afin de ne pas confondre identité et collection ;
+- « Résultats exacts » est réservé à une égalité normalisée avec le titre complet ou le nom complet de l’auteur. Une recherche par fragment, mot-clé ou souvenir approché relève de « Vous cherchez peut-être… », avec au plus trois suggestions justifiées.
+
+Cette révision précise PR1/PRM1 et ZR1b sans modifier leurs principes. Elle constitue le premier correctif de recette du jalon JI1.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

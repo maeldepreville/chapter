@@ -286,6 +286,7 @@ export default function Home() {
   const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const accountControlRef = useRef<HTMLDivElement>(null);
+  const mobileAccountRef = useRef<HTMLElement>(null);
   const previousPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
   const latestPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
@@ -402,7 +403,7 @@ export default function Home() {
 
   useEffect(() => {
     const closeAccountOutside = (event: PointerEvent) => {
-      if (!accountOpen || !accountControlRef.current || accountControlRef.current.contains(event.target as Node)) return;
+      if (!accountOpen || accountControlRef.current?.contains(event.target as Node) || mobileAccountRef.current?.contains(event.target as Node)) return;
       setAccountOpen(false);
     };
     document.addEventListener("pointerdown", closeAccountOutside);
@@ -979,7 +980,7 @@ export default function Home() {
       {accountOpen && (
         <div className="mobile-account-overlay">
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
-          <section className="mobile-account-sheet" aria-label="Compte de Maël">
+          <section ref={mobileAccountRef} className="mobile-account-sheet" aria-label="Compte de Maël">
             <div className="modal-heading">
               <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2><span className="account-title">{equippedTitle}</span></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>

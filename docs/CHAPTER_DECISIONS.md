@@ -692,6 +692,14 @@ Dernière mise à jour : 25 août 2026
 - Le checkpoint de version 7 a été publié avec succès sur le site Chapter ; l’évaluation utilisateur peut commencer depuis la version en ligne.
 - Statut : **validé, implémenté et publié ; évaluation utilisateur ouverte**.
 
+### Révision de recette JI1 — identité, assets et recherche
+
+- Les badges du profil et des Chapitres d’honneur sont chargés directement depuis leurs dérivés WebP publics afin d’éviter une dépendance défaillante à l’optimisation d’images du framework.
+- La fermeture par clic extérieur distingue la feuille de compte mobile : ses actions, notamment « Voir mon profil », s’exécutent avant sa fermeture.
+- PR1/PRM1 sont précisés par une carte de lecteur cartonnée regroupant photo, libellé « Votre portrait », nom, titre et introduction. Les badges restent dans une section séparée sous la carte.
+- ZR1b réserve « Résultats exacts » au titre complet ou au nom complet de l’auteur après normalisation. Les fragments, mots-clés et formulations approchées alimentent au plus trois suggestions « Vous cherchez peut-être… » accompagnées d’une justification concise.
+- Statut : **correctifs implémentés ; nouvelle recette requise**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot

@@ -35,6 +35,18 @@ const normalizeText = (value: string) => value
   .replace(/[^a-z0-9]+/g, " ")
   .trim();
 
+const searchStopWords = new Set(["avec", "dans", "des", "les", "pour", "une"]);
+const searchTokens = (value: string) => normalizeText(value).split(" ").filter((token) => token.length > 2 && !searchStopWords.has(token));
+
+const tokensAreClose = (queryToken: string, candidateToken: string) => {
+  const prefixLength = Math.max(3, Math.min(queryToken.length, candidateToken.length) - 2);
+  return candidateToken === queryToken
+    || candidateToken.startsWith(queryToken)
+    || queryToken.startsWith(candidateToken)
+    || (queryToken.length >= 4 && candidateToken.startsWith(queryToken.slice(0, prefixLength)))
+    || (candidateToken.length >= 4 && queryToken.startsWith(candidateToken.slice(0, prefixLength)));
+};
+
 function CompactCover({ work, className = "discovery-cover" }: { work: SocialWork; className?: string }) {
   return (
     <span className={`${className} ${work.cover ? "cover-image" : `typographic-cover ${work.coverTone}`}`} aria-hidden="true">
@@ -101,18 +113,30 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
   const track = discoveryTracks[intent];
   const normalizedQuery = normalizeText(submittedQuery);
   const exactResults = submittedQuery
-    ? works.filter((work) => normalizeText(`${work.title} ${work.author}`).includes(normalizedQuery))
+    ? works.filter((work) => normalizeText(work.title) === normalizedQuery || normalizeText(work.author) === normalizedQuery)
     : [];
-  const approximateResults = submittedQuery && exactResults.length === 0
+  const approximateResults = submittedQuery
     ? works.map((work) => {
         const title = normalizeText(work.title);
-        const author = normalizeText(work.author);
-        const queryTokens = normalizedQuery.split(" ").filter((token) => token.length > 2);
-        const titleTokens = title.split(" ");
-        const shared = queryTokens.filter((token) => titleTokens.some((candidate) => candidate.startsWith(token.slice(0, Math.max(3, token.length - 2))) || token.startsWith(candidate.slice(0, Math.max(3, candidate.length - 2)))));
-        const authorMatch = queryTokens.some((token) => author.includes(token));
-        return { work, score: shared.length * 2 + (authorMatch ? 1 : 0), reason: authorMatch ? "Le nom de l’auteur correspond" : shared.length > 1 ? `${shared.length} mots du titre se rapprochent` : "Un mot du titre pourrait correspondre" };
-      }).filter((result) => result.score > 0).sort((a, b) => b.score - a.score).slice(0, 3)
+        const queryTokens = searchTokens(submittedQuery);
+        const titleTokens = searchTokens(work.title);
+        const authorTokens = searchTokens(work.author);
+        const titleMatches = queryTokens.filter((token) => titleTokens.some((candidate) => tokensAreClose(token, candidate)));
+        const authorMatches = queryTokens.filter((token) => authorTokens.some((candidate) => tokensAreClose(token, candidate)));
+        const exactTokenCount = queryTokens.filter((token) => titleTokens.includes(token) || authorTokens.includes(token)).length;
+        const score = titleMatches.length * 3 + authorMatches.length * 2 + exactTokenCount;
+        const reason = authorMatches.length > titleMatches.length
+          ? "Le nom de l’auteur se rapproche"
+          : titleMatches.length > 1
+            ? `${titleMatches.length} mots du titre correspondent`
+            : title.includes(normalizedQuery) || exactTokenCount > 0
+              ? "Un mot du titre correspond"
+              : "Un mot du titre semble proche";
+        return { work, score, reason };
+      })
+        .filter(({ work, score }) => score > 0 && !exactResults.some((exact) => exact.id === work.id))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
     : [];
 
   const submitSearch = (event: FormEvent) => {
@@ -222,7 +246,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
               <p className="eyebrow">Recherche</p>
               <h2>Aucun résultat exact pour « {submittedQuery} »</h2>
               <div className="result-actions"><button className="text-action" type="button" onClick={() => searchRef.current?.focus()}>Modifier la recherche</button><button className="text-action muted-action" type="button" onClick={() => { setQuery(""); setSubmittedQuery(""); }}>Effacer</button></div>
-              {approximateResults.length > 0 && <div className="approximate-results"><h3>Titres qui pourraient correspondre</h3>{approximateResults.map(({ work, reason }) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><span><strong>{work.title}</strong><small>{work.author}</small></span><em>{reason}</em></button>)}</div>}
+              {approximateResults.length > 0 && <div className="approximate-results"><h3>Vous cherchez peut-être…</h3>{approximateResults.map(({ work, reason }) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><span><strong>{work.title}</strong><small>{work.author}</small></span><em>{reason}</em></button>)}</div>}
             </>
           )}
           <div className="continue-exploring"><span>Continuer à explorer</span></div>
@@ -250,7 +274,7 @@ export type BadgeId = keyof typeof badgeCatalog;
 
 function BadgeImage({ badgeId, locked = false }: { badgeId: BadgeId; locked?: boolean }) {
   const badge = badgeCatalog[badgeId];
-  return <Image className={locked ? "locked" : ""} src={badge.src} alt="" width={220} height={220} sizes="(max-width: 899px) 34vw, 180px" />;
+  return <img className={locked ? "locked" : ""} src={badge.src} alt="" width="220" height="220" loading="eager" decoding="async" />;
 }
 
 type ProfileProps = {
@@ -286,17 +310,20 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   return (
     <section className="profile-page" aria-labelledby="profile-name">
       <aside className="profile-identity-column">
-        <div className="profile-avatar-wrap">
-          <div className="profile-avatar">{isSelf && photo ? <Image src={photo} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
-          {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
-          {removePhotoConfirm && <div className="photo-remove-confirm" role="alertdialog" aria-label="Retirer la photo de profil"><p>Restaurer vos initiales ?</p><div><button className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div></div>}
-        </div>
-        <div className="profile-heading-copy">
-          <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
-          <h1 id="profile-name">{profile.name}</h1>
-          <p className="equipped-title">{profile.title}</p>
+        <div className="profile-identity-card">
+          <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isSelf ? "Carte de lecteur" : "Portrait public"}</small></div>
+          <div className="profile-avatar-wrap">
+            <div className="profile-avatar">{isSelf && photo ? <Image src={photo} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+            {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+            {removePhotoConfirm && <div className="photo-remove-confirm" role="alertdialog" aria-label="Retirer la photo de profil"><p>Restaurer vos initiales ?</p><div><button className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div></div>}
+          </div>
+          <div className="profile-heading-copy">
+            <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
+            <h1 id="profile-name">{profile.name}</h1>
+            <p className="equipped-title">{profile.title}</p>
+            {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
+          </div>
           <p className="profile-intro">{profile.intro}</p>
-          {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
         </div>
         <section className="profile-honors" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>

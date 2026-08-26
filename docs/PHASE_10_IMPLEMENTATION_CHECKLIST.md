@@ -7,6 +7,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur desktop, ouvrir successivement Journal, Découvrir et Bibliothèque depuis l’en-tête ; l’état actif reste identifiable.
 - [ ] Sur mobile, retrouver ces trois destinations dans la navigation basse sans débordement horizontal.
 - [ ] Ouvrir le menu du compte, puis le fermer par un clic extérieur ; accéder ensuite à son profil.
+- [ ] Sur mobile, ouvrir la feuille de compte puis toucher « Voir mon profil » ; la feuille doit se fermer après la navigation, sans intercepter le clic.
 - [ ] Depuis la recherche d’en-tête, saisir une œuvre et valider avec Entrée ; arriver dans Découvrir avec la requête conservée.
 - [ ] Depuis Journal ou Bibliothèque, ouvrir une œuvre, changer son statut, enregistrer une note et publier une critique : les parcours de phase 9 restent fonctionnels.
 - [ ] Vérifier les retours depuis une œuvre, un profil, une liste et les Chapitres d’honneur ; aucun écran ne doit produire d’impasse.
@@ -21,13 +22,15 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Ouvrir la liste publique, revenir à Découvrir, puis ouvrir le profil de Lina.
 - [ ] Suivre puis ne plus suivre Lina depuis les différents points d’entrée ; l’état doit rester cohérent pendant la session.
 - [ ] Rechercher un titre exact et ouvrir le résultat.
-- [ ] Saisir un souvenir approximatif, par exemple « cartografies vent » ; obtenir au plus trois correspondances expliquées, puis pouvoir corriger ou effacer la requête.
+- [ ] Saisir un mot-clé ou un souvenir approximatif, par exemple « vent » puis « cartografies vent » ; ne pas voir « Résultats exacts », mais au plus trois propositions « Vous cherchez peut-être… » expliquées.
+- [ ] Saisir le titre complet « Cartographies du vent » ; cette fois seulement, voir la rubrique « Résultats exacts ».
 - [ ] Rechercher une chaîne sans correspondance ; l’état vide doit proposer une sortie simple sans quasi-onboarding.
 - [ ] Sur mobile, vérifier DR1M1 : la colonne reste d’une longueur acceptable, l’ordre éditorial est compréhensible et la page possède une fin naturelle.
 
 ## 3. Profils et listes publiques
 
 - [ ] Sur son profil, vérifier PRM1 : identité, titre, œuvres de cœur, listes et critiques composent un portrait éditorial équilibré.
+- [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface cartonnée cohérente ; les Chapitres d’honneur restent visuellement séparés sous la carte.
 - [ ] Sur mobile, vérifier que ce portrait devient un flux continu sans cartes écrasées ni sections confondues.
 - [ ] Le titre « Chapitres d’honneur → » ouvre bien la galerie ; seuls trois badges acquis sont montrés sur le profil.
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
