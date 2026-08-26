@@ -39,7 +39,21 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
 - [ ] Ouvrir sa liste publique autonome, une œuvre de la liste et son profil ; le rôle du nom d’auteur et celui du bouton d’abonnement restent distincts.
 
-## 4. Photo de profil PFP1
+## 4. Carte recto-verso QR1
+
+- [ ] Sur son propre profil, vérifier que « Retourner la carte » se trouve immédiatement sous le bord droit ; la commande ne doit apparaître ni sur le profil de Lina, ni sur la route publique de Maël.
+- [ ] Retourner la carte : le recto doit pivoter horizontalement autour de son centre en environ 440 ms, sans rebond, zoom, déplacement de la carte ou saut des sections voisines.
+- [ ] Au verso, vérifier QRV1 et QRT1 : signature Chapter discrète, QR généreux sur aplat blanc sans grain, nom et instruction aérés, puis URL isolée dans le pied.
+- [ ] Vérifier QRP1b : « Voir le recto » occupe exactement le même repère que « Retourner la carte » ; « Copier le lien » et « Partager » apparaissent sur leur propre ligne sans déplacer cette commande.
+- [ ] Copier le lien, puis le coller ailleurs : l’adresse doit être `https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville` et une confirmation discrète doit apparaître.
+- [ ] Utiliser « Partager » sur un appareil compatible : la feuille de partage native doit proposer le profil. Sur un navigateur incompatible, le lien doit être copié avec un retour explicite.
+- [ ] Scanner le QR depuis un second appareil ayant accès au checkpoint : arriver directement sur le portrait public de Maël, sans « Ajouter une photo », « Recadrer », « Retirer », commande de retournement ni progression privée.
+- [ ] Depuis cette route publique, ouvrir une œuvre, une liste et les Chapitres d’honneur ; les retours doivent rester cohérents et seuls les badges acquis doivent être visibles.
+- [ ] Quitter son profil alors que le verso est affiché, puis y revenir : la carte doit retrouver son recto.
+- [ ] Répéter sur mobile à 320 px : QR, nom, instruction, URL et utilitaires doivent rester lisibles, sans débordement ni compression du silence autour du code.
+- [ ] Activer la réduction des animations : les faces doivent être échangées immédiatement sans rotation, tandis que le focus et les libellés restent corrects.
+
+## 5. Photo de profil PFP1
 
 - [ ] Importer un JPEG, PNG ou WebP de moins de 8 Mo dont le petit côté mesure au moins 512 px.
 - [ ] Avant l’import, vérifier que seule une surface claire de sélection est visible ; le cadre de recadrage ne doit apparaître qu’après le choix d’une image valide.
@@ -55,7 +69,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Essayer un mauvais format, un fichier de plus de 8 Mo et une image trop petite ; chaque erreur doit être compréhensible et non destructive.
 - [ ] Toucher « Retirer » ; le dialogue doit se superposer sans déplacer le contenu de la carte. Confirmer pour restaurer les initiales, puis tester aussi l’annulation.
 
-## 5. Chapitres d’honneur
+## 6. Chapitres d’honneur
 
 - [ ] Sur sa galerie, voir la dernière évolution acquise et la prochaine évolution grisée de chaque axe, puis les cinq honneurs acquis.
 - [ ] Vérifier qu’aucun ancien palier remplacé n’apparaît dans le mur continu.
@@ -72,7 +86,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Examiner les vingt-et-un assets à plusieurs tailles et sur écran dense : contours, métal, symboles et textes voisins restent nets.
 - [ ] Depuis le profil de Lina, ouvrir successivement ses deux listes ; chacune doit afficher son propre titre et son propre nombre d’œuvres, puis revenir au profil. Depuis Découvrir, vérifier que la liste publique revient bien à Découvrir.
 
-## 6. Critiques et conversations
+## 7. Critiques et conversations
 
 - [ ] Sur une œuvre riche en échanges, repérer d’abord le groupe des critiques de personnes suivies, puis le flux général.
 - [ ] Sur l’œuvre sans échange communautaire, obtenir un état vide sobre ; sur l’œuvre à échange rare, voir une seule critique sans mise en scène artificielle.
@@ -83,7 +97,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Signaler une réponse d’un autre lecteur et bloquer son auteur ; vérifier le retour simulé et l’absence d’action ambiguë.
 - [ ] Fermer sa propre conversation, vérifier que l’historique reste lisible mais que les nouvelles réponses sont empêchées, puis la rouvrir.
 
-## 7. Accessibilité, responsive et cas limites
+## 8. Accessibilité, responsive et cas limites
 
 - [ ] Tester au clavier les navigations, boutons, badges, menus, formulaires et dialogues ; le focus reste visible et suit un ordre logique.
 - [ ] Utiliser Échap et le clic/toucher extérieur sur menus, mini-fiches et surfaces temporaires lorsqu’ils sont proposés.
@@ -93,9 +107,10 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Répéter rapidement abonnements, ouvertures, changements de badge et recadrages ; aucun état visuel obsolète ne doit subsister.
 - [ ] Depuis une œuvre et depuis la Bibliothèque mobile, choisir « En cours » puis « Lu » ; le panneau de date doit apparaître au-dessus du voile et proposer « Aujourd’hui », « Choisir » et « Plus tard » sans bloquer la conservation du statut.
 
-## 8. Limites assumées du prototype
+## 9. Limites assumées du prototype
 
 - [ ] Considérer les données, abonnements, signalements, blocages, titres et publications comme locaux à la session : aucune persistance distante n’est attendue.
+- [ ] La route du profil de Maël est directement adressable, mais sa consultation depuis un appareil tiers reste soumise à la politique d’accès du Site ; l’accès public anonyme définitif dépendra des futurs comptes et règles de publication.
 - [ ] Ne pas évaluer dans ce jalon l’authentification, la messagerie privée, les notifications complètes, les listes collaboratives, les classements, le backend de recommandation ou l’administration de modération.
 
 ## Relevé d’évaluation

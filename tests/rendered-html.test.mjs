@@ -31,3 +31,31 @@ test("renders Chapter metadata and primary content", async () => {
   assert.match(html, /Les Cartographies du vent/i);
   assert.match(html, /Mon journal/i);
 });
+
+test("renders Maël's public profile route without owner-only controls", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("public-profile-test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+
+  const response = await worker.fetch(
+    new Request("http://localhost/profil/mael-depreville", {
+      headers: { accept: "text/html" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Maël Depréville/i);
+  assert.match(html, /Portrait public/i);
+  assert.doesNotMatch(html, /Ajouter une photo/i);
+  assert.doesNotMatch(html, /Retourner la carte/i);
+});

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileOwner, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
@@ -27,6 +27,7 @@ type PersonalEntry = {
 
 const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 };
 const UNDO_DURATION_MS = 5000;
+const PUBLIC_PROFILE_PATH = "/profil/mael-depreville";
 
 const works = [
   {
@@ -232,8 +233,8 @@ const activityOrder: Record<WorkId, number> = {
   sel: 1,
 };
 
-export default function Home() {
-  const [currentView, setCurrentView] = useState<View>("work");
+export default function Home({ initialProfileOwner = null }: { initialProfileOwner?: "public-self" | null }) {
+  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : "work");
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0].id);
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>({
     cartographies: {
@@ -279,8 +280,9 @@ export default function Home() {
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
-  const [profileOwner, setProfileOwner] = useState<"self" | "lina">("self");
+  const [profileOwner, setProfileOwner] = useState<ProfileOwner>(initialProfileOwner ?? "self");
   const [followingLina, setFollowingLina] = useState(false);
+  const [followingMael, setFollowingMael] = useState(false);
   const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeId[]>(["reading2", "exploration2", "expression2"]);
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
@@ -327,12 +329,14 @@ export default function Home() {
   const updateEntry = (changes: Partial<PersonalEntry>) => updateEntryFor(selectedWork.id, changes);
 
   const openView = (view: View) => {
+    if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const openProfile = (owner: "self" | "lina") => {
+    if (window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setProfileOwner(owner);
     openView("profile");
   };
@@ -715,8 +719,8 @@ export default function Home() {
           <ProfileView
             owner={profileOwner}
             works={works}
-            following={followingLina}
-            onToggleFollow={() => setFollowingLina((value) => !value)}
+            following={profileOwner === "lina" ? followingLina : followingMael}
+            onToggleFollow={() => profileOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onOpenHonors={() => openView("honors")}
             onOpenList={(listId) => openPublicList(listId, "profile")}

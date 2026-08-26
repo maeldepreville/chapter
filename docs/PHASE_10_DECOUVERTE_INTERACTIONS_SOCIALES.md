@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1 et correctif PDR1B publiés — évaluation utilisateur ouverte**
+Statut : **implémentation JI1 et correctif PDR1B publiés — QR1 autorisé et en validation technique**
 Dernière mise à jour : 26 août 2026
 
 ## Objectif de la phase
@@ -796,6 +796,52 @@ La recette desktop révèle que la colonne identitaire de PRM1 devient visibleme
 **PDR1B est validée et implémentée après autorisation explicite.** La section Œuvres de chevet conserve sa hauteur éditoriale naturelle et l’ensemble formé par son intitulé, son titre et ses trois couvertures est centré verticalement face à la hauteur cumulée de la carte et des honneurs. Ce centrage absorbe les variations raisonnables du nom et de l’introduction sans introduire de faux espace à l’intérieur de la section. PDR1A, qui aurait étiré cette dernière jusqu’à une hauteur strictement égale, est abandonnée.
 
 La structure frontend distingue désormais une ouverture desktop et un flux public pleine largeur. Au breakpoint B2, cette ouverture redevient une seule colonne et restitue l’ordre mobile déjà validé. La checklist de recette couvre l’alignement des deux profils d’exemple, la disparition du vide et la non-régression de l’ordre mobile. Le checkpoint 19 a été publié après réussite du lint, de la construction de production et des contrôles automatisés dédiés ; la recette utilisateur de PDR1B est ouverte.
+
+## Principe validé — QR1, carte de lecteur recto-verso partageable
+
+La carte de lecteur pourra être retournée depuis son propre profil. Son verso donnera une fonction concrète à la métaphore de la carte de visite en présentant un QR code qui ouvre le profil public du lecteur. Le recto existant reste inchangé et le verso doit conserver le même format, le papier blanc cassé et la sobriété éditoriale validée.
+
+Le QR code ne contiendra que l’URL publique canonique du profil. Il ne pourra ni embarquer un jeton de session, ni contourner une restriction de visibilité, ni dépendre de l’appellation publique susceptible de changer sans redirection. Une adresse lisible ainsi que des alternatives Copier et Partager devront couvrir les situations où le QR code ne peut pas être scanné depuis le même appareil.
+
+Cette interaction peut être simulée dans le prototype d’interface, mais sa destination réellement stable dépendra de l’authentification, de la persistance et des routes publiques finales encore hors du lot actuel. La commande de retournement, le dessin du verso, l’animation accessible et la hiérarchie des actions de partage restent à arbitrer étape par étape. Aucune implémentation n’est encore autorisée.
+
+### RTC1 validée — commande explicite sous la carte
+
+« Retourner la carte » est une commande extérieure placée immédiatement sous le bord droit du recto. Elle devient « Voir le recto » lorsque le verso est visible. Cette position préserve l’intégrité du papier et évite tout conflit avec « Ajouter une photo », « Recadrer » et « Retirer ».
+
+L’en-tête n’est pas densifié et la carte entière ne devient pas cliquable : un geste sur son contenu ne peut donc jamais provoquer une rotation involontaire. La forme graphique de la micro-zone sous la carte reste à choisir avant de composer le verso.
+
+### RTG1 validée — filet éditorial
+
+La commande RTC1 prend la forme d’une légende de planche extérieure à la carte. Un filet horizontal très fin mène vers une icône de retournement et le libellé alignés à droite. Aucun fond, contour ou bouton permanent n’est ajouté. Au survol, seuls l’icône et le texte prennent la teinte brique ; un focus clavier explicite reste nécessaire. Sur mobile, le filet se raccourcit sans déplacer l’action.
+
+Ce traitement est une base de travail volontairement ajustable après observation dans le profil réel. Sa validation permet d’ouvrir l’arbitrage de composition du verso sans autoriser encore l’implémentation.
+
+### QRV1 validée — centre calme et texte aéré
+
+Le verso conserve une signature Chapter discrète en tête et place un QR code généreux au centre. Le nom du lecteur reste visible sous le code, mais l’ensemble ne doit pas devenir un empilement dense de nom, instruction et URL. Leur séparation verticale constitue l’arbitrage suivant ; l’adresse pourra notamment être isolée dans le pied de carte.
+
+Le QR code est généré sur une zone parfaitement unie, avec un contraste élevé et une véritable marge de silence. La texture papier peut entourer cette zone, jamais apparaître derrière ses modules. L’adresse montrée dans les comparaisons reste illustrative jusqu’à la définition des routes publiques finales.
+
+### QRT1 validée — URL isolée dans le pied
+
+Sous le QR code, le nom du lecteur et la phrase « Scannez pour ouvrir mon profil » forment deux niveaux séparés par une respiration franche. L’URL publique quitte ce groupe et se place plus bas dans le pied de la carte. Le verso se lit donc en deux temps : identité et invitation, puis adresse de secours.
+
+Une appellation longue suit N1b sur une ou deux lignes, mais ne réduit jamais les espacements autour de l’instruction et de l’URL. Cette hiérarchie clôt la composition statique principale du verso et ouvre l’arbitrage du mouvement de retournement.
+
+### QRM1b validée — retournement central légèrement ralenti
+
+La carte effectue une rotation horizontale de 180° autour de son axe central en environ 440 ms. Son emprise reste strictement fixe : aucun déplacement dans la composition, zoom, rebond ou effet élastique n’accompagne le mouvement. QRM1b conserve donc la simplicité de QRM1 tout en ralentissant légèrement les 360 ms de la comparaison, jugées un peu trop rapides pour percevoir la matérialité de la carte.
+
+La face opposée ne devient interactive et annoncée qu’une fois visible. Lorsque la réduction des animations est activée, la rotation laisse place à un échange direct des faces, éventuellement accompagné d’un fondu très court. Cette validation clôt le mouvement ; seule la hiérarchie des alternatives Copier et Partager reste à arbitrer avant de consolider le périmètre et de demander une autorisation d’implémentation.
+
+### QRP1b validée — commande de face immobile
+
+QRP1 est retenue comme base : « Copier le lien », « Partager » et la commande de face restent tous en dehors du papier. Sa disposition initiale est toutefois révisée afin que « Voir le recto » occupe exactement la même position que la commande permettant d’afficher le verso. Le lecteur conserve ainsi un repère moteur stable avant et après les 440 ms de rotation.
+
+La commande de face demeure seule sur la ligne RTG1 immédiatement sous la carte, alignée à droite et précédée de son filet. Au verso seulement, « Copier le lien » et « Partager » apparaissent sur une seconde ligne extérieure, visuellement secondaire. Ils ne modifient ni la largeur, ni l’alignement, ni la position verticale de la commande de face. Sur mobile, les deux actions peuvent se replier ensemble sans déplacer ce repère. QRP1b remplace ainsi le rail unique initial de QRP1 et clôt les arbitrages visuels de QR1.
+
+Le périmètre consolidé a ensuite reçu une autorisation explicite d’implémentation et de publication. Il comprend le véritable QR généré sans service tiers, une route publique dédiée à Maël qui ne rend aucune commande propriétaire, la copie avec confirmation discrète, le partage natif avec copie de repli, le retour au recto lors de la sortie du profil et les adaptations clavier, tactile, mobile et réduction des animations. La validation technique et le checkpoint restent à achever.
 
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 

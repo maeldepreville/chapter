@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import QRCode from "react-qr-code";
 /* eslint-disable @next/next/no-img-element */
 import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
 
@@ -17,6 +18,7 @@ export type SocialWork = {
 };
 
 export type PublicListId = "places" | "lights";
+export type ProfileOwner = "self" | "public-self" | "lina";
 
 type DiscoverProps = {
   works: readonly SocialWork[];
@@ -280,7 +282,7 @@ function BadgeImage({ badgeId, locked = false }: { badgeId: BadgeId; locked?: bo
 }
 
 type ProfileProps = {
-  owner: "self" | "lina";
+  owner: ProfileOwner;
   works: readonly SocialWork[];
   following: boolean;
   onToggleFollow: () => void;
@@ -295,9 +297,13 @@ type ProfileProps = {
 };
 
 export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase }: ProfileProps) {
-  const isSelf = owner === "self";
+  const isOwnProfile = owner === "self";
+  const isMael = owner !== "lina";
   const [removePhotoConfirm, setRemovePhotoConfirm] = useState(false);
-  const profile = isSelf ? {
+  const [cardFlipped, setCardFlipped] = useState(false);
+  const [shareNotice, setShareNotice] = useState("");
+  const publicProfileUrl = "https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville";
+  const profile = isMael ? {
     name: "Maël Depréville", initials: "MD", title: equippedTitle,
     intro: "Lecteur de fictions où les lieux, les souvenirs et les voix discrètes déplacent le regard.",
     favorites: ["cartographies", "atlas", "miroirs"],
@@ -307,29 +313,105 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
     favorites: ["rivage", "lucioles", "sel"],
   };
   const workById = (id: string) => works.find((work) => work.id === id) ?? works[0];
-  const visibleBadges = isSelf ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
+  const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
+
+  useEffect(() => {
+    if (!shareNotice) return;
+    const timer = window.setTimeout(() => setShareNotice(""), 5000);
+    return () => window.clearTimeout(timer);
+  }, [shareNotice]);
+
+  const copyPublicProfileUrl = async (notice = "Lien du profil copié") => {
+    try {
+      await navigator.clipboard.writeText(publicProfileUrl);
+    } catch {
+      const field = document.createElement("textarea");
+      field.value = publicProfileUrl;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      const copied = document.execCommand("copy");
+      field.remove();
+      if (!copied) {
+        setShareNotice("Impossible de copier automatiquement le lien");
+        return false;
+      }
+    }
+    setShareNotice(notice);
+    return true;
+  };
+
+  const sharePublicProfile = async () => {
+    if (!navigator.share) {
+      await copyPublicProfileUrl("Partage indisponible — lien copié");
+      return;
+    }
+    try {
+      await navigator.share({
+        title: "Profil de Maël Depréville sur Chapter",
+        text: "Découvrez mon portrait de lecteur sur Chapter.",
+        url: publicProfileUrl,
+      });
+      setShareNotice("Profil partagé");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      await copyPublicProfileUrl("Partage indisponible — lien copié");
+    }
+  };
 
   return (
     <section className="profile-page" aria-labelledby="profile-name">
       <div className="profile-opening">
         <aside className="profile-identity-column">
-          <div className="profile-identity-card">
-            <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isSelf ? "Carte de lecteur" : "Portrait public"}</small></div>
-            <div className="profile-avatar-wrap">
-              <div className="profile-avatar">{isSelf && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
-              {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+          <div className={`profile-card-flip-shell ${cardFlipped ? "is-flipped" : ""}`}>
+            <div className="profile-card-flip">
+              <div className="profile-identity-card profile-card-front" aria-hidden={cardFlipped} inert={cardFlipped ? true : undefined}>
+                <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isOwnProfile ? "Carte de lecteur" : "Portrait public"}</small></div>
+                <div className="profile-avatar-wrap">
+                  <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+                  {isOwnProfile && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+                </div>
+                <div className="profile-heading-copy">
+                  <p className="eyebrow">{isOwnProfile ? "Votre portrait" : "Portrait de lecteur"}</p>
+                  <p className="equipped-title">{profile.title}</p>
+                  {!isOwnProfile && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}
+                </div>
+                <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
+                <p className="profile-intro">{profile.intro}</p>
+                <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
+              </div>
+              {isOwnProfile && (
+                <div className="profile-identity-card profile-card-back" aria-hidden={!cardFlipped} inert={!cardFlipped ? true : undefined}>
+                  <div className="profile-card-masthead profile-card-back-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>Profil public</small></div>
+                  <div className="profile-card-qr-field">
+                    <QRCode value={publicProfileUrl} size={168} level="M" bgColor="#ffffff" fgColor="#27221e" aria-label={`QR code vers le profil public de ${profile.name}`} />
+                  </div>
+                  <div className="profile-card-back-copy">
+                    <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>
+                    <p>Scannez pour ouvrir mon profil</p>
+                  </div>
+                  <a className="profile-card-public-url" href={publicProfileUrl}>{publicProfileUrl.replace(/^https?:\/\//, "")}</a>
+                </div>
+              )}
             </div>
-            <div className="profile-heading-copy">
-              <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
-              <p className="equipped-title">{profile.title}</p>
-              {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
-            </div>
-            <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
-            <p className="profile-intro">{profile.intro}</p>
-            <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
           </div>
+          {isOwnProfile && (
+            <div className="profile-card-utilities">
+              <div className="profile-card-turn-row">
+                <span aria-hidden="true" />
+                <button className="profile-card-turn-action" type="button" aria-pressed={cardFlipped} onClick={() => { setCardFlipped((current) => !current); setShareNotice(""); }}><span aria-hidden="true">↻</span>{cardFlipped ? "Voir le recto" : "Retourner la carte"}</button>
+              </div>
+              <div className={`profile-card-share-row ${cardFlipped ? "is-visible" : ""}`} aria-hidden={!cardFlipped}>
+                <p className="profile-card-share-notice" role="status" aria-live="polite">{shareNotice}</p>
+                <button className="text-action" type="button" tabIndex={cardFlipped ? 0 : -1} onClick={() => void copyPublicProfileUrl()}>Copier le lien</button>
+                <button className="text-action" type="button" tabIndex={cardFlipped ? 0 : -1} onClick={() => void sharePublicProfile()}>Partager</button>
+              </div>
+            </div>
+          )}
           <section className="profile-honors" aria-labelledby="profile-honors-title">
             <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
             <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
@@ -352,7 +434,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           <article className="profile-review"><button type="button" onClick={() => onOpenWork(profile.favorites[1])}>{workById(profile.favorites[1]).title}</button><p>Le livre avance par signes minuscules et finit par composer une géographie très précise de l’attention.</p></article>
         </section>
       </div>
-      {removePhotoConfirm && (
+      {isOwnProfile && removePhotoConfirm && (
         <div className="overlay profile-photo-remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="remove-photo-title">
           <button className="overlay-backdrop" type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
           <section className="profile-photo-remove-dialog">
@@ -368,7 +450,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
 }
 
 type HonorsProps = {
-  owner: "self" | "lina";
+  owner: ProfileOwner;
   equippedTitle: string;
   onEquip: (title: string) => void;
   showcase: BadgeId[];
@@ -377,8 +459,9 @@ type HonorsProps = {
 };
 
 export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleShowcase, onBack }: HonorsProps) {
-  const isSelf = owner === "self";
-  const items: { id: BadgeId; locked?: boolean }[] = isSelf
+  const isOwnProfile = owner === "self";
+  const isMael = owner !== "lina";
+  const items: { id: BadgeId; locked?: boolean }[] = isOwnProfile
     ? [
         { id: "reading2" }, { id: "reading3", locked: true },
         { id: "exploration2" }, { id: "exploration3", locked: true },
@@ -386,7 +469,9 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         { id: "relation2" }, { id: "relation3", locked: true },
         { id: "honor1" }, { id: "honor2" },
       ]
-    : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
+    : isMael
+      ? [{ id: "reading2" }, { id: "exploration2" }, { id: "expression2" }, { id: "relation2" }, { id: "honor1" }, { id: "honor2" }]
+      : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
   const [selected, setSelected] = useState<BadgeId | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);
   const itemRows = Array.from({ length: Math.ceil(items.length / 2) }, (_, index) => items.slice(index * 2, index * 2 + 2));
@@ -400,8 +485,8 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
       <div className={`honor-detail honor-detail-${placement}`} role="status">
         <strong>{badge.title}</strong>
         <p>{badge.description}</p>
-        {isSelf && locked && "progress" in badge && <span>{badge.progress}</span>}
-        {isSelf && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
+        {isOwnProfile && locked && "progress" in badge && <span>{badge.progress}</span>}
+        {isOwnProfile && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
       </div>
     );
   };
@@ -418,9 +503,9 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     <section className="destination-page honors-page" aria-labelledby="honors-title">
       <button className="text-action back-action" type="button" onClick={onBack}>← Retour au profil</button>
       <header className="destination-heading honors-heading">
-        <p className="eyebrow">{isSelf ? "Votre parcours" : "Distinctions acquises"}</p>
+        <p className="eyebrow">{isOwnProfile ? "Votre parcours" : "Distinctions acquises"}</p>
         <h1 id="honors-title">Chapitres d’honneur</h1>
-        <p>{isSelf ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : "Les dernières évolutions et les honneurs obtenus par Lina. Ses objectifs en cours restent privés."}</p>
+        <p>{isOwnProfile ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : `Les dernières évolutions et les honneurs obtenus par ${isMael ? "Maël" : "Lina"}. Ses objectifs en cours restent privés.`}</p>
       </header>
       <div ref={wallRef} className="honor-wall" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }}>
         {itemRows.map((row, rowIndex) => {
@@ -461,7 +546,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
           );
         })}
       </div>
-      {isSelf && <p className="honors-note">Seuls vos acquis sont visibles par les autres lecteurs. Les badges grisés et leurs progressions restent privés.</p>}
+      {isOwnProfile && <p className="honors-note">Seuls vos acquis sont visibles par les autres lecteurs. Les badges grisés et leurs progressions restent privés.</p>}
     </section>
   );
 }

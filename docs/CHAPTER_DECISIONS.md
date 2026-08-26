@@ -665,6 +665,32 @@ Dernière mise à jour : 26 août 2026
 - Le checkpoint 19 publie PDR1B après réussite du lint, de la construction de production et des contrôles automatisés dédiés.
 - Statut : **PDR1B validée, autorisée, implémentée et publiée ; recette utilisateur ouverte**.
 
+### QR1 — Carte de lecteur recto-verso partageable
+
+- Depuis son propre profil, un lecteur pourra retourner sa carte de lecteur afin d’afficher un verso partageable contenant un QR code vers son profil public.
+- Le recto actuel reste inchangé. Le verso conserve les dimensions, la matérialité blanc cassé et l’identité éditoriale de la carte sans devenir une surface promotionnelle.
+- Le QR code encodera uniquement l’URL publique canonique et stable du profil : aucun jeton de session, contournement de confidentialité ni paramètre de suivi ne sera intégré.
+- Une adresse lisible et des alternatives de partage devront compléter le QR code pour les usages depuis un seul appareil.
+- L’interaction peut être conçue dans le prototype, mais sa fiabilité finale dépendra des véritables comptes, URL publiques et règles de persistance encore hors du lot actuel.
+- Restent à arbitrer séparément : la commande de retournement, la composition du verso, le mouvement et ses alternatives accessibles, puis les actions Copier/Partager.
+- RTC1 est validée pour la commande : « Retourner la carte » se place hors du recto, immédiatement sous son bord droit. Au verso, la même commande devient « Voir le recto ».
+- La surface entière de la carte ne devient jamais une cible de retournement et son en-tête n’accueille pas cette action ; les commandes de photo restent donc indépendantes.
+- Le traitement graphique précis de cette micro-zone sous la carte reste ouvert.
+- RTG1 est validée : un filet horizontal très fin relie visuellement le bord gauche de la micro-zone à une icône de retournement et au libellé alignés à droite. La zone n’a ni fond, ni contour, ni forme de bouton permanente.
+- Au survol, seuls l’icône et le libellé prennent la teinte brique ; le focus clavier reste explicitement visible. Sur mobile, le filet se raccourcit sans changer la position de l’action.
+- Cette micro-zone pourra être recalibrée facilement après observation du rendu réel sans remettre en cause RTC1.
+- QRV1 est validée pour le verso : le QR code occupe le centre de la carte, sous une signature Chapter discrète, sans reléguer l’identité du lecteur ni devenir un simple écran technique.
+- Le texte sous le QR code doit rester nettement aéré. Le nom, l’instruction de scan et l’adresse ne formeront pas un bloc compact ; leur répartition précise reste à arbitrer, notamment en isolant l’URL dans le pied de carte.
+- Le QR code repose sur un aplat parfaitement uni avec sa marge de silence réglementaire ; le grain blanc cassé ne traverse jamais ses modules.
+- QRT1 est validée : le nom et l’instruction courte « Scannez pour ouvrir mon profil » occupent deux niveaux distincts sous le QR code ; l’adresse publique est isolée plus bas dans le pied de carte.
+- Les espacements restent structurels et ne se contractent pas pour absorber un nom long. N1b adapte l’appellation sur une ou deux lignes sans densifier l’instruction ni l’URL.
+- QRM1b est validée pour le mouvement : la carte pivote horizontalement de 180° autour de son axe central en environ 440 ms, sans rebond, changement d’échelle ni déplacement de sa boîte dans la page. QRM1b ralentit légèrement les 360 ms présentées par QRM1 afin de mieux faire sentir l’objet sans alourdir l’interaction.
+- Lorsque le système demande de réduire les animations, la rotation est remplacée par un échange direct des faces accompagné au plus d’un fondu très court. La commande, le focus et l’état visible ne dépendent jamais de l’animation.
+- QRP1 est retenue comme base pour maintenir les trois utilitaires hors de la carte, mais sa première disposition est révisée par QRP1b : la commande de face garde exactement la même position sous le bord droit au recto comme au verso. « Copier le lien » et « Partager » occupent une seconde ligne extérieure propre au verso et ne peuvent jamais déplacer ce repère.
+- Sur mobile, les deux actions de partage peuvent se replier ensemble sur leur propre ligne sans modifier le repère de retournement. QRP1b remplace donc le rail unique initial de QRP1.
+- Le périmètre consolidé de QR1 est explicitement autorisé : véritable QR généré localement, route publique de Maël distincte des commandes propriétaires, copie, partage natif avec repli, retour automatique au recto à la sortie et contrôles responsive/accessibilité.
+- Statut : **QR1, RTC1, RTG1, QRV1, QRT1, QRM1b et QRP1b validés ; implémentation autorisée et en cours de validation technique**.
+
 ### HMT1 — Fiche tactile insérée sous la rangée
 
 - Sur mobile, toucher un badge insère une fiche compacte sur toute la largeur directement sous sa rangée ; le badge sélectionné reste visible et la grille se décale verticalement.
