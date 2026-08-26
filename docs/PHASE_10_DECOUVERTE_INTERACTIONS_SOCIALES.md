@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1 publiée — correctif PDR1B en préparation de publication**
+Statut : **implémentation JI1 et correctif PDR1B publiés — évaluation utilisateur ouverte**
 Dernière mise à jour : 26 août 2026
 
 ## Objectif de la phase
@@ -795,7 +795,7 @@ La recette desktop révèle que la colonne identitaire de PRM1 devient visibleme
 
 **PDR1B est validée et implémentée après autorisation explicite.** La section Œuvres de chevet conserve sa hauteur éditoriale naturelle et l’ensemble formé par son intitulé, son titre et ses trois couvertures est centré verticalement face à la hauteur cumulée de la carte et des honneurs. Ce centrage absorbe les variations raisonnables du nom et de l’introduction sans introduire de faux espace à l’intérieur de la section. PDR1A, qui aurait étiré cette dernière jusqu’à une hauteur strictement égale, est abandonnée.
 
-La structure frontend distingue désormais une ouverture desktop et un flux public pleine largeur. Au breakpoint B2, cette ouverture redevient une seule colonne et restitue l’ordre mobile déjà validé. La checklist de recette couvre l’alignement des deux profils d’exemple, la disparition du vide et la non-régression de l’ordre mobile. La publication de ce correctif reste à terminer.
+La structure frontend distingue désormais une ouverture desktop et un flux public pleine largeur. Au breakpoint B2, cette ouverture redevient une seule colonne et restitue l’ordre mobile déjà validé. La checklist de recette couvre l’alignement des deux profils d’exemple, la disparition du vide et la non-régression de l’ordre mobile. Le checkpoint 19 a été publié après réussite du lint, de la construction de production et des contrôles automatisés dédiés ; la recette utilisateur de PDR1B est ouverte.
 
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 

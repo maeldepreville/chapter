@@ -662,7 +662,8 @@ Dernière mise à jour : 26 août 2026
 - PDR1B est retenue : la section Œuvres de chevet conserve sa hauteur éditoriale naturelle et son ensemble complet — intitulé, titre et couvertures — est centré verticalement face à la hauteur cumulée de la carte et des honneurs. Les variations raisonnables du nom ou de l’introduction ne créent donc pas de remplissage interne artificiel.
 - PDR1A, qui aurait étiré la section à hauteur égale, est abandonnée.
 - L’implémentation regroupe la carte et les honneurs avec les œuvres de chevet dans une ouverture dédiée, puis rend les listes et traces sœurs dans un flux pleine largeur. Sous 900 px, la structure revient explicitement à une seule colonne dans l’ordre PRM1.
-- Statut : **PDR1B validée, autorisée et implémentée ; publication en attente**.
+- Le checkpoint 19 publie PDR1B après réussite du lint, de la construction de production et des contrôles automatisés dédiés.
+- Statut : **PDR1B validée, autorisée, implémentée et publiée ; recette utilisateur ouverte**.
 
 ### HMT1 — Fiche tactile insérée sous la rangée
 
