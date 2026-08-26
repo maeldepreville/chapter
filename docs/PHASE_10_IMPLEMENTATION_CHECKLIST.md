@@ -41,6 +41,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 
 - [ ] Importer un JPEG, PNG ou WebP de moins de 8 Mo dont le petit côté mesure au moins 512 px.
 - [ ] Avant l’import, vérifier que seule une surface claire de sélection est visible ; le cadre de recadrage ne doit apparaître qu’après le choix d’une image valide.
+- [ ] Dans cet état vide, vérifier que « Choisir une image » est centré horizontalement et que le sceau « C. » reste net, compact et discret sur la carte.
 - [ ] Déplacer l’image à la souris puis au toucher/stylet ; aucun saut ni effet haché ne doit apparaître.
 - [ ] Zoomer avec le curseur, la molette et un pincement tactile ; le cadre doit rester entièrement couvert et l’aperçu circulaire synchronisé.
 - [ ] Observer la netteté durant les déplacements et zooms : la source haute définition ne doit pas se pixelliser pendant l’interaction.

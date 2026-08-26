@@ -891,6 +891,10 @@ La recette suivante invalide trois détails de la version précédente :
 
 **O2 et N1b sont validées et implémentées**. Le sceau compact « C. » devient la marque de coin de la carte. Le champ public ne suppose ni prénom, ni nom de famille, ni deux mots : une appellation ou un pseudonyme peut occuper une ou deux lignes équilibrées, avec une taille adaptative bornée et sans césure interne. La future création de profil imposera seulement une longueur maximale de présentation d’environ 36 caractères et montrera un aperçu de la carte. Avant le choix d’un fichier, une surface claire et compacte remplace désormais le faux espace de recadrage noir ; les outils de cadrage n’apparaissent qu’après l’import d’une image valide.
 
+## Ajustement de recette — centrage de l’import et finition du sceau
+
+Le bouton « Choisir une image » est désormais centré explicitement dans l’état vide du panneau photo, sans dépendre de l’alignement générique des commandes de fichier. Le sceau O2 conserve sa silhouette circulaire et son monogramme « C. », mais gagne une double empreinte plus précise, une ponctuation brique mieux hiérarchisée et une très légère irrégularité évoquant un tampon imprimé. L’évolution reste volontairement discrète afin de préserver la sobriété de la carte.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

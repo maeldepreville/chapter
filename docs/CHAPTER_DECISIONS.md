@@ -726,6 +726,12 @@ Dernière mise à jour : 25 août 2026
 - Avant l’import d’une photo, une surface claire de sélection remplace le faux espace de recadrage noir ; les outils de cadrage apparaissent seulement après la sélection d’un fichier valide.
 - Statut : **validé par arbitrage et implémenté**.
 
+### Ajustement de recette — centrage de l’import et finition du sceau
+
+- Dans l’état vide du panneau photo, « Choisir une image » est centré explicitement dans la surface de sélection ; son ancien alignement hérité à gauche est supprimé.
+- Le sceau « C. » conserve son principe, son emplacement et son faible encombrement. Sa finition devient légèrement plus travaillée grâce à une double empreinte, une ponctuation brique mieux hiérarchisée et une très légère irrégularité de tampon, sans réintroduire un ornement envahissant.
+- Statut : **validé par retour de recette et implémenté**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot

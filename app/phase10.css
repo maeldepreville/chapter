@@ -258,8 +258,9 @@
 .equipped-title { margin: 0.45rem 0 0; color: var(--brick); font-family: var(--font-editorial); font-size: 1.08rem; }
 .profile-intro { grid-column: 1 / -1; margin: 0.9rem 0 0; padding-top: 0.85rem; color: #5f5a53; border-top: 1px solid rgb(91 77 62 / 0.16); font-family: var(--font-editorial); font-size: 0.9rem; line-height: 1.45; }
 .profile-heading-copy .primary-action { margin-top: 0.7rem; }
-.profile-card-seal { position: absolute; top: 0.72rem; right: 0.72rem; z-index: 1; display: grid; place-items: center; width: 2rem; height: 2rem; pointer-events: none; color: #5f554b; background: rgb(245 241 232 / 0.78); border: 1px solid rgb(95 85 75 / 0.46); border-radius: 50%; box-shadow: inset 0 0 0 0.18rem #f5f1e8, inset 0 0 0 calc(0.18rem + 1px) rgb(95 85 75 / 0.16); font-family: var(--font-editorial); font-size: 0.83rem; font-weight: 600; }
-.profile-card-seal span { color: var(--brick); }
+.profile-card-seal { position: absolute; top: 0.68rem; right: 0.68rem; z-index: 1; display: grid; place-items: center; width: 2.12rem; height: 2.12rem; pointer-events: none; isolation: isolate; color: #5f554b; background: radial-gradient(circle, rgb(255 253 249 / 0.72) 0 45%, transparent 46%), rgb(245 241 232 / 0.84); border: 1px solid rgb(95 85 75 / 0.52); border-radius: 50%; box-shadow: inset 0 0 0 0.18rem #f5f1e8, inset 0 0 0 calc(0.18rem + 1px) rgb(95 85 75 / 0.2), 0 0.08rem 0 rgb(95 85 75 / 0.12); font-family: var(--font-editorial); font-size: 0.9rem; font-weight: 600; letter-spacing: -0.08em; line-height: 1; transform: rotate(-2deg); }
+.profile-card-seal::before { position: absolute; inset: 0.34rem; z-index: -1; content: ""; border: 1px solid rgb(163 72 63 / 0.24); border-radius: 50%; }
+.profile-card-seal span { position: relative; top: 0.02rem; margin-left: 0.04rem; color: var(--brick); font-size: 0.78em; }
 .profile-photo-remove-overlay { z-index: 120; }
 .profile-photo-remove-dialog { position: relative; z-index: 1; width: min(100%, 25rem); padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1.4rem 3.5rem rgb(36 33 31 / 0.2); }
 .profile-photo-remove-dialog h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
@@ -383,7 +384,7 @@
 .photo-empty-state { display: grid; justify-items: center; gap: 1rem; padding: clamp(1.5rem, 5vw, 2.5rem); text-align: center; background: #f7f3ec; border: 1px dashed var(--line); border-radius: 0.35rem; }
 .photo-empty-state > p { max-width: 28rem; margin: 0; color: var(--muted); font-family: var(--font-editorial); }
 .photo-empty-state > small { color: var(--muted); font-size: 0.72rem; }
-.photo-empty-state .file-action { display: inline-flex; align-items: center; color: #fffaf5; }
+.photo-empty-state .file-action { display: inline-flex; align-items: center; justify-self: center; margin-inline: auto; color: #fffaf5; }
 .photo-empty-state .photo-error { margin: 0; color: #8e362f; font-size: 0.78rem; }
 .search-discover-action { width: 100%; margin-top: 1.2rem; }
 
