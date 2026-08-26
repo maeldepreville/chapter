@@ -30,7 +30,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 ## 3. Profils et listes publiques
 
 - [ ] Sur son profil, vérifier PRM1 : identité, titre, œuvres de cœur, listes et critiques composent un portrait éditorial équilibré.
-- [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface cartonnée cohérente ; les Chapitres d’honneur restent visuellement séparés sous la carte.
+- [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface blanc cassé, mate et légèrement grainée ; le filet brique reste limité à un angle et les Chapitres d’honneur demeurent séparés sous la carte.
 - [ ] Sur mobile, vérifier que ce portrait devient un flux continu sans cartes écrasées ni sections confondues.
 - [ ] Le titre « Chapitres d’honneur → » ouvre bien la galerie ; seuls trois badges acquis sont montrés sur le profil.
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
@@ -57,7 +57,8 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur mobile, toucher un badge ; HMT1 insère son détail sous la rangée concernée. Toucher un second badge puis l’extérieur pour vérifier le déplacement et la fermeture.
 - [ ] Sur les prochains badges, lire une ligne MP1 concise ; aucune jauge globale ou condition privée ne doit être publique.
 - [ ] Équiper un titre ; vérifier sa mise à jour immédiate sur le profil et dans le menu du compte.
-- [ ] Choisir jusqu’à trois badges à mettre en avant ; une quatrième sélection doit être refusée clairement ou remplacer selon le contrôle proposé, sans dépasser trois.
+- [ ] Vérifier la compréhension des deux commandes : « Afficher ce titre sous mon nom » modifie l’appellation, tandis que « Afficher ce badge sur mon profil » modifie la sélection d’insignes.
+- [ ] Choisir jusqu’à trois badges à afficher ; une quatrième sélection doit être refusée clairement, sans dépasser trois.
 - [ ] Ouvrir la galerie de Lina ; n’y voir que ses acquis, sans badge grisé, compteur, objectif ou titre verrouillé.
 - [ ] Examiner les vingt-et-un assets à plusieurs tailles et sur écran dense : contours, métal, symboles et textes voisins restent nets.
 

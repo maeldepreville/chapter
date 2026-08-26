@@ -700,6 +700,13 @@ Dernière mise à jour : 25 août 2026
 - ZR1b réserve « Résultats exacts » au titre complet ou au nom complet de l’auteur après normalisation. Les fragments, mots-clés et formulations approchées alimentent au plus trois suggestions « Vous cherchez peut-être… » accompagnées d’une justification concise.
 - Statut : **correctifs implémentés ; nouvelle recette requise**.
 
+### Révision de recette JI1 — matérialité de la carte et distinction titre/badge
+
+- La carte de lecteur abandonne le dégradé beige et le grain régulier au profit d’un blanc cassé mat, d’une texture papier très discrète et d’un filet graphique brique limité à un angle.
+- « Équiper un titre » et « mettre un badge en avant » restent deux réglages indépendants : le premier affiche une appellation sous le nom, le second sélectionne jusqu’à trois insignes dans le profil.
+- Les libellés visibles sont reformulés en « Afficher ce titre sous mon nom » et « Afficher ce badge sur mon profil ».
+- Statut : **validé par retour de recette et implémenté**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot

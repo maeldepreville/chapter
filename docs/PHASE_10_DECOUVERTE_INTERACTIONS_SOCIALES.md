@@ -856,6 +856,18 @@ La première recette du jalon a révélé quatre ajustements immédiatement appl
 
 Cette révision précise PR1/PRM1 et ZR1b sans modifier leurs principes. Elle constitue le premier correctif de recette du jalon JI1.
 
+## Révision visuelle — carte blanche cassée et actions d’honneur explicites
+
+La première carte de lecteur était trop beige et trop chargée pour évoquer un papier de qualité. Elle est remplacée par une surface blanc cassé, mate, au grain très discret, avec une ombre courte et un filet brique dans l’angle supérieur droit. L’effet doit rappeler un carton d’édition plutôt qu’une carte administrative ou un panneau d’interface.
+
+La distinction fonctionnelle des Chapitres d’honneur est également explicitée dans les libellés :
+
+- **afficher un titre sous son nom** change l’appellation identitaire visible sur le profil et dans le menu du compte ;
+- **afficher un badge sur son profil** choisit l’un des trois insignes présentés dans la section Chapitres d’honneur du profil ;
+- une même distinction peut fournir à la fois le titre équipable et le badge sélectionnable, mais ces deux choix sont indépendants.
+
+Les commandes deviennent « Afficher ce titre sous mon nom » et « Afficher ce badge sur mon profil » afin de supprimer toute ambiguïté.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

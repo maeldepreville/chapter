@@ -406,7 +406,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
                   <strong>{badge.title}</strong>
                   <p>{badge.description}</p>
                   {isSelf && locked && "progress" in badge && <span>{badge.progress}</span>}
-                  {isSelf && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre équipé" : "Équiper ce titre"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer du profil" : showcase.length >= 3 ? "Trois badges déjà choisis" : "Mettre en avant"}</button></div>}
+                  {isSelf && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
                 </div>
               )}
             </div>
