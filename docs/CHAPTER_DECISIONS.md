@@ -715,6 +715,17 @@ Dernière mise à jour : 25 août 2026
 - Le nom est centré et protégé des bords ; l’ornement d’angle devient un motif discret à doubles arcs et étoile.
 - Statut : **validé par retour de recette et implémenté**.
 
+### Révision validée — lisibilité du nom et marque compacte
+
+- Le cadre noir précédant l’import d’une photo est abandonné : le recadrage n’apparaîtra qu’après la sélection d’un fichier, précédée par une commande d’import compacte.
+- La coupure d’un mot dans le nom est interdite. N1 propose deux lignes équilibrées, N2 distingue prénom et nom de famille, N3 conserve une ligne unique ajustée.
+- L’ornement à arcs et étoile est abandonné. O1 propose un livre ouvert ponctué, O2 un sceau « C. », O3 un marque-page de chapitre.
+- O2 est validée et implémentée : le sceau compact « C. » remplace l’ornement précédent.
+- **N1b — nom libre à composition adaptative** est validée et implémentée : aucune structure prénom/nom ni aucun nombre de mots n’est imposé ; le rendu utilise une ou deux lignes équilibrées, une taille adaptative bornée et aucune coupure interne de mot.
+- La future création de profil définira uniquement une longueur maximale de présentation d’environ 36 caractères et montrera un aperçu de la carte, sans imposer la nature de l’appellation.
+- Avant l’import d’une photo, une surface claire de sélection remplace le faux espace de recadrage noir ; les outils de cadrage apparaissent seulement après la sélection d’un fichier valide.
+- Statut : **validé par arbitrage et implémenté**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot

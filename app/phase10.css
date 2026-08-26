@@ -241,7 +241,7 @@
   border-radius: 0.14rem;
   box-shadow: 0 0.85rem 2rem rgb(58 44 31 / 0.09), inset 0 0 0 1px rgb(255 255 255 / 0.48);
 }
-.profile-card-masthead { position: relative; z-index: 2; grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; padding: 0 4.4rem 0.72rem 0; border-bottom: 1px solid rgb(91 77 62 / 0.2); }
+.profile-card-masthead { position: relative; z-index: 2; grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; padding: 0 2.8rem 0.72rem 0; border-bottom: 1px solid rgb(91 77 62 / 0.2); }
 .profile-card-masthead > span { font-family: var(--font-editorial); font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
 .profile-card-masthead > span span { color: var(--brick); }
 .profile-card-masthead small { color: #746d63; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
@@ -252,16 +252,14 @@
 .profile-photo-actions .text-action { font-size: 0.7rem; }
 .profile-heading-copy { position: relative; z-index: 1; align-self: center; min-width: 0; padding: 0 0.8rem; text-align: center; }
 .profile-heading-copy .eyebrow { color: #746d63; font-size: 0.61rem; }
-.profile-heading-copy h1 { width: 100%; max-width: none; margin: 0; overflow-wrap: break-word; font-family: var(--font-editorial); font-size: clamp(1.95rem, 3.1vw, 2.7rem); font-weight: 500; line-height: 0.94; letter-spacing: -0.04em; text-wrap: balance; }
-.equipped-title { margin: 0.65rem 0 0; color: var(--brick); font-family: var(--font-editorial); font-size: 1.08rem; }
+.profile-card-name { position: relative; z-index: 1; grid-column: 1 / -1; width: 100%; margin: 0.2rem auto 0; padding: 0 0.35rem; overflow-wrap: normal; word-break: normal; font-family: var(--font-editorial); font-size: clamp(2.8rem, 5vw, 3.65rem); font-weight: 500; line-height: 0.92; letter-spacing: -0.045em; text-align: center; text-wrap: balance; }
+.profile-card-name.medium { font-size: clamp(2.25rem, 4vw, 3.05rem); }
+.profile-card-name.long { font-size: clamp(1.65rem, 3.2vw, 2.35rem); letter-spacing: -0.025em; }
+.equipped-title { margin: 0.45rem 0 0; color: var(--brick); font-family: var(--font-editorial); font-size: 1.08rem; }
 .profile-intro { grid-column: 1 / -1; margin: 0.9rem 0 0; padding-top: 0.85rem; color: #5f5a53; border-top: 1px solid rgb(91 77 62 / 0.16); font-family: var(--font-editorial); font-size: 0.9rem; line-height: 1.45; }
 .profile-heading-copy .primary-action { margin-top: 0.7rem; }
-.profile-card-ornament { position: absolute; top: 0; right: 0; z-index: 1; width: 5.2rem; height: 5.2rem; overflow: hidden; pointer-events: none; color: var(--brick); }
-.profile-card-ornament::before,
-.profile-card-ornament::after { content: ""; position: absolute; border: 1px solid rgb(151 70 52 / 0.56); border-radius: 50%; }
-.profile-card-ornament::before { top: -2.9rem; right: -2.9rem; width: 6.7rem; height: 6.7rem; }
-.profile-card-ornament::after { top: -2rem; right: -2rem; width: 4.9rem; height: 4.9rem; border-color: rgb(151 70 52 / 0.34); }
-.profile-card-ornament > span { position: absolute; top: 1.08rem; right: 1.08rem; font-size: 0.68rem; transform: rotate(12deg); }
+.profile-card-seal { position: absolute; top: 0.72rem; right: 0.72rem; z-index: 1; display: grid; place-items: center; width: 2rem; height: 2rem; pointer-events: none; color: #5f554b; background: rgb(245 241 232 / 0.78); border: 1px solid rgb(95 85 75 / 0.46); border-radius: 50%; box-shadow: inset 0 0 0 0.18rem #f5f1e8, inset 0 0 0 calc(0.18rem + 1px) rgb(95 85 75 / 0.16); font-family: var(--font-editorial); font-size: 0.83rem; font-weight: 600; }
+.profile-card-seal span { color: var(--brick); }
 .profile-photo-remove-overlay { z-index: 120; }
 .profile-photo-remove-dialog { position: relative; z-index: 1; width: min(100%, 25rem); padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1.4rem 3.5rem rgb(36 33 31 / 0.2); }
 .profile-photo-remove-dialog h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
@@ -382,6 +380,11 @@
 .zoom-control input { width: 100%; accent-color: var(--brick); }
 .photo-controls > p { margin: 0; color: var(--muted); font-size: 0.78rem; }
 .photo-controls .photo-error { color: #8e362f; }
+.photo-empty-state { display: grid; justify-items: center; gap: 1rem; padding: clamp(1.5rem, 5vw, 2.5rem); text-align: center; background: #f7f3ec; border: 1px dashed var(--line); border-radius: 0.35rem; }
+.photo-empty-state > p { max-width: 28rem; margin: 0; color: var(--muted); font-family: var(--font-editorial); }
+.photo-empty-state > small { color: var(--muted); font-size: 0.72rem; }
+.photo-empty-state .file-action { display: inline-flex; align-items: center; color: #fffaf5; }
+.photo-empty-state .photo-error { margin: 0; color: #8e362f; font-size: 0.78rem; }
 .search-discover-action { width: 100%; margin-top: 1.2rem; }
 
 @media (max-width: 1100px) and (min-width: 900px) {
@@ -412,7 +415,9 @@
   .profile-page { grid-template-columns: 1fr; gap: 4rem; min-height: auto; padding: 3rem 1.1rem 6rem; }
   .profile-identity-column { width: min(100%, 32rem); }
   .profile-identity-card { grid-template-columns: 7.2rem minmax(0, 1fr); }
-  .profile-heading-copy h1 { font-size: clamp(2.4rem, 9vw, 3.4rem); }
+  .profile-card-name { font-size: clamp(2.6rem, 10vw, 3.5rem); }
+  .profile-card-name.medium { font-size: clamp(2.15rem, 8vw, 2.9rem); }
+  .profile-card-name.long { font-size: clamp(1.55rem, 6vw, 2.2rem); }
   .profile-honors { max-width: 26rem; }
   .profile-section { padding-bottom: 4rem; }
   .profile-section + .profile-section { padding-top: 4rem; }
@@ -442,7 +447,9 @@
   .profile-identity-card { grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem 0.9rem; padding: 1rem; }
   .profile-avatar { width: 5.5rem; height: 5.5rem; border-width: 0.25rem; font-size: 1.5rem; }
   .profile-card-masthead small { font-size: 0.54rem; }
-  .profile-heading-copy h1 { font-size: 2.25rem; }
+  .profile-card-name { font-size: 2.45rem; }
+  .profile-card-name.medium { font-size: 2rem; }
+  .profile-card-name.long { font-size: 1.45rem; }
   .profile-intro { font-size: 0.84rem; }
   .favorite-books strong { font-size: 0.82rem; }
   .favorite-books small { font-size: 0.68rem; }

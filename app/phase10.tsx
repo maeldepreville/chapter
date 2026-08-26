@@ -306,6 +306,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   };
   const workById = (id: string) => works.find((work) => work.id === id) ?? works[0];
   const visibleBadges = isSelf ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
+  const nameLength = Array.from(profile.name.trim()).length;
+  const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
 
   return (
     <section className="profile-page" aria-labelledby="profile-name">
@@ -318,12 +320,12 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           </div>
           <div className="profile-heading-copy">
             <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
-            <h1 id="profile-name">{profile.name}</h1>
             <p className="equipped-title">{profile.title}</p>
             {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
           </div>
+          <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
           <p className="profile-intro">{profile.intro}</p>
-          <span className="profile-card-ornament" aria-hidden="true"><span>✦</span></span>
+          <span className="profile-card-seal" aria-hidden="true">C<span>.</span></span>
         </div>
         <section className="profile-honors" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
@@ -658,20 +660,34 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
       <button className="overlay-backdrop" type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
       <section className="photo-crop-modal">
         <div className="modal-heading"><div><p className="eyebrow">Photo facultative</p><h2 id="photo-crop-title">Recadrer la photo</h2></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
-        <div className="photo-crop-layout">
-          <div className="crop-stage" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheelZoom}>
-            {source ? <img ref={imageRef} src={source} alt="Image à recadrer" draggable={false} onLoad={(event) => { const image = event.currentTarget; if (!dimensions.width) setDimensions({ width: image.naturalWidth, height: image.naturalHeight }); clampAndPaint(); }} /> : <span>Choisissez une image</span>}
-            <span className="crop-guide" aria-hidden="true" />
-          </div>
-          <div className="crop-preview"><span>Aperçu</span><div>{source ? <img ref={previewRef} src={source} alt="" /> : <span>MD</span>}</div></div>
-        </div>
-        <div className="photo-controls">
-          <label className="file-action"><span>{source ? "Choisir une autre image" : "Choisir une image"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseFile(event.target.files?.[0])} /></label>
-          <label className="zoom-control"><span>Zoom</span><input type="range" min="1" max="3" step="0.01" value={zoom} disabled={!source} onChange={(event) => updateZoom(Number(event.target.value))} /></label>
-          <p>Déplacez l’image directement. Sur mobile, pincez pour zoomer.</p>
-          {error && <p className="photo-error" role="alert">{error}</p>}
-        </div>
-        <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button><button className="primary-action" type="button" disabled={!source} onClick={saveCrop}>Enregistrer</button></div>
+        {source ? (
+          <>
+            <div className="photo-crop-layout">
+              <div className="crop-stage" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheelZoom}>
+                <img ref={imageRef} src={source} alt="Image à recadrer" draggable={false} onLoad={(event) => { const image = event.currentTarget; if (!dimensions.width) setDimensions({ width: image.naturalWidth, height: image.naturalHeight }); clampAndPaint(); }} />
+                <span className="crop-guide" aria-hidden="true" />
+              </div>
+              <div className="crop-preview"><span>Aperçu</span><div><img ref={previewRef} src={source} alt="" /></div></div>
+            </div>
+            <div className="photo-controls">
+              <label className="file-action"><span>Choisir une autre image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseFile(event.target.files?.[0])} /></label>
+              <label className="zoom-control"><span>Zoom</span><input type="range" min="1" max="3" step="0.01" value={zoom} onChange={(event) => updateZoom(Number(event.target.value))} /></label>
+              <p>Déplacez l’image directement. Sur mobile, pincez pour zoomer.</p>
+              {error && <p className="photo-error" role="alert">{error}</p>}
+            </div>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button><button className="primary-action" type="button" onClick={saveCrop}>Enregistrer</button></div>
+          </>
+        ) : (
+          <>
+            <div className="photo-empty-state">
+              <p>Sélectionnez une image nette ; l’espace de recadrage apparaîtra ensuite.</p>
+              <label className="file-action primary-action"><span>Choisir une image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseFile(event.target.files?.[0])} /></label>
+              <small>JPEG, PNG ou WebP · 8 Mo maximum · 512 px minimum</small>
+              {error && <p className="photo-error" role="alert">{error}</p>}
+            </div>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button></div>
+          </>
+        )}
       </section>
     </div>
   );

@@ -30,7 +30,8 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 ## 3. Profils et listes publiques
 
 - [ ] Sur son profil, vérifier PRM1 : identité, titre, œuvres de cœur, listes et critiques composent un portrait éditorial équilibré.
-- [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface blanc cassé, mate et légèrement grainée ; le filet brique reste limité à un angle et les Chapitres d’honneur demeurent séparés sous la carte.
+- [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface blanc cassé, mate et légèrement grainée ; le sceau compact « C. » reste discret et les Chapitres d’honneur demeurent séparés sous la carte.
+- [ ] Tester un nom libre court puis une appellation proche de 36 caractères : la composition doit rester centrée sur une ou deux lignes équilibrées, sans couper aucun mot ni toucher les bords.
 - [ ] Sur mobile, vérifier que ce portrait devient un flux continu sans cartes écrasées ni sections confondues.
 - [ ] Le titre « Chapitres d’honneur → » ouvre bien la galerie ; seuls trois badges acquis sont montrés sur le profil.
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
@@ -39,6 +40,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 ## 4. Photo de profil PFP1
 
 - [ ] Importer un JPEG, PNG ou WebP de moins de 8 Mo dont le petit côté mesure au moins 512 px.
+- [ ] Avant l’import, vérifier que seule une surface claire de sélection est visible ; le cadre de recadrage ne doit apparaître qu’après le choix d’une image valide.
 - [ ] Déplacer l’image à la souris puis au toucher/stylet ; aucun saut ni effet haché ne doit apparaître.
 - [ ] Zoomer avec le curseur, la molette et un pincement tactile ; le cadre doit rester entièrement couvert et l’aperçu circulaire synchronisé.
 - [ ] Observer la netteté durant les déplacements et zooms : la source haute définition ne doit pas se pixelliser pendant l’interaction.

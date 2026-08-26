@@ -881,6 +881,16 @@ La recette du recadrage a montré qu’un recadrage enregistré ne devait jamais
 
 La composition de la carte est également rééquilibrée : le nom est centré dans son aire, protégé des bords par des marges internes et légèrement réduit lorsque nécessaire. Le simple filet d’angle est remplacé par un ornement éditorial composé de deux arcs fins et d’une petite étoile, toujours dans la teinte brique et sans concurrencer le portrait.
 
+## Révision validée — état vide du recadrage, nom et marque de carte
+
+La recette suivante invalide trois détails de la version précédente :
+
+- avant le choix d’un fichier, le grand cadre noir et son libellé « Choisissez une image » sont supprimés ; une surface de sélection compacte doit précéder l’apparition du véritable espace de recadrage ;
+- le nom ne doit jamais couper un mot pour remplir son aire. Trois traitements restent à arbitrer : deux lignes équilibrées avec adaptation discrète de taille (N1), prénom secondaire et nom de famille affirmé (N2), ou ligne unique ajustée (N3) ;
+- l’ornement à doubles arcs est abandonné. Trois marques compactes liées à Chapter restent à arbitrer : livre ouvert ponctué (O1), sceau monogramme « C. » (O2) ou marque-page de chapitre (O3).
+
+**O2 et N1b sont validées et implémentées**. Le sceau compact « C. » devient la marque de coin de la carte. Le champ public ne suppose ni prénom, ni nom de famille, ni deux mots : une appellation ou un pseudonyme peut occuper une ou deux lignes équilibrées, avec une taille adaptative bornée et sans césure interne. La future création de profil imposera seulement une longueur maximale de présentation d’environ 36 caractères et montrera un aperçu de la carte. Avant le choix d’un fichier, une surface claire et compacte remplace désormais le faux espace de recadrage noir ; les outils de cadrage n’apparaissent qu’après l’import d’une image valide.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.
