@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1 publiée — évaluation utilisateur ouverte**
+Statut : **implémentation JI1 publiée — correctif PDR1B en préparation de publication**
 Dernière mise à jour : 26 août 2026
 
 ## Objectif de la phase
@@ -782,6 +782,21 @@ PR1 doit rester un portrait de goût continu : l’identité, le titre équipé,
 
 PRM1 est préférée à PRM2, dont la colonne universelle aurait sous-exploité la largeur desktop et atténué la présence de la signature du lecteur, ainsi qu’à PRM3, qui aurait fragmenté le portrait derrière des onglets et concurrencé l’accès AC1. Le profil reste ainsi un ensemble éditorial continu sur les deux supports, avec une adaptation de composition plutôt qu’une simple réduction.
 
+## Révision desktop validée — PDR1, ouverture puis flux large
+
+La recette desktop révèle que la colonne identitaire de PRM1 devient visiblement vide sous la carte et les trois badges, tandis que les listes et les critiques continuent longtemps dans la seule colonne droite. PDR1 remplace cette application de PRM1 sans abandonner son portrait éditorial continu :
+
+- la double colonne est limitée à l’ouverture du profil ;
+- la carte de lecteur et les Chapitres d’honneur forment la partie gauche de cette ouverture ;
+- les Œuvres de chevet lui répondent dans la partie droite ;
+- les Listes publiques puis les Traces publiques reprennent ensuite toute la largeur utile du profil ;
+- aucun compteur, résumé de goûts ou contenu de remplissage n’est ajouté pour occuper artificiellement la colonne gauche ;
+- la colonne identitaire reste non collante et l’ordre mobile de PRM1 demeure inchangé.
+
+**PDR1B est validée et implémentée après autorisation explicite.** La section Œuvres de chevet conserve sa hauteur éditoriale naturelle et l’ensemble formé par son intitulé, son titre et ses trois couvertures est centré verticalement face à la hauteur cumulée de la carte et des honneurs. Ce centrage absorbe les variations raisonnables du nom et de l’introduction sans introduire de faux espace à l’intérieur de la section. PDR1A, qui aurait étiré cette dernière jusqu’à une hauteur strictement égale, est abandonnée.
+
+La structure frontend distingue désormais une ouverture desktop et un flux public pleine largeur. Au breakpoint B2, cette ouverture redevient une seule colonne et restitue l’ordre mobile déjà validé. La checklist de recette couvre l’alignement des deux profils d’exemple, la disparition du vide et la non-régression de l’ordre mobile. La publication de ce correctif reste à terminer.
+
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 
 HM3 fixe déjà un mur continu composé des quatre évolutions actuelles, des quatre prochains badges grisés dans la vue personnelle et des honneurs acquis. Sur desktop, la mini-fiche reste ancrée sous le badge au survol ou au focus. Sur mobile, le toucher doit révéler le même contenu sans rendre la grille instable ni masquer une part importante du mur.
@@ -921,7 +936,7 @@ Le relais SD2 était rendu derrière son propre voile sur mobile. Il devient un 
 6. Activer la priorité donnée aux critiques de personnes suivies sur la page d’une œuvre — **KF2 validée**.
 7. Définir les commentaires ou réponses à une critique, leur profondeur et leurs garde-fous — **RP1, DC1, VC1 et CPR1 validées**.
 8. Concevoir les états sans abonnements, sans historique exploitable, sans résultat et avec contenu social limité — **EH1, EA1, ZR1b et CSL1 validées**.
-9. Décliner l’ensemble sur desktop et mobile, puis préparer la checklist exhaustive du jalon — **DR1D et DR1M1 validées pour Découvrir ; PRM1 validée pour le profil responsive ; HMT1 validée pour le comportement tactile du mur d’insignes**.
+9. Décliner l’ensemble sur desktop et mobile, puis préparer la checklist exhaustive du jalon — **DR1D et DR1M1 validées pour Découvrir ; PRM1 validée pour le profil responsive puis révisée sur desktop par PDR1B ; HMT1 validée pour le comportement tactile du mur d’insignes**.
 10. Calibrer les paramètres explicitement reportés avant l’implémentation — **FC1 validée pour la fenêtre confidentielle ED3 ; PFP1 validée pour la photo de profil, avec interaction haute définition et fluide**.
 11. Choisir le découpage de l’implémentation et préparer la checklist — **JI1 validée, autorisée et implémentée ; checklist exhaustive produite**.
 

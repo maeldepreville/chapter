@@ -217,13 +217,16 @@
 .compact-path { padding-bottom: 1rem; }
 
 .profile-page {
-  display: grid;
-  grid-template-columns: minmax(19rem, 1fr) minmax(0, 2fr);
-  gap: clamp(4rem, 8vw, 8rem);
   max-width: 82rem;
   min-height: calc(100vh - 4.75rem);
   margin: 0 auto;
   padding: clamp(4rem, 8vw, 7rem) 3rem 7rem;
+}
+.profile-opening {
+  display: grid;
+  grid-template-columns: minmax(19rem, 1fr) minmax(0, 2fr);
+  gap: clamp(4rem, 8vw, 8rem);
+  align-items: start;
 }
 .profile-identity-column { min-width: 0; }
 .profile-identity-card {
@@ -270,7 +273,9 @@
 .profile-badge-row > div { display: grid; justify-items: center; align-content: start; min-width: 0; text-align: center; }
 .profile-badge-row img { width: 100%; height: auto; }
 .profile-badge-row span { font-size: 0.68rem; line-height: 1.25; }
-.profile-content-column { min-width: 0; }
+.profile-section.profile-opening-favorites { align-self: center; min-width: 0; padding-top: 0; padding-bottom: 0; border-bottom: 0; }
+.profile-wide-content { min-width: 0; margin-top: clamp(4rem, 7vw, 7rem); border-top: 1px solid var(--line); }
+.profile-wide-content > .profile-section:first-child { padding-top: clamp(4rem, 7vw, 6rem); }
 .profile-section { padding: 1rem 0 5rem; border-bottom: 1px solid var(--line); }
 .profile-section + .profile-section { padding-top: 5rem; }
 .profile-section:last-child { border-bottom: 0; }
@@ -412,13 +417,17 @@
   .list-cover-row { max-width: 33rem; }
   .exact-result-list { grid-template-columns: 1fr; }
   .compact-path .intent-panel { display: none; }
-  .profile-page { grid-template-columns: 1fr; gap: 4rem; min-height: auto; padding: 3rem 1.1rem 6rem; }
+  .profile-page { min-height: auto; padding: 3rem 1.1rem 6rem; }
+  .profile-opening { grid-template-columns: 1fr; gap: 4rem; }
   .profile-identity-column { width: min(100%, 32rem); }
   .profile-identity-card { grid-template-columns: 7.2rem minmax(0, 1fr); }
   .profile-card-name { font-size: clamp(2.6rem, 10vw, 3.5rem); }
   .profile-card-name.medium { font-size: clamp(2.15rem, 8vw, 2.9rem); }
   .profile-card-name.long { font-size: clamp(1.55rem, 6vw, 2.2rem); }
   .profile-honors { max-width: 26rem; }
+  .profile-section.profile-opening-favorites { align-self: stretch; padding-bottom: 4rem; border-bottom: 1px solid var(--line); }
+  .profile-wide-content { margin-top: 0; border-top: 0; }
+  .profile-wide-content > .profile-section:first-child { padding-top: 4rem; }
   .profile-section { padding-bottom: 4rem; }
   .profile-section + .profile-section { padding-top: 4rem; }
   .honor-wall { grid-template-columns: 1fr; gap: 1.6rem; }

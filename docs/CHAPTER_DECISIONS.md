@@ -652,7 +652,17 @@ Dernière mise à jour : 26 août 2026
 - Sur desktop, l’identité, le titre équipé, l’introduction, l’action « Suivre » et les trois badges choisis occupent une colonne dédiée d’environ un tiers, sans comportement collant ; les œuvres de chevet, listes publiques et critiques forment le contenu principal.
 - Sur mobile, le profil se déroule selon l’ordre identité → titre → introduction → « Chapitres d’honneur → » → œuvres de chevet → listes → critiques, sans onglet ni carrousel obligatoire.
 - PRM1 est préférée à PRM2, qui sous-exploitait la largeur desktop, et à PRM3, qui fragmentait le portrait derrière une navigation interne.
-- Statut : **validé**.
+- Statut : **validé pour le principe responsive ; composition desktop révisée par PDR1**.
+
+### PDR1 — Ouverture asymétrique puis flux large
+
+- Sur desktop, les deux colonnes de PRM1 sont limitées à l’ouverture du profil : la carte de lecteur et les Chapitres d’honneur occupent la colonne gauche, tandis que les Œuvres de chevet occupent la colonne droite.
+- Après cette ouverture, les Listes publiques puis les Traces publiques reprennent la largeur complète du profil. Elles ne restent plus enfermées dans la colonne droite, ce qui supprime le grand vide sous les honneurs sans inventer de statistiques ni de contenu identitaire secondaire.
+- Le profil conserve un seul ordre éditorial continu et la colonne gauche demeure non collante. La composition mobile validée par PRM1 ne change pas.
+- PDR1B est retenue : la section Œuvres de chevet conserve sa hauteur éditoriale naturelle et son ensemble complet — intitulé, titre et couvertures — est centré verticalement face à la hauteur cumulée de la carte et des honneurs. Les variations raisonnables du nom ou de l’introduction ne créent donc pas de remplissage interne artificiel.
+- PDR1A, qui aurait étiré la section à hauteur égale, est abandonnée.
+- L’implémentation regroupe la carte et les honneurs avec les œuvres de chevet dans une ouverture dédiée, puis rend les listes et traces sœurs dans un flux pleine largeur. Sous 900 px, la structure revient explicitement à une seule colonne dans l’ordre PRM1.
+- Statut : **PDR1B validée, autorisée et implémentée ; publication en attente**.
 
 ### HMT1 — Fiche tactile insérée sous la rangée
 

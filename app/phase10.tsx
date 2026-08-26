@@ -313,32 +313,34 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
 
   return (
     <section className="profile-page" aria-labelledby="profile-name">
-      <aside className="profile-identity-column">
-        <div className="profile-identity-card">
-          <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isSelf ? "Carte de lecteur" : "Portrait public"}</small></div>
-          <div className="profile-avatar-wrap">
-            <div className="profile-avatar">{isSelf && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
-            {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+      <div className="profile-opening">
+        <aside className="profile-identity-column">
+          <div className="profile-identity-card">
+            <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isSelf ? "Carte de lecteur" : "Portrait public"}</small></div>
+            <div className="profile-avatar-wrap">
+              <div className="profile-avatar">{isSelf && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+              {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+            </div>
+            <div className="profile-heading-copy">
+              <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
+              <p className="equipped-title">{profile.title}</p>
+              {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
+            </div>
+            <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
+            <p className="profile-intro">{profile.intro}</p>
+            <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
           </div>
-          <div className="profile-heading-copy">
-            <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
-            <p className="equipped-title">{profile.title}</p>
-            {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
-          </div>
-          <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
-          <p className="profile-intro">{profile.intro}</p>
-          <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
-        </div>
-        <section className="profile-honors" aria-labelledby="profile-honors-title">
-          <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
-          <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
-        </section>
-      </aside>
-      <div className="profile-content-column">
-        <section className="profile-section favorites-section" aria-labelledby="favorites-title">
+          <section className="profile-honors" aria-labelledby="profile-honors-title">
+            <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
+            <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
+          </section>
+        </aside>
+        <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
           <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
           <div className="favorite-books">{profile.favorites.map((id) => { const work = workById(id); return <button type="button" key={id} onClick={() => onOpenWork(id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>; })}</div>
         </section>
+      </div>
+      <div className="profile-wide-content">
         <section className="profile-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
           <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>6 œuvres · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>

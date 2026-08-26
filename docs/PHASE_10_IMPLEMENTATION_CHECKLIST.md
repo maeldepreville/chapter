@@ -29,10 +29,12 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 
 ## 3. Profils et listes publiques
 
-- [ ] Sur son profil, vérifier PRM1 : identité, titre, œuvres de cœur, listes et critiques composent un portrait éditorial équilibré.
+- [ ] Sur desktop, vérifier PDR1B : la double colonne doit se limiter à l’ouverture, avec carte et honneurs à gauche et la section complète « Œuvres de chevet » centrée verticalement à droite.
+- [ ] Sous cette ouverture, les Listes publiques puis les Traces publiques doivent reprendre toute la largeur utile du profil ; aucun grand vide de colonne ne doit subsister.
+- [ ] Comparer son profil et celui de Lina : la différence de longueur de l’introduction ne doit ni étirer artificiellement les œuvres de chevet, ni désaligner le début des sections pleine largeur.
 - [ ] Vérifier la carte de lecteur : photo, « Votre portrait », nom, titre et introduction doivent former une surface blanc cassé, mate et légèrement grainée ; le sceau compact « C. » reste discret et les Chapitres d’honneur demeurent séparés sous la carte.
 - [ ] Tester un nom libre court puis une appellation proche de 36 caractères : la composition doit rester centrée sur une ou deux lignes équilibrées, sans couper aucun mot ni toucher les bords.
-- [ ] Sur mobile, vérifier que ce portrait devient un flux continu sans cartes écrasées ni sections confondues.
+- [ ] Sur mobile, vérifier que PDR1B restitue l’ordre continu carte → honneurs → œuvres de chevet → listes → traces, sans cartes écrasées ni sections confondues.
 - [ ] Le titre « Chapitres d’honneur → » ouvre bien la galerie ; seuls trois badges acquis sont montrés sur le profil.
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
 - [ ] Ouvrir sa liste publique autonome, une œuvre de la liste et son profil ; le rôle du nom d’auteur et celui du bouton d’abonnement restent distincts.
