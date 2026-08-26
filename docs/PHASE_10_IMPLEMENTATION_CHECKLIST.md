@@ -43,9 +43,10 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Zoomer avec le curseur, la molette et un pincement tactile ; le cadre doit rester entièrement couvert et l’aperçu circulaire synchronisé.
 - [ ] Observer la netteté durant les déplacements et zooms : la source haute définition ne doit pas se pixelliser pendant l’interaction.
 - [ ] Enregistrer le cadrage ; retrouver la photo sur le profil et dans l’en-tête concerné.
+- [ ] Après avoir enregistré un fort zoom et un décalage, rouvrir « Recadrer » ; retrouver le cadrage précédent tout en pouvant revenir au zoom minimal de la source originale.
 - [ ] Recommencer un cadrage puis annuler ; l’image précédemment enregistrée doit rester intacte.
 - [ ] Essayer un mauvais format, un fichier de plus de 8 Mo et une image trop petite ; chaque erreur doit être compréhensible et non destructive.
-- [ ] Retirer la photo puis confirmer ; les initiales doivent revenir. Annuler la confirmation lors d’un second essai.
+- [ ] Toucher « Retirer » ; le dialogue doit se superposer sans déplacer le contenu de la carte. Confirmer pour restaurer les initiales, puis tester aussi l’annulation.
 
 ## 5. Chapitres d’honneur
 

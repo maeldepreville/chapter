@@ -285,7 +285,7 @@ type ProfileProps = {
   onOpenWork: (id: string) => void;
   onOpenHonors: () => void;
   onOpenList: () => void;
-  photo: string | null;
+  photo: ProfilePhoto | null;
   onEditPhoto: () => void;
   onRemovePhoto: () => void;
   equippedTitle: string;
@@ -313,9 +313,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         <div className="profile-identity-card">
           <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isSelf ? "Carte de lecteur" : "Portrait public"}</small></div>
           <div className="profile-avatar-wrap">
-            <div className="profile-avatar">{isSelf && photo ? <Image src={photo} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+            <div className="profile-avatar">{isSelf && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
             {isSelf && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
-            {removePhotoConfirm && <div className="photo-remove-confirm" role="alertdialog" aria-label="Retirer la photo de profil"><p>Restaurer vos initiales ?</p><div><button className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div></div>}
           </div>
           <div className="profile-heading-copy">
             <p className="eyebrow">{isSelf ? "Votre portrait" : "Portrait de lecteur"}</p>
@@ -324,6 +323,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
             {!isSelf && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button>}
           </div>
           <p className="profile-intro">{profile.intro}</p>
+          <span className="profile-card-ornament" aria-hidden="true"><span>✦</span></span>
         </div>
         <section className="profile-honors" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
@@ -346,6 +346,17 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           <article className="profile-review"><button type="button" onClick={() => onOpenWork(profile.favorites[1])}>{workById(profile.favorites[1]).title}</button><p>Le livre avance par signes minuscules et finit par composer une géographie très précise de l’attention.</p></article>
         </section>
       </div>
+      {removePhotoConfirm && (
+        <div className="overlay profile-photo-remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="remove-photo-title">
+          <button className="overlay-backdrop" type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
+          <section className="profile-photo-remove-dialog">
+            <p className="eyebrow">Photo de profil</p>
+            <h2 id="remove-photo-title">Retirer cette photo ?</h2>
+            <p>Vos initiales reprendront leur place sur votre carte de lecteur.</p>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div>
+          </section>
+        </div>
+      )}
     </section>
   );
 }
@@ -509,20 +520,27 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
   );
 }
 
-type PhotoCropperProps = { currentPhoto: string | null; onClose: () => void; onSave: (photo: string) => void };
+type CropTransform = { x: number; y: number; zoom: number };
+export type ProfilePhoto = {
+  preview: string;
+  source: string;
+  crop: CropTransform;
+  dimensions: { width: number; height: number };
+};
+
+type PhotoCropperProps = { currentPhoto: ProfilePhoto | null; onClose: () => void; onSave: (photo: ProfilePhoto) => void };
 
 export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProps) {
-  const [source, setSource] = useState<string | null>(currentPhoto);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [source, setSource] = useState<string | null>(currentPhoto?.source ?? null);
+  const [dimensions, setDimensions] = useState(currentPhoto?.dimensions ?? { width: 0, height: 0 });
+  const [zoom, setZoom] = useState(currentPhoto?.crop.zoom ?? 1);
   const [error, setError] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const previewRef = useRef<HTMLImageElement>(null);
-  const transformRef = useRef({ x: 0, y: 0, zoom: 1 });
+  const transformRef = useRef<CropTransform>(currentPhoto?.crop ?? { x: 0, y: 0, zoom: 1 });
   const pointersRef = useRef(new Map<number, { x: number; y: number }>());
   const gestureRef = useRef({ x: 0, y: 0, distance: 0, zoom: 1 });
   const frameRef = useRef(0);
-  const objectUrlRef = useRef<string | null>(null);
   const CROP = 320;
 
   const clampAndPaint = (next = transformRef.current) => {
@@ -545,7 +563,6 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
   };
 
   useEffect(() => () => {
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
     window.cancelAnimationFrame(frameRef.current);
   }, []);
 
@@ -567,23 +584,26 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     setError("");
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return setError("Choisissez une image JPEG, PNG ou WebP.");
     if (file.size > 8 * 1024 * 1024) return setError("Cette image dépasse 8 Mo.");
-    const url = URL.createObjectURL(file);
-    const probe = new window.Image();
-    probe.onload = () => {
-      if (Math.min(probe.naturalWidth, probe.naturalHeight) < 512) {
-        URL.revokeObjectURL(url);
-        setError("Le petit côté de l’image doit mesurer au moins 512 px pour rester net.");
-        return;
-      }
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = url;
-      setSource(url);
-      setDimensions({ width: probe.naturalWidth, height: probe.naturalHeight });
-      transformRef.current = { x: 0, y: 0, zoom: 1 };
-      updateZoom(1);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = typeof reader.result === "string" ? reader.result : "";
+      if (!dataUrl) return setError("Cette image ne peut pas être lue.");
+      const probe = new window.Image();
+      probe.onload = () => {
+        if (Math.min(probe.naturalWidth, probe.naturalHeight) < 512) {
+          setError("Le petit côté de l’image doit mesurer au moins 512 px pour rester net.");
+          return;
+        }
+        setSource(dataUrl);
+        setDimensions({ width: probe.naturalWidth, height: probe.naturalHeight });
+        transformRef.current = { x: 0, y: 0, zoom: 1 };
+        updateZoom(1);
+      };
+      probe.onerror = () => setError("Cette image ne peut pas être lue.");
+      probe.src = dataUrl;
     };
-    probe.onerror = () => { URL.revokeObjectURL(url); setError("Cette image ne peut pas être lue."); };
-    probe.src = url;
+    reader.onerror = () => setError("Cette image ne peut pas être lue.");
+    reader.readAsDataURL(file);
   };
 
   const pointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -624,7 +644,12 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
     context.drawImage(imageRef.current, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 1024, 1024);
-    onSave(canvas.toDataURL("image/webp", 0.9));
+    onSave({
+      preview: canvas.toDataURL("image/webp", 0.9),
+      source,
+      crop: { ...transformRef.current },
+      dimensions: { ...dimensions },
+    });
     onClose();
   };
 

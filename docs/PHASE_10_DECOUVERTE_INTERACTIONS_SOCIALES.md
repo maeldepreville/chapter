@@ -868,6 +868,19 @@ La distinction fonctionnelle des Chapitres d’honneur est également explicité
 
 Les commandes deviennent « Afficher ce titre sous mon nom » et « Afficher ce badge sur mon profil » afin de supprimer toute ambiguïté.
 
+## Correctif PFP1 et carte — source réversible, dialogue et ornement
+
+La recette du recadrage a montré qu’un recadrage enregistré ne devait jamais devenir la nouvelle source de travail. Le modèle local de la photo conserve désormais séparément :
+
+- la source originale importée ;
+- les dimensions de cette source ;
+- le déplacement et le niveau de zoom enregistrés ;
+- le dérivé carré optimisé utilisé dans le profil.
+
+« Recadrer » rouvre donc l’original avec le cadrage précédent et permet de revenir jusqu’au zoom minimal. L’annulation continue de préserver le dernier cadrage validé. La confirmation de suppression quitte la carte et devient un dialogue superposé non destructif, afin de ne jamais déplacer son contenu.
+
+La composition de la carte est également rééquilibrée : le nom est centré dans son aire, protégé des bords par des marges internes et légèrement réduit lorsque nécessaire. Le simple filet d’angle est remplacé par un ornement éditorial composé de deux arcs fins et d’une petite étoile, toujours dans la teinte brique et sans concurrencer le portrait.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

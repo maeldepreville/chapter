@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileView, PublicListView, SocialReviews } from "./phase10";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
@@ -282,7 +282,7 @@ export default function Home() {
   const [followingLina, setFollowingLina] = useState(false);
   const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeId[]>(["reading2", "exploration2", "expression2"]);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
   const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const accountControlRef = useRef<HTMLDivElement>(null);

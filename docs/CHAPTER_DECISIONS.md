@@ -707,6 +707,14 @@ Dernière mise à jour : 25 août 2026
 - Les libellés visibles sont reformulés en « Afficher ce titre sous mon nom » et « Afficher ce badge sur mon profil ».
 - Statut : **validé par retour de recette et implémenté**.
 
+### Correctif PFP1 — recadrage réversible et carte stable
+
+- Le recadrage conserve la source originale, ses dimensions, le déplacement et le zoom en plus du dérivé carré affiché ; rouvrir « Recadrer » ne travaille jamais sur une image déjà recadrée.
+- Le zoom peut revenir à son minimum après un enregistrement, et l’annulation préserve le dernier cadrage validé.
+- La confirmation « Retirer la photo » devient un dialogue superposé et ne participe plus à la grille de la carte.
+- Le nom est centré et protégé des bords ; l’ornement d’angle devient un motif discret à doubles arcs et étoile.
+- Statut : **validé par retour de recette et implémenté**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot
