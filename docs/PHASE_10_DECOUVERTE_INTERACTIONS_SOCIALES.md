@@ -847,7 +847,7 @@ QR1 est implémenté et publié dans le checkpoint 20. Le QR encode `https://cha
 
 ### Correctif de recette — ouverture stable du profil propriétaire
 
-Le composant qui fabriquait le QR au moment de l'affichage était incompatible avec la chaîne de production actuelle : comme il n'était rendu que sur le profil propriétaire, « Mon profil » produisait seul une page blanche tandis que les autres vues restaient fonctionnelles. Le QR est désormais un SVG statique généré localement à partir de la même URL canonique. Le verso, la copie, le partage et la route publique ne changent pas, mais l'ouverture du profil ne dépend plus d'un moteur QR exécuté dans le navigateur. La checklist couvre explicitement l'accès à « Mon profil » depuis les trois vues principales et le retour vers celles-ci.
+Le composant qui fabriquait le QR au moment de l'affichage était incompatible avec la chaîne de production actuelle : comme il n'était rendu que sur le profil propriétaire, « Mon profil » produisait seul une page blanche tandis que les autres vues restaient fonctionnelles. Le QR est désormais un SVG statique généré localement à partir de la même URL canonique. Le verso, la copie, le partage et la route publique ne changent pas, mais l'ouverture du profil ne dépend plus d'un moteur QR exécuté dans le navigateur. La checklist couvre explicitement l'accès à « Mon profil » depuis les trois vues principales et le retour vers celles-ci. Ce correctif est publié dans le checkpoint 21 après réussite du lint, de la construction de production et de neuf tests automatisés.
 
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 
