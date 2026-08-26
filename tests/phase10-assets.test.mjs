@@ -57,3 +57,11 @@ test("ships the approved Chapter profile seal", async () => {
   assert.equal(bytes.subarray(8, 12).toString("ascii"), "WEBP");
   assert.ok(bytes.byteLength > 30_000, "the profile seal should contain the approved detailed asset");
 });
+
+test("ships the scannable Chapter public-profile QR as a static asset", async () => {
+  const svg = await readFile(new URL("../public/branding/chapter-profile-qr.svg", import.meta.url), "utf8");
+  assert.match(svg, /viewBox="0 0 45 45"/);
+  assert.match(svg, /shape-rendering="crispEdges"/);
+  assert.match(svg, /<path fill="#ffffff"/);
+  assert.match(svg, /<path stroke="#000000"/);
+});

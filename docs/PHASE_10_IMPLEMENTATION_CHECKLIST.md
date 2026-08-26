@@ -7,6 +7,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur desktop, ouvrir successivement Journal, Découvrir et Bibliothèque depuis l’en-tête ; l’état actif reste identifiable.
 - [ ] Sur mobile, retrouver ces trois destinations dans la navigation basse sans débordement horizontal.
 - [ ] Ouvrir le menu du compte, puis le fermer par un clic extérieur ; accéder ensuite à son profil.
+- [ ] Depuis Journal, Découvrir puis Bibliothèque, ouvrir « Mon profil » : le profil propriétaire doit s'afficher sans page blanche et la navigation doit rester utilisable pour revenir aux autres vues.
 - [ ] Sur mobile, ouvrir la feuille de compte puis toucher « Voir mon profil » ; la feuille doit se fermer après la navigation, sans intercepter le clic.
 - [ ] Depuis la recherche d’en-tête, saisir une œuvre et valider avec Entrée ; arriver dans Découvrir avec la requête conservée.
 - [ ] Depuis Journal ou Bibliothèque, ouvrir une œuvre, changer son statut, enregistrer une note et publier une critique : les parcours de phase 9 restent fonctionnels.

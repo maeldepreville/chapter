@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import QRCode from "react-qr-code";
 /* eslint-disable @next/next/no-img-element */
 import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
 
@@ -388,7 +387,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 <div className="profile-identity-card profile-card-back" aria-hidden={!cardFlipped} inert={!cardFlipped ? true : undefined}>
                   <div className="profile-card-masthead profile-card-back-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>Profil public</small></div>
                   <div className="profile-card-qr-field">
-                    <QRCode value={publicProfileUrl} size={168} level="M" bgColor="#ffffff" fgColor="#27221e" aria-label={`QR code vers le profil public de ${profile.name}`} />
+                    <img src="/branding/chapter-profile-qr.svg" alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
                   </div>
                   <div className="profile-card-back-copy">
                     <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>

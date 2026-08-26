@@ -9,7 +9,7 @@ test("keeps QR1 on the owner's card with a fixed external control rail", async (
     readFile(new URL("../app/profil/mael-depreville/page.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(component, /<QRCode value=\{publicProfileUrl\}/);
+  assert.match(component, /src="\/branding\/chapter-profile-qr\.svg"/);
   assert.match(component, /Scannez pour ouvrir mon profil/);
   assert.match(component, /cardFlipped \? "Voir le recto" : "Retourner la carte"/);
   assert.match(component, /Copier le lien/);

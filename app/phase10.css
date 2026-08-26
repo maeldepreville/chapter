@@ -297,7 +297,7 @@
   padding: 0.72rem;
   background: #fff;
 }
-.profile-card-qr-field svg { display: block; width: 100%; height: 100%; }
+.profile-card-qr-field img { display: block; width: 100%; height: 100%; }
 .profile-card-back-copy { display: grid; justify-items: center; gap: 0.7rem; width: 100%; text-align: center; }
 .profile-card-back-name { max-width: 100%; margin: 0; padding: 0 0.35rem; font-family: var(--font-editorial); font-size: 1.55rem; font-weight: 500; line-height: 1; text-wrap: balance; overflow-wrap: normal; word-break: normal; }
 .profile-card-back-name.medium { font-size: 1.35rem; }

@@ -845,6 +845,10 @@ Le périmètre consolidé a ensuite reçu une autorisation explicite d’implém
 
 QR1 est implémenté et publié dans le checkpoint 20. Le QR encode `https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville` ; cette route restitue le portrait public de Maël, ses listes, ses traces et uniquement ses distinctions acquises, sans recadrage photo, retrait, retournement ni progression privée. Le lint, la construction de production et huit tests automatisés passent. La recette manuelle couvre notamment la lecture du code depuis un second appareil ayant accès au Site, QRM1b, QRP1b, la copie, le partage natif et son repli. L’ouverture anonyme à des personnes extérieures reste tributaire de la future politique d’accès et des comptes réels, conformément à la limite déjà posée par QR1.
 
+### Correctif de recette — ouverture stable du profil propriétaire
+
+Le composant qui fabriquait le QR au moment de l'affichage était incompatible avec la chaîne de production actuelle : comme il n'était rendu que sur le profil propriétaire, « Mon profil » produisait seul une page blanche tandis que les autres vues restaient fonctionnelles. Le QR est désormais un SVG statique généré localement à partir de la même URL canonique. Le verso, la copie, le partage et la route publique ne changent pas, mais l'ouverture du profil ne dépend plus d'un moteur QR exécuté dans le navigateur. La checklist couvre explicitement l'accès à « Mon profil » depuis les trois vues principales et le retour vers celles-ci.
+
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 
 HM3 fixe déjà un mur continu composé des quatre évolutions actuelles, des quatre prochains badges grisés dans la vue personnelle et des honneurs acquis. Sur desktop, la mini-fiche reste ancrée sous le badge au survol ou au focus. Sur mobile, le toucher doit révéler le même contenu sans rendre la grille instable ni masquer une part importante du mur.
