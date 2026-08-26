@@ -287,7 +287,6 @@
 .profile-list-entry > span:first-child { display: grid; }
 .profile-list-entry strong { font-family: var(--font-editorial); font-size: 1.2rem; font-weight: 500; }
 .profile-list-entry small { color: var(--muted); }
-.static-entry { cursor: default; }
 .profile-review { padding: 1.5rem 0; border-top: 1px solid var(--line); }
 .profile-review:last-child { border-bottom: 1px solid var(--line); }
 .profile-review button { padding: 0; color: var(--brick); background: transparent; border: 0; font-weight: 600; cursor: pointer; }
@@ -296,6 +295,7 @@
 .honors-page { max-width: 82rem; }
 .honors-heading { max-width: 56rem; }
 .honor-wall { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 2vw, 2rem); align-items: start; }
+.honor-row { display: contents; }
 .honor-cell { position: relative; min-width: 0; }
 .honor-badge-button { display: grid; justify-items: center; align-content: start; width: 100%; min-height: 12rem; padding: 0; text-align: center; background: transparent; border: 0; cursor: pointer; }
 .honor-badge-button img { width: 100%; height: auto; filter: drop-shadow(0 0.65rem 0.65rem rgb(36 33 31 / 0.11)); transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease; }
@@ -305,6 +305,7 @@
 .honor-badge-button > span { margin-top: 0.45rem; font-family: var(--font-editorial); font-size: 1.02rem; }
 .honor-badge-button > small { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .honor-detail { position: absolute; top: calc(100% + 0.5rem); left: 50%; z-index: 20; width: min(18rem, 78vw); padding: 1rem; transform: translateX(-50%); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1rem 2rem rgb(36 33 31 / 0.14); text-align: left; }
+.honor-detail-mobile { display: none; }
 .honor-detail strong { font-family: var(--font-editorial); font-size: 1.15rem; font-weight: 500; }
 .honor-detail p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.82rem; }
 .honor-detail > span { display: block; margin-top: 0.65rem; color: var(--brick); font-size: 0.78rem; font-weight: 600; }
@@ -420,10 +421,12 @@
   .profile-honors { max-width: 26rem; }
   .profile-section { padding-bottom: 4rem; }
   .profile-section + .profile-section { padding-top: 4rem; }
-  .honor-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 1rem; }
-  .honor-cell { display: contents; }
+  .honor-wall { grid-template-columns: 1fr; gap: 1.6rem; }
+  .honor-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 1rem; align-items: start; }
+  .honor-cell { display: block; }
   .honor-badge-button { min-height: 10.5rem; }
-  .honor-detail { position: static; grid-column: 1 / -1; width: 100%; padding: 1rem 0; transform: none; background: transparent; border-right: 0; border-left: 0; border-radius: 0; box-shadow: none; }
+  .honor-detail-desktop { display: none; }
+  .honor-detail-mobile { position: static; display: block; grid-column: 1 / -1; width: 100%; padding: 1rem 0; transform: none; background: transparent; border-right: 0; border-left: 0; border-radius: 0; box-shadow: none; }
   .honors-note { margin-top: 3rem; }
   .public-list-heading { margin-bottom: 3rem; }
   .public-list-heading h1 { font-size: 4rem; }

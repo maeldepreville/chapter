@@ -792,6 +792,12 @@ HM3 fixe déjà un mur continu composé des quatre évolutions actuelles, des qu
 
 HMT1 est préférée à HMT2, dont le volet inférieur aurait masqué une partie du mur et affaibli le lien spatial avec le badge, ainsi qu’à HMT3, dont la vue dédiée aurait ajouté une profondeur de navigation disproportionnée. Le léger déplacement de la grille reste borné à une seule fiche compacte et sera vérifié lors du test de jalon.
 
+### Correctif de recette — rangées mobiles stables et listes réellement ouvrables
+
+L’implémentation initiale insérait la fiche tactile comme un nouvel élément du quadrillage mobile : l’ouverture du premier badge pouvait donc repousser le second et rompre visuellement la paire « acquis → suivant ». Le mur est désormais composé de rangées explicites de deux badges. La fiche HMT1 s’insère après la rangée complète, sur toute sa largeur, de sorte que les deux badges restent côte à côte pendant l’ouverture, le déplacement et la fermeture du détail.
+
+La seconde liste présentée sur le profil de Lina n’est plus une entrée statique de démonstration. « Veilles, fenêtres et lumières tardives » ouvre une liste autonome distincte de quatre œuvres. Chaque liste conserve aussi son origine de navigation : retour au profil de Lina lorsqu’elle a été ouverte depuis celui-ci, ou retour à Découvrir depuis le chemin éditorial.
+
 ## Décision validée — FC1, moins de vingt lectures terminées
 
 Le mécanisme d’ED3 et les conditions avancées de « Première lumière » sont déjà fixés. Il reste à définir ce que le compteur public mesure et à quel niveau une œuvre cesse d’être confidentielle, sans rendre presque tout le catalogue admissible au lancement ni dépendre d’un seuil mouvant et opaque.

@@ -16,13 +16,15 @@ export type SocialWork = {
   coverTone: string;
 };
 
+export type PublicListId = "places" | "lights";
+
 type DiscoverProps = {
   works: readonly SocialWork[];
   statuses: Record<string, string | null | undefined>;
   onOpenWork: (id: string) => void;
   onAddToRead: (id: string) => void;
   onOpenProfile: (owner: "self" | "lina") => void;
-  onOpenList: () => void;
+  onOpenList: (listId?: PublicListId) => void;
   followingLina: boolean;
   onToggleFollow: () => void;
   initialQuery?: string;
@@ -210,7 +212,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
                 <button className="identity-link" type="button" onClick={() => onOpenProfile("lina")}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Lectrice et autrice de la liste</small></span></button>
                 <button className="quiet-action" type="button" aria-pressed={followingLina} onClick={onToggleFollow}>{followingLina ? "Suivie" : "Suivre"}</button>
               </div>
-              <button className="primary-action" type="button" onClick={onOpenList}>Ouvrir la liste</button>
+              <button className="primary-action" type="button" onClick={() => onOpenList("places")}>Ouvrir la liste</button>
             </div>
             <div className="list-cover-row" aria-hidden="true">
               {["miroirs", "rivage", "cartographies", "lucioles"].map((id) => <CompactCover key={id} work={workById(id)} className="list-preview-cover" />)}
@@ -284,7 +286,7 @@ type ProfileProps = {
   onToggleFollow: () => void;
   onOpenWork: (id: string) => void;
   onOpenHonors: () => void;
-  onOpenList: () => void;
+  onOpenList: (listId: PublicListId) => void;
   photo: ProfilePhoto | null;
   onEditPhoto: () => void;
   onRemovePhoto: () => void;
@@ -339,8 +341,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         </section>
         <section className="profile-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
-          <button className="profile-list-entry" type="button" onClick={onOpenList}><span><strong>Habiter les lieux qui nous quittent</strong><small>6 œuvres · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
-          <div className="profile-list-entry static-entry"><span><strong>Veilles, fenêtres et lumières tardives</strong><small>4 œuvres · Des présences aperçues lorsque la ville se tait.</small></span></div>
+          <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>6 œuvres · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
+          <button className="profile-list-entry" type="button" onClick={() => onOpenList("lights")}><span><strong>Veilles, fenêtres et lumières tardives</strong><small>4 œuvres · Des présences aperçues lorsque la ville se tait.</small></span><span aria-hidden="true">→</span></button>
         </section>
         <section className="profile-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
@@ -385,6 +387,22 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
   const [selected, setSelected] = useState<BadgeId | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);
+  const itemRows = Array.from({ length: Math.ceil(items.length / 2) }, (_, index) => items.slice(index * 2, index * 2 + 2));
+
+  const renderDetail = (id: BadgeId, placement: "desktop" | "mobile") => {
+    const badge = badgeCatalog[id];
+    const locked = Boolean(items.find((item) => item.id === id)?.locked);
+    const highlighted = showcase.includes(id);
+
+    return (
+      <div className={`honor-detail honor-detail-${placement}`} role="status">
+        <strong>{badge.title}</strong>
+        <p>{badge.description}</p>
+        {isSelf && locked && "progress" in badge && <span>{badge.progress}</span>}
+        {isSelf && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
+      </div>
+    );
+  };
 
   useEffect(() => {
     const closeOutside = (event: globalThis.PointerEvent) => {
@@ -403,25 +421,25 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         <p>{isSelf ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : "Les dernières évolutions et les honneurs obtenus par Lina. Ses objectifs en cours restent privés."}</p>
       </header>
       <div ref={wallRef} className="honor-wall" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }}>
-        {items.map(({ id, locked }) => {
-          const badge = badgeCatalog[id];
-          const open = selected === id;
-          const highlighted = showcase.includes(id);
+        {itemRows.map((row, rowIndex) => {
+          const selectedInRow = row.find((item) => item.id === selected)?.id ?? null;
           return (
-            <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
-              <button type="button" className="honor-badge-button" aria-expanded={open} onClick={() => setSelected(open ? null : id)} onMouseEnter={() => setSelected(id)} onFocus={() => setSelected(id)}>
-                <BadgeImage badgeId={id} locked={locked} />
-                <span>{badge.title}</span>
-                {locked && <small>Prochain</small>}
-              </button>
-              {open && (
-                <div className="honor-detail" role="status">
-                  <strong>{badge.title}</strong>
-                  <p>{badge.description}</p>
-                  {isSelf && locked && "progress" in badge && <span>{badge.progress}</span>}
-                  {isSelf && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
-                </div>
-              )}
+            <div className="honor-row" key={`honor-row-${rowIndex}`}>
+              {row.map(({ id, locked }) => {
+                const badge = badgeCatalog[id];
+                const open = selected === id;
+                return (
+                  <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
+                    <button type="button" className="honor-badge-button" aria-expanded={open} onClick={() => setSelected(open ? null : id)} onMouseEnter={() => setSelected(id)} onFocus={() => setSelected(id)}>
+                      <BadgeImage badgeId={id} locked={locked} />
+                      <span>{badge.title}</span>
+                      {locked && <small>Prochain</small>}
+                    </button>
+                    {open && renderDetail(id, "desktop")}
+                  </div>
+                );
+              })}
+              {selectedInRow && renderDetail(selectedInRow, "mobile")}
             </div>
           );
         })}
@@ -431,15 +449,28 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack }: { works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void }) {
-  const chosen = ["miroirs", "rivage", "cartographies", "lucioles", "atlas", "sel"].map((id) => works.find((work) => work.id === id) ?? works[0]);
+export function PublicListView({ listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+  const lists = {
+    places: {
+      title: "Habiter les lieux qui nous quittent",
+      description: "Six récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.",
+      workIds: ["miroirs", "rivage", "cartographies", "lucioles", "atlas", "sel"],
+    },
+    lights: {
+      title: "Veilles, fenêtres et lumières tardives",
+      description: "Quatre récits de présences entrevues lorsque la ville se tait, entre fenêtres éclairées, attentes nocturnes et rencontres qui ne pouvaient avoir lieu en plein jour.",
+      workIds: ["atlas", "lucioles", "miroirs", "sel"],
+    },
+  } satisfies Record<PublicListId, { title: string; description: string; workIds: string[] }>;
+  const list = lists[listId];
+  const chosen = list.workIds.map((id) => works.find((work) => work.id === id) ?? works[0]);
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
-      <button className="text-action back-action" type="button" onClick={onBack}>← Retour à Découvrir</button>
+      <button className="text-action back-action" type="button" onClick={onBack}>← {backLabel}</button>
       <header className="public-list-heading">
         <p className="eyebrow">Liste publique</p>
-        <h1 id="list-page-title">Habiter les lieux qui nous quittent</h1>
-        <p>Six récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.</p>
+        <h1 id="list-page-title">{list.title}</h1>
+        <p>{list.description}</p>
         <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Autrice de la liste</small></span></button><button className="quiet-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button></div>
       </header>
       <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{index % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div>

@@ -60,13 +60,14 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Chaque axe possède une silhouette et une couleur propres ; chaque honneur possède sa forme, sa couleur et son symbole.
 - [ ] Les évolutions se lisent dans les ornements et la matière sans se limiter à l’ajout de pointes décoratives.
 - [ ] Sur desktop, survoler puis focaliser un badge au clavier ; la mini-fiche doit apparaître sans masquer inutilement le mur.
-- [ ] Sur mobile, toucher un badge ; HMT1 insère son détail sous la rangée concernée. Toucher un second badge puis l’extérieur pour vérifier le déplacement et la fermeture.
+- [ ] Sur mobile, toucher le badge acquis d’une paire ; HMT1 doit insérer son détail sous les deux badges sans éjecter, repousser ni changer de colonne le badge suivant. Répéter avec le badge suivant, puis toucher l’extérieur pour vérifier le déplacement et la fermeture.
 - [ ] Sur les prochains badges, lire une ligne MP1 concise ; aucune jauge globale ou condition privée ne doit être publique.
 - [ ] Équiper un titre ; vérifier sa mise à jour immédiate sur le profil et dans le menu du compte.
 - [ ] Vérifier la compréhension des deux commandes : « Afficher ce titre sous mon nom » modifie l’appellation, tandis que « Afficher ce badge sur mon profil » modifie la sélection d’insignes.
 - [ ] Choisir jusqu’à trois badges à afficher ; une quatrième sélection doit être refusée clairement, sans dépasser trois.
 - [ ] Ouvrir la galerie de Lina ; n’y voir que ses acquis, sans badge grisé, compteur, objectif ou titre verrouillé.
 - [ ] Examiner les vingt-et-un assets à plusieurs tailles et sur écran dense : contours, métal, symboles et textes voisins restent nets.
+- [ ] Depuis le profil de Lina, ouvrir successivement ses deux listes ; chacune doit afficher son propre titre et son propre nombre d’œuvres, puis revenir au profil. Depuis Découvrir, vérifier que la liste publique revient bien à Découvrir.
 
 ## 6. Critiques et conversations
 

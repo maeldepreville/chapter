@@ -662,6 +662,13 @@ Dernière mise à jour : 25 août 2026
 - Le déplacement de la grille sera vérifié lors du test de jalon.
 - Statut : **validé**.
 
+### Correctif de recette — stabilité des paires HMT1 et listes de profil
+
+- Sur mobile, les badges sont structurés en rangées explicites de deux éléments. La fiche tactile appartient à la rangée entière et s’insère seulement après la paire « acquis → suivant » ; l’ouverture du badge acquis ne peut donc plus éjecter ou déplacer son prochain badge.
+- Les deux listes visibles sur le profil de Lina sont de véritables destinations cliquables. « Veilles, fenêtres et lumières tardives » ouvre un contenu propre de quatre œuvres au lieu de rester une entrée statique de démonstration.
+- Le retour d’une liste ouverte depuis le profil ramène au profil de Lina ; une liste ouverte depuis Découvrir conserve son retour vers Découvrir.
+- Statut : **validé par retour de recette et implémenté**.
+
 ### FC1 — Moins de vingt lectures terminées
 
 - Une œuvre est confidentielle tant que moins de vingt comptes l’ont marquée « Lu » ; les statuts « À lire » et « En cours » ne comptent pas.

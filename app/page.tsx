@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
@@ -10,6 +10,7 @@ type View = "work" | "journal" | "library" | "discover" | "profile" | "honors" |
 type LibraryFilter = "Toutes" | ReadingStatus;
 type LibrarySort = "activity" | "title" | "author";
 type StatusOrigin = "opening" | "journal" | "library";
+type PublicListOrigin = "discover" | "profile";
 type Feedback = {
   kind: "publication" | "removal" | "saved";
   label: string;
@@ -285,6 +286,8 @@ export default function Home() {
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
   const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
+  const [publicListId, setPublicListId] = useState<PublicListId>("places");
+  const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const previousPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
@@ -332,6 +335,12 @@ export default function Home() {
   const openProfile = (owner: "self" | "lina") => {
     setProfileOwner(owner);
     openView("profile");
+  };
+
+  const openPublicList = (listId: PublicListId, origin: PublicListOrigin) => {
+    setPublicListId(listId);
+    setPublicListOrigin(origin);
+    openView("list");
   };
 
   const openDiscoverWithQuery = (query: string) => {
@@ -697,7 +706,7 @@ export default function Home() {
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
             onOpenProfile={openProfile}
-            onOpenList={() => openView("list")}
+            onOpenList={() => openPublicList("places", "discover")}
             followingLina={followingLina}
             onToggleFollow={() => setFollowingLina((value) => !value)}
             initialQuery={discoverInitialQuery}
@@ -710,7 +719,7 @@ export default function Home() {
             onToggleFollow={() => setFollowingLina((value) => !value)}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onOpenHonors={() => openView("honors")}
-            onOpenList={() => openView("list")}
+            onOpenList={(listId) => openPublicList(listId, "profile")}
             photo={profilePhoto}
             onEditPhoto={() => setPhotoCropOpen(true)}
             onRemovePhoto={() => setProfilePhoto(null)}
@@ -720,7 +729,7 @@ export default function Home() {
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
         ) : currentView === "list" ? (
-          <PublicListView works={works} following={followingLina} onToggleFollow={() => setFollowingLina((value) => !value)} onOpenProfile={() => openProfile("lina")} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => openView("discover")} />
+          <PublicListView listId={publicListId} works={works} following={followingLina} onToggleFollow={() => setFollowingLina((value) => !value)} onOpenProfile={() => openProfile("lina")} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile("lina") : openView("discover")} backLabel={publicListOrigin === "profile" ? "Retour au profil de Lina" : "Retour à Découvrir"} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
