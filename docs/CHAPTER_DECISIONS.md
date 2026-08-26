@@ -689,7 +689,9 @@ Dernière mise à jour : 26 août 2026
 - QRP1 est retenue comme base pour maintenir les trois utilitaires hors de la carte, mais sa première disposition est révisée par QRP1b : la commande de face garde exactement la même position sous le bord droit au recto comme au verso. « Copier le lien » et « Partager » occupent une seconde ligne extérieure propre au verso et ne peuvent jamais déplacer ce repère.
 - Sur mobile, les deux actions de partage peuvent se replier ensemble sur leur propre ligne sans modifier le repère de retournement. QRP1b remplace donc le rail unique initial de QRP1.
 - Le périmètre consolidé de QR1 est explicitement autorisé : véritable QR généré localement, route publique de Maël distincte des commandes propriétaires, copie, partage natif avec repli, retour automatique au recto à la sortie et contrôles responsive/accessibilité.
-- Statut : **QR1, RTC1, RTG1, QRV1, QRT1, QRM1b et QRP1b validés ; implémentation autorisée et en cours de validation technique**.
+- L’implémentation génère le code sans service tiers, encode `https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville`, conserve le repère de retournement entre les faces et réserve aux propriétaires les commandes de photo et de partage de leur propre carte. La route scannée rend le portrait public de Maël et uniquement ses honneurs acquis.
+- Le checkpoint 20 a été publié après réussite du lint, de la construction de production et de huit tests automatisés. La consultation depuis un appareil tiers reste soumise à la politique d’accès du Site jusqu’aux véritables comptes et règles de publication.
+- Statut : **QR1, RTC1, RTG1, QRV1, QRT1, QRM1b et QRP1b validés, implémentés et publiés ; recette utilisateur ouverte**.
 
 ### HMT1 — Fiche tactile insérée sous la rangée
 

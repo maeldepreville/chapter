@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1 et correctif PDR1B publiés — QR1 autorisé et en validation technique**
+Statut : **implémentation JI1, correctif PDR1B et QR1 publiés — évaluation utilisateur ouverte**
 Dernière mise à jour : 26 août 2026
 
 ## Objectif de la phase
@@ -841,7 +841,9 @@ QRP1 est retenue comme base : « Copier le lien », « Partager » et la command
 
 La commande de face demeure seule sur la ligne RTG1 immédiatement sous la carte, alignée à droite et précédée de son filet. Au verso seulement, « Copier le lien » et « Partager » apparaissent sur une seconde ligne extérieure, visuellement secondaire. Ils ne modifient ni la largeur, ni l’alignement, ni la position verticale de la commande de face. Sur mobile, les deux actions peuvent se replier ensemble sans déplacer ce repère. QRP1b remplace ainsi le rail unique initial de QRP1 et clôt les arbitrages visuels de QR1.
 
-Le périmètre consolidé a ensuite reçu une autorisation explicite d’implémentation et de publication. Il comprend le véritable QR généré sans service tiers, une route publique dédiée à Maël qui ne rend aucune commande propriétaire, la copie avec confirmation discrète, le partage natif avec copie de repli, le retour au recto lors de la sortie du profil et les adaptations clavier, tactile, mobile et réduction des animations. La validation technique et le checkpoint restent à achever.
+Le périmètre consolidé a ensuite reçu une autorisation explicite d’implémentation et de publication. Il comprend le véritable QR généré sans service tiers, une route publique dédiée à Maël qui ne rend aucune commande propriétaire, la copie avec confirmation discrète, le partage natif avec copie de repli, le retour au recto lors de la sortie du profil et les adaptations clavier, tactile, mobile et réduction des animations.
+
+QR1 est implémenté et publié dans le checkpoint 20. Le QR encode `https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville` ; cette route restitue le portrait public de Maël, ses listes, ses traces et uniquement ses distinctions acquises, sans recadrage photo, retrait, retournement ni progression privée. Le lint, la construction de production et huit tests automatisés passent. La recette manuelle couvre notamment la lecture du code depuis un second appareil ayant accès au Site, QRM1b, QRP1b, la copie, le partage natif et son repli. L’ouverture anonyme à des personnes extérieures reste tributaire de la future politique d’accès et des comptes réels, conformément à la limite déjà posée par QR1.
 
 ## Décision validée — HMT1, fiche tactile insérée sous la rangée
 
