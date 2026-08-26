@@ -1,7 +1,7 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
 Statut : **implémentation JI1 publiée — évaluation utilisateur ouverte**
-Dernière mise à jour : 25 août 2026
+Dernière mise à jour : 26 août 2026
 
 ## Objectif de la phase
 
@@ -904,6 +904,12 @@ Le bouton « Choisir une image » est désormais centré explicitement dans l’
 ## Asset validé — poinçon de la carte de lecteur
 
 La reconstruction CSS du sceau est remplacée par le poinçon généré puis fourni par le porteur du projet. Son fond transparent est conservé ; les marges vides de génération sont retirées et une marge technique régulière est réintroduite avant une optimisation WebP sans perte. L’asset est affiché comme une véritable marque imprimée dans le coin supérieur droit de la carte, légèrement plus grand sur desktop que sur mobile, sans chevaucher le libellé de la carte ni les informations du portrait.
+
+## Correctif de recette — badges tactiles et invitation de date
+
+HMT1 distingue désormais les modalités d’entrée : le survol ouvre une fiche uniquement avec un pointeur fin, le focus visible la révèle au clavier et le toucher sélectionne le badge demandé en une seule transition d’état. Le passage d’un acquis à son prochain badge, y compris dans une autre rangée, ne doit plus refermer immédiatement la nouvelle fiche.
+
+Le relais SD2 était rendu derrière son propre voile sur mobile. Il devient un panneau inférieur visible au même niveau que le sélecteur de statut, tandis que sa version desktop reste intégrée près du contrôle d’origine. Le statut est toujours enregistré avant l’invitation facultative et « Plus tard » ferme celle-ci sans annuler le statut.
 
 ## Arbitrages à mener
 

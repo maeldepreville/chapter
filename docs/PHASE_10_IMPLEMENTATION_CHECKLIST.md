@@ -61,6 +61,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Les évolutions se lisent dans les ornements et la matière sans se limiter à l’ajout de pointes décoratives.
 - [ ] Sur desktop, survoler puis focaliser un badge au clavier ; la mini-fiche doit apparaître sans masquer inutilement le mur.
 - [ ] Sur mobile, toucher le badge acquis d’une paire ; HMT1 doit insérer son détail sous les deux badges sans éjecter, repousser ni changer de colonne le badge suivant. Répéter avec le badge suivant, puis toucher l’extérieur pour vérifier le déplacement et la fermeture.
+- [ ] Toujours sur mobile, ouvrir un acquis puis toucher immédiatement son évolution suivante et un badge de la rangée voisine ; chaque fiche demandée doit remplacer la précédente dès le premier toucher, sans fermeture parasite.
 - [ ] Sur les prochains badges, lire une ligne MP1 concise ; aucune jauge globale ou condition privée ne doit être publique.
 - [ ] Équiper un titre ; vérifier sa mise à jour immédiate sur le profil et dans le menu du compte.
 - [ ] Vérifier la compréhension des deux commandes : « Afficher ce titre sous mon nom » modifie l’appellation, tandis que « Afficher ce badge sur mon profil » modifie la sélection d’insignes.
@@ -88,6 +89,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Vérifier les libellés de boutons et états actifs avec un lecteur d’écran ou l’inspecteur d’accessibilité.
 - [ ] Activer la réduction des animations du système ; l’interface reste claire sans dépendre d’un mouvement.
 - [ ] Répéter rapidement abonnements, ouvertures, changements de badge et recadrages ; aucun état visuel obsolète ne doit subsister.
+- [ ] Depuis une œuvre et depuis la Bibliothèque mobile, choisir « En cours » puis « Lu » ; le panneau de date doit apparaître au-dessus du voile et proposer « Aujourd’hui », « Choisir » et « Plus tard » sans bloquer la conservation du statut.
 
 ## 8. Limites assumées du prototype
 

@@ -694,7 +694,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     border-radius: 0.7rem 0.7rem 0 0;
   }
   .status-backdrop { z-index: 60; background: rgb(36 33 31 / 0.28); }
-  .date-invitation { display: grid; width: 100%; }
+  .date-invitation {
+    position: fixed;
+    right: 0;
+    bottom: calc(4.4rem + env(safe-area-inset-bottom));
+    left: 0;
+    z-index: 70;
+    display: grid;
+    width: 100%;
+    margin: 0;
+    padding: 1rem 1.1rem calc(1rem + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0.7rem 0.7rem 0 0;
+    box-shadow: 0 -1rem 2.4rem rgb(36 33 31 / 0.12);
+  }
   .date-invitation-actions { justify-content: space-between; }
   .overlay { align-items: end; padding: 0; }
   .editor-modal, .search-panel {

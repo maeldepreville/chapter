@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 25 août 2026
+Dernière mise à jour : 26 août 2026
 
 ## Cadre de collaboration
 
@@ -746,6 +746,13 @@ Dernière mise à jour : 25 août 2026
 - L’image conserve sa transparence, est recadrée sur son contenu puis optimisée sans perte en WebP afin de rester nette à petite taille.
 - Le poinçon est légèrement plus grand sur desktop que sur mobile et demeure confiné au coin supérieur droit, sans chevaucher les informations de la carte.
 - Statut : **asset fourni, validé et intégré**.
+
+### Correctif de recette — enchaînement tactile des badges et relais de date mobile
+
+- Le toucher d’un badge ne déclenche plus successivement son état de focus puis son action de clic. Le survol automatique est réservé aux pointeurs fins capables de survol ; au clavier, le focus visible ouvre la fiche ; sur écran tactile, chaque pression sélectionne directement le badge visé.
+- Il devient ainsi possible de passer d’un badge acquis à son évolution suivante, y compris entre deux rangées, sans fermeture parasite ni fiche obsolète.
+- Le relais SD2 de date conserve son comportement intégré sur desktop. Sur mobile, après le choix « En cours » ou « Lu », il prend explicitement la place du panneau inférieur au-dessus du voile, avec « Aujourd’hui », « Choisir » et « Plus tard ».
+- Statut : **validé par retour de recette et implémenté**.
 
 ## Décisions validées
 

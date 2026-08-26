@@ -430,7 +430,22 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
                 const open = selected === id;
                 return (
                   <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
-                    <button type="button" className="honor-badge-button" aria-expanded={open} onClick={() => setSelected(open ? null : id)} onMouseEnter={() => setSelected(id)} onFocus={() => setSelected(id)}>
+                    <button
+                      type="button"
+                      className="honor-badge-button"
+                      aria-expanded={open}
+                      onClick={(event) => {
+                        const preciseHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+                        if (preciseHover || event.detail === 0) setSelected(id);
+                        else setSelected((current) => current === id ? null : id);
+                      }}
+                      onMouseEnter={() => {
+                        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelected(id);
+                      }}
+                      onFocus={(event) => {
+                        if (event.currentTarget.matches(":focus-visible")) setSelected(id);
+                      }}
+                    >
                       <BadgeImage badgeId={id} locked={locked} />
                       <span>{badge.title}</span>
                       {locked && <small>Prochain</small>}
