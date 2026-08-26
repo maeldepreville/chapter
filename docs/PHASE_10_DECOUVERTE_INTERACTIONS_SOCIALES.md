@@ -893,7 +893,7 @@ La recette suivante invalide trois détails de la version précédente :
 
 ## Ajustement de recette — centrage de l’import et finition du sceau
 
-Le bouton « Choisir une image » est désormais centré explicitement dans l’état vide du panneau photo, sans dépendre de l’alignement générique des commandes de fichier. Le sceau O2 conserve sa silhouette circulaire et son monogramme : le « C » est centré seul dans la double empreinte, tandis qu’un point brique légèrement agrandi est détaché sous les cercles, comme la ponctuation placée sous un tampon. La rotation de l’ensemble est supprimée pour garantir cet alignement optique. Les commandes « Ajouter une photo » et « Recadrer · Retirer » forment enfin un groupe centré sous le portrait sur desktop comme sur mobile.
+Le bouton « Choisir une image » est désormais centré explicitement dans l’état vide du panneau photo, sans dépendre de l’alignement générique des commandes de fichier. Le sceau O2 conserve sa silhouette circulaire et son monogramme : le « C » est isolé dans sa propre couche afin de recevoir un centrage optique indépendant de la ponctuation. Le point brique légèrement agrandi est placé plus bas, avec un espace visible sous les cercles, comme la ponctuation détachée sous un tampon. La rotation de l’ensemble reste supprimée. Les commandes « Ajouter une photo » et « Recadrer · Retirer » forment enfin un groupe centré sous le portrait sur desktop comme sur mobile.
 
 ## Arbitrages à mener
 

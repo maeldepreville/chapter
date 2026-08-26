@@ -42,7 +42,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Importer un JPEG, PNG ou WebP de moins de 8 Mo dont le petit côté mesure au moins 512 px.
 - [ ] Avant l’import, vérifier que seule une surface claire de sélection est visible ; le cadre de recadrage ne doit apparaître qu’après le choix d’une image valide.
 - [ ] Dans cet état vide, vérifier que « Choisir une image » est centré horizontalement.
-- [ ] Sur la carte, vérifier que le « C » est centré dans le sceau, que le point brique légèrement agrandi se place sous ses cercles et que l’ensemble reste compact.
+- [ ] Sur la carte, vérifier que le « C » est centré optiquement dans le sceau, que le point brique légèrement agrandi est séparé de ses cercles par un espace visible et que l’ensemble reste compact.
 - [ ] Sans photo puis avec une photo enregistrée, vérifier que « Ajouter une photo » et le groupe « Recadrer · Retirer » sont centrés sous le portrait sur desktop et mobile.
 - [ ] Déplacer l’image à la souris puis au toucher/stylet ; aucun saut ni effet haché ne doit apparaître.
 - [ ] Zoomer avec le curseur, la molette et un pincement tactile ; le cadre doit rester entièrement couvert et l’aperçu circulaire synchronisé.

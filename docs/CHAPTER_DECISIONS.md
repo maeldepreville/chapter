@@ -729,7 +729,7 @@ Dernière mise à jour : 25 août 2026
 ### Ajustement de recette — centrage de l’import et finition du sceau
 
 - Dans l’état vide du panneau photo, « Choisir une image » est centré explicitement dans la surface de sélection ; son ancien alignement hérité à gauche est supprimé.
-- Le sceau conserve son principe, son emplacement et son faible encombrement. Sa finition repose sur une double empreinte ; le « C » est centré indépendamment, tandis qu’un point brique légèrement agrandi est détaché sous les cercles. La rotation précédemment ajoutée est supprimée afin de garantir l’alignement optique demandé.
+- Le sceau conserve son principe, son emplacement et son faible encombrement. Sa finition repose sur une double empreinte ; le « C » possède désormais une couche dédiée avec un centrage optique indépendant, tandis qu’un point brique légèrement agrandi est détaché plus bas sous les cercles avec un espace visible. La rotation précédemment ajoutée reste supprimée.
 - « Ajouter une photo » ainsi que le groupe « Recadrer · Retirer » sont centrés sous le portrait sur desktop et mobile.
 - Statut : **validé par retour de recette et implémenté**.
 
