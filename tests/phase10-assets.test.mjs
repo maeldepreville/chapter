@@ -50,3 +50,10 @@ test("preserves every validated PNG as a source master", async () => {
 
   assert.deepEqual(names, expectedBadges);
 });
+
+test("ships the approved Chapter profile seal", async () => {
+  const bytes = await readFile(new URL("../public/branding/chapter-profile-seal.webp", import.meta.url));
+  assert.equal(bytes.subarray(0, 4).toString("ascii"), "RIFF");
+  assert.equal(bytes.subarray(8, 12).toString("ascii"), "WEBP");
+  assert.ok(bytes.byteLength > 30_000, "the profile seal should contain the approved detailed asset");
+});

@@ -895,6 +895,10 @@ La recette suivante invalide trois détails de la version précédente :
 
 Le bouton « Choisir une image » est désormais centré explicitement dans l’état vide du panneau photo, sans dépendre de l’alignement générique des commandes de fichier. Le sceau O2 conserve sa silhouette circulaire et son monogramme : le « C » est isolé dans sa propre couche afin de recevoir un centrage optique indépendant de la ponctuation. Le point brique légèrement agrandi est placé plus bas, avec un espace visible sous les cercles, comme la ponctuation détachée sous un tampon. La rotation de l’ensemble reste supprimée. Les commandes « Ajouter une photo » et « Recadrer · Retirer » forment enfin un groupe centré sous le portrait sur desktop comme sur mobile.
 
+## Asset validé — poinçon de la carte de lecteur
+
+La reconstruction CSS du sceau est remplacée par le poinçon généré puis fourni par le porteur du projet. Son fond transparent est conservé ; les marges vides de génération sont retirées et une marge technique régulière est réintroduite avant une optimisation WebP sans perte. L’asset est affiché comme une véritable marque imprimée dans le coin supérieur droit de la carte, légèrement plus grand sur desktop que sur mobile, sans chevaucher le libellé de la carte ni les informations du portrait.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

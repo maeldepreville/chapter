@@ -325,7 +325,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           </div>
           <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
           <p className="profile-intro">{profile.intro}</p>
-          <span className="profile-card-seal" aria-hidden="true"><span className="profile-card-seal-letter">C</span><span className="profile-card-seal-dot" /></span>
+          <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
         </div>
         <section className="profile-honors" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>

@@ -733,6 +733,13 @@ Dernière mise à jour : 25 août 2026
 - « Ajouter une photo » ainsi que le groupe « Recadrer · Retirer » sont centrés sous le portrait sur desktop et mobile.
 - Statut : **validé par retour de recette et implémenté**.
 
+### Asset validé — poinçon de la carte de lecteur
+
+- Le sceau reconstruit en CSS est abandonné au profit de l’asset généré et fourni par le porteur du projet.
+- L’image conserve sa transparence, est recadrée sur son contenu puis optimisée sans perte en WebP afin de rester nette à petite taille.
+- Le poinçon est légèrement plus grand sur desktop que sur mobile et demeure confiné au coin supérieur droit, sans chevaucher les informations de la carte.
+- Statut : **asset fourni, validé et intégré**.
+
 ## Décisions validées
 
 ### Positionnement du premier lot
