@@ -41,7 +41,9 @@ Dernière mise à jour : 27 août 2026
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
 - Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
-- État actuel : phase 10 ouverte ; cadrage de la découverte et des interactions sociales en cours.
+- Phase 10 — découverte et interactions sociales : **implémentée et publiée, avec PDR1B, QR1 et HDE1 ; recette utilisateur ouverte, clôture formelle en attente**.
+- Phase 11 — états transversaux, cohérence, responsive et accessibilité : **prévue, non encore ouverte**. Le plan initial s'arrête à cette consolidation ; l'authentification, l'onboarding et les autres fonctions exclues nécessiteront un périmètre ultérieur explicitement validé.
+- Organisation confirmée le 27 août : terminer la recette de phase 10 dans le chat actuel ; la phase 11 sera entamée dans un autre chat du projet. Le bilan et les points de reprise sont conservés dans [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md), sans anticiper la validation finale ni ouvrir la phase 11.
 - L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
 - Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md), [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
@@ -806,6 +808,13 @@ Dernière mise à jour : 27 août 2026
 - Le relais SD2 de date conserve son comportement intégré sur desktop. Sur mobile, après le choix « En cours » ou « Lu », il prend explicitement la place du panneau inférieur au-dessus du voile, avec « Aujourd’hui », « Choisir » et « Plus tard ».
 - Statut : **validé par retour de recette et implémenté**.
 
+### Correctif de recette — abonnement visible et commandes de conversation
+
+- Sur un profil visiteur, « Suivi » adopte un fond gris clair et un texte brique, y compris au survol ; désactiver l'abonnement rétablit le bouton « Suivre » brique à texte clair. Le libellé et l'état accessible restent synchronisés.
+- « Voir la conversation · nombre » et « Répondre » sont séparés par un espacement explicite, avec retour à la ligne si nécessaire sur mobile. Développer une conversation conserve l'action de réponse après ses messages.
+- Limite de démonstration vérifiée : parmi les auteurs de critiques, seule Lina possède un profil visiteur raccordé. Théo et Inès sont des contenus d'exemple sans destination ; aucun profil supplémentaire n'est ajouté dans ce correctif.
+- Statut : **demandé en recette et implémenté ; vérification et publication en cours**. La phase 10 reste ouverte et la phase 11 n'est pas entamée.
+
 ## Décisions validées
 
 ### Positionnement du premier lot
@@ -924,6 +933,7 @@ Leur forme exacte — page, panneau, dialogue ou autre interaction — n’est p
 
 ### Comportements de navigation
 
+- Le 27 août, l'utilisateur confirme le maintien du logo « Chapter. » comme retour au Journal dans l'espace connecté. Aucune nouvelle page d'accueil n'est demandée ; le comportement existant reste inchangé. L'accueil public et l'entrée dans le produit demeurent hors du premier lot, sans ajout automatique à la phase 11.
 - Pendant la saisie, la recherche propose une courte liste d’œuvres et d’auteurs ; sélectionner une suggestion ouvre directement sa destination, tandis qu’Entrée ouvre l’écran complet des résultats.
 - Sur la page d’une œuvre, la navigation globale reste visible mais aucune destination principale n’est marquée comme active, car l’œuvre peut être atteinte depuis plusieurs origines.
 - L’en-tête desktop et la barre inférieure mobile restent visibles pendant le défilement.

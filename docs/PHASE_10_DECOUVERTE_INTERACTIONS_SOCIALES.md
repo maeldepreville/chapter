@@ -992,6 +992,16 @@ HMT1 distingue désormais les modalités d’entrée : le survol ouvre une fiche
 
 Le relais SD2 était rendu derrière son propre voile sur mobile. Il devient un panneau inférieur visible au même niveau que le sélecteur de statut, tandis que sa version desktop reste intégrée près du contrôle d’origine. Le statut est toujours enregistré avant l’invitation facultative et « Plus tard » ferme celle-ci sans annuler le statut.
 
+## Correctif de recette — abonnement visible et commandes de conversation
+
+Le retour utilisateur du 27 août précise l'état du bouton d'abonnement dans le profil : « Suivre » reste brique à texte clair, tandis que « Suivi » utilise un fond gris clair et un texte brique. Le survol et l'appui conservent cette distinction ; le changement reste immédiatement réversible et `aria-pressed` reflète l'état effectif.
+
+Sous les critiques, le retrait de la marge gauche sur mobile supprimait aussi la seule séparation entre « Voir la conversation · 2 » et « Répondre ». Une rangée souple avec un espacement horizontal et vertical explicite remplace cette dépendance aux marges. Les commandes passent sur deux lignes si nécessaire ; après développement, la réponse reste proposée sous les messages. Les états sans réponse et conversation fermée sont conservés.
+
+La consultation des auteurs de critiques est limitée par les fixtures actuelles : Lina est reliée à un profil visiteur, contrairement à Théo et Inès. Ce point est confirmé comme une limite du prototype, pas un incident de navigation. Aucun nouveau profil n'est créé dans ce lot.
+
+Statut : correctifs implémentés, vérification et publication en cours. La recette de phase 10 continue ; la phase 11 reste réservée au prochain chat.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.
@@ -1005,6 +1015,16 @@ Le relais SD2 était rendu derrière son propre voile sur mobile. Il devient un 
 9. Décliner l’ensemble sur desktop et mobile, puis préparer la checklist exhaustive du jalon — **DR1D et DR1M1 validées pour Découvrir ; PRM1 validée pour le profil responsive puis révisée sur desktop par PDR1B ; HMT1 validée pour le comportement tactile du mur d’insignes**.
 10. Calibrer les paramètres explicitement reportés avant l’implémentation — **FC1 validée pour la fenêtre confidentielle ED3 ; PFP1 validée pour la photo de profil, avec interaction haute définition et fluide**.
 11. Choisir le découpage de l’implémentation et préparer la checklist — **JI1 validée, autorisée et implémentée ; checklist exhaustive produite**.
+
+## Point de continuité — suite du plan au 27 août
+
+L'utilisateur demande de poursuivre exclusivement la clôture de phase 10 ici et d'entamer la phase 11 dans un autre chat du projet. Le document [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md) rassemble le périmètre livré, les preuves de validation, la dernière recette et les points de reprise. Le lint et les quinze tests automatisés passent à nouveau ; la validation fonctionnelle globale de l'utilisateur reste attendue. Aucune modification d'interface ni nouvelle publication n'est effectuée pendant cette préparation documentaire.
+
+Le retour du logo « Chapter. » au Journal est maintenu à la demande de l'utilisateur ; aucune nouvelle page d'accueil n'est créée. Cette confirmation ne vaut pas clôture globale de la recette de phase 10.
+
+La suite du plan initial est : terminer la recette et obtenir la validation finale de phase 10, puis ouvrir la phase 11 pour l'audit transversal des états limites, des interactions, de la cohérence graphique, du responsive et de l'accessibilité. Les correctifs seront présentés et autorisés avant implémentation, puis soumis à une recette finale exhaustive. Cette phase termine le premier périmètre d'interface sur données simulées ; elle ne transforme pas à elle seule le prototype en service doté de comptes et de persistance réels.
+
+L'authentification, l'onboarding et les autres exclusions ci-dessous restent des sujets de cadrage ultérieurs, sans nouvelle phase numérotée ni implémentation automatiquement autorisée. Le point technique ouvert sur les déclarations Cloudflare du typage global devra être repris dans le bilan de consolidation.
 
 ## Hors périmètre maintenu à ce stade
 

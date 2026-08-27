@@ -286,6 +286,9 @@
 .equipped-title { margin: 0.45rem 0 0; color: var(--brick); font-family: var(--font-editorial); font-size: 1.08rem; }
 .profile-intro { grid-column: 1 / -1; margin: 0.9rem 0 0; padding-top: 0.85rem; color: #5f5a53; border-top: 1px solid rgb(91 77 62 / 0.16); font-family: var(--font-editorial); font-size: 0.9rem; line-height: 1.45; }
 .profile-heading-copy .primary-action { margin-top: 0.7rem; }
+.profile-follow-action[aria-pressed="true"] { color: var(--brick); background: #e9e6e2; }
+.profile-follow-action[aria-pressed="true"]:hover { color: var(--brick-dark); background: #dfdbd6; }
+.profile-follow-action[aria-pressed="true"]:active { background: #d5d0ca; }
 .profile-card-seal { position: absolute; top: 0.48rem; right: 0.52rem; z-index: 1; width: 2.65rem; height: auto; pointer-events: none; opacity: 0.86; }
 .profile-card-back-masthead { width: 100%; }
 .profile-card-qr-field {
@@ -418,6 +421,9 @@
 .compact-review .review-copy { font-size: 1rem; }
 .conversation-toggle,
 .reply-action { margin-left: 3.35rem; }
+.conversation-actions { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1.25rem; margin-left: 3.35rem; }
+.conversation-actions > .text-action { margin: 0; }
+.conversation-actions > .conversation-closed { margin: 0; }
 .reply-preview { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; margin: 1rem 0 0 3.35rem; padding: 0.8rem 0; border-top: 1px solid var(--line); }
 .reply-preview p { margin: 0; color: var(--muted); font-size: 0.82rem; }
 .reply-preview strong { display: block; color: var(--ink); }
@@ -563,6 +569,7 @@
   .public-list-work p { display: none; }
   .reply-preview,
   .reply-list,
+  .conversation-actions,
   .conversation-toggle,
   .reply-action,
   .conversation-closed,

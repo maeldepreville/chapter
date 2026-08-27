@@ -378,7 +378,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 <div className="profile-heading-copy">
                   <p className="eyebrow">{isOwnProfile ? "Votre portrait" : "Portrait de lecteur"}</p>
                   <p className="equipped-title">{profile.title}</p>
-                  {!isOwnProfile && <button className="primary-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}
+                  {!isOwnProfile && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}
                 </div>
                 <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
                 <p className="profile-intro">{profile.intro}</p>
@@ -651,6 +651,7 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
     const isExpanded = expanded.includes(review.id);
     const isClosed = closed.includes(review.id);
     const latest = reviewReplies.at(-1);
+    const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>;
     return (
       <article className={`review social-review ${compact ? "compact-review" : ""}`} key={review.id}>
         <header className="review-header">
@@ -661,9 +662,12 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
         <p className="review-copy">{review.text}</p>
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
         {latest && !isExpanded && <div className="reply-preview"><span className="avatar">{latest.initials}</span><p><strong>{latest.name}</strong>{latest.text}</p></div>}
-        {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
+        <div className="conversation-actions">
+          {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
+          {!isExpanded && replyAction}
+        </div>
         {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => <article key={reply.id} className="reply"><span className="avatar">{reply.initials}</span><div><header><strong>{reply.name}</strong><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.name === "Maël Depréville" ? <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply({ reviewId: review.id, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.id]: (current[review.id] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo({ name: reply.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedNames((current) => [...current, reply.name]); setNotice(`${reply.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>)}</div>}
-        {isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>}
+        {isExpanded && <div className="conversation-actions">{replyAction}</div>}
         {composer === review.id && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.id)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
       </article>
     );

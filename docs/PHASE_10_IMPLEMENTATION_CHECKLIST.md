@@ -38,6 +38,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur mobile, vérifier que PDR1B restitue l’ordre continu carte → honneurs → œuvres de chevet → listes → traces, sans cartes écrasées ni sections confondues.
 - [ ] Le titre « Chapitres d’honneur → » ouvre bien la galerie ; seuls trois badges acquis sont montrés sur le profil.
 - [ ] Sur le profil de Lina, suivre/ne plus suivre reste réversible et aucune progression privée n’apparaît.
+- [ ] Après « Suivre », vérifier que « Suivi » présente un fond gris clair et un texte brique, y compris au survol ; un second clic rétablit le fond brique et le texte clair. Refaire le cycle sur mobile.
 - [ ] Ouvrir sa liste publique autonome, une œuvre de la liste et son profil ; le rôle du nom d’auteur et celui du bouton d’abonnement restent distincts.
 
 ## 4. Carte recto-verso QR1
@@ -98,6 +99,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Sur une œuvre riche en échanges, repérer d’abord le groupe des critiques de personnes suivies, puis le flux général.
 - [ ] Sur l’œuvre sans échange communautaire, obtenir un état vide sobre ; sur l’œuvre à échange rare, voir une seule critique sans mise en scène artificielle.
 - [ ] Sur une critique commentée, voir la réponse la plus récente et le nombre total, puis développer et replier la conversation.
+- [ ] À 320 px puis sur desktop, vérifier un espace net entre « Voir la conversation · 2 » et « Répondre » ; si les commandes passent sur deux lignes, elles restent séparées. Après développement, « Répondre » reste sous les messages. Vérifier aussi une critique sans réponse et une conversation fermée.
 - [ ] Vérifier RP1 : toutes les réponses forment une chronologie plate, sans niveau imbriqué.
 - [ ] Répondre en ligne ; ajouter une mention ou citer le contexte, publier puis retrouver le message dans la conversation.
 - [ ] Modifier puis supprimer une de ses réponses.
@@ -117,6 +119,7 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 ## 9. Limites assumées du prototype
 
 - [ ] Considérer les données, abonnements, signalements, blocages, titres et publications comme locaux à la session : aucune persistance distante n’est attendue.
+- [ ] Dans les critiques, seul l'avatar de Lina est relié à un profil visiteur ; Théo et Inès sont encore des auteurs d'exemple sans profil navigable. Leur absence de destination est une limite documentée, non une panne.
 - [ ] La route du profil de Maël est directement adressable, mais sa consultation depuis un appareil tiers reste soumise à la politique d’accès du Site ; l’accès public anonyme définitif dépendra des futurs comptes et règles de publication.
 - [ ] Ne pas évaluer dans ce jalon l’authentification, la messagerie privée, les notifications complètes, les listes collaboratives, les classements, le backend de recommandation ou l’administration de modération.
 

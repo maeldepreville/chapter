@@ -30,6 +30,7 @@ test("renders Chapter metadata and primary content", async () => {
   assert.match(html, /<title>Chapter — Every book becomes part of your story<\/title>/i);
   assert.match(html, /Les Cartographies du vent/i);
   assert.match(html, /Mon journal/i);
+  assert.match(html, /class="conversation-actions"><button[^>]*>Voir la conversation · 2<\/button><button[^>]*>Répondre<\/button><\/div>/);
 });
 
 test("renders Maël's public profile route without owner-only controls", async () => {
@@ -56,6 +57,7 @@ test("renders Maël's public profile route without owner-only controls", async (
   const html = await response.text();
   assert.match(html, /Maël Depréville/i);
   assert.match(html, /Portrait public/i);
+  assert.match(html, /class="primary-action profile-follow-action"[^>]*aria-pressed="false"/);
   assert.doesNotMatch(html, /Ajouter une photo/i);
   assert.doesNotMatch(html, /Retourner la carte/i);
 });
