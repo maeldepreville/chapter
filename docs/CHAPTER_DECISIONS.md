@@ -285,7 +285,8 @@ Dernière mise à jour : 27 août 2026
 - Les prochains badges restent absents de la vue publique : elle ne réserve aucune case pour les objectifs privés. La sélection des trois badges du profil demeure inchangée.
 - HV1 reste impérative : aucun honneur non acquis, emplacement, compteur ou section vide ; la partie honorifique n'existe qu'après une première obtention. PV1 et HMT1 restent inchangées.
 - L'implémentation et la publication du périmètre consolidé sont explicitement autorisées. Une structure de famille unique change d'orientation au breakpoint B2 ; les honneurs ont leurs propres rangées et partagent le même état de mini-fiche avec les lignées. Les tests couvrent l'ordre des familles, les paires, la confidentialité et l'absence d'honneur non acquis.
-- Statut : **HDE1 autorisée et implémentée ; validation technique et publication en cours**.
+- Le checkpoint 22 publie HDE1 après réussite du lint, du typage ciblé des composants modifiés, de la construction de production et de quinze tests automatisés. Le contrôle TypeScript global reste limité par les déclarations Cloudflare manquantes dans l'infrastructure existante ; il n'est pas annoncé comme réussi.
+- Statut : **HDE1 autorisée, implémentée et publiée ; recette utilisateur ouverte**.
 
 ### ET1 — Le titre évolue avec l’insigne
 

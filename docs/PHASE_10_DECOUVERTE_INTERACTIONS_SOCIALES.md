@@ -1,6 +1,6 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1, correctif PDR1B et QR1 publiés — évaluation utilisateur ouverte**
+Statut : **implémentation JI1, correctifs PDR1B, QR1 et HDE1 publiés — évaluation utilisateur ouverte**
 Dernière mise à jour : 27 août 2026
 
 ## Objectif de la phase
@@ -276,7 +276,7 @@ HDE1 révise explicitement le mélange des deux registres dans HM3. Le défileme
 
 La précision responsive demandée par l'utilisateur est également validée : sur desktop, les quatre familles Lecture, Exploration, Expression et Relation se lisent de gauche à droite, avec une colonne par famille, l'acquis en haut et le prochain badge grisé en dessous. Les colonnes appartiennent à une même surface ouverte, sans encadrés individuels. Sur mobile, chaque famille reprend une rangée complète, acquis à gauche et prochain à droite ; la fiche HMT1 reste sous cette paire. La vue publique supprime les prochains badges sans réserver leur emplacement.
 
-Le périmètre consolidé a reçu l'autorisation explicite d'implémentation et de publication. La structure réalisée regroupe les badges par famille avant leur affichage, place les honneurs acquis dans une section distincte et conserve un état de sélection partagé ainsi qu'une seule zone de clic extérieur. Les rangées d'honneurs insèrent elles aussi la fiche sous la paire entière sur mobile. Des tests dédiés vérifient les paires, leur ordre, la confidentialité publique, les collections vides et les collections d'un à cinq honneurs ; la publication est en cours de validation.
+Le périmètre consolidé a reçu l'autorisation explicite d'implémentation et de publication. La structure réalisée regroupe les badges par famille avant leur affichage, place les honneurs acquis dans une section distincte et conserve un état de sélection partagé ainsi qu'une seule zone de clic extérieur. Les rangées d'honneurs insèrent elles aussi la fiche sous la paire entière sur mobile. Des tests dédiés vérifient les paires, leur ordre, la confidentialité publique, les collections vides et les collections d'un à cinq honneurs. Le checkpoint 22 est publié après réussite du lint, de la construction de production et de quinze tests automatisés.
 
 Le typage ciblé de `phase10.tsx` et `honors-layout.ts` passe. Le contrôle TypeScript global rencontre encore les déclarations Cloudflare absentes (`cloudflare:workers`, `Fetcher`, `D1Database`) dans les fichiers d'infrastructure non modifiés par ce lot ; il n'est donc pas présenté comme réussi. La recette navigateur des gestes et des tailles reste à effectuer par l'utilisateur après publication.
 
