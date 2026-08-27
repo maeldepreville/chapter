@@ -3,6 +3,7 @@
 import Image from "next/image";
 /* eslint-disable @next/next/no-img-element */
 import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
+import { getHonorsLayout } from "./honors-layout";
 
 export type SocialWork = {
   id: string;
@@ -269,8 +270,8 @@ export const badgeCatalog = {
   expression3: { id: "expression3", title: "Voix singulière", src: "/badges/expression-03-voix-singuliere.webp", description: "Une expression éditoriale reconnaissable et durable.", progress: "18/25 critiques · 3/4 listes" },
   relation2: { id: "relation2", title: "Trait d’union", src: "/badges/relation-02-trait-d-union.webp", description: "Des conversations réciproques construites autour de plusieurs œuvres." },
   relation3: { id: "relation3", title: "Point de rencontre", src: "/badges/relation-03-point-de-rencontre.webp", description: "Faire des œuvres un espace commun pour davantage de lecteurs.", progress: "21/30 conversations · 9/12 lecteurs · 11/15 œuvres" },
-  honor1: { id: "honor1", title: "Première lumière", src: "/badges/honor-01-premiere-lumiere.webp", description: "Cinq œuvres confidentielles terminées, quatre auteurs et trois mises en lumière publiques." },
-  honor2: { id: "honor2", title: "Atlas partagé", src: "/badges/honor-02-atlas-partage.webp", description: "Une liste exceptionnelle reliant douze œuvres lues, six auteurs, quatre formes et trois langues." },
+  honor1: { id: "honor1", title: "Première lumière", src: "/badges/honor-01-premiere-lumiere.webp", caption: "Des œuvres confidentielles mises en lumière.", description: "Cinq œuvres confidentielles terminées, quatre auteurs et trois mises en lumière publiques." },
+  honor2: { id: "honor2", title: "Atlas partagé", src: "/badges/honor-02-atlas-partage.webp", caption: "Une liste qui relie les horizons littéraires.", description: "Une liste exceptionnelle reliant douze œuvres lues, six auteurs, quatre formes et trois langues." },
 } as const;
 
 export type BadgeId = keyof typeof badgeCatalog;
@@ -473,7 +474,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
       : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
   const [selected, setSelected] = useState<BadgeId | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);
-  const itemRows = Array.from({ length: Math.ceil(items.length / 2) }, (_, index) => items.slice(index * 2, index * 2 + 2));
+  const { honors, honorRows, families } = getHonorsLayout(items, isOwnProfile);
 
   const renderDetail = (id: BadgeId, placement: "desktop" | "mobile") => {
     const badge = badgeCatalog[id];
@@ -486,6 +487,37 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         <p>{badge.description}</p>
         {isOwnProfile && locked && "progress" in badge && <span>{badge.progress}</span>}
         {isOwnProfile && !locked && <div className="honor-detail-actions"><button className="text-action" type="button" disabled={equippedTitle === badge.title} onClick={() => onEquip(badge.title)}>{equippedTitle === badge.title ? "Titre affiché sous mon nom" : "Afficher ce titre sous mon nom"}</button><button className="text-action" type="button" disabled={!highlighted && showcase.length >= 3} onClick={() => onToggleShowcase(id)}>{highlighted ? "Retirer ce badge du profil" : showcase.length >= 3 ? "Trois badges déjà affichés" : "Afficher ce badge sur mon profil"}</button></div>}
+      </div>
+    );
+  };
+
+  const renderBadge = ({ id, locked }: { id: BadgeId; locked?: boolean }) => {
+    const badge = badgeCatalog[id];
+    const open = selected === id;
+    return (
+      <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
+        <button
+          type="button"
+          className="honor-badge-button"
+          aria-expanded={open}
+          onClick={(event) => {
+            const preciseHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+            if (preciseHover || event.detail === 0) setSelected(id);
+            else setSelected((current) => current === id ? null : id);
+          }}
+          onMouseEnter={() => {
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelected(id);
+          }}
+          onFocus={(event) => {
+            if (event.currentTarget.matches(":focus-visible")) setSelected(id);
+          }}
+        >
+          <BadgeImage badgeId={id} locked={locked} />
+          <span>{badge.title}</span>
+          {!("caption" in badge) && <small>{locked ? "Prochain" : "Acquis"}</small>}
+        </button>
+        {"caption" in badge && <p className="honor-caption">{badge.caption}</p>}
+        {open && renderDetail(id, "desktop")}
       </div>
     );
   };
@@ -506,44 +538,38 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         <h1 id="honors-title">Chapitres d’honneur</h1>
         <p>{isOwnProfile ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : `Les dernières évolutions et les honneurs obtenus par ${isMael ? "Maël" : "Lina"}. Ses objectifs en cours restent privés.`}</p>
       </header>
-      <div ref={wallRef} className="honor-wall" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }}>
-        {itemRows.map((row, rowIndex) => {
-          const selectedInRow = row.find((item) => item.id === selected)?.id ?? null;
-          return (
-            <div className="honor-row" key={`honor-row-${rowIndex}`}>
-              {row.map(({ id, locked }) => {
-                const badge = badgeCatalog[id];
-                const open = selected === id;
+      <div ref={wallRef} className="honors-collection" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }} onKeyDown={(event) => { if (event.key === "Escape") setSelected(null); }}>
+        {honors.length > 0 && (
+          <section className="honors-singular" aria-labelledby="singular-honors-title">
+            <h2 id="singular-honors-title" className="honors-section-title">Distinctions singulières</h2>
+            <div className="honor-special-wall">
+              {honorRows.map((row) => {
+                const selectedInRow = row.find((item) => item.id === selected)?.id;
                 return (
-                  <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
-                    <button
-                      type="button"
-                      className="honor-badge-button"
-                      aria-expanded={open}
-                      onClick={(event) => {
-                        const preciseHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-                        if (preciseHover || event.detail === 0) setSelected(id);
-                        else setSelected((current) => current === id ? null : id);
-                      }}
-                      onMouseEnter={() => {
-                        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelected(id);
-                      }}
-                      onFocus={(event) => {
-                        if (event.currentTarget.matches(":focus-visible")) setSelected(id);
-                      }}
-                    >
-                      <BadgeImage badgeId={id} locked={locked} />
-                      <span>{badge.title}</span>
-                      {locked && <small>Prochain</small>}
-                    </button>
-                    {open && renderDetail(id, "desktop")}
+                  <div className={`honor-special-row ${row.length === 1 ? "is-single" : ""}`} key={row[0].id}>
+                    {row.map(renderBadge)}
+                    {selectedInRow && renderDetail(selectedInRow, "mobile")}
                   </div>
                 );
               })}
-              {selectedInRow && renderDetail(selectedInRow, "mobile")}
             </div>
-          );
-        })}
+          </section>
+        )}
+        <section className="honors-path" aria-labelledby="honors-path-title">
+          <h2 id="honors-path-title" className="honors-section-title">{isOwnProfile ? "Au fil de votre parcours" : "Au fil de son parcours"}</h2>
+          <div className={`honor-wall ${isOwnProfile ? "" : "honor-wall-public"}`}>
+            {families.map((family) => {
+              const selectedInFamily = family.items.find((item) => item.id === selected)?.id;
+              return (
+                <section className="honor-family" key={family.id} aria-labelledby={`honor-family-${family.id}`}>
+                  <h3 className="honor-family-title" id={`honor-family-${family.id}`}>{family.title}</h3>
+                  {family.items.map(renderBadge)}
+                  {selectedInFamily && renderDetail(selectedInFamily, "mobile")}
+                </section>
+              );
+            })}
+          </div>
+        </section>
       </div>
       {isOwnProfile && <p className="honors-note">Seuls vos acquis sont visibles par les autres lecteurs. Les badges grisés et leurs progressions restent privés.</p>}
     </section>

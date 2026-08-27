@@ -361,11 +361,21 @@
 
 .honors-page { max-width: 82rem; }
 .honors-heading { max-width: 56rem; }
-.honor-wall { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 2vw, 2rem); align-items: start; }
-.honor-row { display: contents; }
+.honors-section-title { margin: 0 0 2rem; font-family: var(--font-editorial); font-size: clamp(1.6rem, 2.6vw, 2.1rem); font-weight: 400; }
+.honors-singular + .honors-path { margin-top: clamp(3rem, 6vw, 5rem); padding-top: 2rem; border-top: 1px solid var(--line); }
+.honor-special-wall { display: grid; grid-template-columns: repeat(2, minmax(0, 20rem)); justify-content: center; gap: 2.5rem 3rem; }
+.honor-special-row { display: contents; }
+.honor-special-row.is-single > .honor-cell { grid-column: 1 / -1; width: min(100%, 20rem); justify-self: center; }
+.honor-wall { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 2rem); align-items: stretch; }
+.honor-family { display: grid; grid-template-rows: auto 1fr 1fr; gap: 1.8rem; align-items: start; min-width: 0; }
+.honor-wall-public .honor-family { grid-template-rows: auto 1fr; }
+.honor-family-title { margin: 0; color: var(--muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; }
 .honor-cell { position: relative; min-width: 0; }
 .honor-badge-button { display: grid; justify-items: center; align-content: start; width: 100%; min-height: 12rem; padding: 0; text-align: center; background: transparent; border: 0; cursor: pointer; }
-.honor-badge-button img { width: 100%; height: auto; filter: drop-shadow(0 0.65rem 0.65rem rgb(36 33 31 / 0.11)); transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease; }
+.honor-badge-button img { width: 100%; max-width: 14rem; height: auto; filter: drop-shadow(0 0.65rem 0.65rem rgb(36 33 31 / 0.11)); transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease; }
+.honor-special-wall .honor-badge-button img { max-width: 17.5rem; }
+.honor-special-wall .honor-badge-button > span { font-size: 1.2rem; }
+.honor-caption { max-width: 25ch; margin: 0.85rem auto 0; color: var(--muted); font-size: 0.83rem; line-height: 1.65; text-align: center; }
 .honor-badge-button:hover img,
 .honor-badge-button:focus-visible img { transform: translateY(-0.2rem); filter: drop-shadow(0 0.9rem 0.85rem rgb(36 33 31 / 0.16)); }
 .honor-badge-button img.locked { opacity: 0.35; filter: grayscale(1); }
@@ -373,6 +383,8 @@
 .honor-badge-button > small { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .honor-detail { position: absolute; top: calc(100% + 0.5rem); left: 50%; z-index: 20; width: min(18rem, 78vw); padding: 1rem; transform: translateX(-50%); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1rem 2rem rgb(36 33 31 / 0.14); text-align: left; }
 .honor-detail-mobile { display: none; }
+.honor-family:first-child .honor-detail-desktop { left: 0; transform: none; }
+.honor-family:last-child .honor-detail-desktop { right: 0; left: auto; transform: none; }
 .honor-detail strong { font-family: var(--font-editorial); font-size: 1.15rem; font-weight: 500; }
 .honor-detail p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.82rem; }
 .honor-detail > span { display: block; margin-top: 0.65rem; color: var(--brick); font-size: 0.78rem; font-weight: 600; }
@@ -455,7 +467,6 @@
 .search-discover-action { width: 100%; margin-top: 1.2rem; }
 
 @media (max-width: 1100px) and (min-width: 900px) {
-  .honor-wall { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .discovery-main-grid { grid-template-columns: minmax(0, 1.65fr) minmax(17rem, 1fr); }
   .discovery-feature { grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr); }
 }
@@ -492,8 +503,16 @@
   .profile-wide-content > .profile-section:first-child { padding-top: 4rem; }
   .profile-section { padding-bottom: 4rem; }
   .profile-section + .profile-section { padding-top: 4rem; }
-  .honor-wall { grid-template-columns: 1fr; gap: 1.6rem; }
-  .honor-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 1rem; align-items: start; }
+  .honors-section-title { margin-bottom: 1.5rem; }
+  .honors-singular + .honors-path { margin-top: 3rem; padding-top: 1.5rem; }
+  .honor-special-wall { grid-template-columns: 1fr; gap: 1.6rem; }
+  .honor-special-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 1rem; align-items: start; }
+  .honor-wall { grid-template-columns: 1fr; gap: 2rem; }
+  .honor-family { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 1rem; }
+  .honor-family-title { grid-column: 1 / -1; text-align: left; }
+  .honor-wall-public { grid-template-columns: 1fr; }
+  .honor-wall-public .honor-family { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+  .honor-wall-public .honor-family-title { text-align: center; }
   .honor-cell { display: block; }
   .honor-badge-button { min-height: 10.5rem; }
   .honor-detail-desktop { display: none; }

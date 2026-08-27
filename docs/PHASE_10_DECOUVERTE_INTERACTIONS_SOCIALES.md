@@ -1,7 +1,7 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
 Statut : **implémentation JI1, correctif PDR1B et QR1 publiés — évaluation utilisateur ouverte**
-Dernière mise à jour : 26 août 2026
+Dernière mise à jour : 27 août 2026
 
 ## Objectif de la phase
 
@@ -258,13 +258,27 @@ Sur PR1, l’intitulé **« Chapitres d’honneur → »** introduit les trois b
 
 Cette entrée reste explicite tout en préservant la lecture continue du portrait. Le titre équipé et les badges demeurent expressifs ; ils ne sont accompagnés d’aucune progression. La galerie s’ouvre depuis son nom, ce qui évite de transformer les assets en contrôles ambigus.
 
-### HM3 — mur continu des dernières évolutions
+### HM3 — mur continu des dernières évolutions, hiérarchie révisée par HDE1
 
 « Chapitres d’honneur » adopte un **mur continu d’insignes** plutôt qu’un découpage visible en quatre blocs. La vue personnelle rassemble la dernière évolution obtenue dans chacun des quatre axes, le prochain badge grisé de chaque lignée et les distinctions honorifiques obtenues.
 
 Les anciens paliers d’une lignée ne sont plus affichés : le badge est considéré comme un même insigne qui évolue, et seule sa forme la plus récente demeure dans le mur. Les distinctions honorifiques, qui ne constituent pas des niveaux successifs, s’accumulent séparément dans ce même ensemble.
 
 Sur desktop, survoler ou placer le focus sur un badge ouvre une mini-fiche ancrée sous celui-ci. Sur mobile, un toucher produit le même contenu et un toucher extérieur le referme. Pour le propriétaire, la mini-fiche d’un prochain badge affiche son objectif et sa ligne MP1 ; pour un visiteur, seuls le sens et les critères déjà accomplis d’un badge acquis sont décrits, sans aucune progression personnelle.
+
+### HDE1 — distinguer les honneurs du parcours, hiérarchie validée
+
+Le retour de recette du 27 août relève que les honneurs exceptionnels sont perdus dans la masse des évolutions classiques. La composition actuelle les ajoute en fin de grille avec la même échelle et le même traitement que les badges de lignée. Cette indistinction est visuelle : T3, SGH1 et HH2 définissent déjà deux registres fonctionnels distincts.
+
+HDE1 est validée : les honneurs obtenus ouvrent la galerie, sous « Distinctions singulières », avec une échelle légèrement supérieure, plus d'espace autour des insignes et une courte légende sur l'accomplissement. Le mur des quatre lignées poursuit ensuite la page sous « Au fil de votre parcours ». Les dessins validés ne changent pas ; aucune animation permanente, carte de trophée ou classification de rareté n'est ajoutée.
+
+HDE1 révise explicitement le mélange des deux registres dans HM3. Le défilement continu, l'absence des anciens paliers, les paires acquis/prochain et la mini-fiche HMT1 sont conservés. La section honorifique reste absente si aucun honneur n'a été obtenu, conformément à HV1, sans révéler de collection à compléter. La sélection des trois badges du profil demeure inchangée.
+
+La précision responsive demandée par l'utilisateur est également validée : sur desktop, les quatre familles Lecture, Exploration, Expression et Relation se lisent de gauche à droite, avec une colonne par famille, l'acquis en haut et le prochain badge grisé en dessous. Les colonnes appartiennent à une même surface ouverte, sans encadrés individuels. Sur mobile, chaque famille reprend une rangée complète, acquis à gauche et prochain à droite ; la fiche HMT1 reste sous cette paire. La vue publique supprime les prochains badges sans réserver leur emplacement.
+
+Le périmètre consolidé a reçu l'autorisation explicite d'implémentation et de publication. La structure réalisée regroupe les badges par famille avant leur affichage, place les honneurs acquis dans une section distincte et conserve un état de sélection partagé ainsi qu'une seule zone de clic extérieur. Les rangées d'honneurs insèrent elles aussi la fiche sous la paire entière sur mobile. Des tests dédiés vérifient les paires, leur ordre, la confidentialité publique, les collections vides et les collections d'un à cinq honneurs ; la publication est en cours de validation.
+
+Le typage ciblé de `phase10.tsx` et `honors-layout.ts` passe. Le contrôle TypeScript global rencontre encore les déclarations Cloudflare absentes (`cloudflare:workers`, `Fetcher`, `D1Database`) dans les fichiers d'infrastructure non modifiés par ce lot ; il n'est donc pas présenté comme réussi. La recette navigateur des gestes et des tailles reste à effectuer par l'utilisateur après publication.
 
 ### ET1 — le titre évolue avec l’insigne
 

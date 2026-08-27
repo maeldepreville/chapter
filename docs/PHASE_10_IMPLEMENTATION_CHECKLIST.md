@@ -72,18 +72,24 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 
 ## 6. Chapitres d’honneur
 
-- [ ] Sur sa galerie, voir la dernière évolution acquise et la prochaine évolution grisée de chaque axe, puis les cinq honneurs acquis.
+- [ ] Vérifier HDE1 : les honneurs obtenus ouvrent la galerie sous « Distinctions singulières », avec des insignes légèrement plus grands et une courte légende aérée ; les lignées viennent ensuite sous « Au fil de votre parcours ».
+- [ ] Sur desktop, retrouver quatre colonnes dans l'ordre Lecture → Exploration → Expression → Relation, avec l'acquis au-dessus du prochain badge grisé dans chaque colonne, sans panneaux encadrés ni anciennes évolutions.
+- [ ] Sur mobile et tablette sous B2, retrouver une famille par ligne : acquis à gauche et prochain à droite. À 320 px, vérifier les noms et l'absence de débordement horizontal.
+- [ ] Comparer les deux honneurs de Maël et l'unique honneur de Lina : leurs dimensions restent cohérentes et un honneur isolé est centré, sans case vide. Les autres honneurs non obtenus ne sont jamais révélés.
+- [ ] Dans une fixture sans honneur acquis, aucune section « Distinctions singulières », aucun compteur ni emplacement verrouillé ne doit apparaître (cas couvert automatiquement).
 - [ ] Vérifier qu’aucun ancien palier remplacé n’apparaît dans le mur continu.
 - [ ] Chaque axe possède une silhouette et une couleur propres ; chaque honneur possède sa forme, sa couleur et son symbole.
 - [ ] Les évolutions se lisent dans les ornements et la matière sans se limiter à l’ajout de pointes décoratives.
 - [ ] Sur desktop, survoler puis focaliser un badge au clavier ; la mini-fiche doit apparaître sans masquer inutilement le mur.
 - [ ] Sur mobile, toucher le badge acquis d’une paire ; HMT1 doit insérer son détail sous les deux badges sans éjecter, repousser ni changer de colonne le badge suivant. Répéter avec le badge suivant, puis toucher l’extérieur pour vérifier le déplacement et la fermeture.
 - [ ] Toujours sur mobile, ouvrir un acquis puis toucher immédiatement son évolution suivante et un badge de la rangée voisine ; chaque fiche demandée doit remplacer la précédente dès le premier toucher, sans fermeture parasite.
+- [ ] Passer d'un honneur singulier à une lignée, puis revenir : une seule fiche reste ouverte. Le détail d'un honneur s'insère sous sa paire entière ; second toucher et toucher extérieur ferment la fiche.
+- [ ] Sur desktop, tester survol, focus clavier, clic et Échap dans les deux registres ; les fiches des colonnes de bord ne doivent pas sortir de l'écran et leurs actions restent utilisables.
 - [ ] Sur les prochains badges, lire une ligne MP1 concise ; aucune jauge globale ou condition privée ne doit être publique.
 - [ ] Équiper un titre ; vérifier sa mise à jour immédiate sur le profil et dans le menu du compte.
 - [ ] Vérifier la compréhension des deux commandes : « Afficher ce titre sous mon nom » modifie l’appellation, tandis que « Afficher ce badge sur mon profil » modifie la sélection d’insignes.
 - [ ] Choisir jusqu’à trois badges à afficher ; une quatrième sélection doit être refusée clairement, sans dépasser trois.
-- [ ] Ouvrir la galerie de Lina ; n’y voir que ses acquis, sans badge grisé, compteur, objectif ou titre verrouillé.
+- [ ] Ouvrir la galerie de Lina puis celle de Maël depuis sa route publique ; n'y voir que les acquis, sans badge grisé, compteur, objectif, titre verrouillé ou place réservée aux prochains badges. Les commandes propriétaires sont absentes.
 - [ ] Examiner les vingt-et-un assets à plusieurs tailles et sur écran dense : contours, métal, symboles et textes voisins restent nets.
 - [ ] Depuis le profil de Lina, ouvrir successivement ses deux listes ; chacune doit afficher son propre titre et son propre nombre d’œuvres, puis revenir au profil. Depuis Découvrir, vérifier que la liste publique revient bien à Découvrir.
 

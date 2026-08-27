@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 26 août 2026
+Dernière mise à jour : 27 août 2026
 
 ## Cadre de collaboration
 
@@ -265,7 +265,7 @@ Dernière mise à jour : 26 août 2026
 - Cette entrée préserve la lecture éditoriale continue du profil.
 - Statut : **validé**.
 
-### HM3 — Mur continu des dernières évolutions
+### HM3 — Mur continu des dernières évolutions, hiérarchie révisée par HDE1
 
 - « Chapitres d’honneur » utilise un mur continu plutôt que quatre blocs ou bandes par axe.
 - La vue personnelle montre la dernière évolution acquise de chaque axe, son prochain badge grisé et les distinctions honorifiques obtenues.
@@ -275,6 +275,17 @@ Dernière mise à jour : 26 août 2026
 - La mini-fiche personnelle d’un prochain badge expose son objectif et sa ligne MP1.
 - Un visiteur ne voit que les badges acquis ; leur mini-fiche décrit le sens ou les critères accomplis sans révéler aucune progression.
 - Statut : **validé**.
+
+### HDE1 — Mise en valeur des honneurs singuliers et regroupement responsive
+
+- Retour de recette du 27 août : les honneurs exceptionnels se perdent parmi les badges de lignée, car tous occupent des cases identiques dans le mur.
+- HDE1 est validée : ouvrir la galerie par les seuls honneurs acquis dans une section « Distinctions singulières », avec davantage de respiration, des insignes légèrement plus grands et une courte légende ; poursuivre avec les quatre lignées réunies sous « Au fil de votre parcours ».
+- HDE1 révise explicitement le mélange visuel de HM3, mais conserve une page continue, sans onglets ni anciens paliers. Aucun dessin de badge n'est modifié ; les familles ne deviennent pas quatre panneaux encadrés.
+- Précision responsive validée : sur desktop, quatre colonnes dans l'ordre Lecture, Exploration, Expression, Relation, chacune avec son badge acquis au-dessus du prochain badge grisé. Sur mobile, une famille par ligne, acquis à gauche et prochain à droite, comme actuellement ; HMT1 insère la fiche sous la paire complète.
+- Les prochains badges restent absents de la vue publique : elle ne réserve aucune case pour les objectifs privés. La sélection des trois badges du profil demeure inchangée.
+- HV1 reste impérative : aucun honneur non acquis, emplacement, compteur ou section vide ; la partie honorifique n'existe qu'après une première obtention. PV1 et HMT1 restent inchangées.
+- L'implémentation et la publication du périmètre consolidé sont explicitement autorisées. Une structure de famille unique change d'orientation au breakpoint B2 ; les honneurs ont leurs propres rangées et partagent le même état de mini-fiche avec les lignées. Les tests couvrent l'ordre des familles, les paires, la confidentialité et l'absence d'honneur non acquis.
+- Statut : **HDE1 autorisée et implémentée ; validation technique et publication en cours**.
 
 ### ET1 — Le titre évolue avec l’insigne
 
