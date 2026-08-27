@@ -52,6 +52,7 @@ Dernière mise à jour : 27 août 2026
 
 ### Clôture de la phase 10 — 27 août 2026
 
+- **Synchronisation GitHub confirmée le 27 août 2026.** Après l'envoi du bundle par l'utilisateur, la lecture indépendante de `refs/heads/main` sur `maeldepreville/chapter` retourne exactement `22dad5a21e3c6a46c9bf6c83b806a08f3522d486`, le commit préparé. Le code, les assets, les tests et les documents acceptés sont donc présents sur GitHub, avec les deux historiques conservés. Cette preuve remplace les statuts de blocage et d'attente décrits dans l'historique ci-dessous. La présente confirmation est documentaire ; elle n'ouvre pas la phase 11 et ne modifie pas la version Sites 24.
 - Après les derniers correctifs du bouton d'abonnement, des conversations mobiles et du tri de la Bibliothèque, l'utilisateur indique que tout lui paraît bon et demande de continuer. Ce retour clôt la recette du périmètre livré.
 - La référence acceptée est la version 24, source `ce72daa701d73b49f399da3dbea360278fd6896e`. Aucun changement d'interface ni nouveau déploiement n'accompagne cette clôture documentaire.
 - Les preuves du dernier jalon restent : lint, construction de production, typage ciblé et vingt-deux tests automatisés réussis. La validation utilisateur n'est pas assimilée à l'exécution tracée de chaque test manuel ou à un audit exhaustif d'accessibilité.

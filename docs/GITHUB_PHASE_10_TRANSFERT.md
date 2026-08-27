@@ -2,7 +2,7 @@
 
 Le 27 août 2026, l'utilisateur accepte le transfert par bundle Git, à envoyer depuis son ordinateur authentifié auprès de GitHub. Le bundle conserve les commits et les deux historiques réunis ; il ne s'agit pas d'une simple copie des fichiers.
 
-La fusion locale est terminée. **La préparation ou le téléchargement de cette archive ne met pas GitHub à jour.** L'envoi reste à effectuer, puis à vérifier. La version Sites 24 ne change pas et la phase 11 reste non ouverte.
+**Transfert terminé et vérifié le 27 août 2026.** Après l'envoi par l'utilisateur, la lecture indépendante de `refs/heads/main` sur GitHub retourne exactement le commit du bundle : `22dad5a21e3c6a46c9bf6c83b806a08f3522d486`. Les instructions suivantes sont conservées comme historique de la procédure ; il n'est pas nécessaire de renvoyer le bundle. La version Sites 24 ne change pas et la phase 11 reste non ouverte.
 
 ## Préparer le dossier
 
