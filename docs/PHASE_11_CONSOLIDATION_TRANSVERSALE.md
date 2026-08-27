@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 27 août 2026.
 
-Statut : **premier ensemble accepté ; deuxième ensemble validé et implémenté, vérifications techniques réussies. Publication différée jusqu'à un jalon regroupé. Recette navigateur non encore effectuée.**
+Statut : **premier ensemble accepté ; deuxième ensemble validé et implémenté, vérifications techniques réussies ; troisième ensemble proposé, non encore autorisé. Publication différée jusqu'à un jalon regroupé. Recette navigateur non encore effectuée.**
 
 ## 1. Point de départ et limites
 
@@ -85,6 +85,8 @@ L'import photo, le partage, les textes très longs et le cadrage au clavier rest
 
 ## 6. Journal de phase
 
+- 27 août 2026 : l'utilisateur demande de poursuivre. Audit des textes longs, de l'import photo, du recadrage et de la copie/du partage ; six diagnostics ciblés sur gestionnaires simulés et rendu serveur. Proposition du troisième ensemble ci-dessous, sans autorisation de développement. Aucun changement applicatif, asset, build, test navigateur ou déploiement dans ce tour ; seules les notes de suivi sont mises à jour.
+
 - 27 août 2026 : l'utilisateur valide les correctifs liés aux états vides et données manquantes. Implémentation du deuxième ensemble autorisée, publication toujours différée. Il demande quand les animations seront abordées : sujet rattaché au volet 3, cohérence et accessibilité, avant la recette finale. Les choix S2 (retours tonaux des boutons, sans déplacement ni rebond) et QRM1b (retournement de la carte de lecteur, environ 440 ms, alternative à mouvement réduit) restent acquis. L'harmonisation des transitions, leur rythme et leur utilité devront être discutés avant tout nouveau développement d'animation ; aucun effet nouveau n'est autorisé par cette question.
 
 - 27 août 2026 : premier ensemble accepté par l'utilisateur ; publication reportée à un jalon regroupé. Audit du deuxième ensemble avec lecture du code et essais de rendu sur données absentes/incomplètes. Mise à jour documentaire uniquement ; pas de nouveau développement, build ou déploiement.
@@ -137,3 +139,31 @@ Vérifications exécutées : **build de production réussi ; lint réussi ; typa
 Limites : rendus serveur et gestionnaires exécutés avec des doublures de hooks, pas un navigateur. Aucun test visuel, chargement réseau réel d'image, lecteur d'écran ou audit global de contraste n'est déclaré effectué. Les tests existants des routes compilées restent inclus. La checklist des deux ensembles est mise à jour et reste non cochée.
 
 Aucune publication ni nouvelle version Sites n'accompagne cet ensemble. La suite reste l'audit des autres cas limites (textes longs, import/partage, actions répétées), puis le volet responsive, animations et accessibilité avant la recette finale.
+
+## 9. Troisième ensemble proposé — textes longs et erreurs d'action
+
+**Statut : proposé, non encore autorisé.** Il relève toujours du volet 2 de la phase 11. Les animations, le cadrage au clavier et l'audit global responsive/accessibilité restent dans le volet 3 ; aucun nouveau mouvement n'est proposé ici.
+
+### Constats et limites de preuve
+
+Examen de `PhotoCropper`, `ProfileView` et `SocialReviews` dans `app/phase10.tsx`, des écrits dans `app/page.tsx` et des deux feuilles CSS. Diagnostic Node en mémoire à l'aide du chargeur et des doublures de hooks déjà présents dans `tests/helpers/load-tsx.mjs` : aucune API native de navigateur, photo réelle ou copie dans le presse-papiers n'a été utilisée.
+
+| Référence | Constat | Preuve |
+| --- | --- | --- |
+| P11-F10 | Deux imports successifs ne sont pas ordonnés par la dernière intention. | Sélection A puis B ; fin de B, puis de A : la source B est remplacée par A. Aucun identifiant de requête ni invalidation des callbacks tardifs. |
+| P11-F11 | Une exception pendant la production du recadrage n'est pas traduite en message local. | Exception simulée dans `drawImage` : exception propagée, aucune alerte dans le panneau. Aucun enregistrement ni fermeture n'a eu lieu dans cet essai. `toDataURL` appartient au même chemin non protégé. |
+| P11-F12 | Le repli de copie peut lui-même échouer sans retour utilisateur et sans nettoyage. | Refus simulé de `clipboard.writeText`, puis exception dans `execCommand` : promesse rejetée sans interception, champ temporaire toujours attaché et message vide. |
+| P11-F13 | Les actions de partage peuvent se chevaucher. | Deux clics déclenchent deux appels de partage avant résolution ; aucun verrou ni désactivation en cours. Leur ordre de retour n'est pas maîtrisé. |
+| P11-F14 | L'expansion des critiques publiques longues n'est pas raccordée dans `SocialReviews`. | Une critique de 1 781 caractères est rendue intégralement sans contrôle « Lire la suite », alors que ce comportement est déjà validé. L'expansion des conversations est distincte et doit le rester. |
+| P11-F15 | Les écrits saisis ne disposent pas d'un traitement explicite des paragraphes et des chaînes sans espaces. | Lecture CSS : pas de conservation des sauts de ligne pour les notes/critiques/réponses, ni de repli ciblé des mots très longs dans ces zones. Risque de débordement à confirmer visuellement, pas un débordement mesuré dans ce tour. |
+
+Non-régressions identifiées : le refus d'un format non accepté affiche déjà un message et conserve la source précédente (diagnostic réussi). PFP1 fixe déjà JPEG/PNG/WebP, 8 Mo maximum et un petit côté de 512 px minimum : ne pas inventer d'autres seuils. L'annulation native du partage (`AbortError`) est déjà traitée silencieusement ; la préserver. La limite de 3 000 caractères des critiques reste inchangée. N1b protège le nom de la carte contre une césure interne : ne pas lui appliquer une règle globale de découpe.
+
+### Corrections proposées
+
+1. **Import photo fiable** : message discret « Préparation de l’image… », seul le dernier fichier choisi peut devenir actif ; ignorer les réponses anciennes après nouveau choix ou fermeture. Conserver le dernier cadrage valide pendant un échec, permettre de réessayer le même fichier et empêcher l'enregistrement pendant la préparation. Annuler et Fermer restent disponibles. Aucun nouvel effet animé, outil de retouche ou modification des limites PFP1.
+2. **Recadrage récupérable** : intercepter les échecs de lecture de l'image affichée, de dessin et d'export ; garder le panneau et le cadrage, expliquer l'échec au même endroit et permettre un nouvel essai. Remplacer la photo enregistrée et fermer uniquement après production d'une image valide. Ne pas annoncer une réussite sur un export vide ou invalide.
+3. **Copie et partage cohérents** : une seule opération à la fois, commandes concernées temporairement indisponibles ; confirmer uniquement le succès effectif. Si copie native et repli échouent, rendre un message utile avec recours au lien déjà affiché, nettoyer le champ temporaire et restituer le focus. Garder l'annulation de partage silencieuse, ne pas copier à son insu après cette annulation et empêcher un ancien résultat d'écraser le retour courant. Préserver la disposition QRP1b et la carte QRM1b.
+4. **Écrits longs lisibles** : appliquer l'aperçu et l'expansion locale « Lire la suite / Réduire » aux critiques longues là où ils manquent, sans changer l'ouverture des conversations ; conserver les paragraphes des notes/critiques/réponses. Contenir les chaînes sans espaces dans les zones de texte et les titres d'œuvre, tout en préservant le titre intégral hors de la couverture. Ne pas tronquer les données enregistrées, ajouter une limite de saisie ou modifier la carte N1b. Les lignes/espaces exacts relèveront du contrôle visuel ultérieur.
+
+Après autorisation : ajouter des tests de régression avec fins d'import inversées, fermeture pendant préparation, erreurs de décodage/export/copie, clics répétés, partage annulé et texte multi-paragraphes/chaînes longues. Compléter la checklist du futur jalon et distinguer ces tests des vérifications réelles de navigateur. Pas de simulation de panne réseau d'un backend absent ni de nouvelle persistance.
