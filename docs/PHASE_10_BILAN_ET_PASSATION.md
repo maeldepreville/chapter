@@ -10,7 +10,7 @@ La phase 10 est clôturée dans la conversation actuelle. L'utilisateur souhaite
 
 ## Référence publiée et documents à lire
 
-**Attention — GitHub n'est pas encore synchronisé avec la phase 10.** Le contrôle distant du 27 août trouve `main` sur `0810fc58ae1b9004aa6676dacba6f42b125a1788` (phase 9). Les historiques local et GitHub ont divergé ; aucun envoi forcé n'est effectué. Attendre l'accord de rapprochement des historiques avant de synchroniser, puis vérifier la référence distante et remplacer ce statut d'attente. La version Sites 24 et la clôture locale sont conservées.
+**Synchronisation GitHub autorisée, en cours de vérification.** L'utilisateur a validé la réunion des historiques sans réécriture ni envoi forcé. L'ancien `main` GitHub `0810fc58ae1b9004aa6676dacba6f42b125a1788` possède exactement le même arbre que l'ancêtre local de phase 9 `b0740202971b00ccca83fad697875f770a423308` : aucun travail distant inédit n'est perdu. Le rattachement des historiques conserve la totalité du contenu courant de phase 10. Vérifier la référence distante avant de déclarer la synchronisation réussie. La version Sites 24 reste inchangée.
 
 - Dernier jalon fonctionnel : version 24, menu de tri de la bibliothèque, publiée avec succès après les correctifs d'abonnement et de conversation.
 - Source de ce jalon : `ce72daa701d73b49f399da3dbea360278fd6896e`.
