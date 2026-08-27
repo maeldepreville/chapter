@@ -17,6 +17,8 @@ Vérification distante : GitHub `main` pointe initialement sur `0810fc58ae1b9004
 
 L'envoi non forcé `git push github main:main` échoue faute d'identifiants Git HTTPS configurés (demande de nom d'utilisateur impossible en mode non interactif). La relecture distante confirme que `refs/heads/main` reste `0810fc58ae1b9004aa6676dacba6f42b125a1788`. Le connecteur GitHub confirme des droits `push`, mais son interface de création de commits ne permet pas de transférer l'historique local en préservant les identités des commits ; aucune reconstruction approximative n'est engagée. Il faut un accès Git authentifié dans l'environnement ou un transfert du dépôt au moyen d'un bundle à pousser depuis un environnement déjà authentifié. La fusion locale est terminée ; la synchronisation distante ne l'est pas. Aucun secret n'est demandé dans le chat.
 
+L'utilisateur accepte ensuite le transfert par bundle et les commandes d'envoi depuis son ordinateur authentifié. Le guide [`GITHUB_PHASE_10_TRANSFERT.md`](./GITHUB_PHASE_10_TRANSFERT.md) organise ce transfert dans un nouveau dossier, sans modifier une copie de travail existante, sans réécrire les commits et sans push forcé. Le bundle est à contrôler par vérification Git et clonage indépendant avant remise. La préparation de l'archive ne constitue pas un envoi : la synchronisation GitHub reste en attente de l'exécution et de la vérification des commandes. La règle permanente de synchronisation à chaque jalon validé demeure applicable.
+
 ## Objectif de la phase
 
 Faire évoluer Chapter du journal de lecture personnel vers une expérience où les œuvres, les opinions et les lecteurs enrichissent mutuellement la découverte, sans transformer le produit en fil social générique.
