@@ -820,7 +820,7 @@ Dernière mise à jour : 27 août 2026
 - Le contrôle natif du navigateur est remplacé par un sélecteur cohérent avec Chapter : chevron dans une colonne dédiée avec marge intérieure, menu blanc cassé, survol et focus actifs brique doux, choix sélectionné coché.
 - Les trois tris validés en phase 9 sont inchangés : « Activité récente » par défaut, « Titre » et « Auteur ». Filtres, recherche et conservation du choix restent identiques.
 - Le menu fonctionne au clic et au toucher, se ferme au clic extérieur et à la perte de focus ; au clavier, flèches, Début/Fin, saisie des premières lettres, Entrée/Espace, Échap et Tab sont pris en charge. Échap annule le choix en attente ; Tab le valide sans piéger le focus.
-- Statut : **demandé en recette et implémenté ; publication en préparation**. Correction ciblée du composant de phase 9 pendant la recette de phase 10, sans ouverture de phase 11.
+- Statut : **demandé en recette, implémenté et publié en version 24**. Lint, typage ciblé du contrôle, construction de production et vingt-deux tests automatisés réussis. Correction ciblée du composant de phase 9 pendant la recette de phase 10, sans ouverture de phase 11.
 
 ## Décisions validées
 

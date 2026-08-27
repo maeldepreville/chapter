@@ -10,8 +10,8 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 
 ## Référence publiée et documents à lire
 
-- Dernier jalon fonctionnel : version 23, état « Suivi » et espacement des conversations, publiée avec succès après HDE1.
-- Source de ce jalon : `e0f305c451e3c5f65aeae146128391c80dc8c9ca`.
+- Dernier jalon fonctionnel : version 24, menu de tri de la bibliothèque, publiée avec succès après les correctifs d'abonnement et de conversation.
+- Source de ce jalon : `ce72daa701d73b49f399da3dbea360278fd6896e`.
 - Lire `../AGENTS.md`, `CHAPTER_DECISIONS.md`, puis `PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`.
 - La recette exhaustive est décrite dans `PHASE_10_IMPLEMENTATION_CHECKLIST.md`. Ses cases ne doivent pas être cochées sur la seule base d'un test automatisé ou d'un retour utilisateur limité à une anomalie.
 
@@ -29,7 +29,7 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 
 ## Contrôles et limites de preuve
 
-- Au dernier jalon publié : construction de production réussie, lint réussi, typage ciblé de `phase10.tsx` et `honors-layout.ts` réussi et dix-sept tests automatisés réussis.
+- Au dernier jalon publié : construction de production réussie, lint réussi, typage ciblé de `library-sort.tsx` réussi et vingt-deux tests automatisés réussis. Le typage ciblé de `phase10.tsx` et `honors-layout.ts` avait été vérifié au jalon précédent.
 - La préparation documentaire initiale ne nécessitait aucune publication. Les deux retours de recette suivants ont ensuite été corrigés et publiés en version 23, avec deux tests supplémentaires et des assertions de rendu serveur renforcées.
 - Ces tests couvrent des fonctions de regroupement, des invariants de source, les assets et le rendu serveur ; ils ne constituent pas un test navigateur complet des interactions ou du responsive.
 - Le contrôle TypeScript global reste bloqué par des déclarations Cloudflare absentes dans l'infrastructure existante : `cloudflare:workers`, `Fetcher`, `D1Database`. Ne pas présenter le typage global comme réussi.
@@ -51,7 +51,7 @@ Les cas sans honneur ou avec un nom modifié nécessitent des fixtures et ne son
 
 ## Limites du prototype maintenues
 
-Correctif de recette du tri de la Bibliothèque : menu natif remplacé par un sélecteur blanc cassé/brique avec chevron espacé, option cochée et navigation clavier complète, sans changer les trois tris de phase 9. Publication en préparation ; les cas visuels, clavier, tactiles et de conservation du contexte sont ajoutés à la checklist.
+Correctif de recette du tri de la Bibliothèque : menu natif remplacé par un sélecteur blanc cassé/brique avec chevron espacé, option cochée et navigation clavier complète, sans changer les trois tris de phase 9. Publication vérifiée en version 24 ; les cas visuels, clavier, tactiles et de conservation du contexte sont ajoutés à la checklist.
 
 Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Correctifs vérifiés et publiés en version 23. Deux cas ciblés sont ajoutés à la checklist ; la clôture globale reste attendue.
 

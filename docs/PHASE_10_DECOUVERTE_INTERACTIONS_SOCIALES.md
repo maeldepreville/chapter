@@ -1010,7 +1010,7 @@ Un sélecteur dédié remplace le menu natif : flèche dans une colonne réserv�
 
 Le comportement reste accessible au clavier : focus sur le déclencheur, option active annoncée, flèches, Début/Fin et premières lettres pour parcourir, Entrée/Espace pour valider, Échap pour annuler, Tab pour valider puis poursuivre normalement. Le clic extérieur et la perte de focus ferment sans appliquer une option simplement parcourue ; cliquer ou toucher une option valide directement. Les écouteurs sont nettoyés à la fermeture et à la sortie de la bibliothèque.
 
-Statut : implémenté ; contrôles et publication en cours. Les tris « Activité récente », « Titre » et « Auteur », la recherche et les filtres sont conservés. La phase 11 n'est pas ouverte.
+Statut : implémenté et publié avec succès en version 24 (source `ce72daa701d73b49f399da3dbea360278fd6896e`). Lint, typage ciblé de `library-sort.tsx`, construction de production et vingt-deux tests automatisés réussis. Les cinq tests ajoutés couvrent le rendu des choix, les gestionnaires clic/clavier/perte de focus et les invariants de style, sans remplacer une recette navigateur. Les tris « Activité récente », « Titre » et « Auteur », la recherche et les filtres sont conservés. La phase 11 n'est pas ouverte.
 
 ## Arbitrages à mener
 
