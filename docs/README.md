@@ -23,7 +23,7 @@ The repository-wide rules in [`../AGENTS.md`](../AGENTS.md) apply to every proje
 - [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md)
 - [`PHASE_10_IMPLEMENTATION_CHECKLIST.md`](./PHASE_10_IMPLEMENTATION_CHECKLIST.md)
 - [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md) — Phase 10 accepted and closed on 27 August 2026; historical handoff to Phase 11.
-- [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md) — Active phase; first correction set explicitly approved on 27 August 2026 and implemented, validation/publication in progress.
+- [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md) — First correction set accepted; publication deferred to a grouped milestone. Second correction set proposed, not yet authorized.
 - [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md) — Manual acceptance checklist for the first correction set; not a completed test record.
 - [`PROMPT_PRODUCTION_BADGES_CHAPTER.md`](./PROMPT_PRODUCTION_BADGES_CHAPTER.md)
 - [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md)

@@ -2,9 +2,11 @@
 
 Dernière mise à jour : 27 août 2026.
 
-Statut : **premier ensemble de correctifs validé par l'utilisateur le 27 août 2026 et implémenté ; vérifications et publication en cours. Recette non encore effectuée.**
+Statut : **premier ensemble implémenté, vérifié et accepté ; publication différée jusqu'à un jalon regroupé. Deuxième ensemble proposé, non autorisé. Recette navigateur non encore effectuée.**
 
 ## 1. Point de départ et limites
+
+**Consigne prioritaire du 27 août 2026 :** l'utilisateur valide les changements du premier ensemble, mais souhaite attendre d'autres étapes avant de publier. Cette consigne remplace explicitement l'instruction historique de déployer immédiatement la version 25 à la prochaine confirmation. Le flux de publication préparé est laissé inactif ; aucune nouvelle autorisation de déploiement n'est reçue. Les prochains travaux restent soumis à validation avant développement. GitHub continue de recevoir les éléments acceptés, indépendamment de la publication Sites. Aucun test manuel n'est implicitement déclaré exécuté par cette validation.
 
 La phase 10 reste terminée et validée sur la version Sites 24. La présente phase termine le lot 1 : « Traiter les états transversaux et finaliser la cohérence, le responsive et l'accessibilité ». La demande, réitérée après une interruption de crédits, ouvre le travail de consolidation, pas une autorisation générale de développement.
 
@@ -56,7 +58,34 @@ Pour NSV2 : texte inchangé puis modifié ; première demande de fermeture, reto
 
 La recette navigateur et visuelle reste à exécuter avec l'autorisation correspondante ; aucun test navigateur, lecteur d'écran, mesure de contraste ou test responsive n'a été réalisé dans ce tour. Aucun nouveau build ou test automatique n'est exécuté puisque seuls les documents changent. Les 22 tests et le build réussis cités dans la passation sont des preuves du jalon précédent ; le typage global reste signalé comme limité par les déclarations Cloudflare manquantes.
 
+## 5 bis. Deuxième ensemble proposé — données absentes et erreurs de couverture
+
+Statut **non encore autorisé**. Aucun code applicatif n'est modifié dans ce tour.
+
+| Référence | Constat | Preuve et limite |
+| --- | --- | --- |
+| P11-F05 | Découvrir, profil et listes remplacent une œuvre introuvable par `works[0]`. | Trois essais de rendu serveur avec catalogue vide échouent sur une propriété `title` absente. Il ne s'agit pas d'une panne observée sur le jeu complet publié. |
+| P11-F06 | Un catalogue incomplet peut produire des substitutions trompeuses. | Avec la liste « places » et une seule œuvre disponible, le rendu serveur produit six articles affichant cette même œuvre. |
+| P11-F07 | Le Journal utilise des traces de démonstration fixes et rend leur premier élément sans branche vide. | Lecture de `app/page.tsx` ; le bouton sans lecture dirige toujours vers « À lire », même si cette catégorie est vide. |
+| P11-F08 | La justification de découverte par défaut mentionne toujours les Cartographies du vent. | `DiscoverView` ne branche pas la justification sur l'absence de signal personnel, contrairement à EH1. |
+| P11-F09 | Les couvertures ne gèrent pas l'échec de leur image. | `WorkCover` et `CompactCover` n'ont pas de repli `onError` ; la couverture typographique n'est utilisée que si l'image est déclarée absente. |
+
+Les essais de rendu ont été exécutés en mémoire avec des fixtures temporaires, sans navigateur, changement de source, nouveau build ni publication.
+
+### Corrections proposées
+
+1. Résoudre les œuvres par identifiant sans substitution arbitraire. Dans les propositions, favoris et listes, afficher les éléments réellement disponibles, avec des nombres cohérents ; si aucun élément ne reste, proposer un état sobre et un retour utile. Les traces personnelles et leurs textes ne sont pas supprimés si leurs métadonnées d'œuvre manquent : indiquer l'indisponibilité sans faux lien.
+2. Raccorder les trois états vides du Journal validés en phase 9 : sans lecture avec traces ; lectures sans traces ; absence totale fusionnée. Si « À lire » est vide, l'action devient « Rechercher une œuvre ». Bibliothèque vide ne signifie jamais historique effacé ; le retrait organisationnel conserve les écrits.
+3. Appliquer EH1 sans historique exploitable : sélection éditoriale et justification « Un choix de Chapter pour commencer », envies facultatives. Ne pas créer de moteur réel de recommandation ; la justification doit correspondre aux seuls signaux disponibles.
+4. Préserver l'image valide, garder un état neutre stable pendant son chargement, puis afficher le remplacement typographique de la même œuvre après échec, selon les choix M1M2/L2 déjà validés.
+
+Prévoir des fixtures internes pour vérifier ces cas sans demander à l'utilisateur d'effacer ses données ou de modifier le code. Pas d'onboarding, panneau public de débogage, nouveaux comptes ou persistance distante. Les états vides de Bibliothèque déjà présents seront vérifiés en non-régression.
+
+L'import photo, le partage, les textes très longs et le cadrage au clavier restent à examiner dans les sous-ensembles suivants ; aucun nouvel écran ni nouveau traitement de ces sujets n'est autorisé ici.
+
 ## 6. Journal de phase
+
+- 27 août 2026 : premier ensemble accepté par l'utilisateur ; publication reportée à un jalon regroupé. Audit du deuxième ensemble avec lecture du code et essais de rendu sur données absentes/incomplètes. Mise à jour documentaire uniquement ; pas de nouveau développement, build ou déploiement.
 
 - 27 août 2026 : ouverture explicite du lot 1 / phase 11 ; lecture de la passation, des règles du dépôt et du journal transversal ; examen statique ciblé des superpositions ; proposition du premier ensemble de corrections. Documentation seule, sans changement applicatif, publication ni push.
 - 27 août 2026 : « Je valides ce premier ensemble de correctifs. » Autorisation reçue pour le premier ensemble uniquement. Elle remplace son statut de proposition et ne valide ni les autres volets ni une recette non encore exécutée. Mise en place de dialogues natifs modaux partagés, restauration du focus, protection NSV2 intégrée et fermeture sûre du retrait de photo ; tests et publication à vérifier avant livraison.
@@ -76,3 +105,18 @@ Onze nouveaux tests automatisés couvrent la logique de focus, de verrouillage, 
 P11-F04 (déplacement du cadrage photo au clavier) et les autres volets restent à arbitrer. La validation de ce premier ensemble ne clôture pas la phase 11.
 
 Contrôles avant publication : lint réussi, typage ciblé de `modal.tsx`, `modal-behavior.ts`, `page.tsx` et `phase10.tsx` réussi, 31 tests hors rendu serveur réussis. Le build de production et les deux tests de rendu serveur restent à vérifier lors de la préparation du jalon. Aucun succès de publication ou de synchronisation n'est déduit de ces contrôles.
+
+### Résultat des vérifications du premier ensemble
+
+Ce résultat remplace l'état de contrôles partiels précédent : **build de production réussi, lint réussi, typage ciblé réussi et 33 tests automatisés réussis**, dont les deux tests de rendu serveur. Aucun test navigateur ou lecteur d'écran n'a été exécuté.
+
+Le code et la documentation de préparation sont synchronisés directement sur GitHub au commit `4db6c22cb7b75cf531513385f25e952a097c1651`. L'arbre GitHub créé est identique à l'index préparé (`6223c41bb0fd3d3acaffa1131146138aea4c162d`) ; le même commit a été récupéré localement, sans recréer l'historique, puis la référence distante a été avancée sans forcer et relue. Les notes de résultat sont reprises dans la mise à jour documentaire consignant la publication différée.
+
+La version Sites **25** a été enregistrée depuis ce commit, **pas déployée** :
+
+- Projet : `appgprj_6a89f5d96774819197b23b79c7c07abd`.
+- Version sauvegardée : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_dc314583ba008191bd17d203656876de`.
+- Aucun identifiant de déploiement n'existe encore ; la version en ligne reste la 24.
+- L'archive temporaire a été supprimée après vérification du projet et du commit de la version enregistrée ; elle n'est plus nécessaire pour déployer cette version.
+
+La préparation initiale s'était arrêtée avant déploiement, faute d'accord explicite pour publier ce site préexistant. L'utilisateur a depuis demandé de regrouper plusieurs étapes : ce flux reste donc inactif. La version 25 n'est pas automatiquement la cible du futur jalon ; celui-ci devra refléter l'ensemble des changements alors validés, faire l'objet des vérifications correspondantes et recevoir un accord de publication distinct. Ne pas présenter la validation de conception comme une recette utilisateur accomplie.

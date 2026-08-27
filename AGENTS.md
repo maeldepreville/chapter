@@ -20,6 +20,7 @@ Ces règles s’appliquent à toute conversation, tout chat et tout agent travai
 - Pour toute décision comportant plusieurs rendus ou états visibles, présenter une comparaison visuelle dans le même ordre que les options textuelles avant de demander un choix.
 - Pendant les échanges de conception, ne pas terminer les réponses par une redirection vers le site. Partager le site uniquement lors d’un jalon d’implémentation ou d’évaluation.
 - Accompagner chaque jalon final d’une checklist exhaustive de validation.
+- Phase 11, consigne du 27 août 2026 : l'utilisateur valide le premier ensemble mais demande plusieurs étapes avant un jalon regroupé. Ne pas déployer la version 25 ni publier chaque sous-étape. Attendre l'accord sur le jalon regroupé ; la synchronisation GitHub des éléments validés reste distincte.
 
 ## Synchronisation GitHub après validation d'un jalon
 
