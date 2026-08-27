@@ -1002,6 +1002,16 @@ La consultation des auteurs de critiques est limitée par les fixtures actuelles
 
 Statut : correctifs implémentés et publiés avec succès en version 23 (source `e0f305c451e3c5f65aeae146128391c80dc8c9ca`). Lint, typage ciblé de `phase10.tsx` et `honors-layout.ts`, construction de production et dix-sept tests automatisés réussis. Les tests ajoutés vérifient les règles des deux états et l'espacement responsive ; le rendu serveur vérifie aussi les commandes produites. Ils ne remplacent pas la recette visuelle de l'utilisateur. La recette de phase 10 continue ; la phase 11 reste réservée au prochain chat.
 
+## Correctif de recette — menu de tri de la bibliothèque
+
+Le retour utilisateur signale la flèche native trop proche du bord et le survol bleu de la liste de tri. Le contrôle de phase 9 est repris pendant cette recette, sans ajouter d'option ni modifier les règles de classement.
+
+Un sélecteur dédié remplace le menu natif : flèche dans une colonne réservée avec marge intérieure de 0,85 rem, fond blanc cassé, bordure fine, ombre discrète, survol brique doux et coche sur l'option choisie. La largeur du menu suit celle du bouton et les cibles mesurent au moins 44 px de haut, y compris sur mobile.
+
+Le comportement reste accessible au clavier : focus sur le déclencheur, option active annoncée, flèches, Début/Fin et premières lettres pour parcourir, Entrée/Espace pour valider, Échap pour annuler, Tab pour valider puis poursuivre normalement. Le clic extérieur et la perte de focus ferment sans appliquer une option simplement parcourue ; cliquer ou toucher une option valide directement. Les écouteurs sont nettoyés à la fermeture et à la sortie de la bibliothèque.
+
+Statut : implémenté ; contrôles et publication en cours. Les tris « Activité récente », « Titre » et « Auteur », la recherche et les filtres sont conservés. La phase 11 n'est pas ouverte.
+
 ## Arbitrages à mener
 
 1. Définir les signaux qui structurent les premières œuvres proposées — **D4 validée**.

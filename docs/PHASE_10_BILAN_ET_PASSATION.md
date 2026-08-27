@@ -51,6 +51,8 @@ Les cas sans honneur ou avec un nom modifié nécessitent des fixtures et ne son
 
 ## Limites du prototype maintenues
 
+Correctif de recette du tri de la Bibliothèque : menu natif remplacé par un sélecteur blanc cassé/brique avec chevron espacé, option cochée et navigation clavier complète, sans changer les trois tris de phase 9. Publication en préparation ; les cas visuels, clavier, tactiles et de conservation du contexte sont ajoutés à la checklist.
+
 Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Correctifs vérifiés et publiés en version 23. Deux cas ciblés sont ajoutés à la checklist ; la clôture globale reste attendue.
 
 Dans les critiques, Lina est le seul auteur disposant d'un profil visiteur raccordé. Théo et Inès restent des contenus d'exemple ; aucune nouvelle destination n'a été autorisée dans ce correctif.

@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileOwner, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
-type LibrarySort = "activity" | "title" | "author";
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "profile";
 type Feedback = {
@@ -822,14 +822,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
                       <span className="sr-only">Rechercher dans ma bibliothèque</span>
                       <input type="search" placeholder="Rechercher dans ma bibliothèque" value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} />
                     </label>
-                    <label className="library-sort">
-                      <span>Trier par</span>
-                      <select value={librarySort} onChange={(event) => setLibrarySort(event.target.value as LibrarySort)}>
-                        <option value="activity">Activité récente</option>
-                        <option value="title">Titre</option>
-                        <option value="author">Auteur</option>
-                      </select>
-                    </label>
+                    <LibrarySortControl value={librarySort} onChange={setLibrarySort} />
                   </div>
                 </div>
 

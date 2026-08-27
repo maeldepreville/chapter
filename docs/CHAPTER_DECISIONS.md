@@ -815,6 +815,13 @@ Dernière mise à jour : 27 août 2026
 - Limite de démonstration vérifiée : parmi les auteurs de critiques, seule Lina possède un profil visiteur raccordé. Théo et Inès sont des contenus d'exemple sans destination ; aucun profil supplémentaire n'est ajouté dans ce correctif.
 - Statut : **demandé en recette, implémenté et publié avec succès en version 23**. Lint, typage ciblé, construction de production et dix-sept tests automatisés réussis. La phase 10 reste ouverte et la phase 11 n'est pas entamée.
 
+### Correctif de recette — menu de tri de la bibliothèque
+
+- Le contrôle natif du navigateur est remplacé par un sélecteur cohérent avec Chapter : chevron dans une colonne dédiée avec marge intérieure, menu blanc cassé, survol et focus actifs brique doux, choix sélectionné coché.
+- Les trois tris validés en phase 9 sont inchangés : « Activité récente » par défaut, « Titre » et « Auteur ». Filtres, recherche et conservation du choix restent identiques.
+- Le menu fonctionne au clic et au toucher, se ferme au clic extérieur et à la perte de focus ; au clavier, flèches, Début/Fin, saisie des premières lettres, Entrée/Espace, Échap et Tab sont pris en charge. Échap annule le choix en attente ; Tab le valide sans piéger le focus.
+- Statut : **demandé en recette et implémenté ; publication en préparation**. Correction ciblée du composant de phase 9 pendant la recette de phase 10, sans ouverture de phase 11.
+
 ## Décisions validées
 
 ### Positionnement du premier lot

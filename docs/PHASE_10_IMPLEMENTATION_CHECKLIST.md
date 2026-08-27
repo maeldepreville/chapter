@@ -12,6 +12,10 @@ Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’hon
 - [ ] Depuis la recherche d’en-tête, saisir une œuvre et valider avec Entrée ; arriver dans Découvrir avec la requête conservée.
 - [ ] Depuis Journal ou Bibliothèque, ouvrir une œuvre, changer son statut, enregistrer une note et publier une critique : les parcours de phase 9 restent fonctionnels.
 - [ ] Vérifier les retours depuis une œuvre, un profil, une liste et les Chapitres d’honneur ; aucun écran ne doit produire d’impasse.
+- [ ] Dans la Bibliothèque, vérifier le tri sur desktop et à 320 px : flèche éloignée du bord, menu aligné au bouton sans débordement, fond blanc cassé, survol brique doux sans bleu natif et coche sur le choix courant.
+- [ ] Choisir successivement « Activité récente », « Titre » et « Auteur » : libellé et ordre des œuvres changent, le menu se ferme ; recherche et filtre restent conservés. Quitter puis revenir conserve le tri mais pas un menu ouvert.
+- [ ] Tester le tri au clic et au toucher : second clic sur le bouton, clic extérieur et choix d'une option ferment correctement, sans bloquer la navigation.
+- [ ] Au clavier, ouvrir le tri avec Entrée/Espace, parcourir avec les flèches, Début/Fin et les premières lettres ; Entrée/Espace valide, Échap annule le choix en attente, Tab valide puis quitte le contrôle sans piéger le focus.
 
 ## 2. Découvrir — desktop et mobile
 
