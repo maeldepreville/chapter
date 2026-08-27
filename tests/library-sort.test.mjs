@@ -10,9 +10,9 @@ const require = createRequire(import.meta.url);
 const source = await readFile(new URL("../app/library-sort.tsx", import.meta.url), "utf8");
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText;
 function loadControl(react = require("react")) {
-  const module = { exports: {} };
-  new Function("require", "module", "exports", compiled)((id) => id === "react" ? react : require(id), module, module.exports);
-  return module.exports;
+  const compiledModule = { exports: {} };
+  new Function("require", "module", "exports", compiled)((id) => id === "react" ? react : require(id), compiledModule, compiledModule.exports);
+  return compiledModule.exports;
 }
 
 // Exercise the control's own handlers without a browser or a DOM simulation.
