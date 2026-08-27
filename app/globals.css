@@ -511,6 +511,19 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border: 0;
   cursor: default;
 }
+/* Reset native dialog chrome only; keep the existing overlay and panel layout. */
+dialog.chapter-modal {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+dialog.chapter-modal:not([open]) { display: none; }
+dialog.chapter-modal::backdrop { background: transparent; }
 .editor-modal, .search-panel {
   position: relative;
   z-index: 1;

@@ -4,6 +4,7 @@ import Image from "next/image";
 /* eslint-disable @next/next/no-img-element */
 import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
 import { getHonorsLayout } from "./honors-layout";
+import { Modal } from "./modal";
 
 export type SocialWork = {
   id: string;
@@ -373,7 +374,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isOwnProfile ? "Carte de lecteur" : "Portrait public"}</small></div>
                 <div className="profile-avatar-wrap">
                   <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
-                  {isOwnProfile && <div className="profile-photo-actions"><button className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
+                  {isOwnProfile && <div className="profile-photo-actions"><button data-photo-edit className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
                 </div>
                 <div className="profile-heading-copy">
                   <p className="eyebrow">{isOwnProfile ? "Votre portrait" : "Portrait de lecteur"}</p>
@@ -435,15 +436,15 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         </section>
       </div>
       {isOwnProfile && removePhotoConfirm && (
-        <div className="overlay profile-photo-remove-overlay" role="alertdialog" aria-modal="true" aria-labelledby="remove-photo-title">
-          <button className="overlay-backdrop" type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
+        <Modal className="profile-photo-remove-overlay" alert labelledBy="remove-photo-title" initialFocus="[data-keep-photo]" returnFocusSelector="[data-photo-edit]" onRequestClose={() => setRemovePhotoConfirm(false)}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
           <section className="profile-photo-remove-dialog">
             <p className="eyebrow">Photo de profil</p>
             <h2 id="remove-photo-title">Retirer cette photo ?</h2>
             <p>Vos initiales reprendront leur place sur votre carte de lecteur.</p>
-            <div className="modal-actions"><button className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div>
+            <div className="modal-actions"><button data-keep-photo className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div>
           </section>
-        </div>
+        </Modal>
       )}
     </section>
   );
@@ -818,8 +819,8 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
   };
 
   return (
-    <div className="overlay photo-overlay" role="dialog" aria-modal="true" aria-labelledby="photo-crop-title">
-      <button className="overlay-backdrop" type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
+    <Modal className="photo-overlay" labelledBy="photo-crop-title" initialFocus=".close-button" returnFocusSelector="[data-photo-edit]" onRequestClose={onClose}>
+      <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
       <section className="photo-crop-modal">
         <div className="modal-heading"><div><p className="eyebrow">Photo facultative</p><h2 id="photo-crop-title">Recadrer la photo</h2></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
         {source ? (
@@ -851,6 +852,6 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
           </>
         )}
       </section>
-    </div>
+    </Modal>
   );
 }

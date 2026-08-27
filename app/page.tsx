@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { LibrarySort, LibrarySortControl } from "./library-sort";
+import { Modal } from "./modal";
+import { lockBodyScroll } from "./modal-behavior";
 import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileOwner, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
@@ -409,14 +411,12 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   }, [currentView, selectedWorkId]);
 
   useEffect(() => {
-    const hasOverlay = noteOpen || reviewOpen || searchOpen || photoCropOpen || accountOpen || noteCloseConfirm || reviewCloseConfirm;
-    document.body.style.overflow = hasOverlay ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [noteOpen, reviewOpen, searchOpen, photoCropOpen, accountOpen, noteCloseConfirm, reviewCloseConfirm]);
+    if (accountOpen) return lockBodyScroll(document);
+  }, [accountOpen]);
 
   useEffect(() => {
     const closeAccountOutside = (event: PointerEvent) => {
-      if (!accountOpen || accountControlRef.current?.contains(event.target as Node) || mobileAccountRef.current?.contains(event.target as Node)) return;
+      if (!accountOpen || document.querySelector("dialog[open]") || accountControlRef.current?.contains(event.target as Node) || mobileAccountRef.current?.contains(event.target as Node)) return;
       setAccountOpen(false);
     };
     document.addEventListener("pointerdown", closeAccountOutside);
@@ -431,21 +431,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      if (noteCloseConfirm) return setNoteCloseConfirm(false);
-      if (reviewCloseConfirm) return setReviewCloseConfirm(false);
-      if (noteOpen) {
-        if (noteDraft !== entry.note) setNoteCloseConfirm(true);
-        else setNoteOpen(false);
-        return;
-      }
-      if (reviewOpen) {
-        if (reviewDraft !== entry.review || ratingDraft !== entry.rating) setReviewCloseConfirm(true);
-        else setReviewOpen(false);
-        return;
-      }
-      if (searchOpen) return setSearchOpen(false);
-      if (photoCropOpen) return setPhotoCropOpen(false);
+      if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("dialog[open]")) return;
       if (accountOpen) return setAccountOpen(false);
       if (statusMenuOpen || datePrompt) {
         setStatusMenuOpen(false);
@@ -998,8 +984,8 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
       )}
 
       {searchOpen && (
-        <div className="overlay search-overlay" role="dialog" aria-modal="true" aria-labelledby="search-title">
-          <button className="overlay-backdrop" type="button" aria-label="Fermer la recherche" onClick={() => setSearchOpen(false)} />
+        <Modal className="search-overlay" labelledBy="search-title" initialFocus='input[type="search"]' onRequestClose={() => setSearchOpen(false)}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la recherche" onClick={() => setSearchOpen(false)} />
           <section className="search-panel">
             <div className="modal-heading">
               <div>
@@ -1010,7 +996,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
             </div>
             <label>
               <span className="sr-only">Titre ou auteur</span>
-              <input autoFocus type="search" placeholder="Titre ou auteur" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
+              <input type="search" placeholder="Titre ou auteur" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
             </label>
             <div className="search-results">
               {filteredWorks.map((work) => (
@@ -1020,29 +1006,29 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
             </div>
             <button className="primary-action search-discover-action" type="button" onClick={() => openDiscoverWithQuery(searchQuery)}>{searchQuery.trim() ? "Voir les résultats dans Découvrir" : "Ouvrir Découvrir"}</button>
           </section>
-        </div>
+        </Modal>
       )}
 
       {noteOpen && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="note-title">
-          <button className="overlay-backdrop" type="button" aria-label="Fermer la note" onClick={requestNoteClose} />
+        <Modal labelledBy={noteCloseConfirm ? "note-confirm-title" : "note-title"} describedBy={noteCloseConfirm ? "note-confirm-description" : undefined} alert={noteCloseConfirm} initialFocus={noteCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la note" onClick={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()} />
           <section className={`editor-modal private-editor ${noteCloseConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Privée · visible uniquement par vous</p>
                 <h2 id="note-title">Ma note</h2>
               </div>
-              <button className="close-button" type="button" aria-label="Fermer" onClick={requestNoteClose}>×</button>
+              <button className="close-button" type="button" aria-label="Fermer" onClick={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>×</button>
             </div>
             <label className="editor-field">
               <span>Ce que vous souhaitez retenir</span>
-              <textarea autoFocus={!noteCloseConfirm} readOnly={noteCloseConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
+              <textarea readOnly={noteCloseConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
             </label>
             {noteCloseConfirm ? (
-              <div className="editor-confirmation" role="alertdialog" aria-labelledby="note-confirm-title">
-                <div><strong id="note-confirm-title">Quitter sans enregistrer ?</strong><p>Les modifications apportées à votre note seront perdues.</p></div>
+              <div className="editor-confirmation">
+                <div><strong id="note-confirm-title">Quitter sans enregistrer ?</strong><p id="note-confirm-description">Les modifications apportées à votre note seront perdues.</p></div>
                 <div className="protection-actions">
-                  <button className="primary-action" type="button" onClick={() => setNoteCloseConfirm(false)}>Revenir à la note</button>
+                  <button data-safe-return className="primary-action" type="button" onClick={() => setNoteCloseConfirm(false)}>Revenir à la note</button>
                   <button className="destructive-action" type="button" onClick={() => { setNoteCloseConfirm(false); setNoteOpen(false); setNoteDraft(entry.note); }}>Ignorer les modifications</button>
                 </div>
               </div>
@@ -1053,23 +1039,23 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               </div>
             )}
           </section>
-        </div>
+        </Modal>
       )}
 
       {reviewOpen && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="review-title">
-          <button className="overlay-backdrop" type="button" aria-label="Fermer la critique" onClick={requestReviewClose} />
+        <Modal labelledBy={reviewCloseConfirm ? "review-confirm-title" : "review-title"} describedBy={reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm} initialFocus={reviewCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()} />
           <section className={`editor-modal review-editor ${reviewCloseConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Publique</p>
                 <h2 id="review-title">{entry.review ? "Modifier ma critique" : "Écrire une critique"}</h2>
               </div>
-              <button className="close-button" type="button" aria-label="Fermer" onClick={requestReviewClose}>×</button>
+              <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
             </div>
             <label className="editor-field">
               <span>Votre critique</span>
-              <textarea autoFocus={!reviewCloseConfirm} readOnly={reviewCloseConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
+              <textarea readOnly={reviewCloseConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
               <small>{reviewDraft.length.toLocaleString("fr-FR")} / 3 000 caractères</small>
             </label>
             <fieldset className="rating-field">
@@ -1103,10 +1089,10 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               </div>
             </fieldset>
             {reviewCloseConfirm ? (
-              <div className="editor-confirmation" role="alertdialog" aria-labelledby="review-confirm-title">
-                <div><strong id="review-confirm-title">Quitter sans enregistrer ?</strong><p>Les modifications apportées à votre critique seront perdues.</p></div>
+              <div className="editor-confirmation">
+                <div><strong id="review-confirm-title">Quitter sans enregistrer ?</strong><p id="review-confirm-description">Les modifications apportées à votre critique seront perdues.</p></div>
                 <div className="protection-actions">
-                  <button className="primary-action" type="button" onClick={() => setReviewCloseConfirm(false)}>Revenir à la critique</button>
+                  <button data-safe-return className="primary-action" type="button" onClick={() => setReviewCloseConfirm(false)}>Revenir à la critique</button>
                   <button className="destructive-action" type="button" onClick={() => { setReviewCloseConfirm(false); setReviewOpen(false); setReviewDraft(entry.review); setRatingDraft(entry.rating); }}>Ignorer les modifications</button>
                 </div>
               </div>
@@ -1117,7 +1103,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               </div>
             )}
           </section>
-        </div>
+        </Modal>
       )}
 
       {photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}
