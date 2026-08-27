@@ -37,6 +37,6 @@ Le premier résultat est le commit local ; le second doit afficher exactement le
 
 ## Continuité
 
-La règle permanente de `AGENTS.md` reste applicable : chaque futur jalon explicitement validé doit être synchronisé vers `maeldepreville/chapter`, branche `main`, puis vérifié. Ce transfert manuel résout le blocage d'authentification de l'environnement actuel ; il ne remplace pas cette règle par une obligation de publication manuelle systématique.
+La règle permanente de `AGENTS.md` reste applicable : chaque futur jalon explicitement validé doit être synchronisé vers `maeldepreville/chapter`, branche `main`, puis vérifié. **L'utilisateur confirme le 27 août 2026 que les prochains envois seront effectués directement par l'agent**, avec Git authentifié ou la connexion GitHub intégrée, sans bundle ni commandes utilisateur par défaut. Le présent transfert a permis de livrer les historiques existants à l'identique ; il n'a pas configuré l'authentification Git du terminal et ne constitue pas une procédure récurrente. Un nouveau recours au bundle nécessite un blocage réel expliqué et l'accord de l'utilisateur. Les historiques doivent être préservés et les références distante et locale vérifiées.
 
 Le bundle contient l'historique versionné accessible depuis `main`, dont le code, les assets, les tests et les documents. Il n'embarque pas les fichiers non suivis, les identifiants Git locaux ni la configuration privée du dossier `.git`.
