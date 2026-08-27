@@ -813,7 +813,7 @@ Dernière mise à jour : 27 août 2026
 - Sur un profil visiteur, « Suivi » adopte un fond gris clair et un texte brique, y compris au survol ; désactiver l'abonnement rétablit le bouton « Suivre » brique à texte clair. Le libellé et l'état accessible restent synchronisés.
 - « Voir la conversation · nombre » et « Répondre » sont séparés par un espacement explicite, avec retour à la ligne si nécessaire sur mobile. Développer une conversation conserve l'action de réponse après ses messages.
 - Limite de démonstration vérifiée : parmi les auteurs de critiques, seule Lina possède un profil visiteur raccordé. Théo et Inès sont des contenus d'exemple sans destination ; aucun profil supplémentaire n'est ajouté dans ce correctif.
-- Statut : **demandé en recette et implémenté ; vérification et publication en cours**. La phase 10 reste ouverte et la phase 11 n'est pas entamée.
+- Statut : **demandé en recette, implémenté et publié avec succès en version 23**. Lint, typage ciblé, construction de production et dix-sept tests automatisés réussis. La phase 10 reste ouverte et la phase 11 n'est pas entamée.
 
 ## Décisions validées
 

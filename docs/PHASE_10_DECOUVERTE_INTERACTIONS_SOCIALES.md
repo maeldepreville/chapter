@@ -1000,7 +1000,7 @@ Sous les critiques, le retrait de la marge gauche sur mobile supprimait aussi la
 
 La consultation des auteurs de critiques est limitée par les fixtures actuelles : Lina est reliée à un profil visiteur, contrairement à Théo et Inès. Ce point est confirmé comme une limite du prototype, pas un incident de navigation. Aucun nouveau profil n'est créé dans ce lot.
 
-Statut : correctifs implémentés, vérification et publication en cours. La recette de phase 10 continue ; la phase 11 reste réservée au prochain chat.
+Statut : correctifs implémentés et publiés avec succès en version 23 (source `e0f305c451e3c5f65aeae146128391c80dc8c9ca`). Lint, typage ciblé de `phase10.tsx` et `honors-layout.ts`, construction de production et dix-sept tests automatisés réussis. Les tests ajoutés vérifient les règles des deux états et l'espacement responsive ; le rendu serveur vérifie aussi les commandes produites. Ils ne remplacent pas la recette visuelle de l'utilisateur. La recette de phase 10 continue ; la phase 11 reste réservée au prochain chat.
 
 ## Arbitrages à mener
 

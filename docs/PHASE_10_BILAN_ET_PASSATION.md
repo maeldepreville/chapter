@@ -10,8 +10,8 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 
 ## Référence publiée et documents à lire
 
-- Dernier jalon fonctionnel : version 22, HDE1, publiée avec succès.
-- Source de ce jalon : `551801dd62a0032fb08f96ea9989395703c44317`.
+- Dernier jalon fonctionnel : version 23, état « Suivi » et espacement des conversations, publiée avec succès après HDE1.
+- Source de ce jalon : `e0f305c451e3c5f65aeae146128391c80dc8c9ca`.
 - Lire `../AGENTS.md`, `CHAPTER_DECISIONS.md`, puis `PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`.
 - La recette exhaustive est décrite dans `PHASE_10_IMPLEMENTATION_CHECKLIST.md`. Ses cases ne doivent pas être cochées sur la seule base d'un test automatisé ou d'un retour utilisateur limité à une anomalie.
 
@@ -29,8 +29,8 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 
 ## Contrôles et limites de preuve
 
-- Au dernier jalon publié : construction de production réussie, lint réussi, typage ciblé des composants HDE1 réussi et quinze tests automatisés réussis.
-- Pour cette préparation de clôture : lint et quinze tests relancés avec succès sur la source fonctionnelle inchangée. Aucune nouvelle construction ni publication n'était nécessaire pour cette mise à jour documentaire.
+- Au dernier jalon publié : construction de production réussie, lint réussi, typage ciblé de `phase10.tsx` et `honors-layout.ts` réussi et dix-sept tests automatisés réussis.
+- La préparation documentaire initiale ne nécessitait aucune publication. Les deux retours de recette suivants ont ensuite été corrigés et publiés en version 23, avec deux tests supplémentaires et des assertions de rendu serveur renforcées.
 - Ces tests couvrent des fonctions de regroupement, des invariants de source, les assets et le rendu serveur ; ils ne constituent pas un test navigateur complet des interactions ou du responsive.
 - Le contrôle TypeScript global reste bloqué par des déclarations Cloudflare absentes dans l'infrastructure existante : `cloudflare:workers`, `Fetcher`, `D1Database`. Ne pas présenter le typage global comme réussi.
 - Les retours utilisateur ont permis de corriger plusieurs anomalies de recherche, profil, photo, badges et sélecteur de date. Ils ne constituent pas une validation implicite de toutes les cases de la checklist.
@@ -51,7 +51,7 @@ Les cas sans honneur ou avec un nom modifié nécessitent des fixtures et ne son
 
 ## Limites du prototype maintenues
 
-Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Vérification et publication en cours. Deux cas ciblés sont ajoutés à la checklist ; la clôture globale reste attendue.
+Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Correctifs vérifiés et publiés en version 23. Deux cas ciblés sont ajoutés à la checklist ; la clôture globale reste attendue.
 
 Dans les critiques, Lina est le seul auteur disposant d'un profil visiteur raccordé. Théo et Inès restent des contenus d'exemple ; aucune nouvelle destination n'a été autorisée dans ce correctif.
 
