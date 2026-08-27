@@ -41,13 +41,21 @@ Dernière mise à jour : 27 août 2026
 - Phase 7 — parcours d’ajout, de note privée et de critique : **terminée et validée**.
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
 - Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
-- Phase 10 — découverte et interactions sociales : **implémentée et publiée, avec PDR1B, QR1 et HDE1 ; recette utilisateur ouverte, clôture formelle en attente**.
+- Phase 10 — découverte et interactions sociales : **terminée et validée le 27 août 2026**, sur la version 24, avec JI1, PDR1B, QR1, HDE1 et les correctifs de recette.
 - Phase 11 — états transversaux, cohérence, responsive et accessibilité : **prévue, non encore ouverte**. Le plan initial s'arrête à cette consolidation ; l'authentification, l'onboarding et les autres fonctions exclues nécessiteront un périmètre ultérieur explicitement validé.
-- Organisation confirmée le 27 août : terminer la recette de phase 10 dans le chat actuel ; la phase 11 sera entamée dans un autre chat du projet. Le bilan et les points de reprise sont conservés dans [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md), sans anticiper la validation finale ni ouvrir la phase 11.
+- Organisation confirmée le 27 août : phase 10 clôturée dans le chat actuel ; la phase 11 sera entamée dans un autre chat du projet. Le bilan de clôture et les points de reprise sont conservés dans [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md). La clôture n'autorise pas automatiquement l'implémentation de la phase 11.
 - L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
 - Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md), [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
 ## Décisions validées pendant la phase 10
+
+### Clôture de la phase 10 — 27 août 2026
+
+- Après les derniers correctifs du bouton d'abonnement, des conversations mobiles et du tri de la Bibliothèque, l'utilisateur indique que tout lui paraît bon et demande de continuer. Ce retour clôt la recette du périmètre livré.
+- La référence acceptée est la version 24, source `ce72daa701d73b49f399da3dbea360278fd6896e`. Aucun changement d'interface ni nouveau déploiement n'accompagne cette clôture documentaire.
+- Les preuves du dernier jalon restent : lint, construction de production, typage ciblé et vingt-deux tests automatisés réussis. La validation utilisateur n'est pas assimilée à l'exécution tracée de chaque test manuel ou à un audit exhaustif d'accessibilité.
+- Les anciennes mentions de recette ouverte ci-dessous décrivent l'état des jalons avant cette clôture et sont remplacées par le présent statut global.
+- La phase 11 reste à ouvrir dans le prochain chat : audit transversal, propositions de correction, validation explicite avant implémentation, puis recette finale. Les limites du prototype et le point de typage Cloudflare restent documentés dans la passation.
 
 ### Priorité initiale de la découverte
 

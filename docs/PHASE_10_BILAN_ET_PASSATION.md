@@ -1,19 +1,19 @@
-# Phase 10 — Bilan de recette et préparation de la passation
+# Phase 10 — Bilan de clôture et passation
 
 Dernière mise à jour : 27 août 2026.
 
 ## Statut exact
 
-La phase 10 est implémentée et publiée. Aucun arbitrage de conception de son périmètre validé ne reste ouvert. Sa validation fonctionnelle globale par l'utilisateur est encore attendue : ce document prépare la clôture, il ne l'atteste pas.
+La phase 10 est terminée et validée le 27 août 2026 sur la version 24. Après la reprise du tri de la Bibliothèque, l'utilisateur indique que tout lui paraît bon et demande de continuer. Aucun arbitrage de conception ni anomalie signalée non traitée ne reste ouvert dans le périmètre de cette recette.
 
-L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis entamer la phase 11 dans un autre chat du même projet. Ne pas ouvrir ni implémenter la phase 11 dans cette conversation.
+La phase 10 est clôturée dans la conversation actuelle. L'utilisateur souhaite entamer la phase 11 dans un autre chat du même projet ; elle reste non ouverte et son implémentation n'est pas automatiquement autorisée par cette validation.
 
 ## Référence publiée et documents à lire
 
 - Dernier jalon fonctionnel : version 24, menu de tri de la bibliothèque, publiée avec succès après les correctifs d'abonnement et de conversation.
 - Source de ce jalon : `ce72daa701d73b49f399da3dbea360278fd6896e`.
 - Lire `../AGENTS.md`, `CHAPTER_DECISIONS.md`, puis `PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`.
-- La recette exhaustive est décrite dans `PHASE_10_IMPLEMENTATION_CHECKLIST.md`. Ses cases ne doivent pas être cochées sur la seule base d'un test automatisé ou d'un retour utilisateur limité à une anomalie.
+- La recette exhaustive est décrite dans `PHASE_10_IMPLEMENTATION_CHECKLIST.md`. La validation globale est consignée en tête ; les cases restent non cochées individuellement en l'absence de relevé d'exécution détaillé. Elles pourront servir à la non-régression de phase 11, sans rouvrir la recette clôturée.
 
 ## Périmètre livré
 
@@ -26,6 +26,7 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 | Honneurs | HDE1 : honneurs singuliers acquis en ouverture, quatre colonnes de familles sur desktop ; sur mobile, acquis à gauche et prochain à droite, détail HMT1 sous la paire. |
 | Relations et conversations | Abonnement réversible, priorité relationnelle, réponses à plat, édition/suppression de ses réponses, fermeture/réouverture et signalement/blocage simulés. |
 | Navigation | Le logo Chapter revient au Journal ; aucune page d'accueil supplémentaire n'est demandée. |
+| Bibliothèque | Trois tris conservés, sélecteur blanc cassé/brique, chevron espacé, option cochée et navigation clavier. |
 
 ## Contrôles et limites de preuve
 
@@ -34,10 +35,11 @@ L'utilisateur souhaite terminer la phase 10 dans la conversation actuelle, puis 
 - Ces tests couvrent des fonctions de regroupement, des invariants de source, les assets et le rendu serveur ; ils ne constituent pas un test navigateur complet des interactions ou du responsive.
 - Le contrôle TypeScript global reste bloqué par des déclarations Cloudflare absentes dans l'infrastructure existante : `cloudflare:workers`, `Fetcher`, `D1Database`. Ne pas présenter le typage global comme réussi.
 - Les retours utilisateur ont permis de corriger plusieurs anomalies de recherche, profil, photo, badges et sélecteur de date. Ils ne constituent pas une validation implicite de toutes les cases de la checklist.
+- La clôture du présent tour ne modifie que la documentation. Elle ne nécessite ni nouvelle construction ni publication ; les preuves ci-dessus sont celles du dernier jalon fonctionnel.
 
-## Dernière recette de phase 10
+## Périmètre de la recette clôturée
 
-Reprendre uniquement les points de la checklist qui ne sont pas encore vérifiés par l'utilisateur ; ne pas imposer la répétition intégrale de tous les correctifs déjà confirmés.
+Les ensembles ci-dessous ont été présentés à la recette et font partie du périmètre désormais accepté. Ne pas imposer la répétition intégrale des correctifs confirmés ; en phase 11, cibler les vérifications complémentaires et les non-régressions selon les changements proposés.
 
 1. Découvrir : recherche exacte/approchée/vide, intention, ouverture des œuvres, ajout et annulation.
 2. Relations et listes : suivre/ne plus suivre Lina depuis plusieurs points d'entrée, ouvrir chacune de ses deux listes, retrouver le bon profil au retour.
@@ -53,7 +55,7 @@ Les cas sans honneur ou avec un nom modifié nécessitent des fixtures et ne son
 
 Correctif de recette du tri de la Bibliothèque : menu natif remplacé par un sélecteur blanc cassé/brique avec chevron espacé, option cochée et navigation clavier complète, sans changer les trois tris de phase 9. Publication vérifiée en version 24 ; les cas visuels, clavier, tactiles et de conservation du contexte sont ajoutés à la checklist.
 
-Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Correctifs vérifiés et publiés en version 23. Deux cas ciblés sont ajoutés à la checklist ; la clôture globale reste attendue.
+Retour de recette supplémentaire du 27 août : l'état « Suivi » du profil est désormais gris clair à texte brique ; les commandes de conversation disposent d'un espacement indépendant de l'indentation mobile. Correctifs vérifiés et publiés en version 23, puis inclus dans l'acceptation finale de la version 24.
 
 Dans les critiques, Lina est le seul auteur disposant d'un profil visiteur raccordé. Théo et Inès restent des contenus d'exemple ; aucune nouvelle destination n'a été autorisée dans ce correctif.
 
@@ -63,6 +65,6 @@ L'authentification réelle, l'onboarding, la persistance distante, les notificat
 
 ## Reprise dans le prochain chat
 
-Après validation finale de phase 10 seulement, mettre les statuts de clôture à jour ici et dans les deux documents de référence. Le prochain chat pourra ensuite cadrer la phase 11 : audit des états transversaux, cohérence, responsive, accessibilité et bilan technique, puis corrections après autorisation.
+La clôture est déjà enregistrée ici, dans le journal transversal et dans le document détaillé de phase 10. Le prochain chat commencera par lire ces documents et l'état du dépôt, puis cadrera la phase 11 : audit des états transversaux, cohérence, responsive, accessibilité et bilan technique. Il présentera les constats et les corrections proposées avant de demander l'autorisation de les implémenter. Ne pas créer de nouvelles fonctions ni revoir les choix validés sans raison démontrée et nouvel accord.
 
 Le report historique de fermeture du menu de compte en phase 11 a été traité au cours des correctifs précédents : vérifier sa non-régression, sans supposer que la fonctionnalité reste à développer. Préserver tous les choix validés PDR1B, PFP1, N1b, QR1, HDE1, HV1 et HMT1, ainsi que les dessins des insignes et le poinçon fourni.

@@ -2,6 +2,8 @@
 
 Cette checklist couvre le jalon intégré Découvrir, profils, Chapitres d’honneur et conversations sociales. Elle complète les contrôles automatisés et sert à relever les ajustements visuels ou ergonomiques avant validation définitive.
 
+**Clôture : phase 10 validée globalement par l'utilisateur le 27 août 2026 sur la version 24.** Les cases restent non cochées individuellement : aucune exécution détaillée de chaque scénario n'a été fournie. Cette liste est conservée comme référence de couverture et de non-régression pour la phase 11, et non comme une recette encore bloquante.
+
 ## 1. Navigation et non-régression
 
 - [ ] Sur desktop, ouvrir successivement Journal, Découvrir et Bibliothèque depuis l’en-tête ; l’état actif reste identifiable.

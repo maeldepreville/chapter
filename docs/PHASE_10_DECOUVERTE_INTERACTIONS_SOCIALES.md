@@ -1,7 +1,13 @@
 # Chapter — Phase 10 : découverte et interactions sociales
 
-Statut : **implémentation JI1, correctifs PDR1B, QR1 et HDE1 publiés — évaluation utilisateur ouverte**
+Statut : **terminée et validée par l'utilisateur le 27 août 2026 — version 24 acceptée**
 Dernière mise à jour : 27 août 2026
+
+## Clôture de recette
+
+Après les corrections successives et la reprise du tri de la Bibliothèque, l'utilisateur indique que tout lui paraît bon et demande de continuer. La phase 10 est donc clôturée sur la version 24, source `ce72daa701d73b49f399da3dbea360278fd6896e`, sans modification supplémentaire de l'interface ni nouveau déploiement.
+
+Ce statut remplace les mentions de recette ouverte conservées dans l'historique des jalons ci-dessous. La validation globale n'atteste pas l'exécution individuelle de chaque case de la checklist ; les cas extrêmes, la cohérence transversale et l'accessibilité seront audités en phase 11. La passation est disponible dans [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md).
 
 ## Objectif de la phase
 
@@ -1026,13 +1032,13 @@ Statut : implémenté et publié avec succès en version 24 (source `ce72daa701d
 10. Calibrer les paramètres explicitement reportés avant l’implémentation — **FC1 validée pour la fenêtre confidentielle ED3 ; PFP1 validée pour la photo de profil, avec interaction haute définition et fluide**.
 11. Choisir le découpage de l’implémentation et préparer la checklist — **JI1 validée, autorisée et implémentée ; checklist exhaustive produite**.
 
-## Point de continuité — suite du plan au 27 août
+## Point de continuité — après clôture au 27 août
 
-L'utilisateur demande de poursuivre exclusivement la clôture de phase 10 ici et d'entamer la phase 11 dans un autre chat du projet. Le document [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md) rassemble le périmètre livré, les preuves de validation, la dernière recette et les points de reprise. Le lint et les quinze tests automatisés passent à nouveau ; la validation fonctionnelle globale de l'utilisateur reste attendue. Aucune modification d'interface ni nouvelle publication n'est effectuée pendant cette préparation documentaire.
+L'utilisateur a validé le résultat de la recette de phase 10. Le document [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md) rassemble le périmètre accepté, les preuves du dernier jalon (dont vingt-deux tests réussis) et les points de reprise. Cette clôture est documentaire : aucun contrôle navigateur supplémentaire, changement d'interface ou nouveau déploiement n'est revendiqué.
 
-Le retour du logo « Chapter. » au Journal est maintenu à la demande de l'utilisateur ; aucune nouvelle page d'accueil n'est créée. Cette confirmation ne vaut pas clôture globale de la recette de phase 10.
+Le retour du logo « Chapter. » au Journal est maintenu à la demande de l'utilisateur ; aucune nouvelle page d'accueil n'est créée.
 
-La suite du plan initial est : terminer la recette et obtenir la validation finale de phase 10, puis ouvrir la phase 11 pour l'audit transversal des états limites, des interactions, de la cohérence graphique, du responsive et de l'accessibilité. Les correctifs seront présentés et autorisés avant implémentation, puis soumis à une recette finale exhaustive. Cette phase termine le premier périmètre d'interface sur données simulées ; elle ne transforme pas à elle seule le prototype en service doté de comptes et de persistance réels.
+La suite du plan initial est désormais l'ouverture de la phase 11 dans un autre chat du projet, comme convenu : audit transversal des états limites, des interactions, de la cohérence graphique, du responsive et de l'accessibilité. Les correctifs seront présentés et autorisés avant implémentation, puis soumis à une recette finale exhaustive. La phase 11 n'est pas ouverte ici. Elle termine le premier périmètre d'interface sur données simulées ; elle ne transforme pas à elle seule le prototype en service doté de comptes et de persistance réels.
 
 L'authentification, l'onboarding et les autres exclusions ci-dessous restent des sujets de cadrage ultérieurs, sans nouvelle phase numérotée ni implémentation automatiquement autorisée. Le point technique ouvert sur les déclarations Cloudflare du typage global devra être repris dans le bilan de consolidation.
 
