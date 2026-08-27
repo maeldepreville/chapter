@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { CoverFrame } from "./cover-frame";
+import { JournalTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
 import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { Modal } from "./modal";
 import { lockBodyScroll } from "./modal-behavior";
@@ -31,7 +32,7 @@ const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: 
 const UNDO_DURATION_MS = 5000;
 const PUBLIC_PROFILE_PATH = "/profil/mael-depreville";
 
-const works = [
+export const defaultWorks = [
   {
     id: "cartographies",
     title: "Les Cartographies du vent",
@@ -142,8 +143,8 @@ const works = [
   },
 ] as const;
 
-type WorkId = (typeof works)[number]["id"];
-type Work = (typeof works)[number];
+type WorkId = (typeof defaultWorks)[number]["id"];
+type Work = (typeof defaultWorks)[number];
 
 const coverTitleTier = (title: string) => {
   if (title.length <= 18) return "cover-title-short";
@@ -152,14 +153,12 @@ const coverTitleTier = (title: string) => {
 };
 
 function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" | "journal" | "mini" }) {
-  const className = `${variant === "book" ? "book-cover" : `${variant}-cover`} ${work.cover ? "cover-image" : `typographic-cover ${work.coverTone}`}`;
+  const className = variant === "book" ? "book-cover" : `${variant}-cover`;
   const sizes = variant === "book" ? "(max-width: 899px) 160px, 320px" : variant === "library" ? "(max-width: 899px) 45vw, 240px" : "96px";
 
   return (
-    <span className={className} aria-label={`Couverture de ${work.title}, de ${work.author}`}>
-      {work.cover ? (
-        <Image src="/chapter-cover-art.png" alt="" fill priority={variant === "book"} sizes={sizes} />
-      ) : variant === "mini" ? (
+    <CoverFrame work={work} className={className} priority={variant === "book"} sizes={sizes}>
+      {variant === "mini" ? (
         <strong aria-hidden="true">{work.title.slice(0, 1)}</strong>
       ) : (
         <span className="cover-copy" aria-hidden="true">
@@ -168,20 +167,11 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
           <small>{work.author}</small>
         </span>
       )}
-    </span>
+    </CoverFrame>
   );
 }
 
-type JournalTrace = {
-  id: string;
-  workId: WorkId;
-  date: string;
-  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée";
-  text?: string;
-  action?: "note" | "review";
-};
-
-const journalTraces: JournalTrace[] = [
+const defaultJournalTraces: JournalTrace[] = [
   {
     id: "trace-note-cartographies",
     workId: "cartographies",
@@ -235,10 +225,7 @@ const activityOrder: Record<WorkId, number> = {
   sel: 1,
 };
 
-export default function Home({ initialProfileOwner = null }: { initialProfileOwner?: "public-self" | null }) {
-  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : "work");
-  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0].id);
-  const [entries, setEntries] = useState<Record<string, PersonalEntry>>({
+const defaultEntries: Record<string, PersonalEntry> = {
     cartographies: {
       ...emptyEntry,
       readingStatus: "En cours",
@@ -256,10 +243,19 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
       rating: 4,
     },
     sel: { ...emptyEntry, readingStatus: "À lire" },
-  });
+};
+
+// Internal fixture injection only; no public switch, URL parameter or storage.
+type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
+export default function Home({ initialProfileOwner = null, initialData }: { initialProfileOwner?: "public-self" | null; initialData?: InitialData }) {
+  const works = initialData?.works ?? defaultWorks;
+  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : initialData?.view ?? "work");
+  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0]?.id ?? "cartographies");
+  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? defaultEntries);
+  const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? defaultJournalTraces);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [statusOrigin, setStatusOrigin] = useState<StatusOrigin>("opening");
-  const [statusWorkId, setStatusWorkId] = useState<WorkId>(works[0].id);
+  const [statusWorkId, setStatusWorkId] = useState<WorkId>(works[0]?.id ?? "cartographies");
   const [datePrompt, setDatePrompt] = useState<DatePrompt>(null);
   const [customDateOpen, setCustomDateOpen] = useState(false);
   const [removeConfirmWorkId, setRemoveConfirmWorkId] = useState<WorkId | null>(null);
@@ -294,12 +290,13 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
-  const previousPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
-  const latestPublication = useRef({ workId: works[0].id as WorkId, review: "", rating: 0 });
+  const previousPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
+  const latestPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
+  const previousReviewTrace = useRef<{ trace: JournalTrace | undefined; index: number }>({ trace: undefined, index: -1 });
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const discoverySavedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
-  const selectedWork = works.find((work) => work.id === selectedWorkId) ?? works[0];
-  const entry = entries[selectedWork.id] ?? emptyEntry;
+  const selectedWork = works.find((work) => work.id === selectedWorkId);
+  const entry = entries[selectedWorkId] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
   const libraryWorks = works
     .filter((work) => entries[work.id]?.readingStatus)
@@ -328,7 +325,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
       [workId]: { ...(current[workId] ?? emptyEntry), ...changes },
     }));
   };
-  const updateEntry = (changes: Partial<PersonalEntry>) => updateEntryFor(selectedWork.id, changes);
+  const updateEntry = (changes: Partial<PersonalEntry>) => updateEntryFor(selectedWorkId, changes);
 
   const openView = (view: View) => {
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
@@ -444,6 +441,9 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   });
 
   const chooseStatus = (status: ReadingStatus) => {
+    if (status !== "À lire" && entries[statusWorkId]?.readingStatus !== status) {
+      setJournalTraces((traces) => saveReadingTrace(traces, statusWorkId, status, "Aujourd’hui"));
+    }
     updateEntryFor(statusWorkId, { readingStatus: status, ...(status === "À lire" ? { readingDate: "" } : {}) });
     setStatusMenuOpen(false);
     setRemoveConfirmWorkId(null);
@@ -491,6 +491,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   };
   const saveNote = () => {
     updateEntry({ note: noteDraft.trim() });
+    if (noteDraft.trim() !== entry.note) setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "note", noteDraft, "Aujourd’hui"));
     setNoteOpen(false);
   };
 
@@ -515,10 +516,13 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   const publishReview = () => {
     const cleanReview = reviewDraft.trim();
     if (!cleanReview) return;
-    previousPublication.current = { workId: selectedWork.id, review: entry.review, rating: entry.rating };
-    latestPublication.current = { workId: selectedWork.id, review: cleanReview, rating: ratingDraft };
+    previousPublication.current = { workId: selectedWorkId, review: entry.review, rating: entry.rating };
+    latestPublication.current = { workId: selectedWorkId, review: cleanReview, rating: ratingDraft };
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
+    previousReviewTrace.current = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
     const publicationLabel = entry.review ? "Critique mise à jour" : "Critique publiée";
     updateEntry({ review: cleanReview, rating: ratingDraft });
+    setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "review", cleanReview, "Aujourd’hui"));
     setReviewOpen(false);
     setReviewCloseConfirm(false);
     setFeedback({ kind: "publication", label: publicationLabel, detail: "Elle est maintenant visible publiquement." });
@@ -528,6 +532,12 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
       const previous = previousPublication.current;
       setSelectedWorkId(previous.workId);
       updateEntryFor(previous.workId, { review: previous.review, rating: previous.rating });
+      const { trace: restoredTrace, index } = previousReviewTrace.current;
+      setJournalTraces((traces) => {
+        const rest = traces.filter((trace) => trace.workId !== previous.workId || trace.action !== "review");
+        if (restoredTrace) rest.splice(Math.min(index, rest.length), 0, restoredTrace);
+        return rest;
+      });
       setReviewDraft(latestPublication.current.review);
       setRatingDraft(latestPublication.current.rating);
       setReviewOpen(true);
@@ -613,7 +623,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
   };
 
   const renderJournalTrace = (trace: JournalTrace, featured = false) => {
-    const work = works.find((candidate) => candidate.id === trace.workId) ?? works[0];
+    const work = works.find((candidate) => candidate.id === trace.workId);
     const expanded = expandedJournalTraces.includes(trace.id);
     const expandable = Boolean(trace.text && trace.text.length > 145);
     const visibleText = trace.text && !expanded && expandable ? `${trace.text.slice(0, 145).trim()}…` : trace.text;
@@ -622,10 +632,10 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
       <article className={`personal-trace ${featured ? "featured-trace" : ""}`} key={trace.id}>
         <time>{trace.date}</time>
         <div className="personal-trace-body">
-          <button className="trace-work-link" type="button" onClick={() => selectWork(work.id)}>
+          {work ? <button className="trace-work-link" type="button" onClick={() => selectWork(work.id)}>
             <WorkCover work={work} variant="mini" />
             <span><strong>{work.title}</strong><small>{work.author}</small></span>
-          </button>
+          </button> : <p className="trace-work-unavailable"><strong>Œuvre indisponible</strong><small>Votre trace est conservée.</small></p>}
           <p className="trace-kind">{trace.kind}{trace.kind === "Note privée" ? " · visible uniquement par vous" : ""}</p>
           {visibleText && <p className="trace-copy">{visibleText}</p>}
           <div className="trace-actions">
@@ -639,8 +649,8 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
                 {expanded ? "Réduire" : "Lire la suite"}
               </button>
             )}
-            {trace.action && (
-              <button className="text-action" type="button" onClick={() => trace.action === "note" ? openNoteForWork(trace.workId) : openReviewForWork(trace.workId)}>
+            {trace.action && work && (
+              <button className="text-action" type="button" onClick={() => trace.action === "note" ? openNoteForWork(work.id) : openReviewForWork(work.id)}>
                 Modifier
               </button>
             )}
@@ -693,6 +703,8 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
             key={discoverInitialQuery}
             works={works}
             statuses={Object.fromEntries(works.map((work) => [work.id, entries[work.id]?.readingStatus]))}
+            historyWorkIds={[...journalTraces.map((trace) => trace.workId), ...Object.keys(entries).filter((id) => entries[id].readingStatus === "En cours" || entries[id].readingStatus === "Lu" || entries[id].note.trim() || entries[id].review.trim() || entries[id].rating > 0)]}
+            onBackToJournal={() => openView("journal")}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
             onOpenProfile={openProfile}
@@ -728,7 +740,9 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               <p>Vos lectures du moment et les pensées qui construisent votre parcours.</p>
             </header>
 
-            <div className="journal-opening-grid">
+            {currentReadings.length === 0 && journalTraces.length === 0 ? (
+              <div className="journal-empty journal-empty-whole"><h2>Votre journal commence avec une œuvre</h2><button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button></div>
+            ) : <div className="journal-opening-grid">
               <section className="current-readings" aria-labelledby="current-readings-title">
                 <div className="personal-section-heading">
                   <div>
@@ -737,7 +751,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
                   </div>
                   {libraryCounts["En cours"] > 3 && <button className="text-action" type="button" onClick={() => { setLibraryFilter("En cours"); openView("library"); }}>Voir les {libraryCounts["En cours"]}</button>}
                 </div>
-                <div className="current-reading-rail">
+                <div className={currentReadings.length ? "current-reading-rail" : undefined}>
                   {currentReadings.length > 0 ? currentReadings.map((work) => (
                     <article className="current-reading" key={work.id}>
                       <button className="current-reading-main" type="button" onClick={() => selectWork(work.id)}>
@@ -755,7 +769,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
                   )) : (
                     <div className="journal-empty">
                       <p>Aucune lecture en cours pour le moment.</p>
-                      <button className="text-action" type="button" onClick={() => { setLibraryFilter("À lire"); openView("library"); }}>Choisir ma prochaine lecture</button>
+                      <button className="text-action" type="button" onClick={() => { if (libraryCounts["À lire"]) { setLibraryFilter("À lire"); openView("library"); } else setSearchOpen(true); }}>{libraryCounts["À lire"] ? "Voir mes livres à lire" : "Rechercher une œuvre"}</button>
                     </div>
                   )}
                 </div>
@@ -768,11 +782,11 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
                     <h2 id="latest-trace-title">À retenir</h2>
                   </div>
                 </div>
-                {renderJournalTrace(journalTraces[0], true)}
+                {journalTraces[0] ? renderJournalTrace(journalTraces[0], true) : <div className="journal-empty"><p>Votre prochaine note ou étape de lecture apparaîtra ici.</p></div>}
               </section>
-            </div>
+            </div>}
 
-            <section className="journal-timeline" aria-labelledby="journal-timeline-title">
+            {visibleTimelineTraces.length > 0 && <section className="journal-timeline" aria-labelledby="journal-timeline-title">
               <div className="personal-section-heading timeline-heading">
                 <div>
                   <p className="eyebrow">Chronologie personnelle</p>
@@ -783,7 +797,7 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               {!olderJournalVisible && journalTraces.length > 4 && (
                 <button className="quiet-action older-traces-action" type="button" onClick={() => setOlderJournalVisible(true)}>Afficher les entrées précédentes</button>
               )}
-            </section>
+            </section>}
           </section>
         ) : currentView === "library" ? (
           <section className="destination-page library-page" aria-labelledby="library-title">
@@ -850,6 +864,8 @@ export default function Home({ initialProfileOwner = null }: { initialProfileOwn
               </div>
             )}
           </section>
+        ) : !selectedWork ? (
+          <section className="destination-page"><h1>Œuvre indisponible</h1><p>Cette œuvre n’est pas disponible dans le catalogue.</p><button className="text-action" type="button" onClick={() => openView("journal")}>Revenir au Journal</button></section>
         ) : (
           <>
         <section className="book-opening" aria-labelledby="book-title">

@@ -1,6 +1,6 @@
-# Phase 11 — Recette du premier ensemble de correctifs
+# Phase 11 — Recette des deux premiers ensembles de correctifs
 
-Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures et protection NSV2 ; aucune refonte graphique.
+Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes et couvertures en erreur ; aucune refonte graphique. Publication différée au jalon regroupé.
 
 ## Conditions
 
@@ -61,3 +61,36 @@ Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées p
 - [ ] Si un lecteur d'écran est disponible, vérifier nom et rôle de chaque fenêtre, annonce de la protection NSV2 et absence de navigation dans le fond d'une vraie modale.
 - [ ] Distinguer les tests automatisés (logique et invariants de source) de cette recette réelle. Aucun succès automatique ne coche implicitement ces cases.
 - [ ] Le déplacement de l'image au clavier, les contrastes, tous les cas extrêmes de données et l'audit global responsive/accessibilité restent des sujets ultérieurs de phase 11. Les données demeurent simulées.
+
+## Deuxième ensemble — préparation des scénarios
+
+Les données absentes/incomplètes sont injectées par les fixtures internes de `tests/fixtures/phase11.mjs` et `tests/phase11-empty-states.test.mjs`, exécutables avec `node --test tests/phase11-empty-states.test.mjs`. Ne pas demander à l'utilisateur d'effacer ses contenus, modifier le code ou utiliser un panneau public de débogage. Ces tests automatisés ne cochent aucune case visuelle ci-dessous : les scénarios non présents dans la démonstration normale devront être préparés dans un environnement interne pour une future recette navigateur explicitement demandée.
+
+- [ ] Catalogue vide : Découvrir, profils, listes, Journal et page d'œuvre restent lisibles, sans page blanche ; les retours au Journal ou à l'écran précédent fonctionnent.
+- [ ] Catalogue incomplet : chaque liste/favori affiche uniquement les œuvres disponibles, une fois chacune ; compteurs et ordre cohérents, aucun titre, couverture ou commentaire emprunté à une autre œuvre.
+- [ ] Proposition principale indisponible : message sobre, envies facultatives et autres propositions réellement disponibles utilisables ; aucun remplacement trompeur.
+- [ ] Métadonnées absentes : « Œuvre indisponible », texte de la note/critique conservé, confidentialité inchangée, absence de faux lien ou commande Modifier. Pour un texte long déjà prévu, Lire la suite reste utilisable.
+
+## Deuxième ensemble — Journal et conservation des écrits
+
+- [ ] Ni lecture ni trace : invitation unique « Votre journal commence avec une œuvre » et recherche fonctionnelle ; aucun rail ni bloc chronologique vide.
+- [ ] Traces sans lecture : message compact, traces présentes ; « Voir mes livres à lire » ouvre la bonne catégorie si elle contient une œuvre. Sinon « Rechercher une œuvre » ouvre la recherche.
+- [ ] Lectures sans trace : lectures et actions de note présentes ; « Votre prochaine note ou étape de lecture apparaîtra ici. » sans CTA supplémentaire.
+- [ ] Lectures avec traces : composition habituelle conservée ; dernière trace, développement d'un texte et accès aux entrées précédentes fonctionnent.
+- [ ] Enregistrer une première note, la modifier puis la vider explicitement : la trace suit l'écrit ; un brouillon abandonné ne crée pas de trace.
+- [ ] Commencer/terminer une lecture : une étape rejoint le Journal ; un clic répété sur le même statut ne duplique pas la trace.
+- [ ] Publier/modifier une critique, puis Annuler : état public et trace précédente restaurés, brouillon conservé dans l'éditeur, autres traces intactes.
+- [ ] Retirer de la bibliothèque une œuvre avec puis sans écrit, et annuler le retrait : seuls l'organisation et le statut changent ; textes, évaluations et traces sont conservés.
+- [ ] Bibliothèque vide, catégorie vide, recherche sans résultat, combinaison filtre/recherche : chaque action de récupération garde les autres données intactes.
+
+## Deuxième ensemble — Découvrir et couvertures
+
+- [ ] Sans historique, ou avec seulement À lire : « Un choix de Chapter pour commencer », indication d'évolution des propositions, envies facultatives ; aucune invitation à compléter un compte.
+- [ ] Avec un signal réel sur les Cartographies et l'œuvre disponible : justification liée à cette lecture. Sans cette œuvre, retour à la justification éditoriale, sans référence personnelle introuvable.
+- [ ] Choisir puis effacer chaque envie : raison cohérente, œuvres disponibles correctes, retour au parcours initial.
+- [ ] Couverture valide : image habituelle conservée dans tous les formats, y compris après navigation et retour ; dimensions stables.
+- [ ] Chargement ralenti : emplacement neutre, pas d'apparition fugace de la couverture typographique ni d'image cassée visible.
+- [ ] Échec d'image : repli typographique de la même œuvre, avec titre/auteur ou initiale selon le format, sans déplacement de la mise en page. Refaire sur page d'œuvre, Journal, Bibliothèque, Découvrir, favoris et listes.
+- [ ] Image absente dès le départ : couverture typographique immédiate. Changement d'œuvre/source : aucun état d'erreur hérité de l'image précédente.
+
+Les animations S2 et QRM1b ne sont pas modifiées par cet ensemble. Leur harmonisation et la réduction des mouvements seront discutées dans le volet 3 de la phase 11, avant la recette finale.

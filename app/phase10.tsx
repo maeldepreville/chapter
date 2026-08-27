@@ -5,6 +5,8 @@ import Image from "next/image";
 import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
 import { getHonorsLayout } from "./honors-layout";
 import { Modal } from "./modal";
+import { CoverFrame } from "./cover-frame";
+import { availableWorkCount, availableWorks, publicListWorkIds } from "./catalogue";
 
 export type SocialWork = {
   id: string;
@@ -16,6 +18,7 @@ export type SocialWork = {
   lede: string;
   cover: boolean;
   coverTone: string;
+  coverSrc?: string;
 };
 
 export type PublicListId = "places" | "lights";
@@ -31,6 +34,8 @@ type DiscoverProps = {
   followingLina: boolean;
   onToggleFollow: () => void;
   initialQuery?: string;
+  historyWorkIds?: readonly string[];
+  onBackToJournal?: () => void;
 };
 
 const normalizeText = (value: string) => value
@@ -54,13 +59,9 @@ const tokensAreClose = (queryToken: string, candidateToken: string) => {
 
 function CompactCover({ work, className = "discovery-cover" }: { work: SocialWork; className?: string }) {
   return (
-    <span className={`${className} ${work.cover ? "cover-image" : `typographic-cover ${work.coverTone}`}`} aria-hidden="true">
-      {work.cover ? (
-        <Image src="/chapter-cover-art.png" alt="" fill sizes="(max-width: 899px) 35vw, 220px" />
-      ) : (
+    <CoverFrame work={work} className={className} sizes="(max-width: 899px) 35vw, 220px" decorative>
         <span className="compact-cover-copy"><strong>{work.title}</strong><small>{work.author}</small></span>
-      )}
-    </span>
+    </CoverFrame>
   );
 }
 
@@ -109,13 +110,16 @@ const discoveryTracks = {
 
 type Intent = keyof typeof discoveryTracks;
 
-export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenProfile, onOpenList, followingLina, onToggleFollow, initialQuery = "" }: DiscoverProps) {
+export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenProfile, onOpenList, followingLina, onToggleFollow, initialQuery = "", historyWorkIds, onBackToJournal }: DiscoverProps) {
   const [intent, setIntent] = useState<Intent>("default");
   const [query, setQuery] = useState(initialQuery);
   const [submittedQuery, setSubmittedQuery] = useState(initialQuery.trim());
   const searchRef = useRef<HTMLInputElement>(null);
-  const workById = (id: string) => works.find((work) => work.id === id) ?? works[0];
+  const workById = (id: string) => works.find((work) => work.id === id);
   const track = discoveryTracks[intent];
+  const knownHistory = historyWorkIds ?? Object.keys(statuses).filter((id) => statuses[id] === "En cours" || statuses[id] === "Lu");
+  const hasAnchor = knownHistory.includes("cartographies") && Boolean(workById("cartographies"));
+  const editorialDefault = intent === "default" && !hasAnchor;
   const normalizedQuery = normalizeText(submittedQuery);
   const exactResults = submittedQuery
     ? works.filter((work) => normalizeText(work.title) === normalizedQuery || normalizeText(work.author) === normalizedQuery)
@@ -159,19 +163,20 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
     return (
       <>
         <section className={`discovery-main-grid ${compact ? "compact-path" : ""}`} aria-labelledby="discovery-track-title">
-          <article className="discovery-feature">
+          {mainWork ? <article className="discovery-feature">
             <div className="discovery-feature-art">
               <button type="button" onClick={() => onOpenWork(mainWork.id)} aria-label={`Ouvrir ${mainWork.title}`}><CompactCover work={mainWork} /></button>
             </div>
             <div className="discovery-feature-copy">
-              <p className="eyebrow">{track.reason}</p>
+              <p className="eyebrow">{editorialDefault ? "Un choix de Chapter pour commencer" : track.reason}</p>
               <h2 id="discovery-track-title">{track.title}</h2>
               <p>{track.description}</p>
+              {editorialDefault && <p className="discovery-history-hint">Les propositions évolueront avec vos lectures enregistrées.</p>}
               <button className="title-link" type="button" onClick={() => onOpenWork(mainWork.id)}>{mainWork.title}</button>
               <span className="discovery-author">{mainWork.author} · {mainWork.meta}</span>
               {renderSaveAction(mainWork)}
             </div>
-          </article>
+          </article> : <div className="journal-empty"><h2 id="discovery-track-title">Cette proposition n’est pas disponible pour le moment</h2><p>Les autres chemins disponibles restent à explorer.</p></div>}
           <aside className="discovery-side-paths" aria-label="Ajuster la découverte et explorer autrement">
             {!compact && (
               <div className="intent-panel">
@@ -191,6 +196,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
             <div className="echo-list">
               {track.echoes.map((echo) => {
                 const work = workById(echo.id);
+                if (!work) return null;
                 return (
                   <article className="discovery-echo" key={echo.id}>
                     <button type="button" className="echo-work" onClick={() => onOpenWork(work.id)}>
@@ -218,7 +224,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
               <button className="primary-action" type="button" onClick={() => onOpenList("places")}>Ouvrir la liste</button>
             </div>
             <div className="list-cover-row" aria-hidden="true">
-              {["miroirs", "rivage", "cartographies", "lucioles"].map((id) => <CompactCover key={id} work={workById(id)} className="list-preview-cover" />)}
+              {availableWorks(works, ["miroirs", "rivage", "cartographies", "lucioles"]).map((work) => <CompactCover key={work.id} work={work} className="list-preview-cover" />)}
             </div>
           </section>
         )}
@@ -238,7 +244,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
         <div><input ref={searchRef} id="discover-query" type="search" value={query} onChange={(event) => { setQuery(event.target.value); if (!event.target.value) setSubmittedQuery(""); }} placeholder="Retrouver une œuvre ou un auteur" /><button className="primary-action" type="submit">Rechercher</button></div>
       </form>
 
-      {submittedQuery ? (
+      {works.length === 0 ? <div className="journal-empty"><h2>Aucune œuvre disponible pour le moment</h2><p>Le catalogue ne contient pas d’œuvre à afficher.</p>{onBackToJournal && <button className="text-action" type="button" onClick={onBackToJournal}>Revenir au Journal</button>}</div> : submittedQuery ? (
         <section className="discover-results" aria-live="polite">
           {exactResults.length > 0 ? (
             <>
@@ -313,7 +319,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
     intro: "Je rassemble des romans où les paysages gardent une mémoire et où chaque détour ouvre une manière différente d’habiter le monde.",
     favorites: ["rivage", "lucioles", "sel"],
   };
-  const workById = (id: string) => works.find((work) => work.id === id) ?? works[0];
+  const workById = (id: string) => works.find((work) => work.id === id);
+  const favorites = availableWorks(works, profile.favorites);
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
@@ -420,19 +427,19 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         </aside>
         <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
           <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
-          <div className="favorite-books">{profile.favorites.map((id) => { const work = workById(id); return <button type="button" key={id} onClick={() => onOpenWork(id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>; })}</div>
+          {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
         </section>
       </div>
       <div className="profile-wide-content">
         <section className="profile-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>6 œuvres · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("lights")}><span><strong>Veilles, fenêtres et lumières tardives</strong><small>4 œuvres · Des présences aperçues lorsque la ville se tait.</small></span><span aria-hidden="true">→</span></button>
+          <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.places).length, publicListWorkIds.places.length)} · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
+          <button className="profile-list-entry" type="button" onClick={() => onOpenList("lights")}><span><strong>Veilles, fenêtres et lumières tardives</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.lights).length, publicListWorkIds.lights.length)} · Des présences aperçues lorsque la ville se tait.</small></span><span aria-hidden="true">→</span></button>
         </section>
         <section className="profile-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
-          <article className="profile-review"><button type="button" onClick={() => onOpenWork(profile.favorites[0])}>{workById(profile.favorites[0]).title}</button><p>Une œuvre qui laisse les lieux agir sur les personnages au lieu de les réduire à un décor. Sa force tient à ce déplacement presque imperceptible.</p></article>
-          <article className="profile-review"><button type="button" onClick={() => onOpenWork(profile.favorites[1])}>{workById(profile.favorites[1]).title}</button><p>Le livre avance par signes minuscules et finit par composer une géographie très précise de l’attention.</p></article>
+          <article className="profile-review">{workById(profile.favorites[0]) ? <button type="button" onClick={() => onOpenWork(profile.favorites[0])}>{workById(profile.favorites[0])?.title}</button> : <strong>Œuvre indisponible</strong>}<p>Une œuvre qui laisse les lieux agir sur les personnages au lieu de les réduire à un décor. Sa force tient à ce déplacement presque imperceptible.</p></article>
+          <article className="profile-review">{workById(profile.favorites[1]) ? <button type="button" onClick={() => onOpenWork(profile.favorites[1])}>{workById(profile.favorites[1])?.title}</button> : <strong>Œuvre indisponible</strong>}<p>Le livre avance par signes minuscules et finit par composer une géographie très précise de l’attention.</p></article>
         </section>
       </div>
       {isOwnProfile && removePhotoConfirm && (
@@ -581,17 +588,17 @@ export function PublicListView({ listId, works, following, onToggleFollow, onOpe
   const lists = {
     places: {
       title: "Habiter les lieux qui nous quittent",
-      description: "Six récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.",
-      workIds: ["miroirs", "rivage", "cartographies", "lucioles", "atlas", "sel"],
+      description: "Des récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.",
+      workIds: publicListWorkIds.places,
     },
     lights: {
       title: "Veilles, fenêtres et lumières tardives",
-      description: "Quatre récits de présences entrevues lorsque la ville se tait, entre fenêtres éclairées, attentes nocturnes et rencontres qui ne pouvaient avoir lieu en plein jour.",
-      workIds: ["atlas", "lucioles", "miroirs", "sel"],
+      description: "Des récits de présences entrevues lorsque la ville se tait, entre fenêtres éclairées, attentes nocturnes et rencontres qui ne pouvaient avoir lieu en plein jour.",
+      workIds: publicListWorkIds.lights,
     },
-  } satisfies Record<PublicListId, { title: string; description: string; workIds: string[] }>;
+  } satisfies Record<PublicListId, { title: string; description: string; workIds: readonly string[] }>;
   const list = lists[listId];
-  const chosen = list.workIds.map((id) => works.find((work) => work.id === id) ?? works[0]);
+  const chosen = availableWorks(works, list.workIds);
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
       <button className="text-action back-action" type="button" onClick={onBack}>← {backLabel}</button>
@@ -599,9 +606,10 @@ export function PublicListView({ listId, works, following, onToggleFollow, onOpe
         <p className="eyebrow">Liste publique</p>
         <h1 id="list-page-title">{list.title}</h1>
         <p>{list.description}</p>
+        {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
         <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Autrice de la liste</small></span></button><button className="quiet-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button></div>
       </header>
-      <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{index % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div>
+      {chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
     </section>
   );
 }

@@ -400,6 +400,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .mini-cover { position: relative; display: grid; place-items: center; flex: 0 0 2.7rem; width: 2.7rem; aspect-ratio: 2 / 3; overflow: hidden; color: #fffaf5; font-family: var(--font-editorial); }
 .journal-empty { width: 100%; padding: 1.6rem 0; border-top: 1px solid var(--line); }
 .journal-empty p { margin: 0 0 0.45rem; color: var(--muted); font-family: var(--font-editorial); font-size: 1.08rem; }
+.journal-empty-whole { padding-block: 2.5rem; }
+.journal-empty h2 { margin: 0 0 1rem; font-family: var(--font-editorial); font-size: 1.6rem; font-weight: 500; }
+.trace-work-unavailable { display: grid; gap: 0.35rem; }
+.trace-work-unavailable small, .discovery-feature-copy .discovery-history-hint { color: var(--muted); font-size: 0.85rem; }
 .status-label { color: var(--brick); font-size: 0.78rem; font-weight: 600; }
 .library-toolbar { display: grid; gap: 1.2rem; margin-bottom: 3rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
 .library-filters { display: flex; flex-wrap: wrap; gap: 0.6rem; }

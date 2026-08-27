@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 27 août 2026.
 
-Statut : **premier ensemble implémenté, vérifié et accepté ; publication différée jusqu'à un jalon regroupé. Deuxième ensemble proposé, non autorisé. Recette navigateur non encore effectuée.**
+Statut : **premier ensemble accepté ; deuxième ensemble validé et implémenté, vérifications techniques réussies. Publication différée jusqu'à un jalon regroupé. Recette navigateur non encore effectuée.**
 
 ## 1. Point de départ et limites
 
@@ -20,7 +20,7 @@ Le prototype conserve des données simulées et des interactions locales à la s
 
 1. **Superpositions et continuité des actions** : fermetures, focus, clavier, protection des saisies, restitution du contexte et arbitrage des surfaces simultanées.
 2. **États transversaux et cas limites** : absence de données, résultats vides, erreurs d'image ou de partage, noms/titres/écrits longs, données incomplètes, clics répétés. Réutiliser les comportements déjà validés ; ne pas simuler une panne réseau d'un service absent.
-3. **Responsive et accessibilité** : petits écrans, seuil de 900 px, texte agrandi, débordements, navigation et contrôles au clavier, lecteurs d'écran, contrastes, cibles tactiles et réduction du mouvement.
+3. **Responsive, cohérence et accessibilité** : petits écrans, seuil de 900 px, texte agrandi, débordements, navigation et contrôles au clavier, lecteurs d'écran, contrastes, cibles tactiles ; discussion dédiée aux animations et transitions (utilité, rythme, cohérence, réduction du mouvement), en conservant les choix S2 et QRM1b sauf nouvel arbitrage.
 4. **Clôture du lot** : non-régression ciblée des parcours personnels et sociaux, bilan technique, checklist exhaustive et validation utilisateur. La validation du jalon déclenchera la synchronisation GitHub directe conformément à `AGENTS.md`.
 
 Ces ensembles organisent l'audit ; ils ne sont pas quatre autorisations anticipées d'implémentation. Les corrections sont proposées puis validées avant développement. Aucun changement de l'architecture ni aucune refonte ne sont décidés ici.
@@ -58,9 +58,9 @@ Pour NSV2 : texte inchangé puis modifié ; première demande de fermeture, reto
 
 La recette navigateur et visuelle reste à exécuter avec l'autorisation correspondante ; aucun test navigateur, lecteur d'écran, mesure de contraste ou test responsive n'a été réalisé dans ce tour. Aucun nouveau build ou test automatique n'est exécuté puisque seuls les documents changent. Les 22 tests et le build réussis cités dans la passation sont des preuves du jalon précédent ; le typage global reste signalé comme limité par les déclarations Cloudflare manquantes.
 
-## 5 bis. Deuxième ensemble proposé — données absentes et erreurs de couverture
+## 5 bis. Deuxième ensemble validé — données absentes et erreurs de couverture
 
-Statut **non encore autorisé**. Aucun code applicatif n'est modifié dans ce tour.
+Statut **validé explicitement par l'utilisateur ; implémentation autorisée**. Cette validation remplace le statut de proposition précédent et ne vaut ni recette effectuée, ni autorisation de publier.
 
 | Référence | Constat | Preuve et limite |
 | --- | --- | --- |
@@ -72,7 +72,7 @@ Statut **non encore autorisé**. Aucun code applicatif n'est modifié dans ce to
 
 Les essais de rendu ont été exécutés en mémoire avec des fixtures temporaires, sans navigateur, changement de source, nouveau build ni publication.
 
-### Corrections proposées
+### Corrections autorisées
 
 1. Résoudre les œuvres par identifiant sans substitution arbitraire. Dans les propositions, favoris et listes, afficher les éléments réellement disponibles, avec des nombres cohérents ; si aucun élément ne reste, proposer un état sobre et un retour utile. Les traces personnelles et leurs textes ne sont pas supprimés si leurs métadonnées d'œuvre manquent : indiquer l'indisponibilité sans faux lien.
 2. Raccorder les trois états vides du Journal validés en phase 9 : sans lecture avec traces ; lectures sans traces ; absence totale fusionnée. Si « À lire » est vide, l'action devient « Rechercher une œuvre ». Bibliothèque vide ne signifie jamais historique effacé ; le retrait organisationnel conserve les écrits.
@@ -84,6 +84,8 @@ Prévoir des fixtures internes pour vérifier ces cas sans demander à l'utilisa
 L'import photo, le partage, les textes très longs et le cadrage au clavier restent à examiner dans les sous-ensembles suivants ; aucun nouvel écran ni nouveau traitement de ces sujets n'est autorisé ici.
 
 ## 6. Journal de phase
+
+- 27 août 2026 : l'utilisateur valide les correctifs liés aux états vides et données manquantes. Implémentation du deuxième ensemble autorisée, publication toujours différée. Il demande quand les animations seront abordées : sujet rattaché au volet 3, cohérence et accessibilité, avant la recette finale. Les choix S2 (retours tonaux des boutons, sans déplacement ni rebond) et QRM1b (retournement de la carte de lecteur, environ 440 ms, alternative à mouvement réduit) restent acquis. L'harmonisation des transitions, leur rythme et leur utilité devront être discutés avant tout nouveau développement d'animation ; aucun effet nouveau n'est autorisé par cette question.
 
 - 27 août 2026 : premier ensemble accepté par l'utilisateur ; publication reportée à un jalon regroupé. Audit du deuxième ensemble avec lecture du code et essais de rendu sur données absentes/incomplètes. Mise à jour documentaire uniquement ; pas de nouveau développement, build ou déploiement.
 
@@ -120,3 +122,18 @@ La version Sites **25** a été enregistrée depuis ce commit, **pas déployée*
 - L'archive temporaire a été supprimée après vérification du projet et du commit de la version enregistrée ; elle n'est plus nécessaire pour déployer cette version.
 
 La préparation initiale s'était arrêtée avant déploiement, faute d'accord explicite pour publier ce site préexistant. L'utilisateur a depuis demandé de regrouper plusieurs étapes : ce flux reste donc inactif. La version 25 n'est pas automatiquement la cible du futur jalon ; celui-ci devra refléter l'ensemble des changements alors validés, faire l'objet des vérifications correspondantes et recevoir un accord de publication distinct. Ne pas présenter la validation de conception comme une recette utilisateur accomplie.
+
+## 8. Implémentation du deuxième ensemble
+
+- Résolution des œuvres par identifiant sans repli vers la première œuvre. Découvrir, les favoris, les listes et la page d'œuvre supportent l'absence de données. Les listes affichent seulement les œuvres disponibles et des nombres cohérents ; les commentaires restent associés à leur identifiant original.
+- Les textes des traces personnelles et critiques de profil restent lisibles si les métadonnées manquent, sous « Œuvre indisponible », sans lien ni commande de modification trompeurs. Aucun retrait de bibliothèque n'efface les traces.
+- Les trois états du Journal sont raccordés aux lectures et traces réellement présentes. Une liste À lire vide mène à la recherche. Le rail et la chronologie vides ne sont pas rendus. L'enregistrement d'une première note/critique ou d'une étape de lecture alimente l'état local du Journal ; l'annulation d'une critique restaure sa trace antérieure sans supprimer les autres écrits.
+- EH1 conserve le parcours éditorial et les envies facultatives. La justification liée aux Cartographies n'apparaît que si cette œuvre existe et qu'un signal de lecture, d'évaluation ou d'écrit lui est réellement associé. Une simple intention À lire n'est pas interprétée comme une lecture. Aucun moteur de recommandation ni seuil opaque n'est ajouté.
+- `CoverFrame` centralise le chargement neutre, l'image réussie et le repli typographique. Les formats et assets existants sont conservés ; un changement d'œuvre ou de source réinitialise le cycle. Aucun mouvement nouveau n'est introduit.
+- Les fixtures sont internes aux tests, via des données initiales injectables ; aucune commande publique, paramètre d'URL, nouvelle route ni persistance distante. Aucun utilisateur n'a besoin d'effacer ses données pour vérifier les états vides.
+
+Vérifications exécutées : **build de production réussi ; lint réussi ; typage strict ciblé réussi ; 49 tests automatisés réussis, dont 16 nouveaux**. Les nouveaux tests couvrent les rendus vides/incomplets, les trois états du Journal, les raisons éditoriales, les compteurs, les premiers écrits, le retrait et son annulation, l'annulation de publication, les actions de récupération de Bibliothèque et les transitions d'état des couvertures.
+
+Limites : rendus serveur et gestionnaires exécutés avec des doublures de hooks, pas un navigateur. Aucun test visuel, chargement réseau réel d'image, lecteur d'écran ou audit global de contraste n'est déclaré effectué. Les tests existants des routes compilées restent inclus. La checklist des deux ensembles est mise à jour et reste non cochée.
+
+Aucune publication ni nouvelle version Sites n'accompagne cet ensemble. La suite reste l'audit des autres cas limites (textes longs, import/partage, actions répétées), puis le volet responsive, animations et accessibilité avant la recette finale.
