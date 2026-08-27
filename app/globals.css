@@ -496,6 +496,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .review-header p { margin: 0; color: var(--muted); font-size: 0.74rem; }
 .review-stars { color: var(--brick); font-size: 0.8rem; letter-spacing: 0.06em; }
 .review-copy { margin: 1.15rem 0 0 3.35rem; font-family: var(--font-editorial); font-size: 1.13rem; line-height: 1.7; }
+
+/* Preserve writing, not just its words. Scope wrapping away from the N1b card. */
+.trace-copy, .row-value, .review-copy { white-space: pre-wrap; overflow-wrap: anywhere; }
+.book-identity h1, .book-identity .author, .book-lede,
+.library-work-copy, .trace-work-link > span:last-child,
+.current-reading-copy, .search-results button { min-width: 0; overflow-wrap: anywhere; }
+.review-text-toggle { display: block; margin: 0.55rem 0 0 3.35rem; }
 .review-expand { margin: 0.35rem 0 0 3.35rem; }
 
 .overlay {
@@ -675,6 +682,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .review-header { grid-template-columns: auto 1fr; }
   .review-stars { grid-column: 2; }
   .review-copy { margin-left: 0; }
+  .review-text-toggle { margin-left: 0; }
   .mobile-nav {
     position: fixed;
     inset: auto 0 0;

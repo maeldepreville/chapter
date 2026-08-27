@@ -432,6 +432,13 @@
 .reply header { display: flex; align-items: baseline; gap: 0.6rem; }
 .reply header small { color: var(--muted); }
 .reply p { margin: 0.3rem 0; font-family: var(--font-editorial); }
+.reply > div, .reply-preview > p { min-width: 0; }
+.reply p, .reply-preview p, .reply-context blockquote, .profile-review p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.discovery-feature-copy, .echo-work > span:last-child,
+.favorite-books button > span:last-child, .public-list-work > span:last-child,
+.profile-review > button, .profile-list-entry > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.photo-preparing { color: var(--muted); font-size: 0.85rem; }
+.profile-card-share-row button:disabled { opacity: 0.5; cursor: default; }
 .reply > div > div { display: flex; gap: 1rem; }
 .conversation-closed { margin: 1rem 0 0 3.35rem; color: var(--muted); font-size: 0.78rem; }
 .inline-composer { display: grid; gap: 0.65rem; margin: 1rem 0 0 3.35rem; padding-top: 1rem; border-top: 1px solid var(--line); }

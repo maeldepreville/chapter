@@ -1,6 +1,6 @@
-# Phase 11 — Recette des deux premiers ensembles de correctifs
+# Phase 11 — Recette des trois premiers ensembles de correctifs
 
-Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes et couvertures en erreur ; aucune refonte graphique. Publication différée au jalon regroupé.
+Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes, couvertures en erreur, import/recadrage, copie/partage et textes longs ; aucune refonte graphique. Publication différée au jalon regroupé.
 
 ## Conditions
 
@@ -94,3 +94,32 @@ Les données absentes/incomplètes sont injectées par les fixtures internes de 
 - [ ] Image absente dès le départ : couverture typographique immédiate. Changement d'œuvre/source : aucun état d'erreur hérité de l'image précédente.
 
 Les animations S2 et QRM1b ne sont pas modifiées par cet ensemble. Leur harmonisation et la réduction des mouvements seront discutées dans le volet 3 de la phase 11, avant la recette finale.
+
+## Troisième ensemble — photo et récupération
+
+Les erreurs déterministes sont couvertes par les doublures internes de `tests/phase11-recovery.test.mjs`. Ces tests ne prouvent pas les comportements du navigateur réel ; préparer les scénarios rares dans un environnement interne, sans modifier les données de l'utilisateur.
+
+- [ ] Choisir un JPEG, PNG puis WebP valide ; contrôler les limites de 8 Mo et 512 px, sans nouveau seuil ni retouche.
+- [ ] Pendant « Préparation de l’image… », Enregistrer est indisponible ; Annuler, la croix, Échap et le voile restent utilisables. La photo déjà enregistrée reste intacte.
+- [ ] Choisir A puis B rapidement, avec fins de lecture/décodage inversées : seul B est activé. Un ancien échec n'écrase pas le résultat de B.
+- [ ] Fermer/quitter pendant la préparation, puis revenir : aucune réapparition de la photo annulée, aucun message tardif.
+- [ ] Échec de lecture, format refusé, fichier trop lourd ou trop petit : message local et dernier cadrage valide conservé ; sélectionner de nouveau le même fichier déclenche un nouvel essai.
+- [ ] Échec d'affichage après lecture : message local, retour au cadrage valide précédent lorsqu'il existe ; pas d'enregistrement d'une image cassée.
+- [ ] Échec de dessin/encodage ou sortie vide/invalide : panneau ouvert, cadrage et photo enregistrée conservés, erreur annoncée. Réessayer avec succès, puis rouvrir : source et cadrage corrects.
+- [ ] Modifier zoom/cadrage puis annuler : l'objet photo enregistré et son cadrage d'origine sont inchangés. Vérifier le déplacement/pincement et l'aperçu ; le cadrage au clavier reste à traiter au volet 3.
+
+## Troisième ensemble — copie et partage
+
+- [ ] Copier avec succès : confirmation uniquement après réussite réelle ; vérifier le contenu collé.
+- [ ] Refuser le presse-papiers natif : vérifier le repli, son nettoyage et le retour du focus, y compris lorsqu'il échoue. En cas d'échec total, le message oriente vers le lien visible.
+- [ ] Cliquer rapidement Copier/Partager : une seule opération, deux commandes indisponibles pendant son traitement, puis réactivées.
+- [ ] Partager via le système : réussite confirmée ; annulation silencieuse et aucune copie implicite. Absence/échec du partage : message adapté seulement si la copie de repli réussit.
+- [ ] Retourner la carte ou quitter le profil pendant l'opération : aucun ancien résultat affiché au retour, aucune copie de repli tardive. La disposition QRP1b et le retournement QRM1b restent identiques.
+
+## Troisième ensemble — textes et titres
+
+- [ ] Critique courte inchangée ; critique longue : aperçu puis Lire la suite/Réduire au clavier et au toucher, intégralité restituée sans modification du texte enregistré.
+- [ ] Développer une critique puis sa conversation, et réduire chacune séparément : états indépendants, réponses et saisies conservées.
+- [ ] Notes, critiques, Journal, réponses et aperçu de réponse : paragraphes conservés ; chaînes sans espaces contenues sur petit écran et avec texte agrandi.
+- [ ] Titres longs hors couvertures : texte intégral dans œuvre, Journal, Bibliothèque, recherche, Découvrir, favoris et listes ; pas de débordement horizontal. Les limites L2 de couverture restent inchangées.
+- [ ] Carte N1b : nom sans césure interne ; tailles, composition, badges et poinçon inchangés. Aucun nouvel effet animé.

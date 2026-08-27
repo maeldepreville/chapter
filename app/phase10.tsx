@@ -7,6 +7,8 @@ import { getHonorsLayout } from "./honors-layout";
 import { Modal } from "./modal";
 import { CoverFrame } from "./cover-frame";
 import { availableWorkCount, availableWorks, publicListWorkIds } from "./catalogue";
+import { createProfileShareController } from "./profile-share";
+import { cropPreview, startPhotoImport } from "./photo-processing";
 
 export type SocialWork = {
   id: string;
@@ -309,6 +311,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const [removePhotoConfirm, setRemovePhotoConfirm] = useState(false);
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
   const publicProfileUrl = "https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville";
   const profile = isMael ? {
     name: "Maël Depréville", initials: "MD", title: equippedTitle,
@@ -331,45 +335,10 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
     return () => window.clearTimeout(timer);
   }, [shareNotice]);
 
-  const copyPublicProfileUrl = async (notice = "Lien du profil copié") => {
-    try {
-      await navigator.clipboard.writeText(publicProfileUrl);
-    } catch {
-      const field = document.createElement("textarea");
-      field.value = publicProfileUrl;
-      field.setAttribute("readonly", "");
-      field.style.position = "fixed";
-      field.style.opacity = "0";
-      document.body.appendChild(field);
-      field.select();
-      const copied = document.execCommand("copy");
-      field.remove();
-      if (!copied) {
-        setShareNotice("Impossible de copier automatiquement le lien");
-        return false;
-      }
-    }
-    setShareNotice(notice);
-    return true;
-  };
-
-  const sharePublicProfile = async () => {
-    if (!navigator.share) {
-      await copyPublicProfileUrl("Partage indisponible — lien copié");
-      return;
-    }
-    try {
-      await navigator.share({
-        title: "Profil de Maël Depréville sur Chapter",
-        text: "Découvrez mon portrait de lecteur sur Chapter.",
-        url: publicProfileUrl,
-      });
-      setShareNotice("Profil partagé");
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      await copyPublicProfileUrl("Partage indisponible — lien copié");
-    }
-  };
+  useEffect(() => {
+    shareController.activate();
+    return () => shareController.dispose();
+  }, [shareController, owner]);
 
   return (
     <section className="profile-page" aria-labelledby="profile-name">
@@ -411,12 +380,12 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
             <div className="profile-card-utilities">
               <div className="profile-card-turn-row">
                 <span aria-hidden="true" />
-                <button className="profile-card-turn-action" type="button" aria-pressed={cardFlipped} onClick={() => { setCardFlipped((current) => !current); setShareNotice(""); }}><span aria-hidden="true">↻</span>{cardFlipped ? "Voir le recto" : "Retourner la carte"}</button>
+                <button className="profile-card-turn-action" type="button" aria-pressed={cardFlipped} onClick={() => { shareController.invalidate(); setCardFlipped((current) => !current); }}><span aria-hidden="true">↻</span>{cardFlipped ? "Voir le recto" : "Retourner la carte"}</button>
               </div>
               <div className={`profile-card-share-row ${cardFlipped ? "is-visible" : ""}`} aria-hidden={!cardFlipped}>
                 <p className="profile-card-share-notice" role="status" aria-live="polite">{shareNotice}</p>
-                <button className="text-action" type="button" tabIndex={cardFlipped ? 0 : -1} onClick={() => void copyPublicProfileUrl()}>Copier le lien</button>
-                <button className="text-action" type="button" tabIndex={cardFlipped ? 0 : -1} onClick={() => void sharePublicProfile()}>Partager</button>
+                <button className="text-action" type="button" disabled={shareBusy} tabIndex={cardFlipped ? 0 : -1} onClick={() => void shareController.run("copy", publicProfileUrl)}>Copier le lien</button>
+                <button className="text-action" type="button" disabled={shareBusy} tabIndex={cardFlipped ? 0 : -1} onClick={() => void shareController.run("share", publicProfileUrl)}>Partager</button>
               </div>
             </div>
           )}
@@ -627,6 +596,7 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
   const contextualReviews = workId === "sel" ? [] : workId === "lucioles" ? socialReviews.slice(0, 1) : socialReviews;
   const reviews = personalReview ? [{ id: "self", name: "Maël Depréville", initials: "MD", rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : contextualReviews;
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [expandedTexts, setExpandedTexts] = useState<string[]>([]);
   const [composer, setComposer] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ name: string; text: string } | null>(null);
   const [editingReply, setEditingReply] = useState<{ reviewId: string; replyId: string } | null>(null);
@@ -658,6 +628,9 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
   const renderReview = (review: SocialReview, compact = false) => {
     const reviewReplies = (replies[review.id] ?? []).filter((reply) => !blockedNames.includes(reply.name));
     const isExpanded = expanded.includes(review.id);
+    const textKey = `${workId}-${review.id}`;
+    const textExpanded = expandedTexts.includes(textKey);
+    const longText = Array.from(review.text).length > 280;
     const isClosed = closed.includes(review.id);
     const latest = reviewReplies.at(-1);
     const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>;
@@ -668,7 +641,8 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
           <div><h3>{review.name}</h3><p>{review.date}</p></div>
           {review.rating > 0 && <span className="review-stars" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}
         </header>
-        <p className="review-copy">{review.text}</p>
+        <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
+        {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
         {latest && !isExpanded && <div className="reply-preview"><span className="avatar">{latest.initials}</span><p><strong>{latest.name}</strong>{latest.text}</p></div>}
         <div className="conversation-actions">
@@ -708,9 +682,14 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
   const [dimensions, setDimensions] = useState(currentPhoto?.dimensions ?? { width: 0, height: 0 });
   const [zoom, setZoom] = useState(currentPhoto?.crop.zoom ?? 1);
   const [error, setError] = useState("");
+  const [preparing, setPreparing] = useState(false);
+  const [readySource, setReadySource] = useState<string | null>(null);
+  const [imageVersion, setImageVersion] = useState(0);
+  const importRef = useRef({ generation: 0, closed: false, pending: false, expectedSource: currentPhoto?.source ?? null as string | null, cancel: () => {} });
+  const lastValidRef = useRef(currentPhoto ? { source: currentPhoto.source, dimensions: { ...currentPhoto.dimensions }, crop: { ...currentPhoto.crop } } : null);
   const imageRef = useRef<HTMLImageElement>(null);
   const previewRef = useRef<HTMLImageElement>(null);
-  const transformRef = useRef<CropTransform>(currentPhoto?.crop ?? { x: 0, y: 0, zoom: 1 });
+  const transformRef = useRef<CropTransform>(currentPhoto ? { ...currentPhoto.crop } : { x: 0, y: 0, zoom: 1 });
   const pointersRef = useRef(new Map<number, { x: number; y: number }>());
   const gestureRef = useRef({ x: 0, y: 0, distance: 0, zoom: 1 });
   const frameRef = useRef(0);
@@ -735,8 +714,15 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     });
   };
 
-  useEffect(() => () => {
-    window.cancelAnimationFrame(frameRef.current);
+  useEffect(() => {
+    const operation = importRef.current;
+    operation.closed = false;
+    return () => {
+      operation.closed = true;
+      operation.generation += 1;
+      operation.cancel();
+      window.cancelAnimationFrame(frameRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -754,29 +740,63 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
 
   const chooseFile = (file?: File) => {
     if (!file) return;
+    const operation = importRef.current;
+    if (operation.closed) return;
+    const generation = ++operation.generation;
+    operation.cancel();
+    if (source && readySource === source) lastValidRef.current = { source, dimensions: { ...dimensions }, crop: { ...transformRef.current } };
+    const current = () => !operation.closed && generation === operation.generation;
+    operation.pending = true;
+    operation.expectedSource = null;
+    setPreparing(true);
     setError("");
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return setError("Choisissez une image JPEG, PNG ou WebP.");
-    if (file.size > 8 * 1024 * 1024) return setError("Cette image dépasse 8 Mo.");
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = typeof reader.result === "string" ? reader.result : "";
-      if (!dataUrl) return setError("Cette image ne peut pas être lue.");
-      const probe = new window.Image();
-      probe.onload = () => {
-        if (Math.min(probe.naturalWidth, probe.naturalHeight) < 512) {
-          setError("Le petit côté de l’image doit mesurer au moins 512 px pour rester net.");
-          return;
-        }
-        setSource(dataUrl);
-        setDimensions({ width: probe.naturalWidth, height: probe.naturalHeight });
-        transformRef.current = { x: 0, y: 0, zoom: 1 };
-        updateZoom(1);
-      };
-      probe.onerror = () => setError("Cette image ne peut pas être lue.");
-      probe.src = dataUrl;
-    };
-    reader.onerror = () => setError("Cette image ne peut pas être lue.");
-    reader.readAsDataURL(file);
+    operation.cancel = startPhotoImport(file, (nextSource, nextDimensions) => {
+      if (!current()) return;
+      operation.expectedSource = nextSource;
+      // Do not export until the displayed image also reports a successful load.
+      setReadySource(null);
+      setImageVersion((version) => version + 1);
+      setSource(nextSource);
+      setDimensions(nextDimensions);
+      transformRef.current = { x: 0, y: 0, zoom: 1 };
+      setZoom(1);
+      pointersRef.current.clear();
+    }, (message) => {
+      if (!current()) return;
+      operation.pending = false;
+      setPreparing(false);
+      setError(message);
+    });
+  };
+
+  const fileChanged = (input: HTMLInputElement) => {
+    const file = input.files?.[0];
+    input.value = ""; // A retry of the very same file must fire change again.
+    chooseFile(file);
+  };
+
+  const close = () => {
+    importRef.current.closed = true;
+    importRef.current.generation += 1;
+    importRef.current.cancel();
+    onClose();
+  };
+
+  const imageFailed = (image: HTMLImageElement) => {
+    if (importRef.current.closed || image !== imageRef.current || (importRef.current.pending && importRef.current.expectedSource !== source)) return;
+    importRef.current.pending = false;
+    setPreparing(false);
+    setReadySource(null);
+    setError("Cette image ne peut pas être affichée. Réessayez ou choisissez une autre image.");
+    const previous = lastValidRef.current;
+    if (previous && previous.source !== source) {
+      importRef.current.expectedSource = previous.source;
+      setSource(previous.source);
+      setImageVersion((version) => version + 1);
+      setDimensions(previous.dimensions);
+      transformRef.current = { ...previous.crop };
+      setZoom(previous.crop.zoom);
+    }
   };
 
   const pointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -803,60 +823,64 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
   const wheelZoom = (event: WheelEvent<HTMLDivElement>) => { event.preventDefault(); updateZoom(transformRef.current.zoom - event.deltaY * 0.0015); };
 
   const saveCrop = () => {
-    if (!source || !imageRef.current || !dimensions.width) return setError("Choisissez d’abord une image à recadrer.");
-    const base = Math.max(CROP / dimensions.width, CROP / dimensions.height);
-    const scale = base * transformRef.current.zoom;
-    const sourceSize = CROP / scale;
-    const sourceX = (dimensions.width - sourceSize) / 2 - transformRef.current.x / scale;
-    const sourceY = (dimensions.height - sourceSize) / 2 - transformRef.current.y / scale;
-    const canvas = document.createElement("canvas");
-    canvas.width = 1024;
-    canvas.height = 1024;
-    const context = canvas.getContext("2d");
-    if (!context) return setError("Le recadrage n’a pas pu être créé.");
-    context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = "high";
-    context.drawImage(imageRef.current, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 1024, 1024);
+    if (importRef.current.closed || importRef.current.pending) return;
+    if (!source || readySource !== source || !imageRef.current || imageRef.current.getAttribute("src") !== source) return setError("Attendez que l’image soit prête ou choisissez une autre image.");
+    let preview: string;
+    try {
+      preview = cropPreview(imageRef.current, dimensions, transformRef.current);
+    } catch {
+      setError("Le recadrage n’a pas pu être créé. Votre photo est conservée ; vous pouvez réessayer.");
+      return;
+    }
     onSave({
-      preview: canvas.toDataURL("image/webp", 0.9),
+      preview,
       source,
       crop: { ...transformRef.current },
       dimensions: { ...dimensions },
     });
-    onClose();
+    close();
   };
 
   return (
-    <Modal className="photo-overlay" labelledBy="photo-crop-title" initialFocus=".close-button" returnFocusSelector="[data-photo-edit]" onRequestClose={onClose}>
-      <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
+    <Modal className="photo-overlay" labelledBy="photo-crop-title" initialFocus=".close-button" returnFocusSelector="[data-photo-edit]" onRequestClose={close}>
+      <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer sans enregistrer" onClick={close} />
       <section className="photo-crop-modal">
-        <div className="modal-heading"><div><p className="eyebrow">Photo facultative</p><h2 id="photo-crop-title">Recadrer la photo</h2></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
+        <div className="modal-heading"><div><p className="eyebrow">Photo facultative</p><h2 id="photo-crop-title">Recadrer la photo</h2></div><button className="close-button" type="button" aria-label="Fermer" onClick={close}>×</button></div>
+        {preparing && <p className="photo-preparing" role="status">Préparation de l’image…</p>}
         {source ? (
           <>
             <div className="photo-crop-layout">
               <div className="crop-stage" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheelZoom}>
-                <img ref={imageRef} src={source} alt="Image à recadrer" draggable={false} onLoad={(event) => { const image = event.currentTarget; if (!dimensions.width) setDimensions({ width: image.naturalWidth, height: image.naturalHeight }); clampAndPaint(); }} />
+                <img key={imageVersion} ref={imageRef} src={source} alt="Image à recadrer" draggable={false} onError={(event) => imageFailed(event.currentTarget)} onLoad={(event) => {
+                  const image = event.currentTarget;
+                  if (importRef.current.closed || image !== imageRef.current || !image.naturalWidth || (importRef.current.pending && importRef.current.expectedSource !== source)) return;
+                  importRef.current.pending = false;
+                  setPreparing(false);
+                  setReadySource(source);
+                  lastValidRef.current = { source, dimensions: { ...dimensions }, crop: { ...transformRef.current } };
+                  clampAndPaint();
+                }} />
                 <span className="crop-guide" aria-hidden="true" />
               </div>
               <div className="crop-preview"><span>Aperçu</span><div><img ref={previewRef} src={source} alt="" /></div></div>
             </div>
             <div className="photo-controls">
-              <label className="file-action"><span>Choisir une autre image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseFile(event.target.files?.[0])} /></label>
+              <label className="file-action"><span>Choisir une autre image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => fileChanged(event.currentTarget)} /></label>
               <label className="zoom-control"><span>Zoom</span><input type="range" min="1" max="3" step="0.01" value={zoom} onChange={(event) => updateZoom(Number(event.target.value))} /></label>
               <p>Déplacez l’image directement. Sur mobile, pincez pour zoomer.</p>
               {error && <p className="photo-error" role="alert">{error}</p>}
             </div>
-            <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button><button className="primary-action" type="button" onClick={saveCrop}>Enregistrer</button></div>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={close}>Annuler</button><button className="primary-action" type="button" disabled={preparing || readySource !== source} onClick={saveCrop}>Enregistrer</button></div>
           </>
         ) : (
           <>
             <div className="photo-empty-state">
               <p>Sélectionnez une image nette ; l’espace de recadrage apparaîtra ensuite.</p>
-              <label className="file-action primary-action"><span>Choisir une image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseFile(event.target.files?.[0])} /></label>
+              <label className="file-action primary-action"><span>Choisir une image</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => fileChanged(event.currentTarget)} /></label>
               <small>JPEG, PNG ou WebP · 8 Mo maximum · 512 px minimum</small>
               {error && <p className="photo-error" role="alert">{error}</p>}
             </div>
-            <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button></div>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={close}>Annuler</button></div>
           </>
         )}
       </section>

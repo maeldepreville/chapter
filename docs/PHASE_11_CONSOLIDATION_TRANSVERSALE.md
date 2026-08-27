@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 27 août 2026.
 
-Statut : **premier ensemble accepté ; deuxième ensemble validé et implémenté, vérifications techniques réussies ; troisième ensemble proposé, non encore autorisé. Publication différée jusqu'à un jalon regroupé. Recette navigateur non encore effectuée.**
+Statut : **trois ensembles validés et implémentés ; vérifications techniques réussies. Analyse du dépôt d’Emil Kowalski pour préparer le volet 3, sans nouvelle animation autorisée. Publication différée jusqu'à un jalon regroupé. Recette navigateur non encore effectuée.**
 
 ## 1. Point de départ et limites
 
@@ -85,6 +85,8 @@ L'import photo, le partage, les textes très longs et le cadrage au clavier rest
 
 ## 6. Journal de phase
 
+- 27 août 2026 : l'utilisateur valide le troisième ensemble et demande une analyse de `emilkowalski/skills` pour le prochain volet. Validation consignée et correctifs implémentés ; analyse documentaire des principaux guides du dépôt, sans installation de skills externes, ajout de dépendance ni application de leurs instructions au projet. Publication toujours différée. Les conclusions sont une proposition de méthode, pas un nouvel arbitrage de mouvement validé.
+
 - 27 août 2026 : l'utilisateur demande de poursuivre. Audit des textes longs, de l'import photo, du recadrage et de la copie/du partage ; six diagnostics ciblés sur gestionnaires simulés et rendu serveur. Proposition du troisième ensemble ci-dessous, sans autorisation de développement. Aucun changement applicatif, asset, build, test navigateur ou déploiement dans ce tour ; seules les notes de suivi sont mises à jour.
 
 - 27 août 2026 : l'utilisateur valide les correctifs liés aux états vides et données manquantes. Implémentation du deuxième ensemble autorisée, publication toujours différée. Il demande quand les animations seront abordées : sujet rattaché au volet 3, cohérence et accessibilité, avant la recette finale. Les choix S2 (retours tonaux des boutons, sans déplacement ni rebond) et QRM1b (retournement de la carte de lecteur, environ 440 ms, alternative à mouvement réduit) restent acquis. L'harmonisation des transitions, leur rythme et leur utilité devront être discutés avant tout nouveau développement d'animation ; aucun effet nouveau n'est autorisé par cette question.
@@ -140,9 +142,9 @@ Limites : rendus serveur et gestionnaires exécutés avec des doublures de hooks
 
 Aucune publication ni nouvelle version Sites n'accompagne cet ensemble. La suite reste l'audit des autres cas limites (textes longs, import/partage, actions répétées), puis le volet responsive, animations et accessibilité avant la recette finale.
 
-## 9. Troisième ensemble proposé — textes longs et erreurs d'action
+## 9. Troisième ensemble validé — textes longs et erreurs d'action
 
-**Statut : proposé, non encore autorisé.** Il relève toujours du volet 2 de la phase 11. Les animations, le cadrage au clavier et l'audit global responsive/accessibilité restent dans le volet 3 ; aucun nouveau mouvement n'est proposé ici.
+**Statut : validé explicitement le 27 août 2026, puis implémenté.** Ce statut remplace la proposition précédente. Il relève toujours du volet 2 de la phase 11. Les animations, le cadrage au clavier et l'audit global responsive/accessibilité restent dans le volet 3 ; aucun nouveau mouvement n'est introduit ici.
 
 ### Constats et limites de preuve
 
@@ -159,11 +161,47 @@ Examen de `PhotoCropper`, `ProfileView` et `SocialReviews` dans `app/phase10.tsx
 
 Non-régressions identifiées : le refus d'un format non accepté affiche déjà un message et conserve la source précédente (diagnostic réussi). PFP1 fixe déjà JPEG/PNG/WebP, 8 Mo maximum et un petit côté de 512 px minimum : ne pas inventer d'autres seuils. L'annulation native du partage (`AbortError`) est déjà traitée silencieusement ; la préserver. La limite de 3 000 caractères des critiques reste inchangée. N1b protège le nom de la carte contre une césure interne : ne pas lui appliquer une règle globale de découpe.
 
-### Corrections proposées
+### Corrections autorisées
 
 1. **Import photo fiable** : message discret « Préparation de l’image… », seul le dernier fichier choisi peut devenir actif ; ignorer les réponses anciennes après nouveau choix ou fermeture. Conserver le dernier cadrage valide pendant un échec, permettre de réessayer le même fichier et empêcher l'enregistrement pendant la préparation. Annuler et Fermer restent disponibles. Aucun nouvel effet animé, outil de retouche ou modification des limites PFP1.
 2. **Recadrage récupérable** : intercepter les échecs de lecture de l'image affichée, de dessin et d'export ; garder le panneau et le cadrage, expliquer l'échec au même endroit et permettre un nouvel essai. Remplacer la photo enregistrée et fermer uniquement après production d'une image valide. Ne pas annoncer une réussite sur un export vide ou invalide.
 3. **Copie et partage cohérents** : une seule opération à la fois, commandes concernées temporairement indisponibles ; confirmer uniquement le succès effectif. Si copie native et repli échouent, rendre un message utile avec recours au lien déjà affiché, nettoyer le champ temporaire et restituer le focus. Garder l'annulation de partage silencieuse, ne pas copier à son insu après cette annulation et empêcher un ancien résultat d'écraser le retour courant. Préserver la disposition QRP1b et la carte QRM1b.
 4. **Écrits longs lisibles** : appliquer l'aperçu et l'expansion locale « Lire la suite / Réduire » aux critiques longues là où ils manquent, sans changer l'ouverture des conversations ; conserver les paragraphes des notes/critiques/réponses. Contenir les chaînes sans espaces dans les zones de texte et les titres d'œuvre, tout en préservant le titre intégral hors de la couverture. Ne pas tronquer les données enregistrées, ajouter une limite de saisie ou modifier la carte N1b. Les lignes/espaces exacts relèveront du contrôle visuel ultérieur.
 
-Après autorisation : ajouter des tests de régression avec fins d'import inversées, fermeture pendant préparation, erreurs de décodage/export/copie, clics répétés, partage annulé et texte multi-paragraphes/chaînes longues. Compléter la checklist du futur jalon et distinguer ces tests des vérifications réelles de navigateur. Pas de simulation de panne réseau d'un backend absent ni de nouvelle persistance.
+Vérifications requises : tests de régression avec fins d'import inversées, fermeture pendant préparation, erreurs de décodage/export/copie, clics répétés, partage annulé et texte multi-paragraphes/chaînes longues. Compléter la checklist du futur jalon et distinguer ces tests des vérifications réelles de navigateur. Pas de simulation de panne réseau d'un backend absent ni de nouvelle persistance.
+
+## 10. Implémentation du troisième ensemble
+
+- `photo-processing.ts` sépare la lecture annulable et l'export. `PhotoCropper` invalide les imports précédents et les callbacks après fermeture/démontage ; affiche « Préparation de l’image… » et attend aussi le chargement de l'image réellement affichée avant d'autoriser Enregistrer. L'input est vidé et l'image remontée pour réessayer le même fichier. Les limites PFP1 restent inchangées.
+- Une erreur de lecture conserve la source précédente ; une erreur d'affichage permet de retrouver le dernier cadrage valide. Les transformations en cours ne mutent plus l'objet photo enregistré. Les exceptions de dessin/encodage et les sorties vides, malformées ou sans signature d'image reconnue restent locales ; seul un export réussi enregistre puis ferme. Le PNG de repli natif du canvas est accepté.
+- `profile-share.ts` impose un verrou synchrone partagé à Copier/Partager. Les deux boutons sont désactivés pendant l'opération. Le changement de face ou de profil et le démontage invalident les retours tardifs sans lancer une seconde opération concurrente. Annuler le partage ne copie rien. Le repli de copie nettoie son champ temporaire et rend le focus ; un échec propose le lien déjà affiché, sans fausse confirmation.
+- Les critiques sociales longues disposent d'un aperçu de 280 points de code puis « Lire la suite / Réduire », indépendant des conversations. C'est un seuil de présentation, pas une limite de saisie ; le Journal conserve son aperçu existant, les données intégrales et la limite de 3 000 caractères des critiques sont préservées. Les paragraphes et chaînes longues sont traités par des règles CSS ciblées, sans césure interne du nom N1b ni modification des couvertures L2.
+- Ajout de `tests/phase11-recovery.test.mjs` : 21 tests de logique, gestionnaires avec doublures et invariants de source. Le test statique QR1 suit désormais le partage dans son module extrait, sans retirer ses invariants. Aucun test navigateur, photo réelle, presse-papiers natif ou lecteur d'écran n'est présenté comme effectué. Le rendu des paragraphes, le focus réel, le partage système et les gestes restent dans la recette non cochée.
+
+Résultat complet : **build de production réussi, lint réussi, typage strict ciblé réussi, 70 tests automatisés réussis**. Le typage ciblé couvre les points d'entrée et leurs modules importés ; il ne résout pas la limitation historique du typage global liée aux déclarations Cloudflare. Aucune publication, nouvelle version Sites, nouvelle animation ni dépendance ajoutée. Périmètre de synchronisation GitHub : ces correctifs validés, leurs tests et la documentation de suivi, depuis la référence distante vérifiée `430cf00614eed08e7c7d77953d19d635a6cc809a`, sans réécriture d'historique. La proposition du volet 3 reste documentaire, sans effet applicatif.
+
+## 11. Préparation du volet 3 — lecture du dépôt d’Emil Kowalski
+
+Demande : examiner le dépôt et dire ce qu'on en tire, pas installer ses skills ni appliquer ses recettes. Sources primaires consultées le 27 août 2026, révision `d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7` : README, `emil-design-eng`, `find-animation-opportunities` et `improve-animations`. Ce relevé n'est pas une revue exhaustive de tous les guides natifs/web.
+
+### Ce qui est utile
+
+Le dépôt formalise une discipline de design engineering : justifier le mouvement par son rôle et sa fréquence, relier l'apparition d'une surface à son origine, conserver une réponse fluide aux interruptions, prévoir le toucher et la réduction du mouvement. Les durées/courbes sont des repères à éprouver, pas une identité graphique à importer. [Guide de design engineering](https://github.com/emilkowalski/skills/blob/d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7/skills/emil-design-eng/SKILL.md).
+
+Le guide de recherche d'opportunités demande de rejeter les animations sans bénéfice et de limiter les propositions. Le guide d'amélioration sépare inventaire, audit argumenté, choix utilisateur et plan précis ; il demande aussi de respecter les compromis déjà documentés. Ce fonctionnement s'accorde avec notre cycle de validation. [Opportunités](https://github.com/emilkowalski/skills/blob/d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7/skills/find-animation-opportunities/SKILL.md), [audit et plans](https://github.com/emilkowalski/skills/blob/d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7/skills/improve-animations/SKILL.md).
+
+### Application proposée à Chapter — non encore validée
+
+| Famille | Orientation à examiner | Garde-fou |
+| --- | --- | --- |
+| Navigation, tri, lecture et saisie | Réponse immédiate ; ne pas faire attendre l'accès au texte | Pas de cascade d'apparition systématique dans Journal/Bibliothèque |
+| Menus, modales et feuilles | Étudier seulement les transitions qui clarifient l'ouverture/fermeture et leur origine | Focus, Échap et interruption restent prioritaires ; aucune nouvelle transition implémentée |
+| Retours d'action | Distinguer attente, succès réel et échec avec un retour cohérent | Ne pas masquer une latence ou annoncer un succès prématuré |
+| Carte de lecteur et honneurs | Préserver les moments expressifs déjà arbitrés | QRM1b reste à environ 440 ms ; pas de nouvelle célébration ni refonte des badges |
+| Mouvement réduit et toucher | Examiner chaque famille dans son état alternatif | Aucune information ne doit dépendre d'un déplacement ou d'un survol |
+
+Lecture critique : le conseil de réduction d'échelle à l'appui contredit S2 (retours tonaux sans déplacement/rebond) : ne pas l'appliquer. La recommandation générale de moins de 300 ms ne remplace pas QRM1b ; le guide donne lui-même des budgets plus larges pour certaines surfaces. Ses prescriptions absolues et ses raccourcis de performance doivent être confrontés au contexte et aux mesures, non assimilés à des normes de conformité.
+
+Point de départ observé dans le code : transitions CSS de la carte à 440 ms, des images de badges à 160 ms, défilement fluide, indicateur d'attente et règles `prefers-reduced-motion` déjà présents ; pas de bibliothèque dédiée de mouvement dans les dépendances. Ce relevé statique ne démontre ni fluidité ni défaut visuel.
+
+Prochaine proposition : dans le **volet 3 de la phase 11**, inventorier responsive, accessibilité et mouvement ; présenter une courte charte Chapter par famille (rôle, déclencheur, durée/courbe, interruption, alternative à mouvement réduit), puis comparer les rares évolutions visibles retenues avant validation. Le volet 4 reste la non-régression et la clôture du lot. Rien n'autorise encore de nouveaux effets, une installation de skills, une refonte ou une publication.
