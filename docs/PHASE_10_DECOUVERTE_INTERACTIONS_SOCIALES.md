@@ -9,6 +9,12 @@ Après les corrections successives et la reprise du tri de la Bibliothèque, l'u
 
 Ce statut remplace les mentions de recette ouverte conservées dans l'historique des jalons ci-dessous. La validation globale n'atteste pas l'exécution individuelle de chaque case de la checklist ; les cas extrêmes, la cohérence transversale et l'accessibilité seront audités en phase 11. La passation est disponible dans [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md).
 
+## Règle de livraison confirmée après clôture
+
+Le 27 août 2026, l'utilisateur demande de synchroniser la phase 10 acceptée et sa documentation vers le dépôt GitHub `maeldepreville/chapter` et de répéter cette opération à chaque futur jalon validé. L'obligation est inscrite dans `AGENTS.md` : documents à jour, vérification de l'état distant, envoi non forcé du seul périmètre validé, puis contrôle explicite du commit sur `main`. Une publication Sites ou un envoi vers son dépôt technique ne suffisent pas. Tout blocage d'accès ou de divergence doit être signalé ; aucune synchronisation ne sera déclarée sans preuve distante. Cette règle ne change ni le périmètre accepté ni le statut non ouvert de phase 11.
+
+Vérification distante : GitHub `main` pointe encore sur `0810fc58ae1b9004aa6676dacba6f42b125a1788` (« Finalize phase 9 decisions and review »), alors que la clôture locale est `dd6751ae318df5f7f756e2b6dbfeb31eff14e4fa`. Les historiques ont dix commits propres à GitHub et trente-six propres au travail local avant ajout de cette règle. L'envoi ne peut pas être un simple fast-forward. Aucun push forcé ni remplacement d'historique n'est effectué ; une autorisation de rapprochement des historiques est demandée. La synchronisation GitHub de phase 10 reste donc en attente et ne doit pas être annoncée comme réalisée.
+
 ## Objectif de la phase
 
 Faire évoluer Chapter du journal de lecture personnel vers une expérience où les œuvres, les opinions et les lecteurs enrichissent mutuellement la découverte, sans transformer le produit en fil social générique.

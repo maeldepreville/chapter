@@ -10,6 +10,8 @@ La phase 10 est clôturée dans la conversation actuelle. L'utilisateur souhaite
 
 ## Référence publiée et documents à lire
 
+**Attention — GitHub n'est pas encore synchronisé avec la phase 10.** Le contrôle distant du 27 août trouve `main` sur `0810fc58ae1b9004aa6676dacba6f42b125a1788` (phase 9). Les historiques local et GitHub ont divergé ; aucun envoi forcé n'est effectué. Attendre l'accord de rapprochement des historiques avant de synchroniser, puis vérifier la référence distante et remplacer ce statut d'attente. La version Sites 24 et la clôture locale sont conservées.
+
 - Dernier jalon fonctionnel : version 24, menu de tri de la bibliothèque, publiée avec succès après les correctifs d'abonnement et de conversation.
 - Source de ce jalon : `ce72daa701d73b49f399da3dbea360278fd6896e`.
 - Lire `../AGENTS.md`, `CHAPTER_DECISIONS.md`, puis `PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`.
@@ -64,6 +66,8 @@ Les données sont simulées et les interactions sont locales à la session. La c
 L'authentification réelle, l'onboarding, la persistance distante, les notifications complètes, la messagerie privée, les listes collaboratives, les classements, le moteur réel de recommandation et l'administration complète restent exclus. Aucun de ces sujets n'est automatiquement ajouté à la phase 11.
 
 ## Reprise dans le prochain chat
+
+Règle permanente confirmée après clôture : chaque jalon explicitement validé doit être synchronisé vers `maeldepreville/chapter` sur `main`, avec ses documents, puis vérifié sur GitHub avant de confirmer la livraison. Lire la procédure dans `AGENTS.md`. Ne pas assimiler l'état de `origin` ou une publication Sites à cette preuve ; signaler tout blocage sans contourner les protections.
 
 La clôture est déjà enregistrée ici, dans le journal transversal et dans le document détaillé de phase 10. Le prochain chat commencera par lire ces documents et l'état du dépôt, puis cadrera la phase 11 : audit des états transversaux, cohérence, responsive, accessibilité et bilan technique. Il présentera les constats et les corrections proposées avant de demander l'autorisation de les implémenter. Ne pas créer de nouvelles fonctions ni revoir les choix validés sans raison démontrée et nouvel accord.
 

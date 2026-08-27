@@ -20,3 +20,11 @@ Ces règles s’appliquent à toute conversation, tout chat et tout agent travai
 - Pour toute décision comportant plusieurs rendus ou états visibles, présenter une comparaison visuelle dans le même ordre que les options textuelles avant de demander un choix.
 - Pendant les échanges de conception, ne pas terminer les réponses par une redirection vers le site. Partager le site uniquement lors d’un jalon d’implémentation ou d’évaluation.
 - Accompagner chaque jalon final d’une checklist exhaustive de validation.
+
+## Synchronisation GitHub après validation d'un jalon
+
+- À chaque validation explicite d'un jalon par l'utilisateur, synchroniser dans le même tour le code, les assets, les tests et les documents correspondant au jalon accepté vers `https://github.com/maeldepreville/chapter.git`, branche `main` (remote `github`). Cette demande constitue une autorisation permanente pour ces synchronisations, tant que la cible et le périmètre ne changent pas.
+- Mettre d'abord à jour les documents de décision et de clôture, puis vérifier l'état du dépôt et récupérer l'état distant avant l'envoi. Préserver tout travail sans rapport avec le jalon ; ne pas l'inclure par défaut.
+- Ne pas confondre publication Sites, envoi vers `origin` et synchronisation GitHub. Vérifier explicitement après l'envoi que `refs/heads/main` sur GitHub pointe sur le commit attendu, puis confirmer le résultat à l'utilisateur.
+- Ne jamais forcer un push, réécrire l'historique distant, contourner une branche protégée ni réutiliser des identifiants hors de leur usage configuré. En cas de divergence, de refus d'accès ou d'authentification manquante, signaler le blocage et demander la direction nécessaire sans prétendre que la synchronisation est faite.
+- Cette règle reste applicable dans les futurs chats du projet. Elle n'autorise ni développement non validé, ni nouveau déploiement, ni changement de visibilité du dépôt.

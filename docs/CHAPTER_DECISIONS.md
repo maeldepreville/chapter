@@ -15,6 +15,7 @@ Dernière mise à jour : 27 août 2026
 - Lorsqu’un sujet est évoqué, il doit être situé explicitement dans le plan : phase actuelle, phase ultérieure identifiée, hors du premier lot ou nouveau sujet à intégrer.
 - Chaque jalon final publié doit être accompagné d’une checklist exhaustive des points à tester : écrans, parcours, interactions, responsive, états limites, fermetures, annulations, restauration du contexte et reports connus.
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
+- À chaque validation explicite d'un jalon, synchroniser dans le même tour le périmètre accepté et ses documents vers `maeldepreville/chapter`, branche `main`, puis vérifier le commit distant. Cette autorisation permanente, confirmée le 27 août 2026, est inscrite dans `AGENTS.md` pour les futurs chats ; elle ne permet ni push forcé, ni contournement de protection, ni inclusion de travaux non validés. La publication Sites seule ne constitue pas une synchronisation GitHub.
 
 ## Plan de développement de référence
 
@@ -56,6 +57,8 @@ Dernière mise à jour : 27 août 2026
 - Les preuves du dernier jalon restent : lint, construction de production, typage ciblé et vingt-deux tests automatisés réussis. La validation utilisateur n'est pas assimilée à l'exécution tracée de chaque test manuel ou à un audit exhaustif d'accessibilité.
 - Les anciennes mentions de recette ouverte ci-dessous décrivent l'état des jalons avant cette clôture et sont remplacées par le présent statut global.
 - La phase 11 reste à ouvrir dans le prochain chat : audit transversal, propositions de correction, validation explicite avant implémentation, puis recette finale. Les limites du prototype et le point de typage Cloudflare restent documentés dans la passation.
+- Après la clôture, l'utilisateur demande une vérification et une mise à jour explicites du dépôt GitHub distant, ainsi que l'obligation de renouveler cette synchronisation à chaque futur jalon validé. La règle est enregistrée dans les instructions du dépôt ; le résultat de synchronisation doit être confirmé par lecture de la référence distante, pas déduit d'un déploiement Sites.
+- La vérification GitHub trouve `main` sur `0810fc5` (phase 9), avec un historique divergent de la source locale acceptée. La synchronisation de phase 10 reste en attente d'un accord de rapprochement sans écrasement ; aucun push forcé ni remplacement d'historique n'est effectué. La clôture fonctionnelle de phase 10 reste acquise.
 
 ### Priorité initiale de la découverte
 
