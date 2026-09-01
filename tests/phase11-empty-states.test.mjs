@@ -16,7 +16,7 @@ const html = (Component, props) => renderToStaticMarkup(React.createElement(Comp
 const home = (initialData) => html(Home, { initialData });
 const journal = (entries = {}, traces = [], catalogue = works) => home({ view: "journal", entries, traces, works: catalogue });
 const discover = (extra = {}) => html(DiscoverView, { ...socialHandlers, works, statuses: {}, followingLina: false, ...extra });
-const publicList = (catalogue, listId = "places") => html(PublicListView, { ...socialHandlers, works: catalogue, listId, following: false, backLabel: "Retour à Découvrir" });
+const publicList = (catalogue, listId = "places") => html(PublicListView, { ...socialHandlers, owner: "lina", works: catalogue, listId, following: false, backLabel: "Retour à Découvrir" });
 
 test("all principal views render an empty catalogue without substituting a work", () => {
   for (const view of ["work", "journal", "library", "discover", "profile", "list"]) {
@@ -38,6 +38,18 @@ test("partial lists show each available work once, keep order, and report correc
   assert.equal((publicList(works, "lights").match(/<article/g) ?? []).length, 4);
   assert.deepEqual(availableWorks(works, ["absent", "sel", "sel", "atlas"]).map((work) => work.id), ["sel", "atlas"]);
   assert.equal(availableWorkCount(6, 6), "6 œuvres");
+});
+
+test("public lists render the profile owner instead of a hard-coded author", () => {
+  const own = html(PublicListView, { ...socialHandlers, owner: "self", works, listId: "places", following: false, backLabel: "Retour à mon profil" });
+  assert.match(own, /Maël Depréville/);
+  assert.match(own, /Votre liste publique/);
+  assert.doesNotMatch(own, /Lina Morel|aria-pressed/);
+
+  const lina = publicList(works);
+  assert.match(lina, /Lina Morel/);
+  assert.match(lina, /Autrice de la liste/);
+  assert.match(lina, /aria-pressed="false"/);
 });
 
 test("missing discovery primary retains its real echoes but does not promote a false replacement", () => {

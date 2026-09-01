@@ -289,6 +289,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const [publicListId, setPublicListId] = useState<PublicListId>("places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
+  const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -336,15 +337,16 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  const openProfile = (owner: "self" | "lina") => {
+  const openProfile = (owner: ProfileOwner) => {
     if (window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setProfileOwner(owner);
     openView("profile");
   };
 
-  const openPublicList = (listId: PublicListId, origin: PublicListOrigin) => {
+  const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
     setPublicListId(listId);
     setPublicListOrigin(origin);
+    setPublicListOwner(owner);
     openView("list");
   };
 
@@ -710,7 +712,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
             onOpenProfile={openProfile}
-            onOpenList={() => openPublicList("places", "discover")}
+            onOpenList={() => openPublicList("places", "discover", "lina")}
             followingLina={followingLina}
             onToggleFollow={() => setFollowingLina((value) => !value)}
             initialQuery={discoverInitialQuery}
@@ -723,7 +725,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onToggleFollow={() => profileOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onOpenHonors={() => openView("honors")}
-            onOpenList={(listId) => openPublicList(listId, "profile")}
+            onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
             photo={profilePhoto}
             onEditPhoto={() => setPhotoCropOpen(true)}
             onRemovePhoto={() => setProfilePhoto(null)}
@@ -733,7 +735,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
         ) : currentView === "list" ? (
-          <PublicListView listId={publicListId} works={works} following={followingLina} onToggleFollow={() => setFollowingLina((value) => !value)} onOpenProfile={() => openProfile("lina")} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile("lina") : openView("discover")} backLabel={publicListOrigin === "profile" ? "Retour au profil de Lina" : "Retour à Découvrir"} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={publicListOwner === "lina" ? followingLina : followingMael} onToggleFollow={() => publicListOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : publicListOwner === "public-self" ? "Retour au profil de Maël" : "Retour au profil de Lina"} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">

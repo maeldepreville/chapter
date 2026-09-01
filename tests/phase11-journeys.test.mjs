@@ -50,6 +50,7 @@ test("Discover, Lina's profile, public list and honors preserve origin and relat
 
   let list = ui.component("PublicListView");
   assert.equal(list.props.listId, "lights");
+  assert.equal(list.props.owner, "lina");
   assert.equal(list.props.backLabel, "Retour au profil de Lina");
   assert.equal(list.props.following, true);
   list.props.onBack();
@@ -67,9 +68,30 @@ test("Discover, Lina's profile, public list and honors preserve origin and relat
   ui.button("Découvrir").props.onClick();
   ui.component("DiscoverView").props.onOpenList("places");
   list = ui.component("PublicListView");
+  assert.equal(list.props.owner, "lina");
   assert.equal(list.props.backLabel, "Retour à Découvrir");
   list.props.onBack();
     assert.equal(ui.component("DiscoverView").props.followingLina, true);
+  });
+});
+
+test("a list opened from Maël's profile preserves its owner and return context", () => {
+  const ui = journey({ view: "profile" });
+  withWindow(() => {
+    let profile = ui.component("ProfileView");
+    assert.equal(profile.props.owner, "self");
+    profile.props.onOpenList("places");
+
+    const list = ui.component("PublicListView");
+    assert.equal(list.props.owner, "self");
+    assert.equal(list.props.backLabel, "Retour à mon profil");
+    list.props.onOpenProfile();
+
+    profile = ui.component("ProfileView");
+    assert.equal(profile.props.owner, "self");
+    profile.props.onOpenList("lights");
+    ui.component("PublicListView").props.onBack();
+    assert.equal(ui.component("ProfileView").props.owner, "self");
   });
 });
 

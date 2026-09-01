@@ -572,7 +572,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+export function PublicListView({ owner, listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
   const lists = {
     places: {
       title: "Habiter les lieux qui nous quittent",
@@ -587,6 +587,10 @@ export function PublicListView({ listId, works, following, onToggleFollow, onOpe
   } satisfies Record<PublicListId, { title: string; description: string; workIds: readonly string[] }>;
   const list = lists[listId];
   const chosen = availableWorks(works, list.workIds);
+  const isOwnList = owner === "self";
+  const author = owner === "lina"
+    ? { name: "Lina Morel", initials: "LM", relationship: "Autrice de la liste" }
+    : { name: "Maël Depréville", initials: "MD", relationship: isOwnList ? "Votre liste publique" : "Auteur de la liste" };
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
       <button className="text-action back-action" type="button" onClick={onBack}>← {backLabel}</button>
@@ -595,7 +599,7 @@ export function PublicListView({ listId, works, following, onToggleFollow, onOpe
         <h1 id="list-page-title">{list.title}</h1>
         <p>{list.description}</p>
         {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
-        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Autrice de la liste</small></span></button><button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button></div>
+        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{author.relationship}</small></span></button>{!isOwnList && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
       </header>
       {chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
     </section>

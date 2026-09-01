@@ -21,6 +21,7 @@ La version Sites **28** du présent candidat est désormais déployée en accès
 | Parcours transversaux | Continuité vérifiée dans la logique racine entre Découvrir, profil, listes et honneurs ; statut, date et traces du Journal ; ajout à lire et annulation. |
 | Cohérence sociale et recherche | « Suivre/Suivi » et couleurs partagés sur profil, Découvrir et listes ; effacement natif WebKit remplacé par une action Chapter explicite. |
 | Honneurs au pointeur | Le badge, son intervalle et sa fiche forment une zone interactive précise : les actions restent atteignables au survol, puis la fiche se ferme à la sortie de cet ensemble ; clic, clavier et toucher conservent une ouverture persistante. |
+| Propriété des listes | Une liste conserve Maël ou Lina depuis son profil d'origine ; auteur, suivi, ouverture du profil et retour utilisent tous cette même identité. La propre liste de Maël n'affiche aucun abonnement à soi-même. |
 
 Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets validés et la limite de 3 000 caractères restent inchangés. CT1 demeure refusé : aucun bouton directionnel ou de recentrage n'est ajouté au recadrage.
 
@@ -28,7 +29,7 @@ Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets val
 
 - Construction de production réussie.
 - Lint final sans erreur après constitution du dossier de clôture.
-- **92/92 tests automatisés réussis**, dont trois parcours racine, trois régressions de reprise visuelle et la durée de la fiche d'honneur au survol.
+- **94/94 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la durée de la fiche d'honneur au survol et la propriété des listes publiques.
 - Rendu de la page principale et de la route publique vérifié depuis le worker produit.
 - `git diff --check` final sans anomalie.
 - Aucune dépendance, ressource graphique ou donnée de catalogue nouvelle dans le diff de phase 11.
