@@ -6,7 +6,7 @@ Dernière mise à jour : 1er septembre 2026.
 
 Le périmètre technique de la phase 11 et du lot 1 est **constitué puis repris après de nouveaux retours de recette, comme candidat à la validation utilisateur**. Il n'est pas encore déclaré accepté ni clôturé : la nouvelle composition de la carte retournée sur Safari mobile et desktop étroit, les gestes de recadrage, le responsive, le texte agrandi et les contrôles accessibles restent à évaluer.
 
-La version en ligne demeure celle du jalon antérieur. Aucun commit, synchronisation GitHub, déploiement ou publication du présent candidat n'est déduit de ce bilan. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra être réalisée et vérifiée ; la publication du Site restera une décision distincte.
+La version Sites **26** du présent candidat est désormais déployée en accès propriétaire à la demande explicite de l'utilisateur, afin de permettre sa recette sur `https://chapter-reading.smrdsh.chatgpt.site`. Cette publication ne vaut pas validation. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra encore être réalisée et vérifiée.
 
 ## Périmètre consolidé
 

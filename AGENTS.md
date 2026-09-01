@@ -21,7 +21,7 @@ Ces règles s’appliquent à toute conversation, tout chat et tout agent travai
 - Pour toute décision comportant plusieurs rendus ou états visibles, présenter une comparaison visuelle dans le même ordre que les options textuelles avant de demander un choix.
 - Pendant les échanges de conception, ne pas terminer les réponses par une redirection vers le site. Partager le site uniquement lors d’un jalon d’implémentation ou d’évaluation.
 - Accompagner chaque jalon final d’une checklist exhaustive de validation.
-- Phase 11, consigne du 27 août 2026 : l'utilisateur valide le premier ensemble mais demande plusieurs étapes avant un jalon regroupé. Ne pas déployer la version 25 ni publier chaque sous-étape. Attendre l'accord sur le jalon regroupé ; la synchronisation GitHub des éléments validés reste distincte.
+- Phase 11 : la consigne du 27 août de ne pas déployer la version 25 est révisée le 1er septembre après constitution du jalon regroupé. L'utilisateur autorise explicitement la version Sites 26 afin d'évaluer les correctifs dans l'interface. Ce déploiement de recette ne valide pas le jalon ; la synchronisation GitHub des éléments acceptés reste distincte.
 
 ## Synchronisation GitHub après validation d'un jalon
 

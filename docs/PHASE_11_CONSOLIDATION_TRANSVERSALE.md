@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 1er septembre 2026.
 
-Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile renforcé, suivi harmonisé et effacement de recherche restylé. Le jalon reste candidat, sans validation finale, synchronisation ni publication.**
+Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile renforcé, suivi harmonisé et effacement de recherche restylé. La version Sites 26 est déployée en accès propriétaire pour réévaluation ; le jalon reste candidat, sans validation finale ni synchronisation GitHub.**
 
 ## 1. Point de départ et limites
 
@@ -359,3 +359,14 @@ L'utilisateur fournit une nouvelle capture mobile du verso : la signature et l'e
 Trois régressions dédiées couvrent la structure du corps de verso et sa cascade mobile, l'identité des trois points d'entrée du suivi et le comportement réel de l'action d'effacement. Vérification complète réussie : **build de production, lint, `git diff --check` et 91/91 tests**. Aucun test Safari ou rendu tactile réel n'est revendiqué ; la capture est une preuve du défaut antérieur, pas de sa correction.
 
 Aucune dépendance, asset, publication, synchronisation ou modification de QR n'accompagne cette reprise. Le jalon regroupé reste à réévaluer par l'utilisateur.
+
+### Mise à disposition pour recette — version Sites 26
+
+Le 1er septembre 2026, l'utilisateur demande explicitement que les correctifs soient visibles sur le Site. Cette demande remplace, pour ce candidat regroupé, l'ancienne suspension de publication qui interdisait de déployer la version 25 ; elle n'équivaut pas à une validation fonctionnelle.
+
+- Source candidate commitée au SHA `4d225a642d2f362f6595d67ae43a843f9033de97` et envoyée uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` n'est pas modifié.
+- Build exact du commit réussi, archive vinext enregistrée comme version **26** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_9b62fb5672688191b9b53cc40a3de5fa`.
+- Déploiement privé propriétaire réussi : `appgdep_6a96adbe3e348191b904304056472b2a`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 26, page principale servie avec son titre et son contenu ; la feuille CSS en ligne contient les nouvelles règles du corps de verso, de sa grille renforcée et de l'action d'effacement Découvrir.
+
+La version 26 devient la base de recette visible. Elle reste révocable et ne clôt ni la phase 11 ni le lot 1.
