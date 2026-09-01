@@ -439,3 +439,13 @@ Deux régressions couvrent le rendu auteur/abonnement et le parcours profil de M
 - Contrôle après publication : version courante 29 et provenance égale au SHA candidat.
 
 La version 29 remplace la version 28 comme base de recette visible. Elle ne constitue ni une validation de P11-F33, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
+
+## 23. Audit des données codées en dur et des identités
+
+À la suite du correctif de propriété des listes, l'utilisateur demande de vérifier les autres valeurs « en dur », de corriger celles qui créent une incohérence et de consigner celles qui devront évoluer plus tard. L'audit ciblé des composants, modèles et URL distingue les fixtures assumées du prototype des valeurs qui pilotaient à tort un comportement.
+
+**P11-F34 — corrections candidates :** Découvrir transmet désormais l'identifiant de liste reçu au lieu d'ouvrir systématiquement `places`. Les critiques et réponses utilisent des identifiants d'acteurs stables pour les permissions, le blocage et les destinations de profil ; aucune comparaison du nom visible ne détermine plus un droit. Les identités et présentations simulées sont centralisées dans `app/prototype-data.ts`, le catalogue des listes dans `app/catalogue.ts`, et l'origine ainsi que la route publique dans `app/site-config.ts`. Les vues dérivent leurs noms, initiales, listes, aperçus et URL de ces sources communes.
+
+Le nouveau [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md) consigne les données encore volontairement statiques et leur remplacement futur : session et profils, catalogue, bibliothèque/Journal, listes liées à leur propriétaire, progression, recommandations et interactions sociales. Il signale explicitement que les deux profils partagent encore le même catalogue de listes dans la démonstration. Les seuils produit validés et l'origine sentinelle `https://app.local` de la normalisation d'authentification restent inchangés et ne sont pas traités comme des données métier oubliées.
+
+Une régression dédiée protège la transmission des identifiants, l'absence de permission fondée sur un nom et l'unicité des sources canoniques. Vérification intermédiaire réussie : **build de production et 98/98 tests**. Lint et `git diff --check` doivent compléter le contrôle avant publication. Cette centralisation prépare le futur backend sans l'implémenter et ne change ni le contenu visible attendu, ni le périmètre du lot 1.

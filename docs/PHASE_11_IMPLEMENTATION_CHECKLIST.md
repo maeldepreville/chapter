@@ -165,7 +165,7 @@ Second signalement reçu le 1er septembre : fenêtre desktop réduite au minimum
 
 ## Volet 4 — validation regroupée et décision de clôture
 
-Les **97/97 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette.
+Les **98/98 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette et les sources canoniques de données simulées.
 
 - [ ] Parcourir Journal → Bibliothèque → Découvrir → œuvre → profil de Lina → chacune de ses listes → honneurs → retours ; vérifier titres, destination courante, origine des retours et absence de page blanche.
 - [ ] Suivre/ne plus suivre Lina depuis Découvrir, son profil et une liste : état et libellé identiques à chaque destination, y compris après les retours.
@@ -188,3 +188,5 @@ Les **97/97 tests automatisés**, la construction de production et le lint réus
 - [ ] Cliquer un badge ou l'ouvrir au clavier avant de quitter sa cellule : la fiche reste disponible pour utiliser ses actions ; Échap, clic extérieur et sortie de la collection la ferment. Sur mobile, le toucher conserve son basculement actuel.
 - [ ] Depuis mon profil, ouvrir chacune des deux listes : Maël Depréville et « Votre liste publique » sont affichés, aucun bouton « Suivre » n'est proposé, l'identité et « Retour à mon profil » ramènent au profil propriétaire.
 - [ ] Refaire depuis le profil de Lina puis depuis Découvrir : Lina reste autrice, son bouton « Suivre/Suivi » conserve son état et le retour vise respectivement son profil ou Découvrir. Depuis le profil public de Maël, vérifier « Auteur de la liste » et le retour au profil public plutôt qu'au profil propriétaire.
+- [ ] Depuis Découvrir, ouvrir successivement chacune des listes lorsqu'elle est proposée : la destination doit conserver la liste réellement choisie, sans retomber systématiquement sur « Des lieux qui racontent ».
+- [ ] Vérifier qu'un changement de nom affiché n'altère ni les droits d'édition d'une réponse, ni le blocage d'un auteur, ni la destination de son profil ; ces règles reposent sur l'identifiant de l'acteur.

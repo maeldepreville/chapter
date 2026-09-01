@@ -15,6 +15,7 @@ The concise repository rules in [`../AGENTS.md`](../AGENTS.md) apply to every pr
 - [`AGENT_CONTEXT.md`](./AGENT_CONTEXT.md) — Compact active state, invariants, routing and next action.
 - [`AGENT_WORKFLOW.md`](./AGENT_WORKFLOW.md) — Conditional procedures for implementation, documentation, validation, GitHub and Sites.
 - [`CODEMAP.md`](./CODEMAP.md) — Compact mapping from product areas to source modules and tests.
+- [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md) — Canonical register of intentional prototype fixtures, corrected hardcoding risks and later backend replacements.
 - [`AI_AGENT_CONTEXT_STRATEGY.md`](./AI_AGENT_CONTEXT_STRATEGY.md) — Evidence-backed context and token strategy, measurements and rejected approaches.
 - [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md)
 - [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md)

@@ -7,7 +7,10 @@ import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { Modal } from "./modal";
 import { Fade } from "./fade";
 import { lockBodyScroll } from "./modal-behavior";
-import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileOwner, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
+import type { PublicListId } from "./catalogue";
+import { actorIdForProfile, CURRENT_READER_ID, prototypeActors, type ProfileOwner } from "./prototype-data";
+import { PUBLIC_PROFILE_PATH } from "./site-config";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
@@ -31,7 +34,7 @@ type PersonalEntry = {
 
 const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 };
 const UNDO_DURATION_MS = 5000;
-const PUBLIC_PROFILE_PATH = "/profil/mael-depreville";
+const currentReader = prototypeActors[CURRENT_READER_ID];
 
 export const defaultWorks = [
   {
@@ -685,10 +688,10 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
           />
         </label>
         <div className="account-control" ref={accountControlRef}>
-          <button className="account-button" type="button" aria-label="Ouvrir le compte de Maël" aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}>MD</button>
+          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
           <Fade show={accountOpen}>{accountOpen && (
             <div className="account-menu" id="desktop-account-menu">
-              <p><strong>Maël Depréville</strong><span>{equippedTitle}</span></p>
+              <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
               <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
               <button type="button">Se déconnecter</button>
             </div>
@@ -698,7 +701,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
 
       <header className="mobile-header">
         <button className="wordmark wordmark-button" type="button" onClick={() => openView("journal")}>Chapter<span>.</span></button>
-        <button className="account-button" type="button" aria-label="Ouvrir le compte de Maël" aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>MD</button>
+        <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
       </header>
 
       <main id="top">
@@ -712,7 +715,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
             onOpenProfile={openProfile}
-            onOpenList={() => openPublicList("places", "discover", "lina")}
+            onOpenList={(listId) => openPublicList(listId, "discover", "lina")}
             followingLina={followingLina}
             onToggleFollow={() => setFollowingLina((value) => !value)}
             initialQuery={discoverInitialQuery}
@@ -735,7 +738,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={publicListOwner === "lina" ? followingLina : followingMael} onToggleFollow={() => publicListOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : publicListOwner === "public-self" ? "Retour au profil de Maël" : "Retour au profil de Lina"} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={publicListOwner === "lina" ? followingLina : followingMael} onToggleFollow={() => publicListOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}`} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -992,9 +995,9 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
       <Fade show={accountOpen} kind="modal">{accountOpen && (
         <div className="mobile-account-overlay">
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
-          <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label="Compte de Maël">
+          <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label={`Compte de ${currentReader.firstName}`}>
             <div className="modal-heading">
-              <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2><span className="account-title">{equippedTitle}</span></div>
+              <div><p className="eyebrow">Compte</p><h2>{currentReader.name}</h2><span className="account-title">{equippedTitle}</span></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
             <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>

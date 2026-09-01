@@ -6,10 +6,15 @@ import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useLayoutEffec
 import { getHonorsLayout } from "./honors-layout";
 import { Modal } from "./modal";
 import { CoverFrame } from "./cover-frame";
-import { availableWorkCount, availableWorks, publicListWorkIds } from "./catalogue";
+import { availableWorkCount, availableWorks, FEATURED_DISCOVERY_LIST_ID, publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
 import { createProfileShareController } from "./profile-share";
 import { cropPreview, startPhotoImport } from "./photo-processing";
 import { Fade, useSurfaceActive } from "./fade";
+import { actorIdForProfile, CURRENT_READER_ID, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
+import { PUBLIC_PROFILE_URL } from "./site-config";
+
+export type { PublicListId } from "./catalogue";
+export type { ProfileOwner } from "./prototype-data";
 
 export type SocialWork = {
   id: string;
@@ -24,22 +29,21 @@ export type SocialWork = {
   coverSrc?: string;
 };
 
-export type PublicListId = "places" | "lights";
-export type ProfileOwner = "self" | "public-self" | "lina";
-
 type DiscoverProps = {
   works: readonly SocialWork[];
   statuses: Record<string, string | null | undefined>;
   onOpenWork: (id: string) => void;
   onAddToRead: (id: string) => void;
   onOpenProfile: (owner: "self" | "lina") => void;
-  onOpenList: (listId?: PublicListId) => void;
+  onOpenList: (listId: PublicListId) => void;
   followingLina: boolean;
   onToggleFollow: () => void;
   initialQuery?: string;
   historyWorkIds?: readonly string[];
   onBackToJournal?: () => void;
 };
+
+const linaReader = prototypeActors.lina;
 
 const normalizeText = (value: string) => value
   .normalize("NFD")
@@ -120,6 +124,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
   const searchRef = useRef<HTMLInputElement>(null);
   const workById = (id: string) => works.find((work) => work.id === id);
   const track = discoveryTracks[intent];
+  const featuredList = publicListCatalog[FEATURED_DISCOVERY_LIST_ID];
   const knownHistory = historyWorkIds ?? Object.keys(statuses).filter((id) => statuses[id] === "En cours" || statuses[id] === "Lu");
   const hasAnchor = knownHistory.includes("cartographies") && Boolean(workById("cartographies"));
   const editorialDefault = intent === "default" && !hasAnchor;
@@ -218,16 +223,16 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
           <section className="public-list-path" aria-labelledby="public-list-title">
             <div className="list-introduction">
               <p className="eyebrow">Une sensibilité à découvrir</p>
-              <h2 id="public-list-title">Habiter les lieux qui nous quittent</h2>
-              <p>Des romans où une maison, une ville ou un rivage deviennent une manière de retrouver ce que l’on croyait perdu.</p>
+              <h2 id="public-list-title">{featuredList.title}</h2>
+              <p>{featuredList.discoverySummary}</p>
               <div className="list-author-row">
-                <button className="identity-link" type="button" onClick={() => onOpenProfile("lina")}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Lectrice et autrice de la liste</small></span></button>
+                <button className="identity-link" type="button" onClick={() => onOpenProfile("lina")}><span className="avatar">{linaReader.initials}</span><span><strong>{linaReader.name}</strong><small>Lectrice et autrice de la liste</small></span></button>
                 <button className="primary-action profile-follow-action" type="button" aria-pressed={followingLina} onClick={onToggleFollow}>{followingLina ? "Suivi" : "Suivre"}</button>
               </div>
-              <button className="primary-action" type="button" onClick={() => onOpenList("places")}>Ouvrir la liste</button>
+              <button className="primary-action" type="button" onClick={() => onOpenList(FEATURED_DISCOVERY_LIST_ID)}>Ouvrir la liste</button>
             </div>
             <div className="list-cover-row" aria-hidden="true">
-              {availableWorks(works, ["miroirs", "rivage", "cartographies", "lucioles"]).map((work) => <CompactCover key={work.id} work={work} className="list-preview-cover" />)}
+              {availableWorks(works, featuredList.workIds.slice(0, 4)).map((work) => <CompactCover key={work.id} work={work} className="list-preview-cover" />)}
             </div>
           </section>
         )}
@@ -314,22 +319,16 @@ type ProfileProps = {
 
 export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase }: ProfileProps) {
   const isOwnProfile = owner === "self";
-  const isMael = owner !== "lina";
+  const presentation = profilePresentations[owner];
+  const actor = prototypeActors[presentation.actorId];
+  const isMael = presentation.actorId === "self";
   const [removePhotoConfirm, setRemovePhotoConfirm] = useState(false);
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
   const [shareBusy, setShareBusy] = useState(false);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
-  const publicProfileUrl = "https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville";
-  const profile = isMael ? {
-    name: "Maël Depréville", initials: "MD", title: equippedTitle,
-    intro: "Lecteur de fictions où les lieux, les souvenirs et les voix discrètes déplacent le regard.",
-    favorites: ["cartographies", "atlas", "miroirs"],
-  } : {
-    name: "Lina Morel", initials: "LM", title: "Voix singulière",
-    intro: "Je rassemble des romans où les paysages gardent une mémoire et où chaque détour ouvre une manière différente d’habiter le monde.",
-    favorites: ["rivage", "lucioles", "sel"],
-  };
+  const publicProfileUrl = PUBLIC_PROFILE_URL;
+  const profile = { ...actor, ...presentation, title: isMael ? equippedTitle : presentation.defaultTitle };
   const workById = (id: string) => works.find((work) => work.id === id);
   const favorites = availableWorks(works, profile.favorites);
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
@@ -356,7 +355,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               <div className="profile-identity-card profile-card-front" aria-hidden={cardFlipped} inert={cardFlipped ? true : undefined}>
                 <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isOwnProfile ? "Carte de lecteur" : "Portrait public"}</small></div>
                 <div className="profile-avatar-wrap">
-                  <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+                  <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt={`Photo de profil de ${profile.firstName}`} fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
                   {isOwnProfile && <div className="profile-photo-actions"><button data-photo-edit className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
                 </div>
                 <div className="profile-heading-copy">
@@ -411,8 +410,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       <div className="profile-wide-content">
         <section className="profile-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.places).length, publicListWorkIds.places.length)} · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("lights")}><span><strong>Veilles, fenêtres et lumières tardives</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.lights).length, publicListWorkIds.lights.length)} · Des présences aperçues lorsque la ville se tait.</small></span><span aria-hidden="true">→</span></button>
+          {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
         </section>
         <section className="profile-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
@@ -573,24 +571,11 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
 }
 
 export function PublicListView({ owner, listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
-  const lists = {
-    places: {
-      title: "Habiter les lieux qui nous quittent",
-      description: "Des récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.",
-      workIds: publicListWorkIds.places,
-    },
-    lights: {
-      title: "Veilles, fenêtres et lumières tardives",
-      description: "Des récits de présences entrevues lorsque la ville se tait, entre fenêtres éclairées, attentes nocturnes et rencontres qui ne pouvaient avoir lieu en plein jour.",
-      workIds: publicListWorkIds.lights,
-    },
-  } satisfies Record<PublicListId, { title: string; description: string; workIds: readonly string[] }>;
-  const list = lists[listId];
+  const list = publicListCatalog[listId];
   const chosen = availableWorks(works, list.workIds);
   const isOwnList = owner === "self";
-  const author = owner === "lina"
-    ? { name: "Lina Morel", initials: "LM", relationship: "Autrice de la liste" }
-    : { name: "Maël Depréville", initials: "MD", relationship: isOwnList ? "Votre liste publique" : "Auteur de la liste" };
+  const author = prototypeActors[actorIdForProfile(owner)];
+  const authorRelationship = isOwnList ? "Votre liste publique" : owner === "lina" ? "Autrice de la liste" : "Auteur de la liste";
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
       <button className="text-action back-action" type="button" onClick={onBack}>← {backLabel}</button>
@@ -599,40 +584,40 @@ export function PublicListView({ owner, listId, works, following, onToggleFollow
         <h1 id="list-page-title">{list.title}</h1>
         <p>{list.description}</p>
         {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
-        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{author.relationship}</small></span></button>{!isOwnList && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
+        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{authorRelationship}</small></span></button>{!isOwnList && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
       </header>
       {chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
     </section>
   );
 }
 
-type Reply = { id: string; name: string; initials: string; text: string; date: string };
-type SocialReview = { id: string; name: string; initials: string; rating: number; date: string; text: string; followed?: boolean; own?: boolean };
+type Reply = { id: string; authorId: PrototypeActorId; text: string; date: string };
+type SocialReview = { id: PrototypeActorId; rating: number; date: string; text: string; followed?: boolean; own?: boolean };
 
 const socialReviews: SocialReview[] = [
-  { id: "lina", name: "Lina Morel", initials: "LM", rating: 5, date: "18 août 2026", followed: true, text: "Un roman qui avance comme une carte que l’on dessine en marchant. J’ai aimé la précision des images et cette sensation persistante que nos souvenirs ne sont jamais aussi fixes qu’on le croit." },
-  { id: "theo", name: "Théo Renaud", initials: "TR", rating: 4, date: "12 août 2026", text: "Une écriture ample, parfois exigeante, mais toujours habitée. Le dernier tiers donne une profondeur inattendue à tout ce qui précédait." },
-  { id: "ines", name: "Inès Naël", initials: "IN", rating: 4, date: "3 août 2026", text: "J’y suis entrée lentement, puis je n’ai plus voulu quitter cet univers. Une très belle réflexion sur les lieux que l’on emporte avec soi." },
+  { id: "lina", rating: 5, date: "18 août 2026", followed: true, text: "Un roman qui avance comme une carte que l’on dessine en marchant. J’ai aimé la précision des images et cette sensation persistante que nos souvenirs ne sont jamais aussi fixes qu’on le croit." },
+  { id: "theo", rating: 4, date: "12 août 2026", text: "Une écriture ample, parfois exigeante, mais toujours habitée. Le dernier tiers donne une profondeur inattendue à tout ce qui précédait." },
+  { id: "ines", rating: 4, date: "3 août 2026", text: "J’y suis entrée lentement, puis je n’ai plus voulu quitter cet univers. Une très belle réflexion sur les lieux que l’on emporte avec soi." },
 ];
 
 export function SocialReviews({ workId, personalReview, personalRating, onOpenProfile, onWriteReview }: { workId: string; personalReview: string; personalRating: number; onOpenProfile: () => void; onWriteReview: () => void }) {
   const contextualReviews = workId === "sel" ? [] : workId === "lucioles" ? socialReviews.slice(0, 1) : socialReviews;
-  const reviews = personalReview ? [{ id: "self", name: "Maël Depréville", initials: "MD", rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : contextualReviews;
+  const reviews: SocialReview[] = personalReview ? [{ id: CURRENT_READER_ID, rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : contextualReviews;
   const [expanded, setExpanded] = useState<string[]>([]);
   const [expandedTexts, setExpandedTexts] = useState<string[]>([]);
   const [composer, setComposer] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ name: string; text: string } | null>(null);
   const [editingReply, setEditingReply] = useState<{ reviewId: string; replyId: string } | null>(null);
-  const [blockedNames, setBlockedNames] = useState<string[]>([]);
+  const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [draft, setDraft] = useState("");
   const [closed, setClosed] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
   const [replies, setReplies] = useState<Record<string, Reply[]>>({
     lina: [
-      { id: "r1", name: "Théo Renaud", initials: "TR", date: "19 août", text: "La carte qui se fabrique en marchant, c’est exactement ce qui m’a retenu aussi." },
-      { id: "r2", name: "Lina Morel", initials: "LM", date: "19 août", text: "Oui — et elle accepte de rester incomplète, ce qui change tout à la fin." },
+      { id: "r1", authorId: "theo", date: "19 août", text: "La carte qui se fabrique en marchant, c’est exactement ce qui m’a retenu aussi." },
+      { id: "r2", authorId: "lina", date: "19 août", text: "Oui — et elle accepte de rester incomplète, ce qui change tout à la fin." },
     ],
-    theo: [{ id: "r3", name: "Inès Naël", initials: "IN", date: "13 août", text: "Le dernier tiers m’a aussi fait relire les premières pages autrement." }],
+    theo: [{ id: "r3", authorId: "ines", date: "13 août", text: "Le dernier tiers m’a aussi fait relire les premières pages autrement." }],
   });
 
   const publishReply = (reviewId: string) => {
@@ -640,7 +625,7 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
     setReplies((current) => editingReply ? {
       ...current,
       [reviewId]: (current[reviewId] ?? []).map((reply) => reply.id === editingReply.replyId ? { ...reply, text: draft.trim(), date: "Modifiée à l’instant" } : reply),
-    } : ({ ...current, [reviewId]: [...(current[reviewId] ?? []), { id: `${reviewId}-${Date.now()}`, name: "Maël Depréville", initials: "MD", date: "À l’instant", text: `${replyingTo ? `@${replyingTo.name} ` : ""}${draft.trim()}` }] }));
+    } : ({ ...current, [reviewId]: [...(current[reviewId] ?? []), { id: `${reviewId}-${Date.now()}`, authorId: CURRENT_READER_ID, date: "À l’instant", text: `${replyingTo ? `@${replyingTo.name} ` : ""}${draft.trim()}` }] }));
     setExpanded((current) => current.includes(reviewId) ? current : [...current, reviewId]);
     setComposer(null);
     setReplyingTo(null);
@@ -649,7 +634,8 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
   };
 
   const renderReview = (review: SocialReview, compact = false) => {
-    const reviewReplies = (replies[review.id] ?? []).filter((reply) => !blockedNames.includes(reply.name));
+    const reviewActor = prototypeActors[review.id];
+    const reviewReplies = (replies[review.id] ?? []).filter((reply) => !blockedActorIds.includes(reply.authorId));
     const isExpanded = expanded.includes(review.id);
     const textKey = `${workId}-${review.id}`;
     const textExpanded = expandedTexts.includes(textKey);
@@ -660,19 +646,19 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
     return (
       <article className={`review social-review ${compact ? "compact-review" : ""}`} key={review.id}>
         <header className="review-header">
-          {review.name === "Lina Morel" ? <button className="avatar avatar-button" type="button" aria-label="Ouvrir le profil de Lina Morel" onClick={onOpenProfile}>{review.initials}</button> : <span className="avatar" aria-hidden="true">{review.initials}</span>}
-          <div><h3>{review.name}</h3><p>{review.date}</p></div>
+          {review.id === "lina" ? <button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${reviewActor.name}`} onClick={onOpenProfile}>{reviewActor.initials}</button> : <span className="avatar" aria-hidden="true">{reviewActor.initials}</span>}
+          <div><h3>{reviewActor.name}</h3><p>{review.date}</p></div>
           {review.rating > 0 && <span className="review-stars" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}
         </header>
         <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
         {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
-        {latest && !isExpanded && <div className="reply-preview"><span className="avatar">{latest.initials}</span><p><strong>{latest.name}</strong>{latest.text}</p></div>}
+        {latest && !isExpanded && <div className="reply-preview"><span className="avatar">{prototypeActors[latest.authorId].initials}</span><p><strong>{prototypeActors[latest.authorId].name}</strong>{latest.text}</p></div>}
         <div className="conversation-actions">
           {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
           {!isExpanded && replyAction}
         </div>
-        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => <article key={reply.id} className="reply"><span className="avatar">{reply.initials}</span><div><header><strong>{reply.name}</strong><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.name === "Maël Depréville" ? <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply({ reviewId: review.id, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.id]: (current[review.id] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo({ name: reply.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedNames((current) => [...current, reply.name]); setNotice(`${reply.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>)}</div>}
+        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = prototypeActors[reply.authorId]; return <article key={reply.id} className="reply"><span className="avatar">{replyActor.initials}</span><div><header><strong>{replyActor.name}</strong><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply({ reviewId: review.id, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.id]: (current[review.id] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedActorIds((current) => [...current, reply.authorId]); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
         {isExpanded && <div className="conversation-actions">{replyAction}</div>}
         {composer === review.id && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.id)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
       </article>

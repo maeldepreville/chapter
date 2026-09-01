@@ -22,6 +22,7 @@ La version Sites **29** du présent candidat est désormais déployée en accès
 | Cohérence sociale et recherche | « Suivre/Suivi » et couleurs partagés sur profil, Découvrir et listes ; effacement natif WebKit remplacé par une action Chapter explicite. |
 | Honneurs au pointeur | Le badge, son intervalle et sa fiche forment une zone interactive précise : les actions restent atteignables au survol, puis la fiche se ferme à la sortie de cet ensemble ; clic, clavier et toucher conservent une ouverture persistante. |
 | Propriété des listes | Une liste conserve Maël ou Lina depuis son profil d'origine ; auteur, suivi, ouverture du profil et retour utilisent tous cette même identité. La propre liste de Maël n'affiche aucun abonnement à soi-même. |
+| Données codées en dur | Les identités, listes et URL partagées ont une source canonique ; permissions et navigation reposent sur des identifiants stables. Les fixtures restantes et leur future source backend sont consignées dans `PROTOTYPE_DATA_REGISTER.md`. |
 
 Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets validés et la limite de 3 000 caractères restent inchangés. CT1 demeure refusé : aucun bouton directionnel ou de recentrage n'est ajouté au recadrage.
 
@@ -29,7 +30,7 @@ Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets val
 
 - Construction de production réussie.
 - Lint final sans erreur après constitution du dossier de clôture.
-- **97/97 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la propriété des listes publiques et trois contrôles de l'infrastructure documentaire.
+- **98/98 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la propriété des listes publiques, l'audit des données codées en dur et trois contrôles de l'infrastructure documentaire.
 - Rendu de la page principale et de la route publique vérifié depuis le worker produit.
 - `git diff --check` final sans anomalie.
 - Aucune dépendance, ressource graphique ou donnée de catalogue nouvelle dans le diff de phase 11.
@@ -51,6 +52,7 @@ La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_1
 
 - Le cadrage horizontal/vertical reste un geste direct ; son zoom conserve le curseur. CT1 ayant été refusé, aucune alternative visible au glissement n'est ajoutée. Cette limite P11-F04 doit rester documentée et ne permet pas de revendiquer une conformité WCAG globale.
 - Les données et interactions demeurent locales à la session. Authentification réelle, onboarding, persistance distante, notifications complètes, messagerie, listes collaboratives, classement et moteur de recommandation réel restent hors lot 1.
+- Le catalogue de listes actuellement partagé entre les profils est une fixture de démonstration. Le futur backend devra rattacher chaque liste à son propriétaire ; les autres points de remplacement sont détaillés dans [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md).
 - La confidentialité décrite correspond aux vues du prototype, pas à une garantie backend.
 - Les avertissements de proxy npm et de classification statique vinext sont des limites d'environnement inchangées ; ils n'ont pas empêché la construction.
 

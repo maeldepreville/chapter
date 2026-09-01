@@ -8,11 +8,11 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Candidat visible :** version Sites 29, déployée en accès propriétaire pour recette. Elle inclut P11-F33 et la base documentaire intégrée ; build, lint et 97/97 tests réussissent.
-- **Source de travail :** la source technique et documentaire de la version 29 est consignée sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
+- **Candidat visible :** version Sites 29, déployée en accès propriétaire pour recette. Un candidat P11-F34 plus récent centralise les données simulées et corrige les identités/listes encore codées en dur ; build et 98/98 tests réussissent avant publication.
+- **Source de travail :** la source technique de P11-F34 est en cours de préparation sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** vérifier les listes de Maël et Lina sur la version 29, corriger les défauts éventuels, puis poursuivre la validation du jalon regroupé.
+- **Prochaine étape produit :** publier P11-F34 pour recette, vérifier les deux listes depuis Découvrir et les profils de Maël/Lina, puis poursuivre la validation du jalon regroupé.
 
 ## Invariants à préserver
 
@@ -23,6 +23,7 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - QR1/QRP1b : carte recto-verso et commandes extérieures préservées.
 - HDE1/HMT1/P11-F32 : hiérarchie des honneurs, fiche tactile et accès au pointeur conservés.
 - P11-F33 : une liste conserve le propriétaire du profil qui l'a ouverte ; aucun suivi de soi-même sur la liste personnelle.
+- P11-F34 : permissions, destinations et relations utilisent des identifiants stables ; les données statiques intentionnelles sont centralisées et consignées dans `PROTOTYPE_DATA_REGISTER.md`.
 - PFP1 : JPEG/PNG/WebP, 8 Mo, petit côté minimal de 512 px ; gestes confinés à l'image.
 - N1b : nom de la carte sans césure interne.
 - Critiques publiques limitées à 3 000 caractères ; écrits complets conservés.
@@ -37,6 +38,7 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 | Correctif phase 11 | `rg -n "P11-F|mot-clé" docs/PHASE_11_CONSOLIDATION_TRANSVERSALE.md docs/CHAPTER_DECISIONS.md` puis quelques lignes autour du résultat |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` ; ouvrir seulement le livrable de phase trouvé |
 | Architecture ou fichiers à modifier | `CODEMAP.md`, puis les symboles concernés avec `rg` |
+| Donnée en dur ou future source backend | `PROTOTYPE_DATA_REGISTER.md` |
 | Croissance produit | `CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
 | Synchronisation GitHub ou publication | `AGENT_WORKFLOW.md` et l'état Git/Sites réel |
 | Optimisation des agents | `AI_AGENT_CONTEXT_STRATEGY.md` |

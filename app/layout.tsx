@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { SITE_ORIGIN } from "./site-config";
 import "./globals.css";
 import "./phase10.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chapter-reading.smrdsh.chatgpt.site"),
+  metadataBase: new URL(SITE_ORIGIN),
   title: "Chapter — Every book becomes part of your story",
   description: "Un journal de lecture personnel pour suivre, écrire et partager ce que les livres laissent en nous.",
   openGraph: {
