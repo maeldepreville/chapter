@@ -430,3 +430,12 @@ L'utilisateur relève qu'une liste ouverte depuis ses propres « Listes publique
 **P11-F33 — correction candidate :** l'ouverture mémorise désormais séparément l'identifiant de la liste, son origine et son propriétaire (`self`, `public-self` ou `lina`). La vue utilise cette identité unique pour l'avatar, le nom, la relation, l'état de suivi, l'ouverture du profil et le retour. Depuis le profil propriétaire de Maël, elle affiche « Maël Depréville » et « Votre liste publique », masque le bouton de suivi de soi-même et revient à « mon profil ». Une liste ouverte depuis Lina ou depuis Découvrir conserve le parcours existant ; le profil public de Maël reste également distinct du profil propriétaire.
 
 Deux régressions couvrent le rendu auteur/abonnement et le parcours profil de Maël → liste → profil, tandis que le parcours de Lina est renforcé par l'identité attendue. Après intégration de l'infrastructure documentaire parallèle, vérification complète réussie : **build de production, lint, `git diff --check` et 97/97 tests**. Les titres, descriptions, œuvres, compositions et états de suivi existants ne changent pas.
+
+### Mise à disposition pour recette — version Sites 29
+
+- Source P11-F33 et infrastructure documentaire intégrée au SHA `60601915430b629639668db0a24059016c184a54`, envoyé uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` reste inchangé.
+- Build exact du commit réussi, archive enregistrée comme version **29** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_7c410d15f73c8191811fafa537b14ba4`.
+- Déploiement privé propriétaire réussi : `appgdep_6a970a27a564819192c9b1e5551100ed`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 29 et provenance égale au SHA candidat.
+
+La version 29 remplace la version 28 comme base de recette visible. Elle ne constitue ni une validation de P11-F33, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.

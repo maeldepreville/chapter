@@ -8,11 +8,11 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Candidat visible :** version Sites 28, déployée en accès propriétaire pour recette. Elle inclut P11-F32 et totalise 92/92 tests au dernier bilan produit.
-- **Source de travail :** P11-F33 corrige la propriété des listes ouvertes depuis un profil sur la base documentaire intégrée ; build, lint et 97/97 tests réussissent.
+- **Candidat visible :** version Sites 29, déployée en accès propriétaire pour recette. Elle inclut P11-F33 et la base documentaire intégrée ; build, lint et 97/97 tests réussissent.
+- **Source de travail :** la source technique et documentaire de la version 29 est consignée sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** publier P11-F33 pour recette, vérifier les listes de Maël et Lina, puis poursuivre la validation du jalon regroupé.
+- **Prochaine étape produit :** vérifier les listes de Maël et Lina sur la version 29, corriger les défauts éventuels, puis poursuivre la validation du jalon regroupé.
 
 ## Invariants à préserver
 
