@@ -20,7 +20,7 @@ La version Sites **27** du présent candidat est désormais déployée en accès
 | Responsive et accès | Reflow des titres/actions/formulaires, limites de contrôles renforcées, focus fichier visible, groupe d'étoiles au clavier, destinations courantes et sémantique interactive fidèle. |
 | Parcours transversaux | Continuité vérifiée dans la logique racine entre Découvrir, profil, listes et honneurs ; statut, date et traces du Journal ; ajout à lire et annulation. |
 | Cohérence sociale et recherche | « Suivre/Suivi » et couleurs partagés sur profil, Découvrir et listes ; effacement natif WebKit remplacé par une action Chapter explicite. |
-| Honneurs au pointeur | La fiche suit précisément le badge en simple survol ; clic, clavier et toucher conservent une ouverture persistante pour rendre ses actions utilisables. |
+| Honneurs au pointeur | Le badge, son intervalle et sa fiche forment une zone interactive précise : les actions restent atteignables au survol, puis la fiche se ferme à la sortie de cet ensemble ; clic, clavier et toucher conservent une ouverture persistante. |
 
 Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets validés et la limite de 3 000 caractères restent inchangés. CT1 demeure refusé : aucun bouton directionnel ou de recentrage n'est ajouté au recadrage.
 

@@ -424,6 +424,7 @@
 .honor-badge-button > span { margin-top: 0.45rem; font-family: var(--font-editorial); font-size: 1.02rem; }
 .honor-badge-button > small { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .honor-detail { position: absolute; top: calc(100% + 0.5rem); left: 50%; z-index: 20; width: min(18rem, 78vw); padding: 1rem; transform: translateX(-50%); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1rem 2rem rgb(36 33 31 / 0.14); text-align: left; }
+.honor-detail-desktop::before { position: absolute; right: 0; bottom: 100%; left: 0; height: 0.55rem; content: ""; }
 .honor-detail-mobile { display: none; }
 .honor-family:first-child .honor-detail-desktop { left: 0; transform: none; }
 .honor-family:last-child .honor-detail-desktop { right: 0; left: auto; transform: none; }

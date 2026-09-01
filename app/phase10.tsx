@@ -482,7 +482,15 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     const badge = badgeCatalog[id];
     const open = selected === id;
     return (
-      <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
+      <div
+        className={`honor-cell ${locked ? "locked" : ""}`}
+        key={id}
+        onMouseLeave={() => {
+          if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            setSelection((current) => current?.id === id && current.mode === "hover" ? null : current);
+          }
+        }}
+      >
         <button
           type="button"
           className="honor-badge-button"
@@ -495,11 +503,6 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
           }}
           onMouseEnter={() => {
             if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelection({ id, mode: "hover" });
-          }}
-          onMouseLeave={() => {
-            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-              setSelection((current) => current?.id === id && current.mode === "hover" ? null : current);
-            }
           }}
           onFocus={(event) => {
             if (event.currentTarget.matches(":focus-visible")) setSelection({ id, mode: "persistent" });

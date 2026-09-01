@@ -84,26 +84,31 @@ test("HDE1 preserves touch toggling, keyboard opening and a shared outside-click
   assert.match(component, /event\.key === "Escape"/);
 });
 
-test("desktop hover detail closes with its badge while click keeps actions available", () => {
+test("desktop hover detail remains reachable then closes with its badge-detail cell", async () => {
   const harness = hookHarness();
   const path = fileURLToPath(new URL("../app/phase10.tsx", import.meta.url));
   const { HonorsView } = createSourceLoader({ react: harness.react })(path);
+  const css = await readFile(new URL("../app/phase10.css", import.meta.url), "utf8");
   const previousWindow = globalThis.window;
   globalThis.window = { matchMedia: () => ({ matches: true }) };
   try {
     const props = { owner: "self", equippedTitle: "Esprit nomade", showcase: [], onEquip() {}, onToggleShowcase() {}, onBack() {} };
     const render = () => harness.render(HonorsView, props);
     const firstBadge = () => nodes(render(), (node) => node.type === "button" && node.props.className === "honor-badge-button")[0];
+    const firstCell = () => nodes(render(), (node) => typeof node.props?.className === "string" && node.props.className.startsWith("honor-cell"))[0];
     const details = () => nodes(render(), (node) => typeof node.props?.className === "string" && node.props.className.includes("honor-detail"));
 
     firstBadge().props.onMouseEnter();
     assert.match(textOf(details()), /Première lumière/);
-    firstBadge().props.onMouseLeave();
+    assert.equal(firstBadge().props.onMouseLeave, undefined);
+    assert.match(textOf(details()), /Afficher ce titre sous mon nom/);
+    assert.match(css, /\.honor-detail-desktop::before\s*\{[^}]*height: 0\.55rem/);
+    firstCell().props.onMouseLeave();
     assert.equal(details().length, 0);
 
     firstBadge().props.onMouseEnter();
     firstBadge().props.onClick({ detail: 1 });
-    firstBadge().props.onMouseLeave();
+    firstCell().props.onMouseLeave();
     assert.match(textOf(details()), /Première lumière/);
   } finally {
     if (previousWindow === undefined) delete globalThis.window;

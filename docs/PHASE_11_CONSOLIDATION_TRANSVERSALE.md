@@ -387,3 +387,11 @@ Une régression de composant vérifie les deux branches : survol → sortie ferm
 - Contrôle après publication : version courante 27, provenance égale au SHA candidat, accès limité au seul propriétaire sans groupe ni visiteur externe ; le bundle JavaScript en ligne contient les deux modes `hover` et `persistent` attendus.
 
 La version 27 remplace la version 26 comme base de recette visible. Elle ne constitue ni une validation de P11-F31, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
+
+## 20. Reprise de recette — accès aux actions de la fiche d'honneur
+
+La recette de la version 27 révèle une régression d'usage : la fermeture au `mouseleave` du bouton intervient avant que le pointeur puisse franchir le léger intervalle qui le sépare de la fiche. Les actions « Afficher ce titre sous mon nom » et « Afficher ce badge sur mon profil » deviennent donc inaccessibles sans clic préalable.
+
+**P11-F32 — correction candidate :** la fermeture temporaire est portée par la cellule précise du badge plutôt que par son seul bouton. La fiche desktop, descendante de cette cellule, prolonge sa zone interactive grâce à un pont transparent limité à l'intervalle visuel. Le pointeur peut ainsi passer du badge à la fiche et cliquer ses actions sans fermeture ; il ferme toujours immédiatement la fiche temporaire dès qu'il quitte l'ensemble badge–intervalle–fiche. Une ouverture persistante au clic, au clavier ou au toucher n'est pas fermée par cette sortie locale.
+
+La régression ciblée vérifie désormais l'ouverture au survol, la présence des actions pendant le passage vers la fiche, la fermeture à la sortie de la cellule et la persistance après clic. Vérification complète réussie : **build de production, lint, `git diff --check` et 92/92 tests**, dont **7/7 tests ciblés**. Aucun changement de composition, texte, asset, mouvement du badge ou comportement mobile n'accompagne cette reprise.
