@@ -405,10 +405,28 @@ La régression ciblée vérifie désormais l'ouverture au survol, la présence d
 
 La version 28 remplace la version 27 comme base de recette visible. Elle ne constitue ni une validation de P11-F32, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
 
-## 21. Reprise de recette — propriété des listes ouvertes depuis un profil
+## 21. Infrastructure documentaire — contexte agent à la demande
+
+Le 1er septembre 2026, l'utilisateur demande d'étudier les méthodes récentes de réduction des tokens des agents et d'intégrer immédiatement les gains sûrs au projet. L'audit constate que les anciennes règles imposaient 225 449 caractères de documentation avant toute lecture de code : `AGENTS.md`, le journal transversal et le présent suivi de phase. Cette charge répétée est disproportionnée et peut aussi enfouir les décisions prioritaires.
+
+Le candidat documentaire remplace cette lecture exhaustive par :
+
+- un `AGENTS.md` automatique limité aux règles dures ;
+- un `AGENT_CONTEXT.md` compact avec état, prochaine étape, invariants et routage ;
+- une recherche juste à temps dans les journaux longs ;
+- une carte des sources/tests, une procédure conditionnelle et un rapport de recherche sourcé ;
+- un script de résumé/recherche et trois tests de budget, de liens et de fonctionnement.
+
+La source de vérité n'est ni supprimée ni résumée de façon destructive. Les anciens arbitrages restent dans `CHAPTER_DECISIONS.md` et les livrables de phase. La modification concerne la manière de les récupérer et la discipline de non-duplication. Aucun composant, style, asset, comportement visible ou dépendance applicative n'est modifié.
+
+Ce travail documentaire est intégré à la source technique la plus récente, postérieure à P11-F32. Il ne vaut pas validation du jalon regroupé, ne modifie pas la version Sites 28 et n'autorise pas sa synchronisation GitHub. Les vérifications automatisées doivent confirmer le budget annoncé et la non-régression de la suite existante.
+
+Résultat : `AGENTS.md` mesure 2 673 octets et `AGENT_CONTEXT.md` 4 323 octets. Les trois nouveaux tests contrôlent leurs plafonds, les références et le script de récupération ciblée. **Build de production, lint, `git diff --check` et 95/95 tests réussis**, soit les 92 tests produit antérieurs plus 3 tests d'infrastructure documentaire. Les avertissements de proxy et de classification vinext restent inchangés. Aucun déploiement ni synchronisation GitHub n'accompagne cette intégration.
+
+## 22. Reprise de recette — propriété des listes ouvertes depuis un profil
 
 L'utilisateur relève qu'une liste ouverte depuis ses propres « Listes publiques » présente ensuite Lina comme autrice, propose son suivi et renvoie vers son profil. L'origine générale « profil » était bien conservée, mais le propriétaire précis ne l'était pas : la destination réinjectait Lina en dur.
 
 **P11-F33 — correction candidate :** l'ouverture mémorise désormais séparément l'identifiant de la liste, son origine et son propriétaire (`self`, `public-self` ou `lina`). La vue utilise cette identité unique pour l'avatar, le nom, la relation, l'état de suivi, l'ouverture du profil et le retour. Depuis le profil propriétaire de Maël, elle affiche « Maël Depréville » et « Votre liste publique », masque le bouton de suivi de soi-même et revient à « mon profil ». Une liste ouverte depuis Lina ou depuis Découvrir conserve le parcours existant ; le profil public de Maël reste également distinct du profil propriétaire.
 
-Deux régressions couvrent le rendu auteur/abonnement et le parcours profil de Maël → liste → profil, tandis que le parcours de Lina est renforcé par l'identité attendue. Vérification complète réussie : **build de production, lint, `git diff --check` et 94/94 tests**. Les titres, descriptions, œuvres, compositions et états de suivi existants ne changent pas.
+Deux régressions couvrent le rendu auteur/abonnement et le parcours profil de Maël → liste → profil, tandis que le parcours de Lina est renforcé par l'identité attendue. Sur la branche de travail antérieure à l'intégration de l'infrastructure documentaire, **build de production, lint, `git diff --check` et 94/94 tests** réussissaient. Les titres, descriptions, œuvres, compositions et états de suivi existants ne changent pas ; la suite complète fusionnée doit être relancée avant publication.
