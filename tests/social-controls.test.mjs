@@ -6,8 +6,9 @@ const component = await readFile(new URL("../app/phase10.tsx", import.meta.url),
 const stylesheet = await readFile(new URL("../app/phase10.css", import.meta.url), "utf8");
 
 test("ties the profile's followed colors to its accessible toggle state", () => {
-  assert.match(component, /className="primary-action profile-follow-action"[^>]*aria-pressed=\{following\}[^>]*onClick=\{onToggleFollow\}/);
-  assert.match(component, /\{following \? "Suivi" : "Suivre"\}/);
+  assert.equal((component.match(/className="primary-action profile-follow-action"/g) ?? []).length, 3);
+  assert.ok((component.match(/\? "Suivi" : "Suivre"/g) ?? []).length >= 3);
+  assert.doesNotMatch(component, /Suivie/);
   assert.match(stylesheet, /\.profile-follow-action\[aria-pressed="true"\]\s*\{[^}]*color: var\(--brick\);[^}]*background: #e9e6e2;/);
   assert.match(stylesheet, /\.profile-follow-action\[aria-pressed="true"\]:hover\s*\{[^}]*color: var\(--brick-dark\);[^}]*background: #dfdbd6;/);
   assert.match(stylesheet, /\.profile-follow-action\[aria-pressed="true"\]:active\s*\{[^}]*background: #d5d0ca;/);

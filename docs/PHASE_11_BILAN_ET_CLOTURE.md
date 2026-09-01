@@ -1,0 +1,57 @@
+# Phase 11 — Bilan et clôture candidate du lot 1
+
+Dernière mise à jour : 1er septembre 2026.
+
+## Statut exact
+
+Le périmètre technique de la phase 11 et du lot 1 est **constitué puis repris après de nouveaux retours de recette, comme candidat à la validation utilisateur**. Il n'est pas encore déclaré accepté ni clôturé : la nouvelle composition de la carte retournée sur Safari mobile et desktop étroit, les gestes de recadrage, le responsive, le texte agrandi et les contrôles accessibles restent à évaluer.
+
+La version en ligne demeure celle du jalon antérieur. Aucun commit, synchronisation GitHub, déploiement ou publication du présent candidat n'est déduit de ce bilan. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra être réalisée et vérifiée ; la publication du Site restera une décision distincte.
+
+## Périmètre consolidé
+
+| Ensemble | Résultat candidat |
+| --- | --- |
+| Superpositions | Cinq fenêtres partagent le dialogue modal, le confinement et la restitution du focus, le verrou de défilement et les fermetures sûres NSV2. |
+| Données absentes | Catalogue vide ou incomplet sans substitution trompeuse, écrits conservés, trois états vides du Journal, EH1 éditorial et couverture typographique de repli. |
+| Récupération | Import photo ordonné et annulable, erreurs locales récupérables, copie/partage sérialisés, textes longs préservés et contenus sans espaces contenus. |
+| Mouvement AM1 | Fondus d'opacité seuls, interruptions continues, réduction du mouvement respectée ; S2 et le retournement QRM1b à environ 440 ms sont préservés. |
+| Carte et cadrage | Faces isolées, corps du verso centré et verrouillé à une colonne, correctifs WebKit candidats, gestes confinés à l'image, repère adapté à la taille affichée et continuité pincement → glissement. |
+| Responsive et accès | Reflow des titres/actions/formulaires, limites de contrôles renforcées, focus fichier visible, groupe d'étoiles au clavier, destinations courantes et sémantique interactive fidèle. |
+| Parcours transversaux | Continuité vérifiée dans la logique racine entre Découvrir, profil, listes et honneurs ; statut, date et traces du Journal ; ajout à lire et annulation. |
+| Cohérence sociale et recherche | « Suivre/Suivi » et couleurs partagés sur profil, Découvrir et listes ; effacement natif WebKit remplacé par une action Chapter explicite. |
+
+Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets validés et la limite de 3 000 caractères restent inchangés. CT1 demeure refusé : aucun bouton directionnel ou de recentrage n'est ajouté au recadrage.
+
+## Preuves automatisées
+
+- Construction de production réussie.
+- Lint final sans erreur après constitution du dossier de clôture.
+- **91/91 tests automatisés réussis**, dont trois parcours racine et trois régressions de reprise ajoutés au volet 4.
+- Rendu de la page principale et de la route publique vérifié depuis le worker produit.
+- `git diff --check` final sans anomalie.
+- Aucune dépendance, ressource graphique ou donnée de catalogue nouvelle dans le diff de phase 11.
+
+Les tests utilisent rendu serveur, fonctions pures et doublures React/DOM ciblées. Ils ne simulent pas WebKit, un vrai tactile, la disposition à 200 %, un lecteur d'écran ni le contraste forcé. Ils ne cochent donc aucune case de recette manuelle.
+
+## Recette décisive avant acceptation
+
+La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md). L'ordre conseillé pour évaluer le jalon regroupé est :
+
+1. Safari mobile : recto → verso → recto, sans contenu miroir ni mélange ; QR, identité et adresse lisibles.
+2. Desktop étroit : 901/900/899 px puis largeur minimale, face demandée toujours visible et composition stable.
+3. Recadrage tactile : glissement, pincement, retrait d'un doigt, annulation et perte de capture sans défilement de page ni saut d'image.
+4. Responsive et accès : 320 à 900 px, texte/zoom à 200 %, clavier, focus visible, étoiles, contraste forcé et annonces essentielles.
+5. Superpositions et AM1 : Tab/Maj+Tab, Échap, retour du focus, protection des écrits, interruptions rapides et réduction du mouvement.
+6. Non-régression produit : Journal, Bibliothèque, Découvrir, œuvre, profil, liste, honneurs, suivi, copie/partage et annulations.
+
+## Limites conservées
+
+- Le cadrage horizontal/vertical reste un geste direct ; son zoom conserve le curseur. CT1 ayant été refusé, aucune alternative visible au glissement n'est ajoutée. Cette limite P11-F04 doit rester documentée et ne permet pas de revendiquer une conformité WCAG globale.
+- Les données et interactions demeurent locales à la session. Authentification réelle, onboarding, persistance distante, notifications complètes, messagerie, listes collaboratives, classement et moteur de recommandation réel restent hors lot 1.
+- La confidentialité décrite correspond aux vues du prototype, pas à une garantie backend.
+- Les avertissements de proxy npm et de classification statique vinext sont des limites d'environnement inchangées ; ils n'ont pas empêché la construction.
+
+## Condition de clôture
+
+La phase 11 et le lot 1 pourront être déclarés terminés après : évaluation du candidat dans les contextes ci-dessus, validation explicite de l'utilisateur ou reprise des défauts observés, mise à jour de ce bilan, puis synchronisation GitHub vérifiée du périmètre accepté. Une éventuelle publication sera exécutée seulement avec l'autorisation correspondante.

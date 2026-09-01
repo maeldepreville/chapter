@@ -2,6 +2,7 @@
 
 import { ReactNode, useLayoutEffect, useRef } from "react";
 import { containModalTab, focusModal, mountModal } from "./modal-behavior";
+import { useSurfaceActive } from "./fade";
 
 type ModalProps = {
   children: ReactNode;
@@ -16,13 +17,14 @@ type ModalProps = {
 
 export function Modal({ children, className = "", labelledBy, describedBy, alert = false, initialFocus, returnFocusSelector = "main h1, main", onRequestClose }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const active = useSurfaceActive();
   useLayoutEffect(() => {
-    if (!dialogRef.current) return;
+    if (!active || !dialogRef.current) return;
     return mountModal(dialogRef.current, returnFocusSelector);
-  }, [returnFocusSelector]);
+  }, [returnFocusSelector, active]);
   useLayoutEffect(() => {
-    if (dialogRef.current) focusModal(dialogRef.current, initialFocus);
-  }, [initialFocus]);
+    if (active && dialogRef.current) focusModal(dialogRef.current, initialFocus);
+  }, [initialFocus, active]);
 
   return (
     <dialog ref={dialogRef} className={`overlay chapter-modal ${className}`} role={alert ? "alertdialog" : "dialog"} aria-modal="true" aria-labelledby={labelledBy} aria-describedby={describedBy}

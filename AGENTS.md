@@ -14,9 +14,10 @@ Ces règles s’appliquent à toute conversation, tout chat et tout agent travai
 
 ## Méthode de travail
 
-- Respecter le cycle : discussion → analyse UX → proposition → ajustements → validation explicite → implémentation.
+- Consigne prioritaire du 1er septembre 2026 : une demande de correctif ou d'implémentation autorise sa réalisation directe dans le dépôt afin que l'utilisateur puisse l'évaluer en contexte. Le cycle devient : demande → analyse ciblée → implémentation candidate → évaluation utilisateur → validation ou reprise.
+- Demander un arbitrage avant de développer seulement lorsqu'une ambiguïté produit ou visuelle modifierait matériellement le résultat, ou lorsque l'action exige une autorisation distincte.
 - Lorsqu’un utilisateur valide un arbitrage et demande de continuer ou d’avancer, consigner ce choix puis présenter directement dans la même réponse l’arbitrage suivant, précédé seulement du contexte indispensable. Éviter un tour intermédiaire limité à l’accusé de réception.
-- Ne pas implémenter, publier, pousser ou déployer une solution encore en arbitrage sans autorisation explicite.
+- Une implémentation candidate n'autorise pas à elle seule sa publication, sa synchronisation GitHub ou son déploiement. Ces opérations restent soumises aux règles et validations distinctes ci-dessous.
 - Pour toute décision comportant plusieurs rendus ou états visibles, présenter une comparaison visuelle dans le même ordre que les options textuelles avant de demander un choix.
 - Pendant les échanges de conception, ne pas terminer les réponses par une redirection vers le site. Partager le site uniquement lors d’un jalon d’implémentation ou d’évaluation.
 - Accompagner chaque jalon final d’une checklist exhaustive de validation.
@@ -31,4 +32,4 @@ Ces règles s’appliquent à toute conversation, tout chat et tout agent travai
 - Mettre d'abord à jour les documents de décision et de clôture, puis vérifier l'état du dépôt et récupérer l'état distant avant l'envoi. Préserver tout travail sans rapport avec le jalon ; ne pas l'inclure par défaut.
 - Ne pas confondre publication Sites, envoi vers `origin` et synchronisation GitHub. Vérifier explicitement après l'envoi que `refs/heads/main` sur GitHub pointe sur le commit attendu, puis confirmer le résultat à l'utilisateur.
 - Ne jamais forcer un push, réécrire l'historique distant, contourner une branche protégée ni réutiliser des identifiants hors de leur usage configuré. En cas de divergence, de refus d'accès ou d'authentification manquante, signaler le blocage et demander la direction nécessaire sans prétendre que la synchronisation est faite.
-- Cette règle reste applicable dans les futurs chats du projet. Elle n'autorise ni développement non validé, ni nouveau déploiement, ni changement de visibilité du dépôt.
+- Cette règle reste applicable dans les futurs chats du projet. Elle n'autorise ni nouveau déploiement, ni changement de visibilité du dépôt, ni inclusion d'une implémentation candidate que l'utilisateur n'a pas encore validée.

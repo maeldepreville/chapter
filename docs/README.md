@@ -23,8 +23,9 @@ The repository-wide rules in [`../AGENTS.md`](../AGENTS.md) apply to every proje
 - [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md)
 - [`PHASE_10_IMPLEMENTATION_CHECKLIST.md`](./PHASE_10_IMPLEMENTATION_CHECKLIST.md)
 - [`PHASE_10_BILAN_ET_PASSATION.md`](./PHASE_10_BILAN_ET_PASSATION.md) — Phase 10 accepted and closed on 27 August 2026; historical handoff to Phase 11.
-- [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md) — Three correction sets approved and implemented. Publication deferred to a grouped milestone; Emil Kowalski's repository reviewed as a reference for the upcoming consistency/accessibility/motion work, without installing skills or authorizing new effects.
-- [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md) — Manual acceptance checklist for the first three correction sets; not a completed test record.
+- [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md) — Three correction sets plus AM1 implemented; CT1 rejected. The lot 1 candidate now includes the post-review fixes for the mobile card back, consistent follow controls and Chapter-styled Discover search clearing. Browser re-evaluation, GitHub synchronization and publication remain pending.
+- [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md) — Exhaustive manual acceptance checklist for the grouped phase 11 milestone; not a completed test record.
+- [`PHASE_11_BILAN_ET_CLOTURE.md`](./PHASE_11_BILAN_ET_CLOTURE.md) — Technical balance, evidence limits, decisive acceptance order and conditions for closing phase 11 and lot 1. The milestone remains a candidate awaiting user validation.
 - [`PROMPT_PRODUCTION_BADGES_CHAPTER.md`](./PROMPT_PRODUCTION_BADGES_CHAPTER.md)
 - [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md)
 

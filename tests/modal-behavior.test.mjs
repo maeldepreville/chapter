@@ -138,7 +138,7 @@ const modalSource = await readFile(new URL("../app/modal.tsx", import.meta.url),
 const modalCompiled = ts.transpileModule(modalSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText;
 function modalProps(onRequestClose) {
   const compiledModule = { exports: {} };
-  new Function("require", "module", "exports", modalCompiled)((id) => id === "react" ? { useRef: () => ({ current: null }), useLayoutEffect() {} } : id === "./modal-behavior" ? behavior : require(id), compiledModule, compiledModule.exports);
+  new Function("require", "module", "exports", modalCompiled)((id) => id === "react" ? { useRef: () => ({ current: null }), useLayoutEffect() {} } : id === "./modal-behavior" ? behavior : id === "./fade" ? { useSurfaceActive: () => true } : require(id), compiledModule, compiledModule.exports);
   return compiledModule.exports.Modal({ labelledBy: "title", initialFocus: "textarea", children: null, onRequestClose }).props;
 }
 
