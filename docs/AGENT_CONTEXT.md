@@ -9,10 +9,10 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
 - **Candidat visible :** version Sites 28, déployée en accès propriétaire pour recette. Elle inclut P11-F32 et totalise 92/92 tests au dernier bilan produit.
-- **Source de travail :** les règles de contexte ajoutent trois tests d'infrastructure ; build, lint et 95/95 tests réussissent sans modifier le candidat visible.
+- **Source de travail :** P11-F33 corrige la propriété des listes ouvertes depuis un profil sur la base documentaire intégrée ; build, lint et 97/97 tests réussissent.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** recueillir la recette de la version 28, corriger les défauts éventuels, faire valider le jalon, mettre à jour le bilan puis synchroniser GitHub.
+- **Prochaine étape produit :** publier P11-F33 pour recette, vérifier les listes de Maël et Lina, puis poursuivre la validation du jalon regroupé.
 
 ## Invariants à préserver
 
@@ -22,6 +22,7 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - QRM1b : retournement de la carte autour de 440 ms.
 - QR1/QRP1b : carte recto-verso et commandes extérieures préservées.
 - HDE1/HMT1/P11-F32 : hiérarchie des honneurs, fiche tactile et accès au pointeur conservés.
+- P11-F33 : une liste conserve le propriétaire du profil qui l'a ouverte ; aucun suivi de soi-même sur la liste personnelle.
 - PFP1 : JPEG/PNG/WebP, 8 Mo, petit côté minimal de 512 px ; gestes confinés à l'image.
 - N1b : nom de la carte sans césure interne.
 - Critiques publiques limitées à 3 000 caractères ; écrits complets conservés.

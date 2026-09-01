@@ -29,7 +29,7 @@ Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets val
 
 - Construction de production réussie.
 - Lint final sans erreur après constitution du dossier de clôture.
-- **94/94 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la durée de la fiche d'honneur au survol et la propriété des listes publiques.
+- **97/97 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la propriété des listes publiques et trois contrôles de l'infrastructure documentaire.
 - Rendu de la page principale et de la route publique vérifié depuis le worker produit.
 - `git diff --check` final sans anomalie.
 - Aucune dépendance, ressource graphique ou donnée de catalogue nouvelle dans le diff de phase 11.

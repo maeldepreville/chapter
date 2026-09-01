@@ -165,7 +165,7 @@ Second signalement reçu le 1er septembre : fenêtre desktop réduite au minimum
 
 ## Volet 4 — validation regroupée et décision de clôture
 
-Les **94/94 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette.
+Les **97/97 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette.
 
 - [ ] Parcourir Journal → Bibliothèque → Découvrir → œuvre → profil de Lina → chacune de ses listes → honneurs → retours ; vérifier titres, destination courante, origine des retours et absence de page blanche.
 - [ ] Suivre/ne plus suivre Lina depuis Découvrir, son profil et une liste : état et libellé identiques à chaque destination, y compris après les retours.
