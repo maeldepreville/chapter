@@ -344,7 +344,7 @@ Ces trois parcours réussissent avec les vrais gestionnaires et états de `Home`
 - Les limites de preuve demeurent explicites : Safari, tactile réel, mise en page à 200 %, lecteur d'écran et contraste forcé n'ont pas été exécutés par l'agent.
 - P11-F04 demeure une limite acceptée de périmètre après le refus de CT1 ; aucune conformité WCAG globale n'est déclarée.
 
-Le bilan détaillé et les conditions de clôture sont consignés dans [`PHASE_11_BILAN_ET_CLOTURE.md`](./PHASE_11_BILAN_ET_CLOTURE.md). Le lot 1 est **candidat à la validation**, pas encore clôturé. La publication et la synchronisation restent différées jusqu'à la décision de l'utilisateur sur ce jalon regroupé.
+Le bilan détaillé et les conditions de clôture sont consignés dans [`PHASE_11_BILAN_ET_CLOTURE.md`](./PHASE_11_BILAN_ET_CLOTURE.md). Le lot 1 est **candidat à la validation**, pas encore clôturé. Le candidat est disponible pour recette en version Sites 27 ; seule la synchronisation GitHub du périmètre encore non validé reste différée.
 
 ## 18. Reprise de recette — verso mobile, suivi et recherche Découvrir
 
@@ -378,3 +378,12 @@ L'utilisateur relève que la fiche explicative ouverte au survol d'un badge ne s
 **P11-F31 — correction candidate :** l'état sélectionné distingue désormais un survol temporaire d'une ouverture persistante. Sur un dispositif à pointeur fin, `mouseenter` ouvre la fiche en mode temporaire et `mouseleave` du même bouton la referme immédiatement. Le passage sur un autre badge remplace toujours la fiche. Un clic, un focus clavier ou un toucher l'ouvre en mode persistant afin que les actions « afficher ce titre » et « afficher ce badge » restent utilisables ; Échap, la sortie de collection, le clic extérieur et la perte de focus globale conservent leurs fermetures existantes.
 
 Une régression de composant vérifie les deux branches : survol → sortie ferme ; survol → clic → sortie conserve la fiche. Vérification complète réussie : **build de production, lint, `git diff --check` et 92/92 tests**. HDE1, HMT1, les compositions mobile/desktop, les assets et le mouvement visuel du badge restent inchangés.
+
+### Mise à disposition pour recette — version Sites 27
+
+- Source P11-F31 commitée au SHA `e852d772f265f8e751f0dc01bb246b6f183a466d` et envoyée uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` reste inchangé.
+- Build exact du commit réussi, archive vinext enregistrée comme version **27** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_d630d64abef081919c88009e014469f8`.
+- Déploiement privé propriétaire réussi : `appgdep_6a96b0c23204819190eb1d58e88a88e3`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 27, provenance égale au SHA candidat, accès limité au seul propriétaire sans groupe ni visiteur externe ; le bundle JavaScript en ligne contient les deux modes `hover` et `persistent` attendus.
+
+La version 27 remplace la version 26 comme base de recette visible. Elle ne constitue ni une validation de P11-F31, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
