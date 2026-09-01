@@ -404,3 +404,21 @@ La régression ciblée vérifie désormais l'ouverture au survol, la présence d
 - Contrôle après publication : version courante 28 et provenance égale au SHA candidat.
 
 La version 28 remplace la version 27 comme base de recette visible. Elle ne constitue ni une validation de P11-F32, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
+
+## 21. Infrastructure documentaire — contexte agent à la demande
+
+Le 1er septembre 2026, l'utilisateur demande d'étudier les méthodes récentes de réduction des tokens des agents et d'intégrer immédiatement les gains sûrs au projet. L'audit constate que les anciennes règles imposaient 225 449 caractères de documentation avant toute lecture de code : `AGENTS.md`, le journal transversal et le présent suivi de phase. Cette charge répétée est disproportionnée et peut aussi enfouir les décisions prioritaires.
+
+Le candidat documentaire remplace cette lecture exhaustive par :
+
+- un `AGENTS.md` automatique limité aux règles dures ;
+- un `AGENT_CONTEXT.md` compact avec état, prochaine étape, invariants et routage ;
+- une recherche juste à temps dans les journaux longs ;
+- une carte des sources/tests, une procédure conditionnelle et un rapport de recherche sourcé ;
+- un script de résumé/recherche et trois tests de budget, de liens et de fonctionnement.
+
+La source de vérité n'est ni supprimée ni résumée de façon destructive. Les anciens arbitrages restent dans `CHAPTER_DECISIONS.md` et les livrables de phase. La modification concerne la manière de les récupérer et la discipline de non-duplication. Aucun composant, style, asset, comportement visible ou dépendance applicative n'est modifié.
+
+Ce travail documentaire est intégré à la source technique la plus récente, postérieure à P11-F32. Il ne vaut pas validation du jalon regroupé, ne modifie pas la version Sites 28 et n'autorise pas sa synchronisation GitHub. Les vérifications automatisées doivent confirmer le budget annoncé et la non-régression de la suite existante.
+
+Résultat : `AGENTS.md` mesure 2 673 octets et `AGENT_CONTEXT.md` 4 323 octets. Les trois nouveaux tests contrôlent leurs plafonds, les références et le script de récupération ciblée. **Build de production, lint, `git diff --check` et 95/95 tests réussis**, soit les 92 tests produit antérieurs plus 3 tests d'infrastructure documentaire. Les avertissements de proxy et de classification vinext restent inchangés. Aucun déploiement ni synchronisation GitHub n'accompagne cette intégration.
