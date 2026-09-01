@@ -344,7 +344,7 @@ Ces trois parcours réussissent avec les vrais gestionnaires et états de `Home`
 - Les limites de preuve demeurent explicites : Safari, tactile réel, mise en page à 200 %, lecteur d'écran et contraste forcé n'ont pas été exécutés par l'agent.
 - P11-F04 demeure une limite acceptée de périmètre après le refus de CT1 ; aucune conformité WCAG globale n'est déclarée.
 
-Le bilan détaillé et les conditions de clôture sont consignés dans [`PHASE_11_BILAN_ET_CLOTURE.md`](./PHASE_11_BILAN_ET_CLOTURE.md). Le lot 1 est **candidat à la validation**, pas encore clôturé. Le candidat est disponible pour recette en version Sites 27 ; seule la synchronisation GitHub du périmètre encore non validé reste différée.
+Le bilan détaillé et les conditions de clôture sont consignés dans [`PHASE_11_BILAN_ET_CLOTURE.md`](./PHASE_11_BILAN_ET_CLOTURE.md). Le lot 1 est **candidat à la validation**, pas encore clôturé. Le candidat est disponible pour recette en version Sites 28 ; seule la synchronisation GitHub du périmètre encore non validé reste différée.
 
 ## 18. Reprise de recette — verso mobile, suivi et recherche Découvrir
 
@@ -395,3 +395,12 @@ La recette de la version 27 révèle une régression d'usage : la fermeture au `
 **P11-F32 — correction candidate :** la fermeture temporaire est portée par la cellule précise du badge plutôt que par son seul bouton. La fiche desktop, descendante de cette cellule, prolonge sa zone interactive grâce à un pont transparent limité à l'intervalle visuel. Le pointeur peut ainsi passer du badge à la fiche et cliquer ses actions sans fermeture ; il ferme toujours immédiatement la fiche temporaire dès qu'il quitte l'ensemble badge–intervalle–fiche. Une ouverture persistante au clic, au clavier ou au toucher n'est pas fermée par cette sortie locale.
 
 La régression ciblée vérifie désormais l'ouverture au survol, la présence des actions pendant le passage vers la fiche, la fermeture à la sortie de la cellule et la persistance après clic. Vérification complète réussie : **build de production, lint, `git diff --check` et 92/92 tests**, dont **7/7 tests ciblés**. Aucun changement de composition, texte, asset, mouvement du badge ou comportement mobile n'accompagne cette reprise.
+
+### Mise à disposition pour recette — version Sites 28
+
+- Source P11-F32 commitée au SHA `7da469f78c16e8bf75b9a3ab171d855a7aae2b92` et envoyée uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` reste inchangé.
+- Build exact du commit réussi, archive enregistrée comme version **28** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_41799257dffc819181866b7edd70b5c7`.
+- Déploiement privé propriétaire réussi : `appgdep_6a97016c7ee48191a9d2107a68b46ba1`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 28 et provenance égale au SHA candidat.
+
+La version 28 remplace la version 27 comme base de recette visible. Elle ne constitue ni une validation de P11-F32, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
