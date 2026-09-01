@@ -458,9 +458,10 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     : isMael
       ? [{ id: "reading2" }, { id: "exploration2" }, { id: "expression2" }, { id: "relation2" }, { id: "honor1" }, { id: "honor2" }]
       : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
-  const [selected, setSelected] = useState<BadgeId | null>(null);
+  const [selection, setSelection] = useState<{ id: BadgeId; mode: "hover" | "persistent" } | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);
   const { honors, honorRows, families } = getHonorsLayout(items, isOwnProfile);
+  const selected = selection?.id ?? null;
 
   const renderDetail = (id: BadgeId, placement: "desktop" | "mobile") => {
     const badge = badgeCatalog[id];
@@ -489,14 +490,19 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
           aria-controls={`honor-detail-desktop-${id} honor-detail-mobile-${id}`}
           onClick={(event) => {
             const preciseHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-            if (preciseHover || event.detail === 0) setSelected(id);
-            else setSelected((current) => current === id ? null : id);
+            if (preciseHover || event.detail === 0) setSelection({ id, mode: "persistent" });
+            else setSelection((current) => current?.id === id ? null : { id, mode: "persistent" });
           }}
           onMouseEnter={() => {
-            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelected(id);
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelection({ id, mode: "hover" });
+          }}
+          onMouseLeave={() => {
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+              setSelection((current) => current?.id === id && current.mode === "hover" ? null : current);
+            }
           }}
           onFocus={(event) => {
-            if (event.currentTarget.matches(":focus-visible")) setSelected(id);
+            if (event.currentTarget.matches(":focus-visible")) setSelection({ id, mode: "persistent" });
           }}
         >
           <BadgeImage badgeId={id} locked={locked} />
@@ -511,7 +517,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
 
   useEffect(() => {
     const closeOutside = (event: globalThis.PointerEvent) => {
-      if (selected && wallRef.current && !wallRef.current.contains(event.target as Node)) setSelected(null);
+      if (selected && wallRef.current && !wallRef.current.contains(event.target as Node)) setSelection(null);
     };
     document.addEventListener("pointerdown", closeOutside);
     return () => document.removeEventListener("pointerdown", closeOutside);
@@ -525,7 +531,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         <h1 id="honors-title">Chapitres d’honneur</h1>
         <p>{isOwnProfile ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : `Les dernières évolutions et les honneurs obtenus par ${isMael ? "Maël" : "Lina"}. Ses objectifs en cours restent privés.`}</p>
       </header>
-      <div ref={wallRef} className="honors-collection" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }} onKeyDown={(event) => { if (event.key === "Escape") setSelected(null); }}>
+      <div ref={wallRef} className="honors-collection" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelection(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelection(null); }} onKeyDown={(event) => { if (event.key === "Escape") setSelection(null); }}>
         {honors.length > 0 && (
           <section className="honors-singular" aria-labelledby="singular-honors-title">
             <h2 id="singular-honors-title" className="honors-section-title">Distinctions singulières</h2>

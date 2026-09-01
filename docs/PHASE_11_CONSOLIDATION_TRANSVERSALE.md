@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 1er septembre 2026.
 
-Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile renforcé, suivi harmonisé et effacement de recherche restylé. La version Sites 26 est déployée en accès propriétaire pour réévaluation ; le jalon reste candidat, sans validation finale ni synchronisation GitHub.**
+Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile, suivi, recherche et durée de la fiche d'honneur au survol. Un nouveau candidat Sites est préparé pour réévaluation ; le jalon reste sans validation finale ni synchronisation GitHub.**
 
 ## 1. Point de départ et limites
 
@@ -370,3 +370,11 @@ Le 1er septembre 2026, l'utilisateur demande explicitement que les correctifs so
 - Contrôle après publication : version courante 26, page principale servie avec son titre et son contenu ; la feuille CSS en ligne contient les nouvelles règles du corps de verso, de sa grille renforcée et de l'action d'effacement Découvrir.
 
 La version 26 devient la base de recette visible. Elle reste révocable et ne clôt ni la phase 11 ni le lot 1.
+
+## 19. Reprise de recette — durée de la fiche d'honneur au survol
+
+L'utilisateur relève que la fiche explicative ouverte au survol d'un badge ne se ferme qu'en quittant toute la collection. Il demande qu'elle suive la même zone que l'animation du badge : ouverture à l'entrée et disparition dès la sortie du badge lui-même.
+
+**P11-F31 — correction candidate :** l'état sélectionné distingue désormais un survol temporaire d'une ouverture persistante. Sur un dispositif à pointeur fin, `mouseenter` ouvre la fiche en mode temporaire et `mouseleave` du même bouton la referme immédiatement. Le passage sur un autre badge remplace toujours la fiche. Un clic, un focus clavier ou un toucher l'ouvre en mode persistant afin que les actions « afficher ce titre » et « afficher ce badge » restent utilisables ; Échap, la sortie de collection, le clic extérieur et la perte de focus globale conservent leurs fermetures existantes.
+
+Une régression de composant vérifie les deux branches : survol → sortie ferme ; survol → clic → sortie conserve la fiche. Vérification complète réussie : **build de production, lint, `git diff --check` et 92/92 tests**. HDE1, HMT1, les compositions mobile/desktop, les assets et le mouvement visuel du badge restent inchangés.
