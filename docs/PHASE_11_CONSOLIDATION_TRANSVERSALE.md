@@ -1,6 +1,6 @@
 # Chapter — Phase 11 : consolidation transversale
 
-Dernière mise à jour : 1er septembre 2026.
+Dernière mise à jour : 2 septembre 2026.
 
 Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile, suivi, recherche et durée de la fiche d'honneur au survol. Un nouveau candidat Sites est préparé pour réévaluation ; le jalon reste sans validation finale ni synchronisation GitHub.**
 
@@ -448,4 +448,13 @@ La version 29 remplace la version 28 comme base de recette visible. Elle ne cons
 
 Le nouveau [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md) consigne les données encore volontairement statiques et leur remplacement futur : session et profils, catalogue, bibliothèque/Journal, listes liées à leur propriétaire, progression, recommandations et interactions sociales. Il signale explicitement que les deux profils partagent encore le même catalogue de listes dans la démonstration. Les seuils produit validés et l'origine sentinelle `https://app.local` de la normalisation d'authentification restent inchangés et ne sont pas traités comme des données métier oubliées.
 
-Une régression dédiée protège la transmission des identifiants, l'absence de permission fondée sur un nom et l'unicité des sources canoniques. Vérification intermédiaire réussie : **build de production et 98/98 tests**. Lint et `git diff --check` doivent compléter le contrôle avant publication. Cette centralisation prépare le futur backend sans l'implémenter et ne change ni le contenu visible attendu, ni le périmètre du lot 1.
+Une régression dédiée protège la transmission des identifiants, l'absence de permission fondée sur un nom et l'unicité des sources canoniques. Vérification complète réussie : **build de production, lint, `git diff --check` et 98/98 tests**. Cette centralisation prépare le futur backend sans l'implémenter et ne change ni le contenu visible attendu, ni le périmètre du lot 1.
+
+### Mise à disposition pour recette — version Sites 30
+
+- Source P11-F34 commitée au SHA `9bce0e85869a1ceb5c10fbfa9f212beaa2a1e664` et envoyée uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` reste inchangé.
+- Build exact du commit réussi, archive enregistrée comme version **30** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_0e2722e95fe481919105db56d6005dfd`.
+- Déploiement privé propriétaire réussi : `appgdep_6a987ed34b208191935caf4dd8b6e542`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 30, provenance égale au SHA candidat, accès personnalisé limité au propriétaire sans groupe autorisé.
+
+La version 30 remplace la version 29 comme base de recette visible. Elle ne constitue ni une validation de P11-F34, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.

@@ -1,6 +1,6 @@
 # Chapter — contexte courant compact
 
-Dernière mise à jour : 1er septembre 2026.
+Dernière mise à jour : 2 septembre 2026.
 
 Ce document est le point d'entrée des agents. Il résume l'état utile ; les journaux longs restent consultables à la demande et ne doivent pas être chargés intégralement par réflexe.
 
@@ -8,11 +8,11 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Candidat visible :** version Sites 29, déployée en accès propriétaire pour recette. Un candidat P11-F34 plus récent centralise les données simulées et corrige les identités/listes encore codées en dur ; build et 98/98 tests réussissent avant publication.
-- **Source de travail :** la source technique de P11-F34 est en cours de préparation sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
+- **Candidat visible :** version Sites 30, déployée en accès propriétaire pour recette. Elle centralise les données simulées et corrige les identités/listes encore codées en dur ; build, lint, `git diff --check` et 98/98 tests réussissent.
+- **Source de travail :** la source technique de P11-F34 est consignée sur le dépôt Sites au SHA `9bce0e85869a1ceb5c10fbfa9f212beaa2a1e664` ; aucune synchronisation GitHub du jalon non validé.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** publier P11-F34 pour recette, vérifier les deux listes depuis Découvrir et les profils de Maël/Lina, puis poursuivre la validation du jalon regroupé.
+- **Prochaine étape produit :** vérifier les deux listes depuis Découvrir et les profils de Maël/Lina sur la version 30, puis poursuivre la validation du jalon regroupé.
 
 ## Invariants à préserver
 
