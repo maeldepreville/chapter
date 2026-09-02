@@ -475,3 +475,7 @@ Trois régressions dédiées vérifient la source commune profil–œuvre, l'exp
 - Contrôle après publication : version courante 31 et provenance égale au SHA candidat.
 
 La version 31 remplace la version 30 comme base de recette visible. Elle ne constitue ni une validation de P11-F35, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
+
+### Validation de P11-F35
+
+Le 2 septembre 2026, après vérification de la version 31, l'utilisateur valide la cohérence des traces et la navigation de toutes les identités. Il confirme comprendre que les routes publiques dynamiques, la persistance et les autres cohérences de données sociales seront renforcées par le futur backend. P11-F35 est donc accepté. Cette validation ciblée ne clôt pas implicitement le jalon regroupé : la décision finale sur l'ensemble de la phase 11 reste distincte.

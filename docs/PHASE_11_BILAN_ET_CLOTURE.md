@@ -6,6 +6,8 @@ Dernière mise à jour : 2 septembre 2026.
 
 Le périmètre technique de la phase 11 et du lot 1 est **constitué puis repris après de nouveaux retours de recette, comme candidat à la validation utilisateur**. Il n'est pas encore déclaré accepté ni clôturé : la nouvelle composition de la carte retournée sur Safari mobile et desktop étroit, les gestes de recadrage, le responsive, le texte agrandi et les contrôles accessibles restent à évaluer.
 
+P11-F35 est validé individuellement sur la version 31 : les traces correspondent aux critiques d'œuvre et toutes les identités sociales ouvrent leur profil. La clôture exige encore une validation explicite de l'ensemble du jalon, et non la simple absence d'un nouveau défaut signalé.
+
 La version Sites **31** du présent candidat est désormais déployée en accès propriétaire à la demande explicite de l'utilisateur, afin de permettre sa recette sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. Cette publication ne vaut pas validation. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra encore être réalisée et vérifiée.
 
 ## Périmètre consolidé

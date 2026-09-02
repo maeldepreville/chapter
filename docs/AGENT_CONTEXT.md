@@ -10,9 +10,9 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
 - **Candidat visible :** version Sites 31, déployée en accès propriétaire pour recette. Elle synchronise les traces publiques avec les pages d'œuvres et rend chaque identité sociale navigable ; build, lint, `git diff --check` et 101/101 tests réussissent.
 - **Source de travail :** P11-F35 est consigné sur le dépôt Sites au SHA `904d2dfbf8fbcb5bb7dc6b8f710f24907f3d1570` ; aucune synchronisation GitHub du jalon non validé.
-- **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
+- **Validation :** P11-F35 est accepté après recette sur la version 31. Le jalon regroupé n'est pas encore accepté explicitement ; Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent dans le périmètre de la décision finale.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** vérifier les critiques de Maël, Lina, Théo et Inès entre profils, œuvres et conversations sur la version 31.
+- **Prochaine étape produit :** demander la décision explicite de clôture sur l'ensemble de la version 31 ; en cas d'acceptation, clôturer phase 11 et lot 1 puis synchroniser GitHub.
 
 ## Invariants à préserver
 
