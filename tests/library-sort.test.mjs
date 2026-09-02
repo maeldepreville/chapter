@@ -4,15 +4,13 @@ import { createRequire } from "node:module";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import ts from "typescript";
+import { fileURLToPath } from "node:url";
+import { createSourceLoader } from "./helpers/load-tsx.mjs";
 
 const require = createRequire(import.meta.url);
 const source = await readFile(new URL("../app/library-sort.tsx", import.meta.url), "utf8");
-const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText;
 function loadControl(react = require("react")) {
-  const compiledModule = { exports: {} };
-  new Function("require", "module", "exports", compiled)((id) => id === "react" ? react : require(id), compiledModule, compiledModule.exports);
-  return compiledModule.exports;
+  return createSourceLoader({ react })(fileURLToPath(new URL("../app/library-sort.tsx", import.meta.url)));
 }
 
 // Exercise the control's own handlers without a browser or a DOM simulation.

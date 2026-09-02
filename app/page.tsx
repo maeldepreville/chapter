@@ -5,8 +5,13 @@ import { CoverFrame } from "./cover-frame";
 import { JournalTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
 import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { Modal } from "./modal";
+import { Fade } from "./fade";
 import { lockBodyScroll } from "./modal-behavior";
-import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfileOwner, ProfilePhoto, ProfileView, PublicListId, PublicListView, SocialReviews } from "./phase10";
+import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
+import type { PublicListId } from "./catalogue";
+import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
+import type { PrototypePublicReview } from "./social-data";
+import { PUBLIC_PROFILE_PATH } from "./site-config";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
@@ -30,7 +35,7 @@ type PersonalEntry = {
 
 const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 };
 const UNDO_DURATION_MS = 5000;
-const PUBLIC_PROFILE_PATH = "/profil/mael-depreville";
+const currentReader = prototypeActors[CURRENT_READER_ID];
 
 export const defaultWorks = [
   {
@@ -279,8 +284,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [profileOwner, setProfileOwner] = useState<ProfileOwner>(initialProfileOwner ?? "self");
-  const [followingLina, setFollowingLina] = useState(false);
-  const [followingMael, setFollowingMael] = useState(false);
+  const [followingActors, setFollowingActors] = useState<Record<PrototypeActorId, boolean>>({ self: false, lina: false, theo: false, ines: false });
   const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeId[]>(["reading2", "exploration2", "expression2"]);
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
@@ -288,8 +292,10 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const [publicListId, setPublicListId] = useState<PublicListId>("places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
+  const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
+  const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const previousPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
   const latestPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
   const previousReviewTrace = useRef<{ trace: JournalTrace | undefined; index: number }>({ trace: undefined, index: -1 });
@@ -331,26 +337,35 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  const openProfile = (owner: "self" | "lina") => {
+  const openProfile = (owner: ProfileOwner) => {
     if (window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setProfileOwner(owner);
     openView("profile");
   };
 
-  const openPublicList = (listId: PublicListId, origin: PublicListOrigin) => {
+  const openActorProfile = (actorId: PrototypeActorId) => openProfile(profileOwnerForActor(actorId));
+  const toggleFollow = (actorId: PrototypeActorId) => setFollowingActors((current) => ({ ...current, [actorId]: !current[actorId] }));
+
+  const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
     setPublicListId(listId);
     setPublicListOrigin(origin);
+    setPublicListOwner(owner);
     openView("list");
   };
+
+  const personalPublicReviews: readonly PrototypePublicReview[] = works.flatMap((work) => {
+    const personalEntry = entries[work.id];
+    return personalEntry?.review ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
+  });
 
   const openDiscoverWithQuery = (query: string) => {
     setDiscoverInitialQuery(query.trim());
     setSearchOpen(false);
     setCurrentView("discover");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const addDiscoveryToRead = (id: string) => {
@@ -372,7 +387,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   useEffect(() => {
@@ -564,11 +579,11 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   };
 
   const renderStatusPopover = (origin: StatusOrigin, workId: WorkId) => {
-    if (!statusMenuOpen || statusOrigin !== origin || statusWorkId !== workId) return null;
+    const visible = statusMenuOpen && statusOrigin === origin && statusWorkId === workId;
     const targetEntry = entries[workId] ?? emptyEntry;
 
     return (
-      <div className="status-popover" role="dialog" aria-label="Choisir un statut de lecture">
+      <Fade show={visible}>{visible && <div className="status-popover" id={`status-popover-${origin}-${workId}`} role="dialog" aria-label="Choisir un statut de lecture">
         {removeConfirmWorkId === workId ? (
           <div className="remove-confirmation" role="alertdialog" aria-labelledby={`remove-${workId}`}>
             <strong id={`remove-${workId}`}>Retirer cette œuvre ?</strong>
@@ -592,7 +607,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             )}
           </>
         )}
-      </div>
+      </div>}</Fade>
     );
   };
 
@@ -665,9 +680,9 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
       <header className="desktop-header">
         <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir le journal" onClick={() => openView("journal")}>Chapter<span>.</span></button>
         <nav aria-label="Navigation principale">
-          <button className={currentView === "journal" ? "active" : ""} type="button" onClick={() => openView("journal")}>Journal</button>
-          <button className={currentView === "discover" ? "active" : ""} type="button" onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
-          <button className={currentView === "library" ? "active" : ""} type="button" onClick={() => openView("library")}>Bibliothèque</button>
+          <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>
+          <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
+          <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>
         </nav>
         <label className="header-search">
           <span className="sr-only">Rechercher un livre ou un auteur</span>
@@ -681,20 +696,20 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
           />
         </label>
         <div className="account-control" ref={accountControlRef}>
-          <button className="account-button" type="button" aria-label="Ouvrir le compte de Maël" aria-expanded={accountOpen} onClick={() => setAccountOpen((open) => !open)}>MD</button>
-          {accountOpen && (
-            <div className="account-menu">
-              <p><strong>Maël Depréville</strong><span>{equippedTitle}</span></p>
+          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
+          <Fade show={accountOpen}>{accountOpen && (
+            <div className="account-menu" id="desktop-account-menu">
+              <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
               <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
               <button type="button">Se déconnecter</button>
             </div>
-          )}
+          )}</Fade>
         </div>
       </header>
 
       <header className="mobile-header">
         <button className="wordmark wordmark-button" type="button" onClick={() => openView("journal")}>Chapter<span>.</span></button>
-        <button className="account-button" type="button" aria-label="Ouvrir le compte de Maël" aria-expanded={accountOpen} onClick={() => setAccountOpen((open) => !open)}>MD</button>
+        <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
       </header>
 
       <main id="top">
@@ -707,31 +722,32 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onBackToJournal={() => openView("journal")}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
-            onOpenProfile={openProfile}
-            onOpenList={() => openPublicList("places", "discover")}
-            followingLina={followingLina}
-            onToggleFollow={() => setFollowingLina((value) => !value)}
+            onOpenProfile={(owner) => openProfile(owner)}
+            onOpenList={(listId) => openPublicList(listId, "discover", "lina")}
+            followingLina={followingActors.lina}
+            onToggleFollow={() => toggleFollow("lina")}
             initialQuery={discoverInitialQuery}
           />
         ) : currentView === "profile" ? (
           <ProfileView
             owner={profileOwner}
             works={works}
-            following={profileOwner === "lina" ? followingLina : followingMael}
-            onToggleFollow={() => profileOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)}
+            following={followingActors[actorIdForProfile(profileOwner)]}
+            onToggleFollow={() => toggleFollow(actorIdForProfile(profileOwner))}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onOpenHonors={() => openView("honors")}
-            onOpenList={(listId) => openPublicList(listId, "profile")}
+            onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
             photo={profilePhoto}
             onEditPhoto={() => setPhotoCropOpen(true)}
             onRemovePhoto={() => setProfilePhoto(null)}
             equippedTitle={equippedTitle}
             showcase={showcaseBadges}
+            personalReviews={personalPublicReviews}
           />
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
         ) : currentView === "list" ? (
-          <PublicListView listId={publicListId} works={works} following={followingLina} onToggleFollow={() => setFollowingLina((value) => !value)} onOpenProfile={() => openProfile("lina")} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile("lina") : openView("discover")} backLabel={publicListOrigin === "profile" ? "Retour au profil de Lina" : "Retour à Découvrir"} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}`} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -839,7 +855,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                     <span className="library-work-copy"><strong>{work.title}</strong><small>{work.author}</small></span>
                   </button>
                   <div className="library-status-control">
-                    <button className="library-status-trigger" type="button" aria-expanded={statusOrigin === "library" && statusWorkId === work.id && statusMenuOpen} onClick={() => openStatusMenu("library", work.id)}>
+                    <button className="library-status-trigger" type="button" aria-expanded={statusOrigin === "library" && statusWorkId === work.id && statusMenuOpen} aria-controls={`status-popover-library-${work.id}`} onClick={() => openStatusMenu("library", work.id)}>
                       <span>{entries[work.id]?.readingStatus}</span><span aria-hidden="true">⌄</span>
                     </button>
                     {renderStatusPopover("library", work.id)}
@@ -880,7 +896,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             <p className="book-lede">{selectedWork.lede}</p>
             <div className="opening-actions">
               <div className="status-control">
-                <button className="primary-action" type="button" aria-expanded={statusOrigin === "opening" && statusMenuOpen} onClick={() => openStatusMenu("opening", selectedWork.id)}>
+                <button className="primary-action" type="button" aria-expanded={statusOrigin === "opening" && statusMenuOpen} aria-controls={`status-popover-opening-${selectedWork.id}`} onClick={() => openStatusMenu("opening", selectedWork.id)}>
                   {entry.readingStatus ?? "Ajouter au journal"}
                 </button>
                 {renderStatusPopover("opening", selectedWork.id)}
@@ -919,7 +935,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                 {displayReadingDate && <p className="privacy-note">Date enregistrée · {displayReadingDate}</p>}
               </div>
               <div className="status-control journal-status-control">
-                <button className="text-action" type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
+                <button className="text-action" type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} aria-controls={`status-popover-journal-${selectedWork.id}`} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
                 {renderStatusPopover("journal", selectedWork.id)}
               </div>
             </div>
@@ -968,7 +984,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} onOpenProfile={() => openProfile("lina")} onWriteReview={openReview} /></div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
@@ -980,26 +996,26 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
       )}
 
       <nav className="mobile-nav" aria-label="Navigation principale mobile">
-        <button className={currentView === "journal" ? "active" : ""} type="button" onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>
-        <button className={currentView === "discover" ? "active" : ""} type="button" onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
-        <button className={currentView === "library" ? "active" : ""} type="button" onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
+        <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>
+        <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
+        <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
       </nav>
 
-      {accountOpen && (
+      <Fade show={accountOpen} kind="modal">{accountOpen && (
         <div className="mobile-account-overlay">
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
-          <section ref={mobileAccountRef} className="mobile-account-sheet" aria-label="Compte de Maël">
+          <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label={`Compte de ${currentReader.firstName}`}>
             <div className="modal-heading">
-              <div><p className="eyebrow">Compte</p><h2>Maël Depréville</h2><span className="account-title">{equippedTitle}</span></div>
+              <div><p className="eyebrow">Compte</p><h2>{currentReader.name}</h2><span className="account-title">{equippedTitle}</span></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
             <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
             <button type="button">Se déconnecter</button>
           </section>
         </div>
-      )}
+      )}</Fade>
 
-      {searchOpen && (
+      <Fade show={searchOpen} kind="modal">{searchOpen && (
         <Modal className="search-overlay" labelledBy="search-title" initialFocus='input[type="search"]' onRequestClose={() => setSearchOpen(false)}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la recherche" onClick={() => setSearchOpen(false)} />
           <section className="search-panel">
@@ -1023,9 +1039,9 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             <button className="primary-action search-discover-action" type="button" onClick={() => openDiscoverWithQuery(searchQuery)}>{searchQuery.trim() ? "Voir les résultats dans Découvrir" : "Ouvrir Découvrir"}</button>
           </section>
         </Modal>
-      )}
+      )}</Fade>
 
-      {noteOpen && (
+      <Fade show={noteOpen} kind="modal">{noteOpen && (
         <Modal labelledBy={noteCloseConfirm ? "note-confirm-title" : "note-title"} describedBy={noteCloseConfirm ? "note-confirm-description" : undefined} alert={noteCloseConfirm} initialFocus={noteCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la note" onClick={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()} />
           <section className={`editor-modal private-editor ${noteCloseConfirm ? "editor-protected" : ""}`}>
@@ -1056,9 +1072,9 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             )}
           </section>
         </Modal>
-      )}
+      )}</Fade>
 
-      {reviewOpen && (
+      <Fade show={reviewOpen} kind="modal">{reviewOpen && (
         <Modal labelledBy={reviewCloseConfirm ? "review-confirm-title" : "review-title"} describedBy={reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm} initialFocus={reviewCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()} />
           <section className={`editor-modal review-editor ${reviewCloseConfirm ? "editor-protected" : ""}`}>
@@ -1081,6 +1097,8 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                   <button
                     type="button"
                     role="radio"
+                    ref={(element) => { ratingRefs.current[value - 1] = element; }}
+                    tabIndex={ratingDraft === value || (!ratingDraft && value === 1) ? 0 : -1}
                     aria-checked={ratingDraft === value}
                     aria-label={`${value} étoile${value > 1 ? "s" : ""}`}
                     key={value}
@@ -1091,10 +1109,15 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                     onClick={() => setRatingDraft(value)}
                     onKeyDown={(event) => {
                       if (["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp", "Home", "End"].includes(event.key)) event.preventDefault();
-                      if (event.key === "ArrowLeft" || event.key === "ArrowDown") setRatingDraft((rating) => Math.max(1, rating - 1 || 1));
-                      if (event.key === "ArrowRight" || event.key === "ArrowUp") setRatingDraft((rating) => Math.min(5, rating + 1));
-                      if (event.key === "Home") setRatingDraft(1);
-                      if (event.key === "End") setRatingDraft(5);
+                      let next = value;
+                      if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = value === 1 ? 5 : value - 1;
+                      if (event.key === "ArrowRight" || event.key === "ArrowDown") next = value === 5 ? 1 : value + 1;
+                      if (event.key === "Home") next = 1;
+                      if (event.key === "End") next = 5;
+                      if (next !== value) {
+                        setRatingDraft(next);
+                        ratingRefs.current[next - 1]?.focus();
+                      }
                     }}
                   >
                     {value <= (ratingPreview ?? ratingDraft) ? "★" : "☆"}
@@ -1120,18 +1143,18 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             )}
           </section>
         </Modal>
-      )}
+      )}</Fade>
 
-      {photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}
+      <Fade show={photoCropOpen} kind="modal">{photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}</Fade>
 
-      {feedback && (
+      <Fade show={Boolean(feedback)} kind="feedback" changeKey={feedback}>{feedback && (
         <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
           <span><strong>{feedback.label}</strong><small>{feedback.detail}</small></span>
           <span className="feedback-separator" aria-hidden="true" />
           <button type="button" onClick={undoFeedback}>Annuler</button>
           <button type="button" aria-label="Fermer" onClick={() => setFeedback(null)}>×</button>
         </div>
-      )}
+      )}</Fade>
     </div>
   );
 }

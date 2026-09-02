@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { Fade } from "./fade";
 
 export const librarySortOptions = [
   { value: "activity", label: "Activité récente" },
@@ -99,7 +100,7 @@ export function LibrarySortControl({ value, onChange }: { value: LibrarySort; on
           <span id={`${id}-value`}>{librarySortOptions[selectedIndex].label}</span>
           <svg className="library-sort-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
-        <ul className="library-sort-options" id={`${id}-options`} role="listbox" aria-labelledby={`${id}-label`} hidden={!open}>
+        <Fade show={open} keepMounted><ul className="library-sort-options" id={`${id}-options`} role="listbox" aria-labelledby={`${id}-label`} hidden={!open}>
           {librarySortOptions.map((option, index) => (
             <li
               key={option.value}
@@ -115,7 +116,7 @@ export function LibrarySortControl({ value, onChange }: { value: LibrarySort; on
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8 3 3 7-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </li>
           ))}
-        </ul>
+        </ul></Fade>
       </div>
     </div>
   );

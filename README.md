@@ -2,7 +2,7 @@
 
 Chapter is a social reading platform where every book becomes part of your story — track what you read, share what you think, and connect with readers who inspire your next chapter.
 
-The current version is the integrated phase 10 frontend milestone, extending the personal reading experience with discovery, reader profiles, honors and lightweight social conversations.
+The current visible candidate is the grouped phase 11 milestone for completing lot 1. It consolidates the personal and social reading experience across edge cases, responsive layouts, accessibility, motion and recovery states. It remains under user evaluation and is not yet the accepted GitHub milestone.
 
 ## Live version
 
@@ -56,15 +56,16 @@ npm test
 
 Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with:
 
-- [`AGENTS.md`](./AGENTS.md) — mandatory continuity and documentation rules for every project conversation;
-- [`CHAPTER_DECISIONS.md`](./docs/CHAPTER_DECISIONS.md) — project-wide source of truth;
-- [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./docs/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) — detailed record of the active design phase;
-- [`PHASE_10_IMPLEMENTATION_CHECKLIST.md`](./docs/PHASE_10_IMPLEMENTATION_CHECKLIST.md) — exhaustive evaluation checklist for the integrated milestone;
-- [`PHASE_08_IMPLEMENTATION.md`](./docs/PHASE_08_IMPLEMENTATION.md) — validated implementation milestone;
+- [`AGENTS.md`](./AGENTS.md) — short mandatory rules and context-routing entry point;
+- [`AGENT_CONTEXT.md`](./docs/AGENT_CONTEXT.md) — compact current state, invariants and next action;
+- [`CODEMAP.md`](./docs/CODEMAP.md) — feature-to-source-and-test map;
+- [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;
+- [`CHAPTER_DECISIONS.md`](./docs/CHAPTER_DECISIONS.md) — searchable project-wide decision archive;
+- [`AI_AGENT_CONTEXT_STRATEGY.md`](./docs/AI_AGENT_CONTEXT_STRATEGY.md) — researched strategy for minimizing agent context and token use;
 - [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./docs/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md) — product-growth principles and safeguards.
 
-Every chat working on this repository must read the transversal log and the active phase document, then update both after each validated, refined or revised decision. Conversation history is supplementary context, never the sole project memory.
+Fresh agent sessions start with `npm run context`, then retrieve only the relevant decision sections and source symbols. Conversation history is supplementary context, never the sole project memory.
 
 ## Roadmap status
 
-Phases 1 through 9 are complete. The phase 10 integrated frontend milestone is implemented and awaiting user evaluation.
+Phases 1 through 10 are complete. Phase 11 is deployed as Sites version 28 for evaluation; lot 1 remains open until explicit acceptance and verified GitHub synchronization.

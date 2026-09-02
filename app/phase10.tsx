@@ -2,13 +2,20 @@
 
 import Image from "next/image";
 /* eslint-disable @next/next/no-img-element */
-import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState, WheelEvent } from "react";
+import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useLayoutEffect, useRef, useState, WheelEvent } from "react";
 import { getHonorsLayout } from "./honors-layout";
 import { Modal } from "./modal";
 import { CoverFrame } from "./cover-frame";
-import { availableWorkCount, availableWorks, publicListWorkIds } from "./catalogue";
+import { availableWorkCount, availableWorks, FEATURED_DISCOVERY_LIST_ID, publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
 import { createProfileShareController } from "./profile-share";
 import { cropPreview, startPhotoImport } from "./photo-processing";
+import { Fade, useSurfaceActive } from "./fade";
+import { actorIdForProfile, CURRENT_READER_ID, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
+import { prototypeReviewsForActor, prototypeReviewsForWork, type PrototypePublicReview } from "./social-data";
+import { PUBLIC_PROFILE_URL } from "./site-config";
+
+export type { PublicListId } from "./catalogue";
+export type { ProfileOwner } from "./prototype-data";
 
 export type SocialWork = {
   id: string;
@@ -23,22 +30,21 @@ export type SocialWork = {
   coverSrc?: string;
 };
 
-export type PublicListId = "places" | "lights";
-export type ProfileOwner = "self" | "public-self" | "lina";
-
 type DiscoverProps = {
   works: readonly SocialWork[];
   statuses: Record<string, string | null | undefined>;
   onOpenWork: (id: string) => void;
   onAddToRead: (id: string) => void;
   onOpenProfile: (owner: "self" | "lina") => void;
-  onOpenList: (listId?: PublicListId) => void;
+  onOpenList: (listId: PublicListId) => void;
   followingLina: boolean;
   onToggleFollow: () => void;
   initialQuery?: string;
   historyWorkIds?: readonly string[];
   onBackToJournal?: () => void;
 };
+
+const linaReader = prototypeActors.lina;
 
 const normalizeText = (value: string) => value
   .normalize("NFD")
@@ -119,6 +125,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
   const searchRef = useRef<HTMLInputElement>(null);
   const workById = (id: string) => works.find((work) => work.id === id);
   const track = discoveryTracks[intent];
+  const featuredList = publicListCatalog[FEATURED_DISCOVERY_LIST_ID];
   const knownHistory = historyWorkIds ?? Object.keys(statuses).filter((id) => statuses[id] === "En cours" || statuses[id] === "Lu");
   const hasAnchor = knownHistory.includes("cartographies") && Boolean(workById("cartographies"));
   const editorialDefault = intent === "default" && !hasAnchor;
@@ -217,16 +224,16 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
           <section className="public-list-path" aria-labelledby="public-list-title">
             <div className="list-introduction">
               <p className="eyebrow">Une sensibilité à découvrir</p>
-              <h2 id="public-list-title">Habiter les lieux qui nous quittent</h2>
-              <p>Des romans où une maison, une ville ou un rivage deviennent une manière de retrouver ce que l’on croyait perdu.</p>
+              <h2 id="public-list-title">{featuredList.title}</h2>
+              <p>{featuredList.discoverySummary}</p>
               <div className="list-author-row">
-                <button className="identity-link" type="button" onClick={() => onOpenProfile("lina")}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Lectrice et autrice de la liste</small></span></button>
-                <button className="quiet-action" type="button" aria-pressed={followingLina} onClick={onToggleFollow}>{followingLina ? "Suivie" : "Suivre"}</button>
+                <button className="identity-link" type="button" onClick={() => onOpenProfile("lina")}><span className="avatar">{linaReader.initials}</span><span><strong>{linaReader.name}</strong><small>Lectrice et autrice de la liste</small></span></button>
+                <button className="primary-action profile-follow-action" type="button" aria-pressed={followingLina} onClick={onToggleFollow}>{followingLina ? "Suivi" : "Suivre"}</button>
               </div>
-              <button className="primary-action" type="button" onClick={() => onOpenList("places")}>Ouvrir la liste</button>
+              <button className="primary-action" type="button" onClick={() => onOpenList(FEATURED_DISCOVERY_LIST_ID)}>Ouvrir la liste</button>
             </div>
             <div className="list-cover-row" aria-hidden="true">
-              {availableWorks(works, ["miroirs", "rivage", "cartographies", "lucioles"]).map((work) => <CompactCover key={work.id} work={work} className="list-preview-cover" />)}
+              {availableWorks(works, featuredList.workIds.slice(0, 4)).map((work) => <CompactCover key={work.id} work={work} className="list-preview-cover" />)}
             </div>
           </section>
         )}
@@ -243,7 +250,13 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
       </header>
       <form className="discover-search" role="search" onSubmit={submitSearch}>
         <label htmlFor="discover-query">Titre ou auteur</label>
-        <div><input ref={searchRef} id="discover-query" type="search" value={query} onChange={(event) => { setQuery(event.target.value); if (!event.target.value) setSubmittedQuery(""); }} placeholder="Retrouver une œuvre ou un auteur" /><button className="primary-action" type="submit">Rechercher</button></div>
+        <div>
+          <div className="discover-search-field">
+            <input ref={searchRef} id="discover-query" type="search" value={query} onChange={(event) => { setQuery(event.target.value); if (!event.target.value) setSubmittedQuery(""); }} placeholder="Retrouver une œuvre ou un auteur" />
+            {query && <button className="text-action discover-search-clear" type="button" onClick={() => { setQuery(""); setSubmittedQuery(""); searchRef.current?.focus(); }}>Effacer</button>}
+          </div>
+          <button className="primary-action" type="submit">Rechercher</button>
+        </div>
       </form>
 
       {works.length === 0 ? <div className="journal-empty"><h2>Aucune œuvre disponible pour le moment</h2><p>Le catalogue ne contient pas d’œuvre à afficher.</p>{onBackToJournal && <button className="text-action" type="button" onClick={onBackToJournal}>Revenir au Journal</button>}</div> : submittedQuery ? (
@@ -303,28 +316,26 @@ type ProfileProps = {
   onRemovePhoto: () => void;
   equippedTitle: string;
   showcase: BadgeId[];
+  personalReviews?: readonly PrototypePublicReview[];
 };
 
-export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase }: ProfileProps) {
+export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [] }: ProfileProps) {
   const isOwnProfile = owner === "self";
-  const isMael = owner !== "lina";
+  const presentation = profilePresentations[owner];
+  const actor = prototypeActors[presentation.actorId];
+  const isMael = presentation.actorId === "self";
   const [removePhotoConfirm, setRemovePhotoConfirm] = useState(false);
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
   const [shareBusy, setShareBusy] = useState(false);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
-  const publicProfileUrl = "https://chapter-reading.smrdsh.chatgpt.site/profil/mael-depreville";
-  const profile = isMael ? {
-    name: "Maël Depréville", initials: "MD", title: equippedTitle,
-    intro: "Lecteur de fictions où les lieux, les souvenirs et les voix discrètes déplacent le regard.",
-    favorites: ["cartographies", "atlas", "miroirs"],
-  } : {
-    name: "Lina Morel", initials: "LM", title: "Voix singulière",
-    intro: "Je rassemble des romans où les paysages gardent une mémoire et où chaque détour ouvre une manière différente d’habiter le monde.",
-    favorites: ["rivage", "lucioles", "sel"],
-  };
+  const publicProfileUrl = PUBLIC_PROFILE_URL;
+  const profile = { ...actor, ...presentation, title: isMael ? equippedTitle : presentation.defaultTitle };
   const workById = (id: string) => works.find((work) => work.id === id);
   const favorites = availableWorks(works, profile.favorites);
+  const publicReviews = (profile.actorId === CURRENT_READER_ID ? personalReviews : prototypeReviewsForActor(profile.actorId))
+    .filter((review) => Boolean(workById(review.workId)))
+    .slice(0, 2);
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
@@ -349,7 +360,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               <div className="profile-identity-card profile-card-front" aria-hidden={cardFlipped} inert={cardFlipped ? true : undefined}>
                 <div className="profile-card-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>{isOwnProfile ? "Carte de lecteur" : "Portrait public"}</small></div>
                 <div className="profile-avatar-wrap">
-                  <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt="Photo de profil de Maël" fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
+                  <div className="profile-avatar">{isMael && photo ? <Image src={photo.preview} alt={`Photo de profil de ${profile.firstName}`} fill sizes="180px" unoptimized /> : <span>{profile.initials}</span>}</div>
                   {isOwnProfile && <div className="profile-photo-actions"><button data-photo-edit className="text-action" type="button" onClick={onEditPhoto}>{photo ? "Recadrer" : "Ajouter une photo"}</button>{photo && <button className="text-action muted-action" type="button" onClick={() => setRemovePhotoConfirm(true)}>Retirer</button>}</div>}
                 </div>
                 <div className="profile-heading-copy">
@@ -364,12 +375,14 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               {isOwnProfile && (
                 <div className="profile-identity-card profile-card-back" aria-hidden={!cardFlipped} inert={!cardFlipped ? true : undefined}>
                   <div className="profile-card-masthead profile-card-back-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>Profil public</small></div>
-                  <div className="profile-card-qr-field">
-                    <img src="/branding/chapter-profile-qr.svg" alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
-                  </div>
-                  <div className="profile-card-back-copy">
-                    <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>
-                    <p>Scannez pour ouvrir mon profil</p>
+                  <div className="profile-card-back-body">
+                    <div className="profile-card-qr-field">
+                      <img src="/branding/chapter-profile-qr.svg" alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
+                    </div>
+                    <div className="profile-card-back-copy">
+                      <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>
+                      <p>Scannez pour ouvrir mon profil</p>
+                    </div>
                   </div>
                   <a className="profile-card-public-url" href={publicProfileUrl}>{publicProfileUrl.replace(/^https?:\/\//, "")}</a>
                 </div>
@@ -383,7 +396,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 <button className="profile-card-turn-action" type="button" aria-pressed={cardFlipped} onClick={() => { shareController.invalidate(); setCardFlipped((current) => !current); }}><span aria-hidden="true">↻</span>{cardFlipped ? "Voir le recto" : "Retourner la carte"}</button>
               </div>
               <div className={`profile-card-share-row ${cardFlipped ? "is-visible" : ""}`} aria-hidden={!cardFlipped}>
-                <p className="profile-card-share-notice" role="status" aria-live="polite">{shareNotice}</p>
+                <p className="profile-card-share-notice" role="status" aria-live="polite"><Fade inline show={Boolean(shareNotice)} kind="feedback" changeKey={shareNotice}>{shareNotice && <span className="feedback-copy">{shareNotice}</span>}</Fade></p>
                 <button className="text-action" type="button" disabled={shareBusy} tabIndex={cardFlipped ? 0 : -1} onClick={() => void shareController.run("copy", publicProfileUrl)}>Copier le lien</button>
                 <button className="text-action" type="button" disabled={shareBusy} tabIndex={cardFlipped ? 0 : -1} onClick={() => void shareController.run("share", publicProfileUrl)}>Partager</button>
               </div>
@@ -402,16 +415,14 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       <div className="profile-wide-content">
         <section className="profile-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("places")}><span><strong>Habiter les lieux qui nous quittent</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.places).length, publicListWorkIds.places.length)} · Une sélection sur les paysages qui deviennent mémoire.</small></span><span aria-hidden="true">→</span></button>
-          <button className="profile-list-entry" type="button" onClick={() => onOpenList("lights")}><span><strong>Veilles, fenêtres et lumières tardives</strong><small>{availableWorkCount(availableWorks(works, publicListWorkIds.lights).length, publicListWorkIds.lights.length)} · Des présences aperçues lorsque la ville se tait.</small></span><span aria-hidden="true">→</span></button>
+          {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
         </section>
         <section className="profile-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
-          <article className="profile-review">{workById(profile.favorites[0]) ? <button type="button" onClick={() => onOpenWork(profile.favorites[0])}>{workById(profile.favorites[0])?.title}</button> : <strong>Œuvre indisponible</strong>}<p>Une œuvre qui laisse les lieux agir sur les personnages au lieu de les réduire à un décor. Sa force tient à ce déplacement presque imperceptible.</p></article>
-          <article className="profile-review">{workById(profile.favorites[1]) ? <button type="button" onClick={() => onOpenWork(profile.favorites[1])}>{workById(profile.favorites[1])?.title}</button> : <strong>Œuvre indisponible</strong>}<p>Le livre avance par signes minuscules et finit par composer une géographie très précise de l’attention.</p></article>
+          {publicReviews.length ? publicReviews.map((review) => { const work = workById(review.workId)!; return <article className="profile-review" key={`${review.authorId}-${review.workId}`}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{review.text}</p></article>; }) : <p className="journal-empty">Aucune critique publiée pour le moment.</p>}
         </section>
       </div>
-      {isOwnProfile && removePhotoConfirm && (
+      <Fade show={isOwnProfile && removePhotoConfirm} kind="modal">{isOwnProfile && removePhotoConfirm && (
         <Modal className="profile-photo-remove-overlay" alert labelledBy="remove-photo-title" initialFocus="[data-keep-photo]" returnFocusSelector="[data-photo-edit]" onRequestClose={() => setRemovePhotoConfirm(false)}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
           <section className="profile-photo-remove-dialog">
@@ -421,7 +432,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
             <div className="modal-actions"><button data-keep-photo className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div>
           </section>
         </Modal>
-      )}
+      )}</Fade>
     </section>
   );
 }
@@ -449,9 +460,10 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     : isMael
       ? [{ id: "reading2" }, { id: "exploration2" }, { id: "expression2" }, { id: "relation2" }, { id: "honor1" }, { id: "honor2" }]
       : [{ id: "reading3" }, { id: "exploration2" }, { id: "expression3" }, { id: "relation2" }, { id: "honor1" }];
-  const [selected, setSelected] = useState<BadgeId | null>(null);
+  const [selection, setSelection] = useState<{ id: BadgeId; mode: "hover" | "persistent" } | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);
   const { honors, honorRows, families } = getHonorsLayout(items, isOwnProfile);
+  const selected = selection?.id ?? null;
 
   const renderDetail = (id: BadgeId, placement: "desktop" | "mobile") => {
     const badge = badgeCatalog[id];
@@ -459,7 +471,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     const highlighted = showcase.includes(id);
 
     return (
-      <div className={`honor-detail honor-detail-${placement}`} role="status">
+      <div className={`honor-detail honor-detail-${placement}`} id={`honor-detail-${placement}-${id}`} role="region" aria-label={`Détails de ${badge.title}`}>
         <strong>{badge.title}</strong>
         <p>{badge.description}</p>
         {isOwnProfile && locked && "progress" in badge && <span>{badge.progress}</span>}
@@ -472,21 +484,30 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
     const badge = badgeCatalog[id];
     const open = selected === id;
     return (
-      <div className={`honor-cell ${locked ? "locked" : ""}`} key={id}>
+      <div
+        className={`honor-cell ${locked ? "locked" : ""}`}
+        key={id}
+        onMouseLeave={() => {
+          if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            setSelection((current) => current?.id === id && current.mode === "hover" ? null : current);
+          }
+        }}
+      >
         <button
           type="button"
           className="honor-badge-button"
           aria-expanded={open}
+          aria-controls={`honor-detail-desktop-${id} honor-detail-mobile-${id}`}
           onClick={(event) => {
             const preciseHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-            if (preciseHover || event.detail === 0) setSelected(id);
-            else setSelected((current) => current === id ? null : id);
+            if (preciseHover || event.detail === 0) setSelection({ id, mode: "persistent" });
+            else setSelection((current) => current?.id === id ? null : { id, mode: "persistent" });
           }}
           onMouseEnter={() => {
-            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelected(id);
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setSelection({ id, mode: "hover" });
           }}
           onFocus={(event) => {
-            if (event.currentTarget.matches(":focus-visible")) setSelected(id);
+            if (event.currentTarget.matches(":focus-visible")) setSelection({ id, mode: "persistent" });
           }}
         >
           <BadgeImage badgeId={id} locked={locked} />
@@ -501,7 +522,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
 
   useEffect(() => {
     const closeOutside = (event: globalThis.PointerEvent) => {
-      if (selected && wallRef.current && !wallRef.current.contains(event.target as Node)) setSelected(null);
+      if (selected && wallRef.current && !wallRef.current.contains(event.target as Node)) setSelection(null);
     };
     document.addEventListener("pointerdown", closeOutside);
     return () => document.removeEventListener("pointerdown", closeOutside);
@@ -515,7 +536,7 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
         <h1 id="honors-title">Chapitres d’honneur</h1>
         <p>{isOwnProfile ? "Vos évolutions actuelles, les prochains horizons et les accomplissements qui consacrent votre parcours." : `Les dernières évolutions et les honneurs obtenus par ${isMael ? "Maël" : "Lina"}. Ses objectifs en cours restent privés.`}</p>
       </header>
-      <div ref={wallRef} className="honors-collection" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelected(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelected(null); }} onKeyDown={(event) => { if (event.key === "Escape") setSelected(null); }}>
+      <div ref={wallRef} className="honors-collection" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelection(null); }} onMouseLeave={() => { if (window.matchMedia("(hover: hover)").matches) setSelection(null); }} onKeyDown={(event) => { if (event.key === "Escape") setSelection(null); }}>
         {honors.length > 0 && (
           <section className="honors-singular" aria-labelledby="singular-honors-title">
             <h2 id="singular-honors-title" className="honors-section-title">Distinctions singulières</h2>
@@ -553,21 +574,12 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
-  const lists = {
-    places: {
-      title: "Habiter les lieux qui nous quittent",
-      description: "Des récits où les maisons, les villes et les rivages ne sont jamais de simples décors : ils conservent ce que les personnages n’arrivent plus à porter seuls.",
-      workIds: publicListWorkIds.places,
-    },
-    lights: {
-      title: "Veilles, fenêtres et lumières tardives",
-      description: "Des récits de présences entrevues lorsque la ville se tait, entre fenêtres éclairées, attentes nocturnes et rencontres qui ne pouvaient avoir lieu en plein jour.",
-      workIds: publicListWorkIds.lights,
-    },
-  } satisfies Record<PublicListId, { title: string; description: string; workIds: readonly string[] }>;
-  const list = lists[listId];
+export function PublicListView({ owner, listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+  const list = publicListCatalog[listId];
   const chosen = availableWorks(works, list.workIds);
+  const isOwnList = owner === "self";
+  const author = prototypeActors[actorIdForProfile(owner)];
+  const authorRelationship = isOwnList ? "Votre liste publique" : owner === "lina" ? "Autrice de la liste" : "Auteur de la liste";
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
       <button className="text-action back-action" type="button" onClick={onBack}>← {backLabel}</button>
@@ -576,40 +588,34 @@ export function PublicListView({ listId, works, following, onToggleFollow, onOpe
         <h1 id="list-page-title">{list.title}</h1>
         <p>{list.description}</p>
         {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
-        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">LM</span><span><strong>Lina Morel</strong><small>Autrice de la liste</small></span></button><button className="quiet-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivie" : "Suivre"}</button></div>
+        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{authorRelationship}</small></span></button>{!isOwnList && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
       </header>
       {chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
     </section>
   );
 }
 
-type Reply = { id: string; name: string; initials: string; text: string; date: string };
-type SocialReview = { id: string; name: string; initials: string; rating: number; date: string; text: string; followed?: boolean; own?: boolean };
+type Reply = { id: string; authorId: PrototypeActorId; text: string; date: string };
+type SocialReview = PrototypePublicReview & { own?: boolean };
 
-const socialReviews: SocialReview[] = [
-  { id: "lina", name: "Lina Morel", initials: "LM", rating: 5, date: "18 août 2026", followed: true, text: "Un roman qui avance comme une carte que l’on dessine en marchant. J’ai aimé la précision des images et cette sensation persistante que nos souvenirs ne sont jamais aussi fixes qu’on le croit." },
-  { id: "theo", name: "Théo Renaud", initials: "TR", rating: 4, date: "12 août 2026", text: "Une écriture ample, parfois exigeante, mais toujours habitée. Le dernier tiers donne une profondeur inattendue à tout ce qui précédait." },
-  { id: "ines", name: "Inès Naël", initials: "IN", rating: 4, date: "3 août 2026", text: "J’y suis entrée lentement, puis je n’ai plus voulu quitter cet univers. Une très belle réflexion sur les lieux que l’on emporte avec soi." },
-];
-
-export function SocialReviews({ workId, personalReview, personalRating, onOpenProfile, onWriteReview }: { workId: string; personalReview: string; personalRating: number; onOpenProfile: () => void; onWriteReview: () => void }) {
-  const contextualReviews = workId === "sel" ? [] : workId === "lucioles" ? socialReviews.slice(0, 1) : socialReviews;
-  const reviews = personalReview ? [{ id: "self", name: "Maël Depréville", initials: "MD", rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : contextualReviews;
+export function SocialReviews({ workId, personalReview, personalRating, followedActorIds = [], onOpenProfile, onWriteReview }: { workId: string; personalReview: string; personalRating: number; followedActorIds?: readonly PrototypeActorId[]; onOpenProfile: (actorId: PrototypeActorId) => void; onWriteReview: () => void }) {
+  const contextualReviews = prototypeReviewsForWork(workId);
+  const reviews: SocialReview[] = personalReview ? [{ authorId: CURRENT_READER_ID, workId, rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : [...contextualReviews];
   const [expanded, setExpanded] = useState<string[]>([]);
   const [expandedTexts, setExpandedTexts] = useState<string[]>([]);
   const [composer, setComposer] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ name: string; text: string } | null>(null);
   const [editingReply, setEditingReply] = useState<{ reviewId: string; replyId: string } | null>(null);
-  const [blockedNames, setBlockedNames] = useState<string[]>([]);
+  const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [draft, setDraft] = useState("");
   const [closed, setClosed] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
   const [replies, setReplies] = useState<Record<string, Reply[]>>({
     lina: [
-      { id: "r1", name: "Théo Renaud", initials: "TR", date: "19 août", text: "La carte qui se fabrique en marchant, c’est exactement ce qui m’a retenu aussi." },
-      { id: "r2", name: "Lina Morel", initials: "LM", date: "19 août", text: "Oui — et elle accepte de rester incomplète, ce qui change tout à la fin." },
+      { id: "r1", authorId: "theo", date: "19 août", text: "La carte qui se fabrique en marchant, c’est exactement ce qui m’a retenu aussi." },
+      { id: "r2", authorId: "lina", date: "19 août", text: "Oui — et elle accepte de rester incomplète, ce qui change tout à la fin." },
     ],
-    theo: [{ id: "r3", name: "Inès Naël", initials: "IN", date: "13 août", text: "Le dernier tiers m’a aussi fait relire les premières pages autrement." }],
+    theo: [{ id: "r3", authorId: "ines", date: "13 août", text: "Le dernier tiers m’a aussi fait relire les premières pages autrement." }],
   });
 
   const publishReply = (reviewId: string) => {
@@ -617,7 +623,7 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
     setReplies((current) => editingReply ? {
       ...current,
       [reviewId]: (current[reviewId] ?? []).map((reply) => reply.id === editingReply.replyId ? { ...reply, text: draft.trim(), date: "Modifiée à l’instant" } : reply),
-    } : ({ ...current, [reviewId]: [...(current[reviewId] ?? []), { id: `${reviewId}-${Date.now()}`, name: "Maël Depréville", initials: "MD", date: "À l’instant", text: `${replyingTo ? `@${replyingTo.name} ` : ""}${draft.trim()}` }] }));
+    } : ({ ...current, [reviewId]: [...(current[reviewId] ?? []), { id: `${reviewId}-${Date.now()}`, authorId: CURRENT_READER_ID, date: "À l’instant", text: `${replyingTo ? `@${replyingTo.name} ` : ""}${draft.trim()}` }] }));
     setExpanded((current) => current.includes(reviewId) ? current : [...current, reviewId]);
     setComposer(null);
     setReplyingTo(null);
@@ -626,41 +632,42 @@ export function SocialReviews({ workId, personalReview, personalRating, onOpenPr
   };
 
   const renderReview = (review: SocialReview, compact = false) => {
-    const reviewReplies = (replies[review.id] ?? []).filter((reply) => !blockedNames.includes(reply.name));
-    const isExpanded = expanded.includes(review.id);
-    const textKey = `${workId}-${review.id}`;
+    const reviewActor = prototypeActors[review.authorId];
+    const reviewReplies = (replies[review.authorId] ?? []).filter((reply) => !blockedActorIds.includes(reply.authorId));
+    const isExpanded = expanded.includes(review.authorId);
+    const textKey = `${workId}-${review.authorId}`;
     const textExpanded = expandedTexts.includes(textKey);
     const longText = Array.from(review.text).length > 280;
-    const isClosed = closed.includes(review.id);
+    const isClosed = closed.includes(review.authorId);
     const latest = reviewReplies.at(-1);
-    const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>;
+    const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>;
     return (
-      <article className={`review social-review ${compact ? "compact-review" : ""}`} key={review.id}>
+      <article className={`review social-review ${compact ? "compact-review" : ""}`} key={review.authorId}>
         <header className="review-header">
-          <button className="avatar avatar-button" type="button" onClick={review.name === "Lina Morel" ? onOpenProfile : undefined}>{review.initials}</button>
-          <div><h3>{review.name}</h3><p>{review.date}</p></div>
+          <button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${reviewActor.name}`} onClick={() => onOpenProfile(review.authorId)}>{reviewActor.initials}</button>
+          <button className="review-author-button" type="button" aria-label={`Ouvrir le profil de ${reviewActor.name}`} onClick={() => onOpenProfile(review.authorId)}><strong>{reviewActor.name}</strong><small>{review.date}</small></button>
           {review.rating > 0 && <span className="review-stars" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}
         </header>
         <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
         {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
-        {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
-        {latest && !isExpanded && <div className="reply-preview"><span className="avatar">{latest.initials}</span><p><strong>{latest.name}</strong>{latest.text}</p></div>}
+        {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
+        {latest && !isExpanded && <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].name}</button>{latest.text}</p></div>}
         <div className="conversation-actions">
-          {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.id) : [...current, review.id])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
+          {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
           {!isExpanded && replyAction}
         </div>
-        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => <article key={reply.id} className="reply"><span className="avatar">{reply.initials}</span><div><header><strong>{reply.name}</strong><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.name === "Maël Depréville" ? <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo(null); setEditingReply({ reviewId: review.id, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.id]: (current[review.id] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.id); setReplyingTo({ name: reply.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedNames((current) => [...current, reply.name]); setNotice(`${reply.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>)}</div>}
+        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = prototypeActors[reply.authorId]; return <article key={reply.id} className="reply"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.initials}</button><div><header><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.name}</button><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply({ reviewId: review.authorId, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.authorId]: (current[review.authorId] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedActorIds((current) => [...current, reply.authorId]); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
         {isExpanded && <div className="conversation-actions">{replyAction}</div>}
-        {composer === review.id && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.id)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
+        {composer === review.authorId && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.authorId)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
       </article>
     );
   };
 
-  const followedReviews = reviews.filter((review) => review.followed).slice(0, 3);
-  const generalReviews = reviews.filter((review) => !review.followed);
+  const followedReviews = reviews.filter((review) => followedActorIds.includes(review.authorId)).slice(0, 3);
+  const generalReviews = reviews.filter((review) => !followedActorIds.includes(review.authorId));
   return (
     <div className="social-reviews">
-      {notice && <div className="conversation-notice" role="status"><span>{notice}</span><button type="button" onClick={() => setNotice("")}>Fermer</button></div>}
+      <Fade show={Boolean(notice)} kind="feedback" changeKey={notice}>{notice && <div className="conversation-notice" role="status"><span>{notice}</span><button type="button" onClick={() => setNotice("")}>Fermer</button></div>}</Fade>
       {followedReviews.length > 0 && <section className="review-group followed-review-group" aria-labelledby="followed-reviews-title"><h3 id="followed-reviews-title">De personnes que vous suivez</h3>{followedReviews.map((review, index) => renderReview(review, index > 0))}</section>}
       {(generalReviews.length > 0 || followedReviews.length === 0) && <section className="review-group" aria-labelledby="all-reviews-title"><h3 id="all-reviews-title">Toutes les critiques</h3>{generalReviews.length > 0 ? generalReviews.map((review) => renderReview(review)) : <div className="empty-reviews"><p>Aucune critique publiée.</p><button className="text-action" type="button" onClick={onWriteReview}>Écrire une critique</button></div>}</section>}
     </div>
@@ -678,6 +685,7 @@ export type ProfilePhoto = {
 type PhotoCropperProps = { currentPhoto: ProfilePhoto | null; onClose: () => void; onSave: (photo: ProfilePhoto) => void };
 
 export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProps) {
+  const active = useSurfaceActive();
   const [source, setSource] = useState<string | null>(currentPhoto?.source ?? null);
   const [dimensions, setDimensions] = useState(currentPhoto?.dimensions ?? { width: 0, height: 0 });
   const [zoom, setZoom] = useState(currentPhoto?.crop.zoom ?? 1);
@@ -689,6 +697,7 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
   const lastValidRef = useRef(currentPhoto ? { source: currentPhoto.source, dimensions: { ...currentPhoto.dimensions }, crop: { ...currentPhoto.crop } } : null);
   const imageRef = useRef<HTMLImageElement>(null);
   const previewRef = useRef<HTMLImageElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const transformRef = useRef<CropTransform>(currentPhoto ? { ...currentPhoto.crop } : { x: 0, y: 0, zoom: 1 });
   const pointersRef = useRef(new Map<number, { x: number; y: number }>());
   const gestureRef = useRef({ x: 0, y: 0, distance: 0, zoom: 1 });
@@ -706,7 +715,8 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     frameRef.current = window.requestAnimationFrame(() => {
       if (!imageRef.current) return;
       const value = transformRef.current;
-      imageRef.current.style.transform = `translate(calc(-50% + ${value.x}px), calc(-50% + ${value.y}px)) scale(${base * value.zoom})`;
+      const stageRatio = (stageRef.current?.getBoundingClientRect().width || CROP) / CROP;
+      imageRef.current.style.transform = `translate(calc(-50% + ${value.x * stageRatio}px), calc(-50% + ${value.y * stageRatio}px)) scale(${base * value.zoom * stageRatio})`;
       if (previewRef.current) {
         const ratio = 112 / CROP;
         previewRef.current.style.transform = `translate(calc(-50% + ${value.x * ratio}px), calc(-50% + ${value.y * ratio}px)) scale(${base * value.zoom * ratio})`;
@@ -714,16 +724,35 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const operation = importRef.current;
+    if (!active) return;
+    // A visual exit may be interrupted before unmount. Reopening is still a
+    // new editing session: discard the cancelled draft, keeping the saved photo.
+    if (operation.closed) {
+      operation.pending = false;
+      operation.expectedSource = currentPhoto?.source ?? null;
+      lastValidRef.current = currentPhoto ? { source: currentPhoto.source, dimensions: { ...currentPhoto.dimensions }, crop: { ...currentPhoto.crop } } : null;
+      transformRef.current = currentPhoto ? { ...currentPhoto.crop } : { x: 0, y: 0, zoom: 1 };
+      // Synchronize the retained visual shell with its newly active session.
+      setSource(currentPhoto?.source ?? null);
+      setDimensions(currentPhoto?.dimensions ?? { width: 0, height: 0 });
+      setZoom(currentPhoto?.crop.zoom ?? 1);
+      setError("");
+      setPreparing(false);
+      setReadySource(null);
+      setImageVersion((version) => version + 1);
+    }
     operation.closed = false;
+    const pointers = pointersRef.current;
     return () => {
       operation.closed = true;
       operation.generation += 1;
       operation.cancel();
+      pointers.clear();
       window.cancelAnimationFrame(frameRef.current);
     };
-  }, []);
+  }, [active, currentPhoto]);
 
   useEffect(() => {
     clampAndPaint();
@@ -779,6 +808,7 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     importRef.current.closed = true;
     importRef.current.generation += 1;
     importRef.current.cancel();
+    pointersRef.current.clear();
     onClose();
   };
 
@@ -799,27 +829,47 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
     }
   };
 
+  const cropPoint = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const ratio = CROP / (bounds.width || CROP);
+    return { x: (event.clientX - bounds.left) * ratio, y: (event.clientY - bounds.top) * ratio };
+  };
+
+  const resetGesture = () => {
+    const points = [...pointersRef.current.values()];
+    if (points.length === 1) {
+      gestureRef.current = { x: points[0].x - transformRef.current.x, y: points[0].y - transformRef.current.y, distance: 0, zoom: transformRef.current.zoom };
+      return;
+    }
+    if (points.length >= 2) {
+      gestureRef.current = { ...gestureRef.current, distance: Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y), zoom: transformRef.current.zoom };
+      return;
+    }
+    gestureRef.current = { x: 0, y: 0, distance: 0, zoom: transformRef.current.zoom };
+  };
+
   const pointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
-    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    const points = [...pointersRef.current.values()];
-    if (points.length === 1) gestureRef.current = { x: points[0].x - transformRef.current.x, y: points[0].y - transformRef.current.y, distance: 0, zoom: transformRef.current.zoom };
-    if (points.length === 2) gestureRef.current = { ...gestureRef.current, distance: Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y), zoom: transformRef.current.zoom };
+    pointersRef.current.set(event.pointerId, cropPoint(event));
+    resetGesture();
   };
 
   const pointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!pointersRef.current.has(event.pointerId)) return;
-    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    pointersRef.current.set(event.pointerId, cropPoint(event));
     const points = [...pointersRef.current.values()];
     if (points.length === 1) clampAndPaint({ ...transformRef.current, x: points[0].x - gestureRef.current.x, y: points[0].y - gestureRef.current.y });
-    if (points.length === 2 && gestureRef.current.distance) {
+    if (points.length >= 2 && gestureRef.current.distance) {
       const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
       const nextZoom = Math.max(1, Math.min(3, gestureRef.current.zoom * distance / gestureRef.current.distance));
       updateZoom(nextZoom);
     }
   };
 
-  const pointerUp = (event: ReactPointerEvent<HTMLDivElement>) => { pointersRef.current.delete(event.pointerId); };
+  const pointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(event.pointerId);
+    resetGesture();
+  };
   const wheelZoom = (event: WheelEvent<HTMLDivElement>) => { event.preventDefault(); updateZoom(transformRef.current.zoom - event.deltaY * 0.0015); };
 
   const saveCrop = () => {
@@ -850,7 +900,7 @@ export function PhotoCropper({ currentPhoto, onClose, onSave }: PhotoCropperProp
         {source ? (
           <>
             <div className="photo-crop-layout">
-              <div className="crop-stage" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onWheel={wheelZoom}>
+              <div ref={stageRef} className="crop-stage" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerEnd} onPointerCancel={pointerEnd} onLostPointerCapture={pointerEnd} onWheel={wheelZoom}>
                 <img key={imageVersion} ref={imageRef} src={source} alt="Image à recadrer" draggable={false} onError={(event) => imageFailed(event.currentTarget)} onLoad={(event) => {
                   const image = event.currentTarget;
                   if (importRef.current.closed || image !== imageRef.current || !image.naturalWidth || (importRef.current.pending && importRef.current.expectedSource !== source)) return;

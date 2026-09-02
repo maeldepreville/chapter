@@ -16,7 +16,7 @@ const html = (Component, props) => renderToStaticMarkup(React.createElement(Comp
 const home = (initialData) => html(Home, { initialData });
 const journal = (entries = {}, traces = [], catalogue = works) => home({ view: "journal", entries, traces, works: catalogue });
 const discover = (extra = {}) => html(DiscoverView, { ...socialHandlers, works, statuses: {}, followingLina: false, ...extra });
-const publicList = (catalogue, listId = "places") => html(PublicListView, { ...socialHandlers, works: catalogue, listId, following: false, backLabel: "Retour à Découvrir" });
+const publicList = (catalogue, listId = "places") => html(PublicListView, { ...socialHandlers, owner: "lina", works: catalogue, listId, following: false, backLabel: "Retour à Découvrir" });
 
 test("all principal views render an empty catalogue without substituting a work", () => {
   for (const view of ["work", "journal", "library", "discover", "profile", "list"]) {
@@ -25,7 +25,7 @@ test("all principal views render an empty catalogue without substituting a work"
     assert.doesNotMatch(rendered, /class="(?:book-cover|favorite-cover|discovery-cover|public-list-cover)/);
   }
   assert.match(discover({ works: [] }), /Aucune œuvre disponible/);
-  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Œuvre indisponible/);
+  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Aucune critique publiée pour le moment/);
   assert.match(publicList([]), /Aucune œuvre de cette liste/);
 });
 
@@ -40,6 +40,18 @@ test("partial lists show each available work once, keep order, and report correc
   assert.equal(availableWorkCount(6, 6), "6 œuvres");
 });
 
+test("public lists render the profile owner instead of a hard-coded author", () => {
+  const own = html(PublicListView, { ...socialHandlers, owner: "self", works, listId: "places", following: false, backLabel: "Retour à mon profil" });
+  assert.match(own, /Maël Depréville/);
+  assert.match(own, /Votre liste publique/);
+  assert.doesNotMatch(own, /Lina Morel|aria-pressed/);
+
+  const lina = publicList(works);
+  assert.match(lina, /Lina Morel/);
+  assert.match(lina, /Autrice de la liste/);
+  assert.match(lina, /aria-pressed="false"/);
+});
+
 test("missing discovery primary retains its real echoes but does not promote a false replacement", () => {
   const rendered = discover({ works: [works[4]] });
   assert.match(rendered, /Cette proposition n’est pas disponible/);
@@ -49,11 +61,12 @@ test("missing discovery primary retains its real echoes but does not promote a f
 });
 
 test("profile partial favorites and public reviews retain their real identities", () => {
-  const rendered = html(ProfileView, { ...profileProps, works: [works[0]] });
+  const personalReviews = [{ authorId: "self", workId: "cartographies", rating: 4, date: "Aujourd’hui", text: "Une trace réellement publiée." }];
+  const rendered = html(ProfileView, { ...profileProps, works: [works[0]], personalReviews });
   assert.equal((rendered.match(/class="favorite-cover/g) ?? []).length, 1);
   assert.match(rendered, /1 œuvre disponible sur 6/);
-  assert.match(rendered, /Œuvre indisponible/);
-  assert.match(rendered, /Le livre avance par signes minuscules/);
+  assert.match(rendered, /Une trace réellement publiée/);
+  assert.doesNotMatch(rendered, /Le livre avance par signes minuscules/);
   assert.doesNotMatch(rendered, /Atlas des nuits calmes/);
 });
 

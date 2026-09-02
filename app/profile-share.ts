@@ -1,3 +1,7 @@
+import { prototypeActors } from "./prototype-data";
+
+const reader = prototypeActors.self;
+
 // A synchronous lock covers both native share and its optional copy fallback.
 // Invalidating a surface suppresses late feedback without unlocking a native job.
 export function createProfileShareController(onBusy: (busy: boolean) => void, onNotice: (notice: string) => void) {
@@ -22,7 +26,7 @@ export function createProfileShareController(onBusy: (busy: boolean) => void, on
         if (kind === "share") {
           if (navigator.share) {
             try {
-              await navigator.share({ title: "Profil de Maël Depréville sur Chapter", text: "Découvrez mon portrait de lecteur sur Chapter.", url });
+              await navigator.share({ title: `Profil de ${reader.name} sur Chapter`, text: "Découvrez mon portrait de lecteur sur Chapter.", url });
               if (current()) onNotice("Profil partagé");
               return;
             } catch (error) {

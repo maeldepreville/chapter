@@ -1,6 +1,6 @@
-# Phase 11 — Recette des trois premiers ensembles de correctifs
+# Phase 11 — Recette des ensembles, d'AM1 et du correctif responsive
 
-Date : 27 août 2026. Statut : **recette à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes, couvertures en erreur, import/recadrage, copie/partage et textes longs ; aucune refonte graphique. Publication différée au jalon regroupé.
+Date : 1er septembre 2026. Statut mis à jour le 2 septembre : **jalon regroupé accepté par l'utilisateur sur la version 31**. Les cases non cochées restent des scénarios sans relevé individuel et ne doivent pas être présentées comme exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes, couvertures en erreur, import/recadrage, copie/partage, textes longs, mouvement AM1, correctifs responsive/tactiles et parcours transversaux ; aucune refonte graphique. CT1 est refusé.
 
 ## Conditions
 
@@ -123,3 +123,72 @@ Les erreurs déterministes sont couvertes par les doublures internes de `tests/p
 - [ ] Notes, critiques, Journal, réponses et aperçu de réponse : paragraphes conservés ; chaînes sans espaces contenues sur petit écran et avec texte agrandi.
 - [ ] Titres longs hors couvertures : texte intégral dans œuvre, Journal, Bibliothèque, recherche, Découvrir, favoris et listes ; pas de débordement horizontal. Les limites L2 de couverture restent inchangées.
 - [ ] Carte N1b : nom sans césure interne ; tailles, composition, badges et poinçon inchangés. Aucun nouvel effet animé.
+
+## AM1 — mouvement, continuité et réduction
+
+- [ ] Menus de statut (œuvre et bibliothèque), compte desktop et tri : fondu seul, ouverture 140 ms / sortie 100 ms ; aucune translation, échelle ni saut de contenu. Tri et statut appliqués dès le choix.
+- [ ] Compte mobile, recherche, note, critique, cadrage et retrait photo : fondu seul 180/120 ms, panneaux et positions antérieurs conservés. Vérifier la sortie du dialogue natif sans disparition brusque du panneau ni double voile.
+- [ ] Fermer durant l'ouverture puis rouvrir durant la sortie : animation reprise sans flash, aucune fermeture tardive. Répéter rapidement depuis plusieurs déclencheurs.
+- [ ] Dès la fermeture : fond utilisable, scroll libéré, focus rendu sans attendre 120 ms ; aucune commande du contenu sortant atteignable au clavier, lecteur d'écran ou pointeur.
+- [ ] Échap/clic extérieur durant une transition : NSV2 protège immédiatement un écrit modifié, jamais deux alertes ni perte de saisie ; retour à l'éditeur sans remonter une fenêtre.
+- [ ] Photo : choisir/déplacer sans enregistrer, annuler, rouvrir immédiatement ; retrouver la photo enregistrée. Répéter pendant un import : aucune image/erreur tardive et nouveau choix possible.
+- [ ] Retours d'action et copie/partage : fondu 120 ms sur changement réel, texte annoncé une seule fois, aucune réussite anticipée ni action dupliquée. Retourner/quitter le profil pendant une opération.
+- [ ] Navigation, recherche, filtres et saisies immédiats, pas de cascade des livres. Changement de destination sans défilement animé ; ancres internes douces uniquement hors mouvement réduit.
+- [ ] Souris : couleurs d'action sur 120 ms, pression et focus immédiats, pas d'échelle/rebond. Écran tactile : pas de survol persistant ; sélection et focus restent visibles.
+- [ ] Activer la réduction du mouvement avant ouverture, puis pendant une entrée et une sortie : état final immédiat, aucun voile retenu, aucune boucle d'attente animée. Désactiver ensuite : prochains fondus rétablis, pas d'effet rejoué spontanément.
+- [ ] QRM1b inchangé (environ 440 ms) hors mouvement réduit, alternative existante sans rotation dans ce mode. Badges, poinçon et honneurs sans nouvel effet.
+- [ ] Répéter autour du seuil 900 px, redimensionner avec un menu ouvert et vérifier les variantes masquées ; aucune surface invisible interactive. Vérifier mouvement réduit dans CSS et JavaScript.
+
+## Retour mobile et desktop étroit — correctifs candidats à évaluer
+
+Signalement reçu : capture `IMG_0750.png`, Safari, verso arrêté après rotation ; recto en miroir superposé au verso. Ce constat utilisateur n'est pas une recette corrective passée par l'agent.
+
+Second signalement reçu le 1er septembre : fenêtre desktop réduite au minimum, aucune face retournée visible et composition étrange. Aucun correctif n'était encore appliqué lors de ces deux observations.
+
+- [ ] Pour la recette corrective, noter appareil, version Safari, largeur et état du mouvement réduit ; contrôler pendant la rotation et une fois le verso arrêté.
+- [ ] Carte à 320/390/560/768 px et de part et d'autre de 900 px : verso à une colonne, QR centré et lisible, identité/instruction/adresse séparées ; aucun contenu du recto visible en miroir.
+- [ ] Sur desktop, réduire progressivement la fenêtre à 901, 900, 899 px puis au minimum ; la face demandée reste visible, lisible et correctement composée à chaque étape, sans disparition au changement de navigation responsive.
+- [ ] Répéter recto → verso → recto, avec/sans photo, portrait/paysage, mouvement normal/réduit ; dimensions de carte et repère de la commande stables, aucune face invisible interactive.
+- [ ] Glisser un doigt et pincer deux doigts dans le recadrage : la photo seule réagit, ni la page ni la modale ne défilent. Un geste commencé hors image conserve le défilement normal du contenu de la modale.
+- [ ] Après pincement, retirer alternativement l'un puis l'autre doigt et poursuivre avec le doigt restant : aucun saut ; quitter/revenir, annuler le geste ou perdre la capture : aucun contact fantôme.
+- [ ] Comparer aperçu et photo enregistrée à chaque taille, puis rouvrir/annuler ; zoom au curseur inchangé, pas de nouveaux boutons de cadrage.
+
+## Responsive, texte agrandi et contrôles — candidat du volet 3
+
+- [ ] À 320, 390, 560, 899, 900 px puis sur desktop habituel : aucun défilement horizontal de page ; titres, actions, résultats approchants, formulaire de date et messages reviennent à la ligne sans recouvrir un contrôle.
+- [ ] Zoom navigateur et taille de texte à 200 % : Journal, Bibliothèque, Découvrir, œuvre, profil, honneurs, liste publique et cinq fenêtres restent lisibles ; aucune information ni commande ne disparaît. Répéter avec espacement de texte personnalisé si disponible.
+- [ ] Au clavier, parcourir tous les champs : bordure identifiable au repos et halo brique net au focus. Le focus du champ fichier doit entourer « Choisir une image » / « Choisir une autre image » sans faire apparaître un contrôle de fichier minuscule.
+- [ ] Dans l'évaluation : Tab entre sur l'étoile sélectionnée, ou la première sans note ; flèches droite/bas et gauche/haut déplacent focus et sélection avec boucle ; Début/Fin rejoignent 1/5 ; Espace sélectionne ; Retirer remet une entrée clavier logique.
+- [ ] Navigation desktop et mobile : la destination active est annoncée comme page courante. Compte, statut et honneurs annoncent leur état développé et leur surface associée ; Échap et Tab conservent un ordre visible.
+- [x] Critiques et réponses : l'avatar et le nom de Maël, Lina, Théo et Inès ouvrent chacun le bon profil, avec des états de suivi indépendants. Validé par l'utilisateur sur la version 31 le 2 septembre 2026.
+- [ ] Mesurer dans le rendu final les limites des champs et le halo de focus, y compris en contraste forcé. Vérifier les cibles compte/fermeture au toucher et l'absence de chevauchement avec les titres longs.
+
+## Volet 4 — validation regroupée et décision de clôture
+
+Les **101/101 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette et les sources canoniques de données simulées.
+
+- [ ] Parcourir Journal → Bibliothèque → Découvrir → œuvre → profil de Lina → chacune de ses listes → honneurs → retours ; vérifier titres, destination courante, origine des retours et absence de page blanche.
+- [ ] Suivre/ne plus suivre Lina depuis Découvrir, son profil et une liste : état et libellé identiques à chaque destination, y compris après les retours.
+- [ ] Ajouter une œuvre depuis Découvrir, la retrouver dans Bibliothèque, annuler puis recommencer ; aucune trace ou saisie sans rapport n'est perdue.
+- [ ] Enregistrer En cours puis Lu avec Aujourd'hui, une date choisie et Plus tard ; Journal, œuvre et Bibliothèque affichent le même statut, la bonne date et les traces attendues.
+- [ ] Publier puis annuler une critique, modifier puis protéger une note, retirer puis restaurer une œuvre ; écrits, évaluation, focus et message temporaire restent cohérents.
+- [ ] Ouvrir le profil public par son QR dans le contexte autorisé : aucun contrôle propriétaire ; revenir au profil propriétaire et vérifier photo, carte, partage, titre et trois badges exposés.
+- [ ] Rejouer les contrôles prioritaires Safari/carte, recadrage tactile, 200 % de texte, clavier/focus, mouvement réduit et interruptions rapides des sections précédentes.
+- [ ] Noter chaque anomalie avec navigateur, appareil, largeur, mouvement réduit et étapes ; ne cocher que les scénarios réellement exécutés.
+- [x] Après correction éventuelle, décider explicitement : le jalon regroupé est validé par l'utilisateur le 2 septembre 2026 sur la version 31.
+- [x] Après validation : bilan et documents de clôture mis à jour ; synchronisation GitHub directe engagée puis contrôlée séparément. Aucune nouvelle publication Sites n'est nécessaire.
+
+## Reprise de recette — contrôle des trois nouveaux correctifs
+
+- [ ] Sur le même téléphone et à la même largeur que la capture, retourner la carte : signature en tête, QR centré et généreux, nom puis instruction sous le QR, URL seule dans le pied. Aucun élément ne reste à gauche ou à droite dans une ancienne colonne.
+- [ ] Répéter à 320, 390, 520 et 560 px, ainsi qu'à 899/900 px : la hiérarchie du verso reste verticale et aérée, sans modifier l'emprise de la carte ni le repère « Voir le recto ».
+- [ ] Dans Découvrir, suivre puis ne plus suivre Lina depuis « Une sensibilité à découvrir » ; comparer au profil et à la page de liste : mêmes couleurs, mêmes états « Suivre » / « Suivi », même état annoncé.
+- [ ] Saisir du texte dans « Titre ou auteur » sur Safari et Chrome : aucune croix native ; « Effacer » apparaît dans le champ, reste lisible et focalisable, vide requête/résultats puis rend la saisie immédiatement possible.
+- [ ] Avec une souris, survoler un badge puis déplacer le pointeur jusque sur sa fiche : l'intervalle se franchit sans fermeture et les deux actions de la fiche restent cliquables. Quitter ensuite l'ensemble badge–fiche : la fiche disparaît immédiatement. Passer directement sur un autre badge : seule sa fiche apparaît.
+- [ ] Cliquer un badge ou l'ouvrir au clavier avant de quitter sa cellule : la fiche reste disponible pour utiliser ses actions ; Échap, clic extérieur et sortie de la collection la ferment. Sur mobile, le toucher conserve son basculement actuel.
+- [ ] Depuis mon profil, ouvrir chacune des deux listes : Maël Depréville et « Votre liste publique » sont affichés, aucun bouton « Suivre » n'est proposé, l'identité et « Retour à mon profil » ramènent au profil propriétaire.
+- [ ] Refaire depuis le profil de Lina puis depuis Découvrir : Lina reste autrice, son bouton « Suivre/Suivi » conserve son état et le retour vise respectivement son profil ou Découvrir. Depuis le profil public de Maël, vérifier « Auteur de la liste » et le retour au profil public plutôt qu'au profil propriétaire.
+- [ ] Depuis Découvrir, ouvrir successivement chacune des listes lorsqu'elle est proposée : la destination doit conserver la liste réellement choisie, sans retomber systématiquement sur « Des lieux qui racontent ».
+- [ ] Vérifier qu'un changement de nom affiché n'altère ni les droits d'édition d'une réponse, ni le blocage d'un auteur, ni la destination de son profil ; ces règles reposent sur l'identifiant de l'acteur.
+- [x] Depuis chaque trace publique de Maël, Lina, Théo et Inès, ouvrir l'œuvre : la même critique, la même note et le même auteur sont présents dans la section Critiques. Une critique retirée ne doit plus apparaître sur le profil. Validé par l'utilisateur sur la version 31 le 2 septembre 2026.
+- [x] Dans les critiques et les réponses, ouvrir successivement l'avatar puis le nom de Maël, Lina, Théo et Inès : chaque action rejoint le bon profil, sans partager l'état de suivi d'une autre personne. Validé par l'utilisateur sur la version 31 le 2 septembre 2026.

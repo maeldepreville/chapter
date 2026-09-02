@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Home from "../../page";
+import { prototypeActors } from "../../prototype-data";
+
+const reader = prototypeActors.self;
 
 export const metadata: Metadata = {
-  title: "Maël Depréville — Chapter",
-  description: "Le portrait public de Maël Depréville sur Chapter.",
+  title: `${reader.name} — Chapter`,
+  description: `Le portrait public de ${reader.name} sur Chapter.`,
 };
 
 export default function MaelPublicProfilePage() {

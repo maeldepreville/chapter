@@ -112,7 +112,7 @@ test("fallback restores the initiating control after it is re-enabled", async (t
 });
 
 function imageEnvironment(t) {
-  const readers = [], images = [];
+  const readers = [], images = [], frames = new Map(); let nextFrame = 0;
   class Reader {
     readyState = 0;
     constructor() { readers.push(this); }
@@ -121,14 +121,19 @@ function imageEnvironment(t) {
     abort() { this.readyState = 2; }
   }
   class Image { naturalWidth = 800; naturalHeight = 600; constructor() { images.push(this); } }
-  globals(t, { FileReader: Reader, window: { Image, cancelAnimationFrame() {}, requestAnimationFrame() { return 1; } } });
-  return { readers, images };
+  globals(t, { FileReader: Reader, window: {
+    Image,
+    cancelAnimationFrame(id) { frames.delete(id); },
+    requestAnimationFrame(callback) { const id = ++nextFrame; frames.set(id, callback); return id; },
+  } });
+  return { readers, images, flushFrames() { const pending = [...frames.values()]; frames.clear(); pending.forEach((callback) => callback()); } };
 }
 const file = { type: "image/png", size: 1024 };
 const photo = { source: "old", preview: "previous", dimensions: { width: 800, height: 600 }, crop: { x: 10, y: 0, zoom: 1.2 } };
 function cropUI(extra = {}) {
   const harness = hookHarness(); const effects = [];
-  const { PhotoCropper } = createSourceLoader({ react: { ...harness.react, useEffect: (effect) => effects.push(effect) } })(source("phase10.tsx"));
+  let active = true;
+  const { PhotoCropper } = createSourceLoader({ react: { ...harness.react, useLayoutEffect: (effect) => effects.push(effect), useEffect: (effect) => effects.push(effect) }, "./fade": { Fade: () => null, useSurfaceActive: () => active } })(source("phase10.tsx"));
   const saved = []; let closed = 0;
   const props = { currentPhoto: photo, onClose: () => closed++, onSave: (value) => saved.push(value), ...extra };
   const render = () => harness.render(PhotoCropper, props);
@@ -140,15 +145,39 @@ function cropUI(extra = {}) {
     nodes(render(), (n) => n.type === "input" && n.props.type === "file")[0].props.onChange({ currentTarget: input });
     assert.equal(input.value, "");
   };
-  const displayed = (success = true) => {
+  const stage = (width = 320) => {
+    const element = nodes(render(), (n) => n.props.className === "crop-stage")[0];
+    const bounds = { left: 10, top: 20, width, height: width };
+    element.props.ref.current = { getBoundingClientRect: () => bounds };
+    return { props: element.props, target: { getBoundingClientRect: () => bounds, setPointerCapture() {} } };
+  };
+  const displayed = (success = true, width = 320) => {
+    stage(width);
     const element = nodes(render(), (n) => n.type === "img" && n.props.alt === "Image à recadrer")[0];
     const image = { complete: true, naturalWidth: success ? 800 : 0, style: {}, getAttribute: () => element.props.src };
     element.props.ref.current = image;
     element.props[success ? "onLoad" : "onError"]({ currentTarget: image });
     return image;
   };
-  return { render, choose, displayed, button, saved, closed: () => closed, unmount: () => cleanups.forEach((fn) => fn()) };
+  const setActive = (next) => {
+    cleanups.splice(0).forEach((fn) => fn());
+    effects.length = 0;
+    active = next; render();
+    cleanups.push(...effects.splice(0).map((effect) => effect()).filter(Boolean));
+  };
+  return { render, choose, displayed, stage, button, saved, setActive, closed: () => closed, unmount: () => cleanups.forEach((fn) => fn()) };
 }
+test("photo exit cancels immediately and rapid reopen starts from the saved crop", (t) => {
+  const { readers, images } = imageEnvironment(t); const ui = cropUI(); ui.displayed();
+  ui.choose(); readers[0].finish("discarded"); images[0].onload(); ui.displayed();
+  ui.choose(); readers[1].finish("late"); const late = images[1].onload;
+  ui.button("Annuler").props.onClick(); ui.setActive(false); ui.setActive(true); late();
+  assert.equal(nodes(ui.render(), (n) => n.type === "img")[0].props.src, photo.source);
+  assert.equal(ui.button("Enregistrer").props.disabled, true);
+  ui.displayed(); assert.equal(ui.button("Enregistrer").props.disabled, false);
+  ui.choose(); assert.equal(readers.length, 3);
+  assert.equal(ui.saved.length, 0);
+});
 test("newest photo wins despite reversed reader and decode completion", (t) => {
   const { readers, images } = imageEnvironment(t); const ui = cropUI(); ui.displayed();
   ui.choose(); readers[0].finish("A"); const lateDecode = images[0].onload;
@@ -203,6 +232,33 @@ test("retrying the same source remounts its image and zoom never mutates the sav
   assert.notEqual(nodes(ui.render(), (n) => n.type === "img")[0].key, before);
   assert.equal(ui.button("Enregistrer").props.disabled, true);
   ui.displayed(); assert.equal(ui.button("Enregistrer").props.disabled, false);
+});
+test("mobile crop maps gestures to its displayed size and keeps pinch-to-drag continuous", (t) => {
+  const environment = imageEnvironment(t); const ui = cropUI(); const image = ui.displayed(true, 160); environment.flushFrames();
+  const { props, target } = ui.stage(160);
+  const pointer = (pointerId, clientX, clientY = 100) => ({ pointerId, clientX, clientY, currentTarget: target });
+
+  props.onPointerDown(pointer(1, 50));
+  props.onPointerMove(pointer(1, 70));
+  environment.flushFrames();
+  assert.match(image.style.transform, /\+ 25px\)/);
+  props.onPointerUp(pointer(1, 70));
+
+  props.onPointerDown(pointer(1, 50));
+  props.onPointerDown(pointer(2, 110));
+  props.onPointerMove(pointer(2, 140));
+  environment.flushFrames();
+  const afterPinch = image.style.transform;
+  props.onPointerUp(pointer(1, 50));
+  props.onPointerMove(pointer(2, 140));
+  environment.flushFrames();
+  assert.equal(image.style.transform, afterPinch);
+
+  assert.equal(typeof props.onLostPointerCapture, "function");
+  props.onLostPointerCapture(pointer(2, 140));
+  props.onPointerMove(pointer(2, 150));
+  environment.flushFrames();
+  assert.equal(image.style.transform, afterPinch);
 });
 const validPng = "data:image/png;base64," + Buffer.from("\x89PNG\r\n\x1a\nfixture", "latin1").toString("base64");
 test("canvas output rejects empty or malformed data and accepts a PNG fallback", () => {

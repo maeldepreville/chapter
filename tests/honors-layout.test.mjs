@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import ts from "typescript";
+import { fileURLToPath } from "node:url";
+import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-tsx.mjs";
 
 const source = await readFile(new URL("../app/honors-layout.ts", import.meta.url), "utf8");
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
@@ -75,9 +77,41 @@ test("HDE1 renders honors before the four-column family grid and keeps mobile de
 test("HDE1 preserves touch toggling, keyboard opening and a shared outside-click scope", async () => {
   const component = await readFile(new URL("../app/phase10.tsx", import.meta.url), "utf8");
   assert.match(component, /ref=\{wallRef\} className="honors-collection"/);
-  assert.match(component, /if \(preciseHover \|\| event\.detail === 0\) setSelected\(id\)/);
-  assert.match(component, /else setSelected\(\(current\) => current === id \? null : id\)/);
+  assert.match(component, /if \(preciseHover \|\| event\.detail === 0\) setSelection\(\{ id, mode: "persistent" \}\)/);
+  assert.match(component, /current\?\.id === id \? null : \{ id, mode: "persistent" \}/);
   assert.match(component, /matches\(":focus-visible"\)/);
   assert.match(component, /!wallRef\.current\.contains\(event\.target as Node\)/);
   assert.match(component, /event\.key === "Escape"/);
+});
+
+test("desktop hover detail remains reachable then closes with its badge-detail cell", async () => {
+  const harness = hookHarness();
+  const path = fileURLToPath(new URL("../app/phase10.tsx", import.meta.url));
+  const { HonorsView } = createSourceLoader({ react: harness.react })(path);
+  const css = await readFile(new URL("../app/phase10.css", import.meta.url), "utf8");
+  const previousWindow = globalThis.window;
+  globalThis.window = { matchMedia: () => ({ matches: true }) };
+  try {
+    const props = { owner: "self", equippedTitle: "Esprit nomade", showcase: [], onEquip() {}, onToggleShowcase() {}, onBack() {} };
+    const render = () => harness.render(HonorsView, props);
+    const firstBadge = () => nodes(render(), (node) => node.type === "button" && node.props.className === "honor-badge-button")[0];
+    const firstCell = () => nodes(render(), (node) => typeof node.props?.className === "string" && node.props.className.startsWith("honor-cell"))[0];
+    const details = () => nodes(render(), (node) => typeof node.props?.className === "string" && node.props.className.includes("honor-detail"));
+
+    firstBadge().props.onMouseEnter();
+    assert.match(textOf(details()), /Première lumière/);
+    assert.equal(firstBadge().props.onMouseLeave, undefined);
+    assert.match(textOf(details()), /Afficher ce titre sous mon nom/);
+    assert.match(css, /\.honor-detail-desktop::before\s*\{[^}]*height: 0\.55rem/);
+    firstCell().props.onMouseLeave();
+    assert.equal(details().length, 0);
+
+    firstBadge().props.onMouseEnter();
+    firstBadge().props.onClick({ detail: 1 });
+    firstCell().props.onMouseLeave();
+    assert.match(textOf(details()), /Première lumière/);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
 });
