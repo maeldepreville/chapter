@@ -466,3 +466,12 @@ La recette de la version 30 révèle que les « Traces publiques » d'un profil 
 **P11-F35 — corrections candidates :** `app/social-data.ts` devient la source commune des critiques simulées. Les traces de chaque profil filtrent ce registre par auteur, tandis que chaque page d'œuvre le filtre par œuvre ; les critiques personnelles publiées proviennent directement des entrées du lecteur. Une trace ne peut donc plus exister sans sa critique correspondante. Maël, Lina, Théo et Inès disposent tous d'une présentation publique, d'un état de suivi indépendant et d'une destination depuis leur avatar comme depuis leur nom. Cette navigation couvre les critiques, les aperçus de réponse et les conversations développées.
 
 Trois régressions dédiées vérifient la source commune profil–œuvre, l'exposition de chaque identité dans critiques/réponses et l'ouverture réelle du profil de Théo depuis la racine. Vérification complète réussie : **build de production, lint, `git diff --check` et 101/101 tests**. Le backend social, les routes publiques dynamiques et la persistance restent hors lot 1 ; le registre simule leur futur contrat sans les prétendre réalisés.
+
+### Mise à disposition pour recette — version Sites 31
+
+- Source P11-F35 commitée au SHA `904d2dfbf8fbcb5bb7dc6b8f710f24907f3d1570` et envoyée uniquement sur le dépôt technique `origin` du Site. Le distant GitHub `github` reste inchangé.
+- Build exact du commit réussi, archive enregistrée comme version **31** : `appgprj_6a89f5d96774819197b23b79c7c07abd~appgver_fd6d9ca4275081918cd842fe6a562f4d`.
+- Déploiement privé propriétaire réussi : `appgdep_6a98860710d8819190c3e749fdfb7124`, URL `https://chapter-reading.smrdsh.chatgpt.site`.
+- Contrôle après publication : version courante 31 et provenance égale au SHA candidat.
+
+La version 31 remplace la version 30 comme base de recette visible. Elle ne constitue ni une validation de P11-F35, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.

@@ -8,11 +8,11 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Candidat visible :** version Sites 30, déployée en accès propriétaire pour recette. Un candidat P11-F35 plus récent synchronise les traces publiques avec les pages d'œuvres et rend chaque identité sociale navigable ; build, lint, `git diff --check` et 101/101 tests réussissent avant publication.
-- **Source de travail :** P11-F35 est en préparation sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
+- **Candidat visible :** version Sites 31, déployée en accès propriétaire pour recette. Elle synchronise les traces publiques avec les pages d'œuvres et rend chaque identité sociale navigable ; build, lint, `git diff --check` et 101/101 tests réussissent.
+- **Source de travail :** P11-F35 est consigné sur le dépôt Sites au SHA `904d2dfbf8fbcb5bb7dc6b8f710f24907f3d1570` ; aucune synchronisation GitHub du jalon non validé.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** publier P11-F35, puis vérifier les critiques de Maël, Lina, Théo et Inès entre profils, œuvres et conversations.
+- **Prochaine étape produit :** vérifier les critiques de Maël, Lina, Théo et Inès entre profils, œuvres et conversations sur la version 31.
 
 ## Invariants à préserver
 

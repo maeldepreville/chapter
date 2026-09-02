@@ -176,7 +176,7 @@ Les **101/101 tests automatisés**, la construction de production et le lint ré
 - [ ] Rejouer les contrôles prioritaires Safari/carte, recadrage tactile, 200 % de texte, clavier/focus, mouvement réduit et interruptions rapides des sections précédentes.
 - [ ] Noter chaque anomalie avec navigateur, appareil, largeur, mouvement réduit et étapes ; ne cocher que les scénarios réellement exécutés.
 - [ ] Après correction éventuelle, décider explicitement : valider le jalon regroupé ou demander une reprise. Ne pas assimiler l'absence d'autre remarque à une validation.
-- [ ] Après validation seulement : vérifier la mise à jour du bilan et la synchronisation GitHub du commit accepté. La version Sites 30 étant déjà le support de recette, ne décider d'une nouvelle publication que si une reprise supplémentaire la rend nécessaire.
+- [ ] Après validation seulement : vérifier la mise à jour du bilan et la synchronisation GitHub du commit accepté. La version Sites 31 étant déjà le support de recette, ne décider d'une nouvelle publication que si une reprise supplémentaire la rend nécessaire.
 
 ## Reprise de recette — contrôle des trois nouveaux correctifs
 

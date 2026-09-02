@@ -6,7 +6,7 @@ Dernière mise à jour : 2 septembre 2026.
 
 Le périmètre technique de la phase 11 et du lot 1 est **constitué puis repris après de nouveaux retours de recette, comme candidat à la validation utilisateur**. Il n'est pas encore déclaré accepté ni clôturé : la nouvelle composition de la carte retournée sur Safari mobile et desktop étroit, les gestes de recadrage, le responsive, le texte agrandi et les contrôles accessibles restent à évaluer.
 
-La version Sites **30** du présent candidat est désormais déployée en accès propriétaire à la demande explicite de l'utilisateur, afin de permettre sa recette sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 29, conserve la propriété des listes ouvertes depuis un profil et ajoute l'audit des données codées en dur. Cette publication ne vaut pas validation. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra encore être réalisée et vérifiée.
+La version Sites **31** du présent candidat est désormais déployée en accès propriétaire à la demande explicite de l'utilisateur, afin de permettre sa recette sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. Cette publication ne vaut pas validation. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra encore être réalisée et vérifiée.
 
 ## Périmètre consolidé
 
@@ -59,4 +59,4 @@ La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_1
 
 ## Condition de clôture
 
-La phase 11 et le lot 1 pourront être déclarés terminés après : évaluation du candidat dans les contextes ci-dessus, validation explicite de l'utilisateur ou reprise des défauts observés, mise à jour de ce bilan, puis synchronisation GitHub vérifiée du périmètre accepté. La version Sites 30 sert déjà de support de recette ; toute nouvelle publication ultérieure restera liée au périmètre demandé.
+La phase 11 et le lot 1 pourront être déclarés terminés après : évaluation du candidat dans les contextes ci-dessus, validation explicite de l'utilisateur ou reprise des défauts observés, mise à jour de ce bilan, puis synchronisation GitHub vérifiée du périmètre accepté. La version Sites 31 sert déjà de support de recette ; toute nouvelle publication ultérieure restera liée au périmètre demandé.
