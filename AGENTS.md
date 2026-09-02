@@ -21,7 +21,7 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 - Exécuter d'abord les tests ciblés, puis les vérifications complètes adaptées au périmètre. Distinguer preuve automatisée, inspection statique et recette navigateur réelle.
 - Ne pas publier, déployer, modifier la visibilité ou effectuer une action destructive sans l'autorisation correspondante.
 - Après validation explicite d'un jalon, synchroniser directement le périmètre accepté vers `maeldepreville/chapter`, branche `main`, sans force-push ni réécriture. Vérifier ensuite la référence distante. Suivre `docs/AGENT_WORKFLOW.md` pour la procédure détaillée.
-- La version Sites 31 est une base de recette, pas un jalon validé. Les candidats postérieurs au commit GitHub `9547a2a` ne doivent pas être envoyés sur GitHub avant validation du jalon regroupé.
+- La version Sites 31 est le jalon accepté qui clôt la phase 11 et le lot 1. Le périmètre accepté doit rester synchronisé sur GitHub ; le lot 2 ne s'ouvre qu'après un cadrage explicite.
 
 ## Références à la demande
 

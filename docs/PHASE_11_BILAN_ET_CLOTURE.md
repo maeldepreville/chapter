@@ -1,14 +1,14 @@
-# Phase 11 — Bilan et clôture candidate du lot 1
+# Phase 11 — Bilan et clôture du lot 1
 
 Dernière mise à jour : 2 septembre 2026.
 
 ## Statut exact
 
-Le périmètre technique de la phase 11 et du lot 1 est **constitué puis repris après de nouveaux retours de recette, comme candidat à la validation utilisateur**. Il n'est pas encore déclaré accepté ni clôturé : la nouvelle composition de la carte retournée sur Safari mobile et desktop étroit, les gestes de recadrage, le responsive, le texte agrandi et les contrôles accessibles restent à évaluer.
+Le périmètre technique de la phase 11 et du lot 1 est **accepté et clôturé le 2 septembre 2026**. Après la validation ciblée de P11-F35, l'utilisateur a confirmé explicitement la validation du jalon regroupé de la version Sites 31.
 
-P11-F35 est validé individuellement sur la version 31 : les traces correspondent aux critiques d'œuvre et toutes les identités sociales ouvrent leur profil. La clôture exige encore une validation explicite de l'ensemble du jalon, et non la simple absence d'un nouveau défaut signalé.
+P11-F35 est validé individuellement sur la version 31 : les traces correspondent aux critiques d'œuvre et toutes les identités sociales ouvrent leur profil. La confirmation finale porte ensuite sur l'ensemble du jalon ; elle n'est pas déduite de la simple absence d'un nouveau défaut signalé.
 
-La version Sites **31** du présent candidat est désormais déployée en accès propriétaire à la demande explicite de l'utilisateur, afin de permettre sa recette sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. Cette publication ne vaut pas validation. Après validation explicite du jalon regroupé, la synchronisation GitHub prévue par `AGENTS.md` devra encore être réalisée et vérifiée.
+La version Sites **31** est le jalon accepté, déployé en accès propriétaire sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. La synchronisation GitHub prévue par `AGENTS.md` fait partie de la clôture opérationnelle et doit être vérifiée indépendamment du déploiement Sites.
 
 ## Périmètre consolidé
 
@@ -40,7 +40,7 @@ Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets val
 
 Les tests utilisent rendu serveur, fonctions pures et doublures React/DOM ciblées. Ils ne simulent pas WebKit, un vrai tactile, la disposition à 200 %, un lecteur d'écran ni le contraste forcé. Ils ne cochent donc aucune case de recette manuelle.
 
-## Recette décisive avant acceptation
+## Recette décisive utilisée pour l'acceptation
 
 La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md). L'ordre conseillé pour évaluer le jalon regroupé est :
 
@@ -59,6 +59,6 @@ La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_1
 - La confidentialité décrite correspond aux vues du prototype, pas à une garantie backend.
 - Les avertissements de proxy npm et de classification statique vinext sont des limites d'environnement inchangées ; ils n'ont pas empêché la construction.
 
-## Condition de clôture
+## Décision de clôture
 
-La phase 11 et le lot 1 pourront être déclarés terminés après : évaluation du candidat dans les contextes ci-dessus, validation explicite de l'utilisateur ou reprise des défauts observés, mise à jour de ce bilan, puis synchronisation GitHub vérifiée du périmètre accepté. La version Sites 31 sert déjà de support de recette ; toute nouvelle publication ultérieure restera liée au périmètre demandé.
+La condition est remplie : l'utilisateur valide explicitement le jalon regroupé de la version 31 le 2 septembre 2026. La phase 11 et le lot 1 sont donc terminés. Les cases manuelles non consignées individuellement restent des limites de preuve historiques et ne permettent pas de revendiquer un audit exhaustif d'accessibilité. Le lot 2 devra être cadré séparément avant toute implémentation ; aucune nouvelle publication Sites n'est nécessaire pour cette clôture documentaire.

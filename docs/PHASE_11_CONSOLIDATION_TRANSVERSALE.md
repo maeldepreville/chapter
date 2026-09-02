@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2 septembre 2026.
 
-Statut : **trois ensembles puis charte AM1 validés et implémentés ; CT1 refusé. Le volet 4 est constitué, puis repris après recette utilisateur : verso mobile, suivi, recherche et durée de la fiche d'honneur au survol. Un nouveau candidat Sites est préparé pour réévaluation ; le jalon reste sans validation finale ni synchronisation GitHub.**
+Statut : **phase 11 et lot 1 clôturés le 2 septembre 2026 sur la version Sites 31. Trois ensembles puis la charte AM1 sont validés et implémentés ; CT1 reste refusé. Les reprises de recette du volet 4 sont intégrées et le jalon regroupé est accepté.**
 
 ## 1. Point de départ et limites
 
@@ -479,3 +479,11 @@ La version 31 remplace la version 30 comme base de recette visible. Elle ne cons
 ### Validation de P11-F35
 
 Le 2 septembre 2026, après vérification de la version 31, l'utilisateur valide la cohérence des traces et la navigation de toutes les identités. Il confirme comprendre que les routes publiques dynamiques, la persistance et les autres cohérences de données sociales seront renforcées par le futur backend. P11-F35 est donc accepté. Cette validation ciblée ne clôt pas implicitement le jalon regroupé : la décision finale sur l'ensemble de la phase 11 reste distincte.
+
+## 25. Validation du jalon regroupé et clôture
+
+Le 2 septembre 2026, invité à confirmer la validation du jalon complet de la version 31, l'utilisateur répond explicitement « Je valides. ». Cette décision succède à la recette des reprises et à l'acceptation ciblée de P11-F35 : elle porte sur l'ensemble regroupé, clôt la phase 11 et termine le lot 1.
+
+La référence fonctionnelle acceptée reste la version Sites 31, issue du SHA `904d2dfbf8fbcb5bb7dc6b8f710f24907f3d1570`, avec **build de production, lint, `git diff --check` et 101/101 tests réussis**. Les limites de preuve demeurent : les cases manuelles non consignées séparément ne deviennent pas des tests exécutés par l'agent et aucune conformité WCAG globale n'est revendiquée. Le backend, l'authentification, la persistance et les routes publiques dynamiques restent hors lot 1.
+
+Conformément à la règle permanente du dépôt, cette validation déclenche la synchronisation directe et vérifiée de la branche `main` de `maeldepreville/chapter`. Le lot 2 n'est pas ouvert par cette clôture : son périmètre devra faire l'objet d'un cadrage distinct.

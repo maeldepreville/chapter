@@ -1,6 +1,6 @@
 # Phase 11 — Recette des ensembles, d'AM1 et du correctif responsive
 
-Date : 1er septembre 2026. Statut : **recette finale du jalon regroupé à effectuer**, cases non exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes, couvertures en erreur, import/recadrage, copie/partage, textes longs, mouvement AM1, correctifs responsive/tactiles et parcours transversaux ; aucune refonte graphique. CT1 est refusé. Publication et synchronisation différées jusqu'à la validation du jalon.
+Date : 1er septembre 2026. Statut mis à jour le 2 septembre : **jalon regroupé accepté par l'utilisateur sur la version 31**. Les cases non cochées restent des scénarios sans relevé individuel et ne doivent pas être présentées comme exécutées par l'agent. Périmètre : superpositions, focus, fermetures, protection NSV2, états vides, données manquantes, couvertures en erreur, import/recadrage, copie/partage, textes longs, mouvement AM1, correctifs responsive/tactiles et parcours transversaux ; aucune refonte graphique. CT1 est refusé.
 
 ## Conditions
 
@@ -160,7 +160,7 @@ Second signalement reçu le 1er septembre : fenêtre desktop réduite au minimum
 - [ ] Au clavier, parcourir tous les champs : bordure identifiable au repos et halo brique net au focus. Le focus du champ fichier doit entourer « Choisir une image » / « Choisir une autre image » sans faire apparaître un contrôle de fichier minuscule.
 - [ ] Dans l'évaluation : Tab entre sur l'étoile sélectionnée, ou la première sans note ; flèches droite/bas et gauche/haut déplacent focus et sélection avec boucle ; Début/Fin rejoignent 1/5 ; Espace sélectionne ; Retirer remet une entrée clavier logique.
 - [ ] Navigation desktop et mobile : la destination active est annoncée comme page courante. Compte, statut et honneurs annoncent leur état développé et leur surface associée ; Échap et Tab conservent un ordre visible.
-- [ ] Critiques : seul l'avatar de Lina est activable et ouvre son profil ; Maël, Théo et Inès ne créent aucun arrêt clavier sans action. Le rendu visuel des quatre avatars reste identique.
+- [x] Critiques et réponses : l'avatar et le nom de Maël, Lina, Théo et Inès ouvrent chacun le bon profil, avec des états de suivi indépendants. Validé par l'utilisateur sur la version 31 le 2 septembre 2026.
 - [ ] Mesurer dans le rendu final les limites des champs et le halo de focus, y compris en contraste forcé. Vérifier les cibles compte/fermeture au toucher et l'absence de chevauchement avec les titres longs.
 
 ## Volet 4 — validation regroupée et décision de clôture
@@ -175,8 +175,8 @@ Les **101/101 tests automatisés**, la construction de production et le lint ré
 - [ ] Ouvrir le profil public par son QR dans le contexte autorisé : aucun contrôle propriétaire ; revenir au profil propriétaire et vérifier photo, carte, partage, titre et trois badges exposés.
 - [ ] Rejouer les contrôles prioritaires Safari/carte, recadrage tactile, 200 % de texte, clavier/focus, mouvement réduit et interruptions rapides des sections précédentes.
 - [ ] Noter chaque anomalie avec navigateur, appareil, largeur, mouvement réduit et étapes ; ne cocher que les scénarios réellement exécutés.
-- [ ] Après correction éventuelle, décider explicitement : valider le jalon regroupé ou demander une reprise. Ne pas assimiler l'absence d'autre remarque à une validation.
-- [ ] Après validation seulement : vérifier la mise à jour du bilan et la synchronisation GitHub du commit accepté. La version Sites 31 étant déjà le support de recette, ne décider d'une nouvelle publication que si une reprise supplémentaire la rend nécessaire.
+- [x] Après correction éventuelle, décider explicitement : le jalon regroupé est validé par l'utilisateur le 2 septembre 2026 sur la version 31.
+- [x] Après validation : bilan et documents de clôture mis à jour ; synchronisation GitHub directe engagée puis contrôlée séparément. Aucune nouvelle publication Sites n'est nécessaire.
 
 ## Reprise de recette — contrôle des trois nouveaux correctifs
 
