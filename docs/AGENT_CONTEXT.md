@@ -8,11 +8,11 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 
 - **Phase active :** phase 11, consolidation transversale et clôture candidate du lot 1.
 - **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Candidat visible :** version Sites 30, déployée en accès propriétaire pour recette. Elle centralise les données simulées et corrige les identités/listes encore codées en dur ; build, lint, `git diff --check` et 98/98 tests réussissent.
-- **Source de travail :** la source technique de P11-F34 est consignée sur le dépôt Sites au SHA `9bce0e85869a1ceb5c10fbfa9f212beaa2a1e664` ; aucune synchronisation GitHub du jalon non validé.
+- **Candidat visible :** version Sites 30, déployée en accès propriétaire pour recette. Un candidat P11-F35 plus récent synchronise les traces publiques avec les pages d'œuvres et rend chaque identité sociale navigable ; build, lint, `git diff --check` et 101/101 tests réussissent avant publication.
+- **Source de travail :** P11-F35 est en préparation sur le dépôt Sites ; aucune synchronisation GitHub du jalon non validé.
 - **Validation :** le jalon regroupé n'est pas encore accepté. Safari mobile, desktop étroit, gestes de recadrage, texte à 200 %, clavier et technologies d'assistance restent à évaluer.
 - **GitHub :** `maeldepreville/chapter` reste volontairement sur `9547a2a`. Les versions de recette 26 à 28 et les travaux documentaires ultérieurs ne doivent pas y être synchronisés avant validation explicite du jalon.
-- **Prochaine étape produit :** vérifier les deux listes depuis Découvrir et les profils de Maël/Lina sur la version 30, puis poursuivre la validation du jalon regroupé.
+- **Prochaine étape produit :** publier P11-F35, puis vérifier les critiques de Maël, Lina, Théo et Inès entre profils, œuvres et conversations.
 
 ## Invariants à préserver
 
@@ -24,6 +24,7 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - HDE1/HMT1/P11-F32 : hiérarchie des honneurs, fiche tactile et accès au pointeur conservés.
 - P11-F33 : une liste conserve le propriétaire du profil qui l'a ouverte ; aucun suivi de soi-même sur la liste personnelle.
 - P11-F34 : permissions, destinations et relations utilisent des identifiants stables ; les données statiques intentionnelles sont centralisées et consignées dans `PROTOTYPE_DATA_REGISTER.md`.
+- P11-F35 : une critique publique possède une source commune entre profil et œuvre ; toute identité affichée dans une critique ou une réponse ouvre son profil.
 - PFP1 : JPEG/PNG/WebP, 8 Mo, petit côté minimal de 512 px ; gestes confinés à l'image.
 - N1b : nom de la carte sans césure interne.
 - Critiques publiques limitées à 3 000 caractères ; écrits complets conservés.

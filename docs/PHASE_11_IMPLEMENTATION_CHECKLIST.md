@@ -165,7 +165,7 @@ Second signalement reçu le 1er septembre : fenêtre desktop réduite au minimum
 
 ## Volet 4 — validation regroupée et décision de clôture
 
-Les **98/98 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette et les sources canoniques de données simulées.
+Les **101/101 tests automatisés**, la construction de production et le lint réussis préparent le jalon ; ils ne remplacent aucune case ci-dessous. Les tests du volet vérifient les liaisons de logique entre destinations, statuts/dates/traces et ajout/annulation depuis Découvrir, puis les reprises de recette et les sources canoniques de données simulées.
 
 - [ ] Parcourir Journal → Bibliothèque → Découvrir → œuvre → profil de Lina → chacune de ses listes → honneurs → retours ; vérifier titres, destination courante, origine des retours et absence de page blanche.
 - [ ] Suivre/ne plus suivre Lina depuis Découvrir, son profil et une liste : état et libellé identiques à chaque destination, y compris après les retours.
@@ -190,3 +190,5 @@ Les **98/98 tests automatisés**, la construction de production et le lint réus
 - [ ] Refaire depuis le profil de Lina puis depuis Découvrir : Lina reste autrice, son bouton « Suivre/Suivi » conserve son état et le retour vise respectivement son profil ou Découvrir. Depuis le profil public de Maël, vérifier « Auteur de la liste » et le retour au profil public plutôt qu'au profil propriétaire.
 - [ ] Depuis Découvrir, ouvrir successivement chacune des listes lorsqu'elle est proposée : la destination doit conserver la liste réellement choisie, sans retomber systématiquement sur « Des lieux qui racontent ».
 - [ ] Vérifier qu'un changement de nom affiché n'altère ni les droits d'édition d'une réponse, ni le blocage d'un auteur, ni la destination de son profil ; ces règles reposent sur l'identifiant de l'acteur.
+- [ ] Depuis chaque trace publique de Maël, Lina, Théo et Inès, ouvrir l'œuvre : la même critique, la même note et le même auteur sont présents dans la section Critiques. Une critique retirée ne doit plus apparaître sur le profil.
+- [ ] Dans les critiques et les réponses, ouvrir successivement l'avatar puis le nom de Maël, Lina, Théo et Inès : chaque action rejoint le bon profil, sans partager l'état de suivi d'une autre personne.

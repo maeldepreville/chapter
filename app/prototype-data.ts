@@ -1,5 +1,5 @@
-export type ProfileOwner = "self" | "public-self" | "lina";
 export type PrototypeActorId = "self" | "lina" | "theo" | "ines";
+export type ProfileOwner = "self" | "public-self" | Exclude<PrototypeActorId, "self">;
 
 export const CURRENT_READER_ID: PrototypeActorId = "self";
 
@@ -29,8 +29,24 @@ export const profilePresentations = {
     intro: "Je rassemble des romans où les paysages gardent une mémoire et où chaque détour ouvre une manière différente d’habiter le monde.",
     favorites: ["rivage", "lucioles", "sel"],
   },
-} as const satisfies Record<ProfileOwner, { actorId: "self" | "lina"; defaultTitle: string; intro: string; favorites: readonly string[] }>;
+  theo: {
+    actorId: "theo",
+    defaultTitle: "Lecteur au long cours",
+    intro: "Je lis les récits qui prennent leur temps, déplacent patiemment leurs lignes et donnent envie de revenir aux premières pages.",
+    favorites: ["atlas", "cartographies", "lucioles"],
+  },
+  ines: {
+    actorId: "ines",
+    defaultTitle: "Éclat sensible",
+    intro: "Je garde les livres qui font affleurer une émotion sans l’expliquer et transforment un détail familier en souvenir durable.",
+    favorites: ["miroirs", "cartographies", "rivage"],
+  },
+} as const satisfies Record<ProfileOwner, { actorId: PrototypeActorId; defaultTitle: string; intro: string; favorites: readonly string[] }>;
 
-export function actorIdForProfile(owner: ProfileOwner): "self" | "lina" {
+export function actorIdForProfile(owner: ProfileOwner): PrototypeActorId {
   return profilePresentations[owner].actorId;
+}
+
+export function profileOwnerForActor(actorId: PrototypeActorId): ProfileOwner {
+  return actorId === CURRENT_READER_ID ? "self" : actorId;
 }

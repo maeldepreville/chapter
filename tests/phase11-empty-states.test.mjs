@@ -25,7 +25,7 @@ test("all principal views render an empty catalogue without substituting a work"
     assert.doesNotMatch(rendered, /class="(?:book-cover|favorite-cover|discovery-cover|public-list-cover)/);
   }
   assert.match(discover({ works: [] }), /Aucune œuvre disponible/);
-  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Œuvre indisponible/);
+  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Aucune critique publiée pour le moment/);
   assert.match(publicList([]), /Aucune œuvre de cette liste/);
 });
 
@@ -61,11 +61,12 @@ test("missing discovery primary retains its real echoes but does not promote a f
 });
 
 test("profile partial favorites and public reviews retain their real identities", () => {
-  const rendered = html(ProfileView, { ...profileProps, works: [works[0]] });
+  const personalReviews = [{ authorId: "self", workId: "cartographies", rating: 4, date: "Aujourd’hui", text: "Une trace réellement publiée." }];
+  const rendered = html(ProfileView, { ...profileProps, works: [works[0]], personalReviews });
   assert.equal((rendered.match(/class="favorite-cover/g) ?? []).length, 1);
   assert.match(rendered, /1 œuvre disponible sur 6/);
-  assert.match(rendered, /Œuvre indisponible/);
-  assert.match(rendered, /Le livre avance par signes minuscules/);
+  assert.match(rendered, /Une trace réellement publiée/);
+  assert.doesNotMatch(rendered, /Le livre avance par signes minuscules/);
   assert.doesNotMatch(rendered, /Atlas des nuits calmes/);
 });
 

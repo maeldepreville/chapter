@@ -458,3 +458,11 @@ Une régression dédiée protège la transmission des identifiants, l'absence de
 - Contrôle après publication : version courante 30, provenance égale au SHA candidat, accès personnalisé limité au propriétaire sans groupe autorisé.
 
 La version 30 remplace la version 29 comme base de recette visible. Elle ne constitue ni une validation de P11-F34, ni une clôture de la phase 11 ou du lot 1, ni une autorisation de synchronisation GitHub.
+
+## 24. Reprise de recette — cohérence des traces et profils sociaux
+
+La recette de la version 30 révèle que les « Traces publiques » d'un profil étaient des textes autonomes : ouvrir l'œuvre ne garantissait donc ni la présence de cette critique, ni le même contenu. L'utilisateur confirme également que la limitation historique aux seuls liens de Lina doit disparaître : toute apparition d'un profil doit être navigable, sur le modèle d'un réseau social cohérent.
+
+**P11-F35 — corrections candidates :** `app/social-data.ts` devient la source commune des critiques simulées. Les traces de chaque profil filtrent ce registre par auteur, tandis que chaque page d'œuvre le filtre par œuvre ; les critiques personnelles publiées proviennent directement des entrées du lecteur. Une trace ne peut donc plus exister sans sa critique correspondante. Maël, Lina, Théo et Inès disposent tous d'une présentation publique, d'un état de suivi indépendant et d'une destination depuis leur avatar comme depuis leur nom. Cette navigation couvre les critiques, les aperçus de réponse et les conversations développées.
+
+Trois régressions dédiées vérifient la source commune profil–œuvre, l'exposition de chaque identité dans critiques/réponses et l'ouverture réelle du profil de Théo depuis la racine. Vérification complète réussie : **build de production, lint, `git diff --check` et 101/101 tests**. Le backend social, les routes publiques dynamiques et la persistance restent hors lot 1 ; le registre simule leur futur contrat sans les prétendre réalisés.

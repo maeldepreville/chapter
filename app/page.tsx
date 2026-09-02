@@ -9,7 +9,8 @@ import { Fade } from "./fade";
 import { lockBodyScroll } from "./modal-behavior";
 import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
 import type { PublicListId } from "./catalogue";
-import { actorIdForProfile, CURRENT_READER_ID, prototypeActors, type ProfileOwner } from "./prototype-data";
+import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
+import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
 
 type ReadingStatus = "À lire" | "En cours" | "Lu";
@@ -283,8 +284,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [profileOwner, setProfileOwner] = useState<ProfileOwner>(initialProfileOwner ?? "self");
-  const [followingLina, setFollowingLina] = useState(false);
-  const [followingMael, setFollowingMael] = useState(false);
+  const [followingActors, setFollowingActors] = useState<Record<PrototypeActorId, boolean>>({ self: false, lina: false, theo: false, ines: false });
   const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeId[]>(["reading2", "exploration2", "expression2"]);
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
@@ -346,12 +346,20 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     openView("profile");
   };
 
+  const openActorProfile = (actorId: PrototypeActorId) => openProfile(profileOwnerForActor(actorId));
+  const toggleFollow = (actorId: PrototypeActorId) => setFollowingActors((current) => ({ ...current, [actorId]: !current[actorId] }));
+
   const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
     setPublicListId(listId);
     setPublicListOrigin(origin);
     setPublicListOwner(owner);
     openView("list");
   };
+
+  const personalPublicReviews: readonly PrototypePublicReview[] = works.flatMap((work) => {
+    const personalEntry = entries[work.id];
+    return personalEntry?.review ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
+  });
 
   const openDiscoverWithQuery = (query: string) => {
     setDiscoverInitialQuery(query.trim());
@@ -714,18 +722,18 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onBackToJournal={() => openView("journal")}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onAddToRead={addDiscoveryToRead}
-            onOpenProfile={openProfile}
+            onOpenProfile={(owner) => openProfile(owner)}
             onOpenList={(listId) => openPublicList(listId, "discover", "lina")}
-            followingLina={followingLina}
-            onToggleFollow={() => setFollowingLina((value) => !value)}
+            followingLina={followingActors.lina}
+            onToggleFollow={() => toggleFollow("lina")}
             initialQuery={discoverInitialQuery}
           />
         ) : currentView === "profile" ? (
           <ProfileView
             owner={profileOwner}
             works={works}
-            following={profileOwner === "lina" ? followingLina : followingMael}
-            onToggleFollow={() => profileOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)}
+            following={followingActors[actorIdForProfile(profileOwner)]}
+            onToggleFollow={() => toggleFollow(actorIdForProfile(profileOwner))}
             onOpenWork={(id) => selectWork(id as WorkId)}
             onOpenHonors={() => openView("honors")}
             onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
@@ -734,11 +742,12 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onRemovePhoto={() => setProfilePhoto(null)}
             equippedTitle={equippedTitle}
             showcase={showcaseBadges}
+            personalReviews={personalPublicReviews}
           />
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={publicListOwner === "lina" ? followingLina : followingMael} onToggleFollow={() => publicListOwner === "lina" ? setFollowingLina((value) => !value) : setFollowingMael((value) => !value)} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}`} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}`} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -975,7 +984,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} onOpenProfile={() => openProfile("lina")} onWriteReview={openReview} /></div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>

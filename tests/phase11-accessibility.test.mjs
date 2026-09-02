@@ -35,7 +35,7 @@ test("small screens keep text and form controls reflowable", () => {
   assert.match(phase10, /\.file-action:has\(input:focus-visible\)\s*\{[^}]*outline: 3px solid var\(--brick\);/s);
 });
 
-test("navigation identifies the current destination and inert avatars are not buttons", () => {
+test("navigation identifies the current destination and every review identity opens a profile", () => {
   const harness = hookHarness();
   const load = createSourceLoader({ react: harness.react });
   const Home = load(source("page.tsx")).default;
@@ -46,10 +46,12 @@ test("navigation identifies the current destination and inert avatars are not bu
 
   const socialHarness = hookHarness();
   const { SocialReviews } = createSourceLoader({ react: socialHarness.react })(source("phase10.tsx"));
-  const renderReviews = () => socialHarness.render(SocialReviews, { workId: "cartographies", personalReview: "", personalRating: 0, onOpenProfile() {}, onWriteReview() {} });
-  const profileAvatars = nodes(renderReviews(), (node) => node.props?.className === "avatar avatar-button");
-  assert.equal(profileAvatars.length, 1);
-  assert.equal(profileAvatars[0].props["aria-label"], "Ouvrir le profil de Lina Morel");
+  const opened = [];
+  const renderReviews = () => socialHarness.render(SocialReviews, { workId: "cartographies", personalReview: "", personalRating: 0, onOpenProfile(actorId) { opened.push(actorId); }, onWriteReview() {} });
+  const reviewAuthors = nodes(renderReviews(), (node) => node.props?.className === "review-author-button");
+  assert.deepEqual(reviewAuthors.map(textOf), ["Lina Morel18 août 2026", "Théo Renaud12 août 2026", "Inès Naël3 août 2026"]);
+  reviewAuthors.forEach((button) => button.props.onClick());
+  assert.deepEqual(opened, ["lina", "theo", "ines"]);
   assert.match(phase10Component, /role="region" aria-label=\{`Détails de \$\{badge\.title\}`\}/);
   assert.doesNotMatch(phase10Component, /honor-detail honor-detail-\$\{placement\}`\} role="status"/);
 });

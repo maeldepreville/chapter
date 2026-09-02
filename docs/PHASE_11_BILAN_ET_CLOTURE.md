@@ -23,6 +23,7 @@ La version Sites **30** du présent candidat est désormais déployée en accès
 | Honneurs au pointeur | Le badge, son intervalle et sa fiche forment une zone interactive précise : les actions restent atteignables au survol, puis la fiche se ferme à la sortie de cet ensemble ; clic, clavier et toucher conservent une ouverture persistante. |
 | Propriété des listes | Une liste conserve Maël ou Lina depuis son profil d'origine ; auteur, suivi, ouverture du profil et retour utilisent tous cette même identité. La propre liste de Maël n'affiche aucun abonnement à soi-même. |
 | Données codées en dur | Les identités, listes et URL partagées ont une source canonique ; permissions et navigation reposent sur des identifiants stables. Les fixtures restantes et leur future source backend sont consignées dans `PROTOTYPE_DATA_REGISTER.md`. |
+| Profils et critiques publiques | Une trace de profil et sa critique sur l'œuvre dérivent du même registre. Maël, Lina, Théo et Inès ont un profil navigable depuis leurs critiques, avatars, noms et réponses ; les suivis restent distincts par identité. |
 
 Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets validés et la limite de 3 000 caractères restent inchangés. CT1 demeure refusé : aucun bouton directionnel ou de recentrage n'est ajouté au recadrage.
 
@@ -30,7 +31,7 @@ Les choix PDR1B, PFP1, N1b, QR1, QRP1b, QRM1b, HDE1, HV1 et HMT1, les assets val
 
 - Construction de production réussie.
 - Lint final sans erreur après constitution du dossier de clôture.
-- **98/98 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la propriété des listes publiques, l'audit des données codées en dur et trois contrôles de l'infrastructure documentaire.
+- **101/101 tests automatisés réussis**, dont les parcours racine, les régressions de reprise visuelle, la propriété des listes publiques, la cohérence profil–œuvre, la navigation de toutes les identités sociales et trois contrôles de l'infrastructure documentaire.
 - Rendu de la page principale et de la route publique vérifié depuis le worker produit.
 - `git diff --check` final sans anomalie.
 - Aucune dépendance, ressource graphique ou donnée de catalogue nouvelle dans le diff de phase 11.

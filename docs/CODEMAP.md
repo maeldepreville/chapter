@@ -7,11 +7,11 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
 | Journal, œuvre, Bibliothèque, état racine | `app/page.tsx` | `journal-model.ts`, `library-sort.tsx`, `catalogue.ts`, `cover-frame.tsx` | `rendered-html`, `library-sort`, `phase11-empty-states`, `phase11-journeys` |
-| Identités et données de profils simulées | `app/prototype-data.ts` | `site-config.ts`, `profile-share.ts` | `hardcoded-data`, `profile-layout`, `profile-qr` |
+| Identités et données de profils simulées | `app/prototype-data.ts` | `social-data.ts`, `site-config.ts`, `profile-share.ts` | `hardcoded-data`, `social-profiles`, `profile-layout`, `profile-qr` |
 | Découvrir | `DiscoverView` dans `app/phase10.tsx` | `catalogue.ts`, `prototype-data.ts`, `cover-frame.tsx` | `social-controls`, `hardcoded-data`, `phase11-polish`, `phase11-journeys` |
 | Profil et carte de lecteur | `ProfileView` dans `app/phase10.tsx` | `prototype-data.ts`, `site-config.ts`, `profile-share.ts`, `photo-processing.ts` | `profile-layout`, `profile-qr`, `hardcoded-data`, `phase11-recovery`, `phase11-polish` |
 | Honneurs | `HonorsView` dans `app/phase10.tsx` | `honors-layout.ts`, `fade.tsx`, `fade-behavior.ts` | `honors-layout`, `fade-behavior`, `phase11-accessibility`, `phase11-polish` |
-| Listes publiques et conversations | `PublicListView` / `SocialReviews` dans `app/phase10.tsx` | `catalogue.ts`, `prototype-data.ts` | `social-controls`, `hardcoded-data`, `phase11-recovery`, `phase11-journeys` |
+| Listes publiques et conversations | `PublicListView` / `SocialReviews` dans `app/phase10.tsx` | `catalogue.ts`, `prototype-data.ts`, `social-data.ts` | `social-controls`, `social-profiles`, `hardcoded-data`, `phase11-recovery`, `phase11-journeys` |
 | Modales et focus | `modal.tsx` | `modal-behavior.ts` | `modal-behavior`, `phase11-accessibility` |
 | Styles globaux | `app/globals.css` | — | `rendered-html`, `phase11-accessibility`, `phase11-polish` |
 | Styles sociaux/profil/honneurs | `app/phase10.css` | — | `profile-layout`, `profile-qr`, `phase11-polish` |

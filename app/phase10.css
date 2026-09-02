@@ -397,6 +397,7 @@
 .profile-review { padding: 1.5rem 0; border-top: 1px solid var(--line); }
 .profile-review:last-child { border-bottom: 1px solid var(--line); }
 .profile-review button { padding: 0; color: var(--brick); background: transparent; border: 0; font-weight: 600; cursor: pointer; }
+.profile-review-rating { display: inline-block; margin-left: 0.8rem; color: var(--brick); font-size: 0.78rem; letter-spacing: 0.06em; }
 .profile-review p { max-width: 42rem; margin: 0.65rem 0 0; font-family: var(--font-editorial); font-size: 1.12rem; }
 
 .honors-page { max-width: 82rem; }
@@ -458,6 +459,17 @@
 .review-group > h3 { margin: 0 0 0.7rem; color: var(--muted); font-size: 0.76rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 .followed-review-group { padding: 1.2rem 1.4rem 0; background: color-mix(in srgb, var(--soft-brick) 48%, transparent); border-left: 2px solid var(--brick); }
 .avatar-button { border: 0; cursor: pointer; }
+.review-author-button,
+.reply-author-button { min-width: 0; padding: 0; color: inherit; text-align: left; background: transparent; border: 0; cursor: pointer; }
+.review-author-button { display: grid; }
+.review-author-button strong { font-size: 0.9rem; font-weight: 600; }
+.review-author-button small { color: var(--muted); font-size: 0.74rem; }
+.reply-author-button { color: var(--ink); font-weight: 600; }
+@media (hover: hover) and (pointer: fine) {
+  .avatar-button:hover,
+  .review-author-button:hover strong,
+  .reply-author-button:hover { color: var(--brick); }
+}
 .compact-review .review-copy { font-size: 1rem; }
 .conversation-toggle,
 .reply-action { margin-left: 3.35rem; }
