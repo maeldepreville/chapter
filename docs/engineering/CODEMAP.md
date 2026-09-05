@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 validé et la candidate P1 locale construits au-dessus de la base acceptée du lot 1. Le contrat actif est dans [`P1_PREMIER_CONTACT_PUBLIC.md`](../milestones/P1_PREMIER_CONTACT_PUBLIC.md).
+Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0, le premier contact public P1 validé et la candidate P2 au-dessus de la base acceptée du lot 1. Le contrat actif est dans [`P2_PREMIER_REPERE.md`](../milestones/P2_PREMIER_REPERE.md).
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
@@ -12,6 +12,7 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | Premier contact public P1 | `app/p1-public.tsx` | `p1-public.css`, `p1-public-fixtures.ts`, `page.tsx` | `p1-public`, `rendered-html`, `fade-behavior` |
 | Illustration éditoriale P1 | `public/editorial/p1-reading-trace.webp` | `assets/editorial/p1-reading-trace-master.png`, `app/p1-public.tsx`, `docs/design/ASSET_SYSTEM.md` | `p1-public` |
 | Routes publiques P1 | `app/decouvrir/page.tsx`, `app/recherche/page.tsx`, `app/oeuvres/[workId]/page.tsx` | `p1-public-fixtures.ts`, `page.tsx` | `p1-public` |
+| Premier repère P2 | `PublicWork` dans `app/p1-public.tsx` | `p2-first-marker.css`, `page.tsx`, `foundation/primitives.tsx`, `modal.tsx` | `p2-first-marker`, `p1-public` |
 | Journal, œuvre, Bibliothèque, état racine | `app/page.tsx` | `foundation/fixtures.ts`, `journal-model.ts`, `library-sort.tsx`, `catalogue.ts`, `cover-frame.tsx` | `rendered-html`, `library-sort`, `phase11-empty-states`, `phase11-journeys` |
 | Identités et données de profils simulées | `app/prototype-data.ts` | `social-data.ts`, `site-config.ts`, `profile-share.ts` | `hardcoded-data`, `social-profiles`, `profile-layout`, `profile-qr` |
 | Découvrir | `DiscoverView` dans `app/phase10.tsx` | `catalogue.ts`, `prototype-data.ts`, `cover-frame.tsx` | `social-controls`, `hardcoded-data`, `phase11-polish`, `phase11-journeys` |

@@ -3,6 +3,7 @@ import { SITE_ORIGIN } from "./site-config";
 import "./globals.css";
 import "./phase10.css";
 import "./p1-public.css";
+import "./p2-first-marker.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),

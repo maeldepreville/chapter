@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **reprise visuelle disponible pour recette privée en version Sites 33 ; validation utilisateur requise**.
+Statut : **validé le 5 septembre 2026 sur la version Sites 34 et synchronisé sur GitHub**.
 
 ## But
 
@@ -67,8 +67,8 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 - [x] La fiche œuvre publique ne contient aucun contrôle réservé à P2, P3 ou P4.
 - [x] Le responsive de référence à 900 px, les cibles tactiles, le focus visible et le mouvement réduit sont préservés statiquement.
 - [x] Tests ciblés, lint, build, suite complète et `git diff --check` réussissent.
-- [ ] La composition, la lisibilité, le rythme, le débordement et les interactions sont validés par recette visuelle desktop et mobile.
-- [ ] L'utilisateur valide explicitement P1 avant synchronisation GitHub ; la mise à disposition Sites pour recette ne vaut pas validation.
+- [x] La composition, la lisibilité, le rythme, le débordement et les interactions sont validés par recette visuelle utilisateur.
+- [x] L'utilisateur valide explicitement P1 avant synchronisation GitHub ; la mise à disposition Sites pour recette ne vaut pas validation.
 
 ## Preuves et limites de la candidate
 
@@ -81,6 +81,8 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 - La version 32 confirme par recette le bon fonctionnement des retours et de la Recherche, dont la composition est conservée. Son premier écran reste refusé dans son rythme et sa singularité visuelle ; la reprise ne vaut pas validation de P1.
 - La reprise est construite, vérifiée et déployée avec succès en version Sites 33 le 5 septembre 2026, toujours sous l'accès privé existant. Son commit produit est `38d08d156fad536128064fb5e0c7ed2bfcebd9f1` et son commit technique de publication est `4c82db330150da397e83d21654af48816bad703e` ; aucun envoi GitHub du candidat non validé n'a été effectué.
 - La recette de la version 33 valide la nouvelle composition mais relève que l'illustration ne charge pas. L'asset est bien présent dans la construction ; son URL était toutefois réécrite vers le service d'optimisation Vinext. Le correctif conserve les dimensions réservées et sert directement le WebP déjà optimisé, sans modifier la composition.
+- Le correctif de chargement est construit, vérifié et déployé avec succès en version Sites 34 le 5 septembre 2026. Son commit produit est `5a79af72e5080a126855588f55541978fc216f86` et son commit technique de publication est `e76eff49933e7982952f4214980fcd0a37cc06b4` ; le rendu serveur référence désormais directement `/editorial/p1-reading-trace.webp` et l'archive publiée contient ce fichier.
+- Après vérification du chargement de l'illustration, l'utilisateur juge la reprise parfaite et valide explicitement P1 le 5 septembre 2026. La version 34 clôt donc le jalon ; les 115 tests, le lint, la construction de production et `git diff --check` réussissent. Les limites backend et les reports vers P2, P4 et P6 demeurent inchangés.
 
 ## Recette utilisateur attendue
 
@@ -91,4 +93,4 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 5. Sur mobile, vérifier les deux destinations inférieures, le rail horizontal à trois directions, le scroll, les longueurs de titres et la fiche œuvre.
 6. Vérifier qu'aucun statut, Journal, Bibliothèque, profil, critique ou commande de compte ne se glisse dans ce premier contact.
 
-La candidate vérifiée est mise directement à disposition sur le Site de recette. Après validation explicite, P1 sera synchronisé sur la branche GitHub `refonte-pre-lot-2`, puis P2 — Premier repère deviendra l'unique prochaine action.
+P1 est validé et synchronisé sur la branche GitHub `refonte-pre-lot-2`, sans fusion vers `main`. Après le blocage initial de la connexion intégrée, l'utilisateur a explicitement autorisé le transfert du WebP public et de son PNG source avec le code P1. P2 — Premier repère devient l'unique prochaine action.

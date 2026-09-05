@@ -43,17 +43,18 @@ test("public discovery explains Chapter and every exposed action has a destinati
   assert.deepEqual(opened, ["cartographies"]);
 });
 
-test("public search is immediate and work pages remain account-free", () => {
+test("public search is immediate and work pages introduce only the P2 personal action", () => {
   const searchMarkup = renderToStaticMarkup(React.createElement(PublicSearch, { works: publicWorks, onOpenWork() {} }));
   assert.match(searchMarkup, /24 œuvres disponibles/);
   assert.match(searchMarkup, /Titre ou auteur/);
 
   const workMarkup = renderToStaticMarkup(React.createElement(PublicWork, {
-    work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {},
+    work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {}, onActivate() {}, onSaveMarker() {},
   }));
   assert.match(workMarkup, /À propos/);
   assert.match(workMarkup, /Chemins voisins/);
-  assert.doesNotMatch(workMarkup, /Ajouter au journal|Ma note|Ma critique|Créer un compte/);
+  assert.match(workMarkup, /Ajouter au journal/);
+  assert.doesNotMatch(workMarkup, /Ma critique|Créer mon compte|Nom public|Suivre/);
 });
 
 test("the root visitor journey opens search and a work while keeping public navigation", () => {

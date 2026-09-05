@@ -14,7 +14,7 @@ import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
 import { shellAttributes, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
 import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
-import { PublicDiscover, PublicSearch, PublicWork } from "./p1-public";
+import { PublicDiscover, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { publicWorks } from "./p1-public-fixtures";
 
 type DatePrompt = "start" | "finish" | null;
@@ -123,6 +123,8 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const [publicSearchQuery, setPublicSearchQuery] = useState("");
   const [publicWorkOrigin, setPublicWorkOrigin] = useState<"discover" | "search">("discover");
+  const [publicActivated, setPublicActivated] = useState(false);
+  const [publicFirstMarkers, setPublicFirstMarkers] = useState<Record<string, FirstMarkerRecord>>({});
   const [publicListId, setPublicListId] = useState<PublicListId>("places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
@@ -554,7 +556,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
             <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
             <button className={currentView === "search" || (currentView === "work" && publicWorkOrigin === "search") ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
           </nav>
-          <span className="p1-public-note">Lire d’abord · créer un compte plus tard</span>
+          <span className="p1-public-note">{publicActivated ? "Votre espace privé est prêt" : "Lire d’abord · créer un compte plus tard"}</span>
         </header>
       ) : <><header className="desktop-header">
         <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
@@ -597,7 +599,20 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
           currentView === "search" ? (
             <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} />
           ) : currentView === "work" && selectedWork ? (
-            <PublicWork work={selectedWork} works={works} backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : "Retour à Découvrir"} onBack={() => openPublicView(publicWorkOrigin)} onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)} />
+            <PublicWork
+              work={selectedWork}
+              works={works}
+              activated={publicActivated}
+              record={publicFirstMarkers[selectedWork.id]}
+              backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : "Retour à Découvrir"}
+              onBack={() => openPublicView(publicWorkOrigin)}
+              onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)}
+              onActivate={(status) => {
+                setPublicActivated(true);
+                setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
+              }}
+              onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
+            />
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
