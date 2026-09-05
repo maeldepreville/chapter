@@ -66,6 +66,7 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
             width={1400}
             height={1050}
             sizes="(max-width: 899px) calc(100vw - 2rem), 58vw"
+            unoptimized
             priority
           />
           <figcaption><span>En marge</span> Une lecture, une trace, un chemin.</figcaption>

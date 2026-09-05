@@ -28,7 +28,8 @@ test("public discovery explains Chapter and every exposed action has a destinati
     onOpenSearch() {},
   }));
   assert.match(markup, /Ici, on commence par une œuvre/);
-  assert.match(markup, /p1-reading-trace\.webp/);
+  assert.match(markup, /src="\/editorial\/p1-reading-trace\.webp"/);
+  assert.doesNotMatch(markup, /_vinext\/image\?url=.*p1-reading-trace/);
   assert.match(markup, /Revue littéraire · journal personnel/);
   assert.doesNotMatch(markup, /Chaque lecture laisse une trace/);
   assert.match(markup, /Rechercher un titre ou un auteur/);

@@ -30,7 +30,8 @@ test("renders Chapter metadata and primary content", async () => {
   assert.match(html, /<title>Chapter — Every book becomes part of your story<\/title>/i);
   assert.match(html, /Les Cartographies du vent/i);
   assert.match(html, /Ici, on commence par une œuvre/i);
-  assert.match(html, /p1-reading-trace\.webp/i);
+  assert.match(html, /src="\/editorial\/p1-reading-trace\.webp"/i);
+  assert.doesNotMatch(html, /_vinext\/image\?url=.*p1-reading-trace/i);
   assert.match(html, /data-shell="public"/);
   assert.doesNotMatch(html, /Mon journal/i);
   assert.doesNotMatch(html, /Ajouter au journal|Écrire une critique/i);
