@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **candidate de recette implémentée ; mise à disposition directe autorisée ; validation utilisateur requise**.
+Statut : **candidate disponible pour recette privée en version Sites 32 ; validation utilisateur requise**.
 
 ## But
 
@@ -75,6 +75,7 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 - Les tests historiques continuent d'exécuter les parcours connectés à travers une injection interne explicite.
 - Les preuves automatisées ne remplacent pas une recette réelle dans Safari/Chrome ni l'inspection visuelle aux largeurs desktop et mobile.
 - Le commit et l'envoi techniques requis pour le Site de recette restent séparés de la synchronisation GitHub du jalon, qui attend sa validation.
+- La source candidate a été enregistrée et déployée avec succès en version Sites 32 le 5 septembre 2026, sous l'accès privé existant. Son commit technique de publication est `c427bef9d5a7b3f11645fb3e2175e0511d5c3901` ; le commit produit P1 reste `da8bebfe443893162457e6d6efbe86d41dcb58f1` sur la branche locale, sans envoi GitHub avant validation.
 
 ## Recette utilisateur attendue
 
