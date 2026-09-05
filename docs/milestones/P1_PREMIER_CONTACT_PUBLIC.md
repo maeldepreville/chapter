@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **validé le 5 septembre 2026 sur la version Sites 34**.
+Statut : **validé le 5 septembre 2026 sur la version Sites 34 ; synchronisation GitHub en attente d'autorisation explicite pour l'asset local**.
 
 ## But
 
@@ -93,4 +93,4 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 5. Sur mobile, vérifier les deux destinations inférieures, le rail horizontal à trois directions, le scroll, les longueurs de titres et la fiche œuvre.
 6. Vérifier qu'aucun statut, Journal, Bibliothèque, profil, critique ou commande de compte ne se glisse dans ce premier contact.
 
-P1 validé est synchronisé sur la branche GitHub `refonte-pre-lot-2`, sans fusion vers `main`. P2 — Premier repère devient l'unique prochaine action.
+P1 est validé. Sa synchronisation sur la branche GitHub `refonte-pre-lot-2` est préparée, mais la connexion intégrée exige une autorisation explicite pour transférer l'illustration locale dans `maeldepreville/chapter`. Aucun fichier P1 n'est encore envoyé et `main` reste inchangé. P2 — Premier repère devient l'unique prochaine action après cette synchronisation.

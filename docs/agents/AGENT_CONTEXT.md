@@ -7,9 +7,9 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2. P1 — Premier contact public est validé sur la version Sites 34. P2 — Premier repère est le prochain jalon.
+- **Phase active :** refonte visible pré-lot 2. P1 — Premier contact public est validé sur la version Sites 34. Sa synchronisation GitHub attend l'autorisation explicite de transférer l'illustration locale ; P2 suit cette synchronisation.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** clôturé le 5 septembre 2026 après validation explicite de la composition reprise, de l'illustration chargée directement, des retours, de la Recherche, du catalogue de 24 œuvres et des fiches `/oeuvres/:workId`. La synchronisation GitHub cible `refonte-pre-lot-2` ; aucune fusion vers `main` n'est autorisée avant P7.
+- **Statut P1 :** clôturé le 5 septembre 2026 après validation explicite de la composition reprise, de l'illustration chargée directement, des retours, de la Recherche, du catalogue de 24 œuvres et des fiches `/oeuvres/:workId`. La synchronisation GitHub cible `refonte-pre-lot-2`, mais aucun fichier P1 n'est encore envoyé : la connexion intégrée exige l'autorisation explicite de transférer l'asset local. Aucune fusion vers `main` n'est autorisée avant P7.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 
