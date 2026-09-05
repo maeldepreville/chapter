@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **candidate disponible pour recette privée en version Sites 32 ; validation utilisateur requise**.
+Statut : **reprise visuelle de la candidate en cours de vérification ; validation utilisateur requise**.
 
 ## But
 
@@ -19,7 +19,9 @@ P1 transforme l'arrivée sur Chapter en expérience publique immédiatement util
 ## Décisions de composition P1
 
 - La racine ouvre Découvrir, pas un écran promotionnel ni une fiche personnelle préremplie.
-- Le premier écran associe une thèse courte à une œuvre immédiatement ouvrable ; la présentation du produit ne repousse pas l'activité principale sous une succession de blocs marketing.
+- Le premier écran associe une entrée éditoriale courte à une illustration-signature, puis conduit immédiatement vers une œuvre ouvrable ; la présentation du produit ne repousse pas l'activité principale sous une succession de blocs marketing.
+- Le retour de recette de la version 32 invalide la monumentalité de l'ancien titre « Chaque lecture laisse une trace. Certaines ouvrent un chemin. » et le rythme trop dépendant des seules couvertures. La reprise adopte « Ici, on commence par une œuvre. », une échelle nettement réduite et une composition texte–illustration plus humaine.
+- L'illustration P1 matérialise la trace laissée par une lecture au moyen d'un livre ouvert et d'un marque-page brique reliant un second ouvrage. Elle apporte une présence visuelle propre à Chapter sans simuler d'interface ou de fonctionnalité.
 - Les directions de découverte utilisent des sensations compréhensibles plutôt qu'un score, une tendance ou une promesse de recommandation personnalisée.
 - La recherche P1 couvre œuvres et auteurs. Lecteurs et listes rejoindront cette surface avec la recomposition sociale de P4.
 - Une œuvre ouverte depuis Recherche revient à Recherche sans perdre la requête de la session ; une œuvre ouverte depuis Découvrir revient à Découvrir.
@@ -38,7 +40,7 @@ Le catalogue P1 contient 24 œuvres fictives cohérentes, chacune reliée à un 
 
 ## Ce qui doit être visible dans la candidate
 
-- une nouvelle arrivée publique « Chaque lecture laisse une trace. Certaines ouvrent un chemin. » ;
+- une nouvelle arrivée publique « Ici, on commence par une œuvre. », accompagnée d'une illustration éditoriale originale ;
 - la navigation publique limitée à `Découvrir` et `Recherche` ;
 - une œuvre d'entrée, trois directions horizontales sur mobile et une continuité éditoriale ;
 - une recherche affichant les 24 œuvres et filtrant au fil de la saisie ;
@@ -76,10 +78,11 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 - Les preuves automatisées ne remplacent pas une recette réelle dans Safari/Chrome ni l'inspection visuelle aux largeurs desktop et mobile.
 - Le commit et l'envoi techniques requis pour le Site de recette restent séparés de la synchronisation GitHub du jalon, qui attend sa validation.
 - La source candidate a été enregistrée et déployée avec succès en version Sites 32 le 5 septembre 2026, sous l'accès privé existant. Son commit technique de publication est `c427bef9d5a7b3f11645fb3e2175e0511d5c3901` ; le commit produit P1 reste `da8bebfe443893162457e6d6efbe86d41dcb58f1` sur la branche locale, sans envoi GitHub avant validation.
+- La version 32 confirme par recette le bon fonctionnement des retours et de la Recherche, dont la composition est conservée. Son premier écran reste refusé dans son rythme et sa singularité visuelle ; la reprise ne vaut pas validation de P1.
 
 ## Recette utilisateur attendue
 
-1. Sur desktop, vérifier la première vue, l'équilibre texte–couverture et la présence immédiate d'une œuvre ouvrable.
+1. Sur desktop, vérifier la nouvelle première vue, l'équilibre texte–illustration, l'échelle du titre et la présence rapide d'une œuvre ouvrable.
 2. Ouvrir les œuvres depuis la mise en avant, chacune des trois directions et les lignes finales ; vérifier le retour à Découvrir.
 3. Ouvrir Recherche, tester un titre, un auteur, une recherche sans résultat, `Effacer` et l'ouverture du résultat.
 4. Recharger directement `/decouvrir`, `/recherche` et une URL telle que `/oeuvres/atlas`.

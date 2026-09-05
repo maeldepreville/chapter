@@ -79,3 +79,11 @@ Avant de produire un asset, renseigner :
 - [ ] Le fichier, son format, ses dimensions, son poids et sa source sont consignés lorsqu'il entre dans le dépôt.
 
 P0 pose les tokens et les emplacements capables d'accueillir ce système. La production d'une campagne complète n'appartient pas à P0 sauf demande explicite.
+
+## Registre des assets éditoriaux intégrés
+
+| Asset | Idée et famille | Fichiers | Dimensions et poids | Source |
+| --- | --- | --- | --- | --- |
+| Trace de lecture P1 | Un marque-page brique relie la marge d'un livre ouvert à un autre ouvrage ; familles mémoire et découverte | `assets/editorial/p1-reading-trace-master.png` ; `public/editorial/p1-reading-trace.webp` | source PNG 1448 × 1086, 3 072 200 octets ; diffusion WebP 1400 × 1050, 190 034 octets | Illustration originale générée le 5 septembre 2026 avec OpenAI ImageGen à partir du brief Chapter : nature morte éditoriale contemporaine, encre et graphite sur papier chaud, accent brique restreint, sans texte lisible ni faux contrôle. Conversion WebP locale, qualité 84. |
+
+L'asset P1 est réservé à l'ouverture publique. Il soutient la promesse de mémoire et de chemin sans remplacer les couvertures, qui demeurent les masses colorées liées aux œuvres.

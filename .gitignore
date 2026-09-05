@@ -41,3 +41,4 @@ tsconfig.tsbuildinfo
 /.sites-runtime/
 /outputs/
 /work/
+/generated_images/

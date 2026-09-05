@@ -29,7 +29,8 @@ test("renders Chapter metadata and primary content", async () => {
   const html = await response.text();
   assert.match(html, /<title>Chapter — Every book becomes part of your story<\/title>/i);
   assert.match(html, /Les Cartographies du vent/i);
-  assert.match(html, /Chaque lecture laisse une trace/i);
+  assert.match(html, /Ici, on commence par une œuvre/i);
+  assert.match(html, /p1-reading-trace\.webp/i);
   assert.match(html, /data-shell="public"/);
   assert.doesNotMatch(html, /Mon journal/i);
   assert.doesNotMatch(html, /Ajouter au journal|Écrire une critique/i);
