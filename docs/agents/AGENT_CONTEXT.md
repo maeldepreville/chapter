@@ -9,7 +9,7 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
 - **Phase active :** refonte visible pré-lot 2. P1 — Premier contact public possède une candidate locale complète en attente de recette et de validation utilisateur.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** racine visiteur, Découvrir, Recherche immédiate, catalogue public de 24 œuvres et fiches `/oeuvres/:workId` forment la candidate de recette. La mise à disposition directe sur le Site est désormais autorisée ; la prochaine action unique après publication est la recette utilisateur de P1.
+- **Statut P1 :** racine visiteur, Découvrir, Recherche immédiate, catalogue public de 24 œuvres et fiches `/oeuvres/:workId` sont disponibles pour recette privée en version Sites 32. La prochaine action unique est la recette utilisateur de P1.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 
