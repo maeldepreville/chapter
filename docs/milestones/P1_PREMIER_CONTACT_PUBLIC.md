@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **reprise visuelle de la candidate en cours de vérification ; validation utilisateur requise**.
+Statut : **reprise visuelle disponible pour recette privée en version Sites 33 ; validation utilisateur requise**.
 
 ## But
 
@@ -79,6 +79,7 @@ Les anciens parcours du lot 1 restent présents dans le code et dans leurs tests
 - Le commit et l'envoi techniques requis pour le Site de recette restent séparés de la synchronisation GitHub du jalon, qui attend sa validation.
 - La source candidate a été enregistrée et déployée avec succès en version Sites 32 le 5 septembre 2026, sous l'accès privé existant. Son commit technique de publication est `c427bef9d5a7b3f11645fb3e2175e0511d5c3901` ; le commit produit P1 reste `da8bebfe443893162457e6d6efbe86d41dcb58f1` sur la branche locale, sans envoi GitHub avant validation.
 - La version 32 confirme par recette le bon fonctionnement des retours et de la Recherche, dont la composition est conservée. Son premier écran reste refusé dans son rythme et sa singularité visuelle ; la reprise ne vaut pas validation de P1.
+- La reprise est construite, vérifiée et déployée avec succès en version Sites 33 le 5 septembre 2026, toujours sous l'accès privé existant. Son commit produit est `38d08d156fad536128064fb5e0c7ed2bfcebd9f1` et son commit technique de publication est `4c82db330150da397e83d21654af48816bad703e` ; aucun envoi GitHub du candidat non validé n'a été effectué.
 
 ## Recette utilisateur attendue
 
