@@ -1,6 +1,6 @@
 # Chapter — registre des données statiques du prototype
 
-Dernière mise à jour : 1er septembre 2026.
+Dernière mise à jour : 5 septembre 2026.
 
 Ce registre distingue les valeurs figées qui faussaient un parcours de celles qui constituent encore volontairement les données simulées du lot 1. Une chaîne visible n'est pas un identifiant : permissions, navigation et relations doivent toujours utiliser des identifiants stables, et les paramètres reçus par un callback doivent être transmis à la destination.
 
@@ -13,6 +13,20 @@ Ce registre distingue les valeurs figées qui faussaient un parcours de celles q
 | Noms, initiales et présentations de Maël et Lina étaient recopiés dans plusieurs composants. | `app/prototype-data.ts` centralise l'identité et les présentations simulées. |
 | Titres, descriptions, œuvres et aperçu de listes étaient dupliqués. | `app/catalogue.ts` porte un catalogue canonique dont les différentes vues dérivent. |
 | Domaine et chemin du profil public étaient répétés. | `app/site-config.ts` fournit l'origine, le chemin et l'URL publique canoniques. |
+| Œuvres, entrées privées et traces initiales vivaient dans `page.tsx`. | `app/foundation/fixtures.ts` porte désormais ces fixtures ; `page.tsx` ne conserve que leur adaptation à l'interface existante. |
+
+## Registre P0
+
+| Famille | Source canonique | Volume et cas couverts | Future source lot 2 |
+| --- | --- | --- | --- |
+| Œuvres, auteurs, éditions | `app/foundation/fixtures.ts` | 6 œuvres cœur reliées par identifiants ; couverture absente incluse | Catalogue distant normalisé |
+| Lecteurs et profils publics | `app/foundation/fixtures.ts` | 32 lecteurs, 28 profils facultatifs, deux homonymes portant des identifiants distincts, une biographie longue | Comptes et service de profils |
+| États de lecture privés | `PrivateReadingRecord` dans `app/foundation/contracts.ts` | Statut, date, note, note chiffrée et progression facultative `bookmark` ; aucun champ de possession | Bibliothèque privée persistée |
+| Écrits et relations publics | `PublicReview`, `PublicReply`, `PublicList`, `Follow` | Critique, réponse, liste, suivi et contenu retiré reliés uniquement par identifiants | Services social et modération |
+| Sessions | `prototypeSessionSeeds` et `foundation/session.ts` | `blank`, `activated`, `habitual`, clonage et remise à zéro déterministes | Session authentifiée et stockage |
+| Densité | `foundation/dense-fixtures.ts` | 500 œuvres et 500 entrées privées, générées de façon déterministe et absentes du chemin de chargement normal | Jeu de test/seed contrôlé |
+
+Les objets privés et publics sont volontairement séparés. Une note privée ne partage pas le type d'une critique publique ; le nom public, les initiales, la photo ou la biographie ne servent jamais de clé relationnelle. La progression est absente par défaut et, lorsqu'elle existe, prend la forme d'un marque-page manuel.
 
 Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamment le retour des comparaisons de noms pour déterminer un droit.
 
@@ -20,9 +34,9 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 
 | Zone statique actuelle | Remplacement attendu après le lot 1 |
 | --- | --- |
-| Lecteur courant et acteurs de démonstration dans `prototype-data.ts` | Session authentifiée et API de profils. |
+| Lecteur courant et acteurs de démonstration de compatibilité dans `prototype-data.ts` | Session authentifiée et API de profils. |
 | Présentation, favoris et titre exposé des profils | Données de profil persistées et réglages du lecteur. |
-| `defaultWorks` dans `catalogue.ts` | Catalogue distant avec identifiants pérennes. |
+| Œuvres cœur exportées par `foundation/fixtures.ts` et réexportées comme `defaultWorks` par `page.tsx` | Catalogue distant avec identifiants pérennes. |
 | Entrées de bibliothèque, traces du Journal et compteurs de lecteurs | Stockage utilisateur et agrégats du service. |
 | Deux listes publiques, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Le partage actuel du même catalogue de listes entre Maël et Lina est une limite de démonstration, pas le modèle métier final. |
 | Badges, titres exposables et progression | Progression calculée et persistée par compte. |

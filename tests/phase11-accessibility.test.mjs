@@ -6,6 +6,7 @@ import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-t
 
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
 const globals = readFileSync(source("globals.css"), "utf8");
+const tokens = readFileSync(source("foundation/tokens.css"), "utf8");
 const phase10 = readFileSync(source("phase10.css"), "utf8");
 const phase10Component = readFileSync(source("phase10.tsx"), "utf8");
 
@@ -16,11 +17,12 @@ const luminance = (hex) => hex.match(/[0-9a-f]{2}/gi)
 const contrast = (foreground, background) => (Math.max(luminance(foreground), luminance(background)) + 0.05) / (Math.min(luminance(foreground), luminance(background)) + 0.05);
 
 test("control boundaries and focus indicators retain non-text contrast", () => {
-  const controlLine = globals.match(/--control-line:\s*(#[0-9a-f]{6})/i)?.[1];
+  const controlLine = tokens.match(/--color-border-strong:\s*(#[0-9a-f]{6})/i)?.[1];
   assert.ok(controlLine);
   assert.ok(contrast(controlLine, "#fffdf9") >= 3);
   assert.ok(contrast(controlLine, "#f7f3ec") >= 3);
-  assert.match(globals, /:focus-visible[\s\S]*?outline: 3px solid var\(--brick\);/);
+  assert.match(tokens, /--focus-ring:\s*3px solid var\(--color-accent\);/);
+  assert.match(globals, /:focus-visible[\s\S]*?outline: var\(--focus-ring\);/);
   assert.match(globals, /\.header-search input\s*\{[^}]*border: 1px solid var\(--control-line\);/s);
   assert.match(globals, /\.library-search input, \.library-sort-trigger\s*\{[^}]*border: 1px solid var\(--control-line\);/s);
   assert.match(phase10, /\.discover-search input\s*\{[^}]*border: 1px solid var\(--control-line\);/s);

@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **contrat prêt ; implémentation non commencée**.
+Statut : **validé le 5 septembre 2026 ; intégré à la branche `refonte-pre-lot-2`**.
 
 ## But
 
@@ -41,15 +41,38 @@ Le registre canonique reste [`PROTOTYPE_DATA_REGISTER.md`](../engineering/PROTOT
 
 ## Critères d'acceptation
 
-- [ ] Les tokens sont centralisés et les primitives n'embarquent pas de valeurs de style concurrentes sans justification.
-- [ ] Les coquilles publique et connectée fonctionnent au-dessus et au-dessous du point de bascule, sans navigation morte.
-- [ ] Les composants interactifs sont utilisables au clavier, exposent un focus visible et respectent le mouvement réduit.
-- [ ] Les états privés, publics et de session sont distincts dans les types et les fixtures.
-- [ ] Les permissions et relations utilisent des identifiants, jamais un nom, une photo ou une biographie.
-- [ ] Les fixtures sont centralisées, cohérentes et réinitialisables ; le jeu dense ne bloque pas l'interface.
-- [ ] Les tests ciblés, `npm run lint`, `npm run build` et `git diff --check` réussissent.
-- [ ] Le code, les décisions et le registre de données décrivent le même état.
-- [ ] Aucun déploiement ou fusion vers `main` n'est déduit de l'acceptation de P0.
+- [x] Les tokens sont centralisés et les primitives n'embarquent pas de valeurs de style concurrentes sans justification.
+- [x] Les coquilles publique et connectée fonctionnent au-dessus et au-dessous du point de bascule, sans navigation morte.
+- [x] Les composants interactifs sont utilisables au clavier, exposent un focus visible et respectent le mouvement réduit.
+- [x] Les états privés, publics et de session sont distincts dans les types et les fixtures.
+- [x] Les permissions et relations utilisent des identifiants, jamais un nom, une photo ou une biographie.
+- [x] Les fixtures sont centralisées, cohérentes et réinitialisables ; le jeu dense n'est pas monté par défaut.
+- [x] Les tests ciblés, `npm run lint`, `npm run build` et `git diff --check` réussissent.
+- [x] Le code, les décisions et le registre de données décrivent le même état.
+- [x] Aucun déploiement ou fusion vers `main` n'est déduit de l'acceptation de P0.
+
+## Candidate implémentée
+
+- `foundation/tokens.css` nomme la palette, les rôles typographiques, espacements, rayons, bordures, ombres, densités et durées ; les alias du lot 1 restent raccordés à ces tokens.
+- `foundation/primitives.tsx` et `foundation/primitives.css` fournissent bouton, lien-action, champ, zone de texte, sélection, menu, dialogue, toast, surface éditoriale, couverture, avatar et état vide.
+- `foundation/contracts.ts` sépare les entités privées et publiques, déclare les coquilles, le seuil de 900 px, la navigation et le résultat observable de P1 à P7.
+- `foundation/fixtures.ts` centralise les œuvres et états initiaux consommés par `page.tsx`, puis ajoute les auteurs, éditions, profils, relations et cas limites ; `foundation/dense-fixtures.ts` isole la persona de 500 œuvres hors du chargement normal.
+- `foundation/session.ts` clone et réinitialise les trois sessions de référence sans partager de mutations.
+- La route publique masque les destinations privées et expose Découvrir/Recherche ; la coquille connectée expose Journal/Bibliothèque/Découvrir/Recherche, avec quatre destinations dans la navigation mobile.
+
+## Preuves de la candidate
+
+- test ciblé : `node --test tests/p0-foundation.test.mjs` ;
+- non-régression : `node --test tests/*.test.mjs` ;
+- qualité : `npm run lint`, `npm run build`, `git diff --check` ;
+- contrôle de charge : la chaîne sentinelle du jeu dense est absente de la sortie de production après build ;
+- aucune modification de `.openai/hosting.json`, aucun déploiement, aucun commit ni push avant validation.
+
+La recette P0 porte sur le système et ses contrats. Elle ne valide pas l'apparence finale des écrans P1 à P7 ; aucune prévisualisation navigateur n'a été créée dans ce jalon documentaire et technique.
+
+## Validation
+
+Le 5 septembre 2026, après clarification de la part visible et de la part structurelle du jalon, l'utilisateur valide explicitement P0. Cette validation autorise son commit et sa synchronisation sur `refonte-pre-lot-2`. Elle n'autorise ni fusion vers `main`, ni nouvelle version Sites, ni déploiement. P1 — Premier contact public devient le prochain jalon.
 
 ## Hors recette P0
 

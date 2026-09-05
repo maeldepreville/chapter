@@ -12,8 +12,9 @@ import type { PublicListId } from "./catalogue";
 import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
+import { shellAttributes, type ReadingStatus } from "./foundation/contracts";
+import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry, type CoreWork, type CoreWorkId } from "./foundation/fixtures";
 
-type ReadingStatus = "À lire" | "En cours" | "Lu";
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
@@ -33,123 +34,13 @@ type PersonalEntry = {
   rating: number;
 };
 
-const emptyEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 };
+const emptyEntry: PersonalEntry = { ...emptyPersonalEntry };
 const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
 
-export const defaultWorks = [
-  {
-    id: "cartographies",
-    title: "Les Cartographies du vent",
-    author: "Camille Maret",
-    meta: "Roman · 2021",
-    year: "2021",
-    genre: "Roman contemporain",
-    language: "Français",
-    rating: "4,3",
-    ratingCount: "1 248 évaluations",
-    lede: "Une cartographe revient dans l’archipel de son enfance et découvre que les lieux oubliés continuent de déplacer ceux qui les ont quittés.",
-    synopsis: [
-      "Après douze années loin de Néréis, Ana Vales retourne dans l’archipel pour vider la maison de sa mère. Les cartes qu’elle y retrouve ne représentent aucun territoire connu : elles semblent plutôt suivre les déplacements de la mémoire, les silences d’une famille et les routes que le vent efface chaque nuit.",
-      "À mesure qu’elle reprend son ancien métier, Ana comprend que cartographier un lieu consiste parfois moins à en fixer les contours qu’à accepter ce qui nous échappe.",
-    ],
-    cover: true,
-    coverTone: "slate",
-  },
-  {
-    id: "rivage",
-    title: "Le Rivage des heures",
-    author: "Nora Sorel",
-    meta: "Roman · 2019",
-    year: "2019",
-    genre: "Fiction littéraire",
-    language: "Français",
-    rating: "4,1",
-    ratingCount: "862 évaluations",
-    lede: "Sur une côte où les marées dérèglent les horloges, une restauratrice tente de reconstituer les derniers jours d’un village disparu.",
-    synopsis: [
-      "Élise arrive à Keravel pour restaurer les cadrans d’un ancien observatoire. Chaque mécanisme porte pourtant une heure différente, comme si le village avait refusé de vivre selon un temps commun.",
-      "Entre archives incomplètes et récits contradictoires, elle découvre une communauté qui a choisi de mesurer le passé autrement que par les dates.",
-    ],
-    cover: false,
-    coverTone: "brick",
-  },
-  {
-    id: "atlas",
-    title: "Atlas des nuits calmes",
-    author: "Yanis Delcourt",
-    meta: "Récit · 2024",
-    year: "2024",
-    genre: "Récit contemporain",
-    language: "Français",
-    rating: "4,5",
-    ratingCount: "534 évaluations",
-    lede: "Un veilleur de nuit inventorie les lumières encore allumées et compose, sans le savoir, le portrait intime de toute une ville.",
-    synopsis: [
-      "Chaque nuit, Sami parcourt les rues désertes et note les fenêtres éclairées dans un carnet. Il imagine les vies derrière ces halos, jusqu’au soir où l’une de ses descriptions lui revient sous la forme d’une lettre.",
-      "Son inventaire devient alors un atlas sensible des solitudes, des attentes et des gestes minuscules qui empêchent la ville de dormir tout à fait.",
-    ],
-    cover: false,
-    coverTone: "petrol",
-  },
-  {
-    id: "lucioles",
-    title: "La Saison des lucioles",
-    author: "Élise Varenne",
-    meta: "Roman · 2018",
-    year: "2018",
-    genre: "Roman initiatique",
-    language: "Français",
-    rating: "4,0",
-    ratingCount: "719 évaluations",
-    lede: "Dans une vallée où les lucioles ont disparu, deux sœurs rouvrent l’observatoire abandonné de leur père.",
-    synopsis: [
-      "Mila revient à Valcroix au début d’un été trop silencieux. Sa sœur a conservé les carnets de leur père, remplis de relevés sur les lumières qui animaient autrefois les prés.",
-      "Leur enquête transforme peu à peu un deuil familial en exploration sensible de ce qui persiste lorsque les signes familiers s’éteignent.",
-    ],
-    cover: false,
-    coverTone: "sage",
-  },
-  {
-    id: "miroirs",
-    title: "La Maison des miroirs lents",
-    author: "Samuel Ardent",
-    meta: "Roman · 2020",
-    year: "2020",
-    genre: "Fiction littéraire",
-    language: "Français",
-    rating: "4,2",
-    ratingCount: "947 évaluations",
-    lede: "Un restaurateur découvre que les miroirs d’une demeure normande ne renvoient jamais tout à fait le présent.",
-    synopsis: [
-      "Chargé de restaurer une maison promise à la vente, Jonas remarque que certaines pièces semblent conserver les gestes de leurs anciens habitants.",
-      "Au fil des reflets, l’architecture devient une mémoire instable où chaque réparation révèle une absence nouvelle.",
-    ],
-    cover: false,
-    coverTone: "plum",
-  },
-  {
-    id: "sel",
-    title: "Un Peu de sel dans la brume",
-    author: "Diane Kermor",
-    meta: "Récit · 2023",
-    year: "2023",
-    genre: "Récit contemporain",
-    language: "Français",
-    rating: "3,9",
-    ratingCount: "381 évaluations",
-    lede: "Une cuisinière embarque sur le dernier ferry d’une ligne condamnée et recueille les recettes de ses passagers.",
-    synopsis: [
-      "Pendant les trois dernières semaines de la traversée, Maud cuisine avec ce que les voyageurs lui confient : une épice, un souvenir, parfois seulement un nom.",
-      "Son carnet compose le portrait d’un passage maritime autant que celui des vies qui l’ont emprunté.",
-    ],
-    cover: false,
-    coverTone: "ochre",
-  },
-] as const;
-
-type WorkId = (typeof defaultWorks)[number]["id"];
-type Work = (typeof defaultWorks)[number];
+export const defaultWorks = coreWorks;
+type WorkId = CoreWorkId;
+type Work = CoreWork;
 
 const coverTitleTier = (title: string) => {
   if (title.length <= 18) return "cover-title-short";
@@ -176,79 +67,9 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
   );
 }
 
-const defaultJournalTraces: JournalTrace[] = [
-  {
-    id: "trace-note-cartographies",
-    workId: "cartographies",
-    date: "22 août 2026",
-    kind: "Note privée",
-    text: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
-    action: "note",
-  },
-  {
-    id: "trace-finished-lucioles",
-    workId: "lucioles",
-    date: "19 août 2026",
-    kind: "Lecture terminée",
-  },
-  {
-    id: "trace-review-miroirs",
-    workId: "miroirs",
-    date: "17 août 2026",
-    kind: "Critique publique",
-    text: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
-    action: "review",
-  },
-  {
-    id: "trace-start-rivage",
-    workId: "rivage",
-    date: "12 août 2026",
-    kind: "Lecture commencée",
-  },
-  {
-    id: "trace-note-atlas",
-    workId: "atlas",
-    date: "8 août 2026",
-    kind: "Note privée",
-    text: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue.",
-    action: "note",
-  },
-  {
-    id: "trace-finished-miroirs",
-    workId: "miroirs",
-    date: "2 août 2026",
-    kind: "Lecture terminée",
-  },
-];
-
-const activityOrder: Record<WorkId, number> = {
-  cartographies: 6,
-  rivage: 5,
-  atlas: 4,
-  lucioles: 3,
-  miroirs: 2,
-  sel: 1,
-};
-
-const defaultEntries: Record<string, PersonalEntry> = {
-    cartographies: {
-      ...emptyEntry,
-      readingStatus: "En cours",
-      readingDate: "4 août 2026",
-      note: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.",
-    },
-    rivage: { ...emptyEntry, readingStatus: "En cours", readingDate: "12 août 2026", note: "Observer comment les différentes heures deviennent une manière de raconter les désaccords du village." },
-    atlas: { ...emptyEntry, readingStatus: "En cours", readingDate: "8 août 2026", note: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue." },
-    lucioles: { ...emptyEntry, readingStatus: "Lu", readingDate: "19 août 2026", rating: 4 },
-    miroirs: {
-      ...emptyEntry,
-      readingStatus: "Lu",
-      readingDate: "2 août 2026",
-      review: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.",
-      rating: 4,
-    },
-    sel: { ...emptyEntry, readingStatus: "À lire" },
-};
+const defaultJournalTraces: readonly JournalTrace[] = coreJournalTraces;
+const activityOrder: Record<WorkId, number> = coreActivityOrder;
+const defaultEntries: Record<string, PersonalEntry> = coreEntries;
 
 // Internal fixture injection only; no public switch, URL parameter or storage.
 type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
@@ -676,15 +497,16 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   };
 
   return (
-    <div className="site-shell">
+    <div {...shellAttributes(initialProfileOwner ? "public" : "connected")}>
       <header className="desktop-header">
-        <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir le journal" onClick={() => openView("journal")}>Chapter<span>.</span></button>
+        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
         <nav aria-label="Navigation principale">
-          <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>
+          {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>}
+          {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>}
           <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
-          <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>
+          {initialProfileOwner && <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button>}
         </nav>
-        <label className="header-search">
+        {!initialProfileOwner && <label className="header-search">
           <span className="sr-only">Rechercher un livre ou un auteur</span>
           <input
             type="search"
@@ -694,8 +516,8 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             onFocus={() => setSearchOpen(true)}
             onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); openDiscoverWithQuery(searchQuery); } }}
           />
-        </label>
-        <div className="account-control" ref={accountControlRef}>
+        </label>}
+        {!initialProfileOwner && <div className="account-control" ref={accountControlRef}>
           <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
           <Fade show={accountOpen}>{accountOpen && (
             <div className="account-menu" id="desktop-account-menu">
@@ -704,12 +526,12 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
               <button type="button">Se déconnecter</button>
             </div>
           )}</Fade>
-        </div>
+        </div>}
       </header>
 
       <header className="mobile-header">
-        <button className="wordmark wordmark-button" type="button" onClick={() => openView("journal")}>Chapter<span>.</span></button>
-        <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
+        <button className="wordmark wordmark-button" type="button" onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
+        {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>}
       </header>
 
       <main id="top">
@@ -996,12 +818,13 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
       )}
 
       <nav className="mobile-nav" aria-label="Navigation principale mobile">
-        <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>
+        {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>}
+        {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>}
         <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
-        <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
+        <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}><span aria-hidden="true">⌕</span>Recherche</button>
       </nav>
 
-      <Fade show={accountOpen} kind="modal">{accountOpen && (
+      {!initialProfileOwner && <Fade show={accountOpen} kind="modal">{accountOpen && (
         <div className="mobile-account-overlay">
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
           <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label={`Compte de ${currentReader.firstName}`}>
@@ -1013,7 +836,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             <button type="button">Se déconnecter</button>
           </section>
         </div>
-      )}</Fade>
+      )}</Fade>}
 
       <Fade show={searchOpen} kind="modal">{searchOpen && (
         <Modal className="search-overlay" labelledBy="search-title" initialFocus='input[type="search"]' onRequestClose={() => setSearchOpen(false)}>

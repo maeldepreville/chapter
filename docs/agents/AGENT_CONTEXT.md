@@ -7,9 +7,9 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2. Le socle produit et la feuille de route P0 à P7 sont validés ; P0 est le jalon courant.
+- **Phase active :** refonte visible pré-lot 2. P0 est validé ; P1 — Premier contact public est le prochain jalon.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P0 :** contrat documenté dans `docs/milestones/P0_FONDATIONS_PROTOTYPE.md` ; implémentation non commencée. La prochaine action est l'autorisation explicite de construire P0.
+- **Statut P0 :** validé explicitement le 5 septembre 2026 et intégré à `refonte-pre-lot-2`. La prochaine action est d'ouvrir un nouveau chat pour cadrer puis construire P1, sans modifier le Site public tant qu'un déploiement n'est pas demandé.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** aucune publication n'est autorisée par le cadrage ou par une implémentation candidate. Le Site accepté reste inchangé tant qu'une mise à disposition n'est pas demandée explicitement.
 
