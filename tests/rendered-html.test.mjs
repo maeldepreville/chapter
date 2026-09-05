@@ -29,8 +29,10 @@ test("renders Chapter metadata and primary content", async () => {
   const html = await response.text();
   assert.match(html, /<title>Chapter — Every book becomes part of your story<\/title>/i);
   assert.match(html, /Les Cartographies du vent/i);
-  assert.match(html, /Mon journal/i);
-  assert.match(html, /class="conversation-actions"><button[^>]*>Voir la conversation · 2<\/button><button[^>]*>Répondre<\/button><\/div>/);
+  assert.match(html, /Chaque lecture laisse une trace/i);
+  assert.match(html, /data-shell="public"/);
+  assert.doesNotMatch(html, /Mon journal/i);
+  assert.doesNotMatch(html, /Ajouter au journal|Écrire une critique/i);
 });
 
 test("renders Maël's public profile route without owner-only controls", async () => {

@@ -12,11 +12,13 @@ import type { PublicListId } from "./catalogue";
 import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
-import { shellAttributes, type ReadingStatus } from "./foundation/contracts";
-import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry, type CoreWork, type CoreWorkId } from "./foundation/fixtures";
+import { shellAttributes, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
+import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
+import { PublicDiscover, PublicSearch, PublicWork } from "./p1-public";
+import { publicWorks } from "./p1-public-fixtures";
 
 type DatePrompt = "start" | "finish" | null;
-type View = "work" | "journal" | "library" | "discover" | "profile" | "honors" | "list";
+type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "profile";
@@ -39,8 +41,8 @@ const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
 
 export const defaultWorks = coreWorks;
-type WorkId = CoreWorkId;
-type Work = CoreWork;
+type WorkId = string;
+type Work = FoundationWork;
 
 const coverTitleTier = (title: string) => {
   if (title.length <= 18) return "cover-title-short";
@@ -68,15 +70,23 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
 }
 
 const defaultJournalTraces: readonly JournalTrace[] = coreJournalTraces;
-const activityOrder: Record<WorkId, number> = coreActivityOrder;
+const activityOrder = coreActivityOrder as Record<string, number>;
 const defaultEntries: Record<string, PersonalEntry> = coreEntries;
 
 // Internal fixture injection only; no public switch, URL parameter or storage.
 type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
-export default function Home({ initialProfileOwner = null, initialData }: { initialProfileOwner?: "public-self" | null; initialData?: InitialData }) {
-  const works = initialData?.works ?? defaultWorks;
-  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : initialData?.view ?? "work");
-  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(works[0]?.id ?? "cartographies");
+type HomeProps = {
+  initialProfileOwner?: "public-self" | null;
+  initialData?: InitialData;
+  initialPublicView?: "discover" | "search";
+  initialPublicWorkId?: string | null;
+};
+
+export default function Home({ initialProfileOwner = null, initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
+  const p1Public = !initialProfileOwner && !initialData;
+  const works = initialData?.works ?? (p1Public ? publicWorks : defaultWorks);
+  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
+  const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? defaultEntries);
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? defaultJournalTraces);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
@@ -111,6 +121,8 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhoto | null>(null);
   const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
+  const [publicSearchQuery, setPublicSearchQuery] = useState("");
+  const [publicWorkOrigin, setPublicWorkOrigin] = useState<"discover" | "search">("discover");
   const [publicListId, setPublicListId] = useState<PublicListId>("places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
@@ -189,6 +201,25 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
+  const openPublicView = (view: "discover" | "search", path = view === "search" ? "/recherche" : "/decouvrir") => {
+    setCurrentView(view);
+    setSearchOpen(false);
+    if (window.location.pathname !== path) window.history.pushState(null, "", path);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const openPublicWork = (id: string, origin: "discover" | "search" = "discover") => {
+    const work = works.find((candidate) => candidate.id === id);
+    if (!work) return;
+    setPublicWorkOrigin(origin);
+    setSelectedWorkId(work.id);
+    setCurrentView("work");
+    setSearchOpen(false);
+    const path = `/oeuvres/${work.id}`;
+    if (window.location.pathname !== path) window.history.pushState(null, "", path);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
   const addDiscoveryToRead = (id: string) => {
     const workId = id as WorkId;
     discoverySavedEntry.current = { workId, entry: entries[workId] ?? emptyEntry };
@@ -210,6 +241,22 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     setRemoveConfirmWorkId(null);
     window.scrollTo({ top: 0, behavior: "instant" });
   };
+
+  useEffect(() => {
+    if (!p1Public) return;
+    const syncPublicLocation = () => {
+      const path = window.location.pathname;
+      if (path === "/recherche") return setCurrentView("search");
+      const workId = path.match(/^\/oeuvres\/([^/]+)\/?$/)?.[1];
+      if (workId && works.some((work) => work.id === workId)) {
+        setSelectedWorkId(workId as WorkId);
+        return setCurrentView("work");
+      }
+      setCurrentView("discover");
+    };
+    window.addEventListener("popstate", syncPublicLocation);
+    return () => window.removeEventListener("popstate", syncPublicLocation);
+  }, [p1Public, works]);
 
   useEffect(() => {
     const sections = ["journal", "about", "reviews"]
@@ -496,9 +543,20 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
     );
   };
 
+  const rootShell = shellAttributes(p1Public || initialProfileOwner ? "public" : "connected");
+
   return (
-    <div {...shellAttributes(initialProfileOwner ? "public" : "connected")}>
-      <header className="desktop-header">
+    <div {...rootShell} className={`${rootShell.className}${p1Public ? " p1-shell" : ""}`}>
+      {p1Public ? (
+        <header className="p1-public-header">
+          <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}>Chapter<span>.</span></button>
+          <nav aria-label="Navigation principale">
+            <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
+            <button className={currentView === "search" || (currentView === "work" && publicWorkOrigin === "search") ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
+          </nav>
+          <span className="p1-public-note">Lire d’abord · créer un compte plus tard</span>
+        </header>
+      ) : <><header className="desktop-header">
         <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
         <nav aria-label="Navigation principale">
           {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>}
@@ -532,10 +590,18 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
       <header className="mobile-header">
         <button className="wordmark wordmark-button" type="button" onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
         {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>}
-      </header>
+      </header></>}
 
       <main id="top">
-        {currentView === "discover" ? (
+        {p1Public ? (
+          currentView === "search" ? (
+            <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} />
+          ) : currentView === "work" && selectedWork ? (
+            <PublicWork work={selectedWork} works={works} backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : "Retour à Découvrir"} onBack={() => openPublicView(publicWorkOrigin)} onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)} />
+          ) : (
+            <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
+          )
+        ) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
             works={works}
@@ -817,12 +883,17 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
         <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => { setStatusMenuOpen(false); setDatePrompt(null); setRemoveConfirmWorkId(null); }} />
       )}
 
-      <nav className="mobile-nav" aria-label="Navigation principale mobile">
+      {p1Public ? (
+        <nav className="p1-public-mobile-nav" aria-label="Navigation principale mobile">
+          <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
+          <button className={currentView === "search" || (currentView === "work" && publicWorkOrigin === "search") ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
+        </nav>
+      ) : <nav className="mobile-nav" aria-label="Navigation principale mobile">
         {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>}
         {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>}
         <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
         <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}><span aria-hidden="true">⌕</span>Recherche</button>
-      </nav>
+      </nav>}
 
       {!initialProfileOwner && <Fade show={accountOpen} kind="modal">{accountOpen && (
         <div className="mobile-account-overlay">
@@ -838,7 +909,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
         </div>
       )}</Fade>}
 
-      <Fade show={searchOpen} kind="modal">{searchOpen && (
+      {!p1Public && <Fade show={searchOpen} kind="modal">{searchOpen && (
         <Modal className="search-overlay" labelledBy="search-title" initialFocus='input[type="search"]' onRequestClose={() => setSearchOpen(false)}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la recherche" onClick={() => setSearchOpen(false)} />
           <section className="search-panel">
@@ -862,7 +933,7 @@ export default function Home({ initialProfileOwner = null, initialData }: { init
             <button className="primary-action search-discover-action" type="button" onClick={() => openDiscoverWithQuery(searchQuery)}>{searchQuery.trim() ? "Voir les résultats dans Découvrir" : "Ouvrir Découvrir"}</button>
           </section>
         </Modal>
-      )}</Fade>
+      )}</Fade>}
 
       <Fade show={noteOpen} kind="modal">{noteOpen && (
         <Modal labelledBy={noteCloseConfirm ? "note-confirm-title" : "note-title"} describedBy={noteCloseConfirm ? "note-confirm-description" : undefined} alert={noteCloseConfirm} initialFocus={noteCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>
