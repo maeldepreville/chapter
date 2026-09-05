@@ -1,12 +1,12 @@
 # Chapter — stratégie de contexte et d'usage des tokens pour les agents
 
-Dernière mise à jour : 1er septembre 2026.
+Dernière mise à jour : 5 septembre 2026.
 
 ## Conclusion
 
 Pour Chapter, le levier dominant est la **divulgation progressive du contexte** : charger un état courant très court, puis rechercher seulement les décisions, fichiers et tests concernés. Avant cette révision, les règles demandaient la lecture systématique de `AGENTS.md`, du journal transversal et du document de phase 11, soit **225 449 caractères**. Avec une approximation volontairement simple de quatre caractères par token, cela représentait environ **56 000 tokens d'entrée avant l'analyse du code**.
 
-Le démarrage courant repose maintenant sur `AGENTS.md` et `AGENT_CONTEXT.md`, soit **6 996 caractères**, environ **1 750 tokens selon la même approximation** : une réduction théorique proche de **97 % du contexte documentaire de départ**. Une tâche nécessitant aussi la procédure complète reste autour de 3 000 tokens documentaires estimés, soit environ 95 % sous l'ancien démarrage.
+Le démarrage courant repose maintenant sur `AGENTS.md` et `docs/agents/AGENT_CONTEXT.md`. Les plafonds automatisés restent respectivement de 4 Ko et 7 Ko ; la commande `npm run context` vérifie le résumé réellement chargé. Les mesures du 1er septembre donnaient environ **1 750 tokens** de contexte documentaire initial, soit une réduction théorique proche de **97 %** par rapport à l'ancien démarrage exhaustif.
 
 Ces nombres ne sont pas une mesure de facturation : le découpage réel dépend du tokenizer, des instructions de la plateforme et des outils. Ils fournissent toutefois une comparaison homogène avant/après.
 
@@ -18,7 +18,7 @@ Ces nombres ne sont pas une mesure de facturation : le découpage réel dépend 
 | 2 | `AGENTS.md` court et stable | Réduit le contexte automatique et concentre les règles dures | Appliqué |
 | 3 | Routage par tâche + recherche `rg` | Charge une section ou un symbole au lieu d'un fichier entier | Appliqué |
 | 4 | Carte du code et tests ciblés | Réduit l'exploration, les logs et les itérations inutiles | Appliqué |
-| 5 | Mémoire externe structurée | Permet un nouveau chat ou une compaction sans perdre l'état | Appliqué via `AGENT_CONTEXT.md` et les bilans |
+| 5 | Mémoire externe structurée | Permet un nouveau chat ou une compaction sans perdre l'état | Appliqué via `docs/agents/AGENT_CONTEXT.md` et les bilans |
 | 6 | Prompts cadrés par but/contexte/contraintes/fin | Diminue les hypothèses, les reprises et les sorties inutiles | Intégré à la procédure |
 | 7 | Sorties d'outils bornées | Empêche logs, builds et recherches de polluer la conversation | Règle appliquée ; commandes ciblées |
 | 8 | Nouveau chat aux frontières de jalon | Repart d'un contexte propre lorsque l'état est déjà durable | Recommandé, non automatisé |
@@ -47,6 +47,8 @@ Pour Chapter, la règle pratique est donc :
 - reprendre par `scripts/agent-context.sh summary`, pas par le collage d'un ancien échange.
 
 Le fichier courant doit conserver les décisions, blocages et prochaines étapes ; les sorties brutes de tests, captures intermédiaires et essais abandonnés n'y entrent pas.
+
+Depuis le 5 septembre, les sources spécialisées sont regroupées par rôle sous `docs/agents`, `docs/product`, `docs/design`, `docs/engineering`, `docs/milestones` et `docs/operations`. `docs/README.md` est l'index unique. Cette arborescence réduit les ambiguïtés de routage sans ajouter d'instructions automatiquement chargées dans chaque sous-dossier.
 
 ## Cache de prompt : utile, mais peu pilotable ici
 
@@ -88,7 +90,7 @@ Pour suivre le budget documentaire :
 bash scripts/agent-context.sh budget
 ```
 
-Le garde-fou automatisé maintient `AGENTS.md` sous 4 Ko et `AGENT_CONTEXT.md` sous 7 Ko. Si l'un dépasse sa limite, déplacer le détail vers un document spécialisé plutôt que relever le plafond par défaut.
+Le garde-fou automatisé maintient `AGENTS.md` sous 4 Ko et `docs/agents/AGENT_CONTEXT.md` sous 7 Ko. Si l'un dépasse sa limite, déplacer le détail vers un document spécialisé plutôt que relever le plafond par défaut.
 
 ## Lecture critique des tendances sociales
 

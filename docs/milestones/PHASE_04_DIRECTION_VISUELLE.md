@@ -197,7 +197,7 @@ La direction visuelle ne doit être ni une œuvre éditoriale autosuffisante ni 
 - **la rétention**, par le plaisir de retrouver un journal lisible, la continuité du contexte et la facilité à consigner une pensée ;
 - **la confiance**, par des actions explicites, une confidentialité compréhensible et l’absence de pression artificielle.
 
-Les métriques d’engagement ne doivent jamais conduire à augmenter le bruit visuel, la fréquence des sollicitations ou la compétition sociale sans bénéfice démontré pour le lecteur. Le cadre transversal est détaillé dans [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
+Les métriques d’engagement ne doivent jamais conduire à augmenter le bruit visuel, la fréquence des sollicitations ou la compétition sociale sans bénéfice démontré pour le lecteur. Le cadre transversal est détaillé dans [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](../product/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
 ## Fondations validées
 

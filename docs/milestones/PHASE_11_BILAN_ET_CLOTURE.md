@@ -8,7 +8,7 @@ Le périmètre technique de la phase 11 et du lot 1 est **accepté et clôturé 
 
 P11-F35 est validé individuellement sur la version 31 : les traces correspondent aux critiques d'œuvre et toutes les identités sociales ouvrent leur profil. La confirmation finale porte ensuite sur l'ensemble du jalon ; elle n'est pas déduite de la simple absence d'un nouveau défaut signalé.
 
-La version Sites **31** est le jalon accepté, déployé en accès propriétaire sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. La synchronisation GitHub prévue par `AGENTS.md` fait partie de la clôture opérationnelle et doit être vérifiée indépendamment du déploiement Sites.
+La version Sites **31** est le jalon accepté, déployé en accès propriétaire sur `https://chapter-reading.smrdsh.chatgpt.site`. Elle remplace la version 30, conserve les correctifs précédents et ajoute la source commune des critiques ainsi que les profils navigables de Maël, Lina, Théo et Inès. La synchronisation GitHub prévue par `../../AGENTS.md` fait partie de la clôture opérationnelle et doit être vérifiée indépendamment du déploiement Sites.
 
 ## Périmètre consolidé
 
@@ -55,7 +55,7 @@ La checklist exhaustive reste [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_1
 
 - Le cadrage horizontal/vertical reste un geste direct ; son zoom conserve le curseur. CT1 ayant été refusé, aucune alternative visible au glissement n'est ajoutée. Cette limite P11-F04 doit rester documentée et ne permet pas de revendiquer une conformité WCAG globale.
 - Les données et interactions demeurent locales à la session. Authentification réelle, onboarding, persistance distante, notifications complètes, messagerie, listes collaboratives, classement et moteur de recommandation réel restent hors lot 1.
-- Le catalogue de listes actuellement partagé entre les profils est une fixture de démonstration. Le futur backend devra rattacher chaque liste à son propriétaire ; les autres points de remplacement sont détaillés dans [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md).
+- Le catalogue de listes actuellement partagé entre les profils est une fixture de démonstration. Le futur backend devra rattacher chaque liste à son propriétaire ; les autres points de remplacement sont détaillés dans [`PROTOTYPE_DATA_REGISTER.md`](../engineering/PROTOTYPE_DATA_REGISTER.md).
 - La confidentialité décrite correspond aux vues du prototype, pas à une garantie backend.
 - Les avertissements de proxy npm et de classification statique vinext sont des limites d'environnement inchangées ; ils n'ont pas empêché la construction.
 

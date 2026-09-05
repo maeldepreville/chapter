@@ -16,7 +16,7 @@ Dernière mise à jour : 5 septembre 2026
 - Chaque jalon final publié doit être accompagné d’une checklist exhaustive des points à tester : écrans, parcours, interactions, responsive, états limites, fermetures, annulations, restauration du contexte et reports connus.
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
 - À chaque validation explicite d'un jalon, synchroniser dans le même tour le périmètre accepté et ses documents vers `maeldepreville/chapter`, puis vérifier le commit distant. La cible est `refonte-pre-lot-2` pour P0 à P6 ; `main` n'accueille la refonte qu'après recette et validation explicite de P7. Cette autorisation ne permet ni push forcé, ni contournement de protection, ni inclusion de travaux non validés. La publication Sites reste distincte.
-- Méthode confirmée le 27 août 2026 pour les prochains jalons : **synchronisation directe par l'agent**, via Git authentifié ou la connexion GitHub intégrée, sans bundle ni manipulation utilisateur par défaut. Le connecteur peut créer les nouveaux commits sur la référence distante vérifiée, puis l'agent récupère ces mêmes commits localement et contrôle la concordance. Le transfert manuel de phase 10 reste une exception liée à la préservation exacte d'historiques existants ; tout nouveau recours manuel nécessite un blocage explicite et l'accord de l'utilisateur. Les règles de `AGENTS.md` détaillent les contrôles et la protection des historiques.
+- Méthode confirmée le 27 août 2026 pour les prochains jalons : **synchronisation directe par l'agent**, via Git authentifié ou la connexion GitHub intégrée, sans bundle ni manipulation utilisateur par défaut. Le connecteur peut créer les nouveaux commits sur la référence distante vérifiée, puis l'agent récupère ces mêmes commits localement et contrôle la concordance. Le transfert manuel de phase 10 reste une exception liée à la préservation exacte d'historiques existants ; tout nouveau recours manuel nécessite un blocage explicite et l'accord de l'utilisateur. Les règles de `../../AGENTS.md` détaillent les contrôles et la protection des historiques.
 
 ## Refonte visible pré-lot 2 — cadrage du 5 septembre 2026
 
@@ -24,8 +24,8 @@ Dernière mise à jour : 5 septembre 2026
 - La doctrine, les décisions d'acquisition, de confidentialité, d'identité, de navigation, de densité, d'assets et de mouvement sont consolidées dans [`REFONTE_PRE_LOT_2.md`](./REFONTE_PRE_LOT_2.md), qui devient la source détaillée active.
 - Le déroulé P0 à P7 est validé. P0 pose les fondations du prototype ; P1 à P6 livrent des tranches verticales visibles ; P7 porte la recette complète et la décision de fusion.
 - La branche `refonte-pre-lot-2` isole toute la refonte du `main` accepté. Les jalons P0 à P6 validés y sont synchronisés ; aucune fusion vers `main` n'est implicite avant P7.
-- Un nouveau chat est prévu par jalon. `AGENT_CONTEXT.md`, le document du jalon et l'état Git constituent la passation durable ; le chat précédent n'est pas requis pour reprendre correctement.
-- Le contrat de P0 est consigné dans [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md). Son cadrage et la création de branche sont autorisés ; son implémentation applicative n'est pas encore commencée et ne vaut pas déploiement.
+- Un nouveau chat est prévu par jalon. `docs/agents/AGENT_CONTEXT.md`, le document du jalon et l'état Git constituent la passation durable ; le chat précédent n'est pas requis pour reprendre correctement.
+- Le contrat de P0 est consigné dans [`P0_FONDATIONS_PROTOTYPE.md`](../milestones/P0_FONDATIONS_PROTOTYPE.md). Son cadrage et la création de branche sont autorisés ; son implémentation applicative n'est pas encore commencée et ne vaut pas déploiement.
 
 ## Plan de développement de référence
 
@@ -54,9 +54,9 @@ Dernière mise à jour : 5 septembre 2026
 - Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
 - Phase 10 — découverte et interactions sociales : **terminée et validée le 27 août 2026**, sur la version 24, avec JI1, PDR1B, QR1, HDE1 et les correctifs de recette.
 - Phase 11 — états transversaux, cohérence, responsive et accessibilité : **terminée et validée le 2 septembre 2026 sur la version Sites 31**. Le lot 1 est clos et synchronisé sur GitHub ; CT1 demeure refusé et les limites de preuve sont conservées dans le bilan de clôture.
-- Reprise du 27 août : l'utilisateur demande d'entamer la phase 11 du lot 1 dans ce nouveau chat, puis réitère sa demande après une interruption de crédits. Cette ouverture remplace explicitement le statut « non encore ouverte » de la passation historique, sans rouvrir la phase 10 ni autoriser automatiquement de développement. Le suivi actif est désormais [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md).
+- Reprise du 27 août : l'utilisateur demande d'entamer la phase 11 du lot 1 dans ce nouveau chat, puis réitère sa demande après une interruption de crédits. Cette ouverture remplace explicitement le statut « non encore ouverte » de la passation historique, sans rouvrir la phase 10 ni autoriser automatiquement de développement. Le suivi actif est désormais [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](../milestones/PHASE_11_CONSOLIDATION_TRANSVERSALE.md).
 - L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
-- Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md), [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
+- Livrables : [`PHASE_02_CARTE_ECRANS.md`](../milestones/PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](../milestones/PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](../milestones/PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](../milestones/PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](../milestones/PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](../milestones/PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](../milestones/PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](../milestones/PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md), [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](../milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
 
 ## Organisation du contexte des agents — 1er septembre 2026
 
@@ -65,6 +65,14 @@ Dernière mise à jour : 5 septembre 2026
 - `AGENT_WORKFLOW.md` porte les procédures conditionnelles, `CODEMAP.md` relie les surfaces aux sources et tests, et `AI_AGENT_CONTEXT_STRATEGY.md` conserve les recherches, mesures et limites. Un test empêche les deux fichiers de démarrage de dépasser leur budget sans décision explicite.
 - Cette organisation remplace la duplication systématique par une source détaillée unique accompagnée de synthèses et de liens. L'état du dépôt demeure la mémoire durable ; le chat reste complémentaire.
 - Cette réorganisation documentaire n'avait alors modifié aucun comportement produit, asset ou choix visuel. Son ancien statut de recette sur la version 28 a ensuite été remplacé par la validation de la version 31 et la clôture du lot 1 le 2 septembre 2026.
+
+## Arborescence documentaire — 5 septembre 2026
+
+- L'accumulation de tous les documents dans `docs/` est remplacée par six catégories stables : `agents`, `product`, `design`, `engineering`, `milestones` et `operations`.
+- `docs/README.md` devient l'index global unique. Aucun alias, doublon ou second `ORCHESTRATOR.md` n'est créé ; `docs/agents/AGENT_WORKFLOW.md` conserve seul l'orchestration.
+- Le jalon P0 réside dans `docs/milestones/` avec les archives de phase. Le contexte actif reste dans `docs/agents/`, distinct de l'historique produit.
+- Les scripts, tests, règles automatiques et liens relatifs sont mis à jour avec les nouveaux chemins. Un test d'intégrité contrôle désormais les liens Markdown locaux et les six dossiers attendus.
+- Cette opération ne change aucun comportement applicatif, asset, dépendance ou état du Site. Elle prépare seulement un dépôt plus navigable avant l'implémentation de P0.
 
 ## Phase 11 — ouverture et audit initial
 
@@ -95,7 +103,7 @@ L'utilisateur demande aussi une analyse de `https://github.com/emilkowalski/skil
 - Le premier ensemble porte sur un comportement commun des superpositions, sans refonte graphique et en conservant NS1/NSV2. **Validation explicite reçue le 27 août 2026**, autorisant son implémentation : focus des modales, fermeture sûre du retrait de photo et focus sur l'action de retour à l'écrit. Les autres volets restent non autorisés ; la recette du correctif reste à effectuer.
 - Le clic extérieur du compte est déjà implémenté : il relève de la non-régression, contrairement à l'ancien report historique de phase 9.
 - Seule la documentation est modifiée à cette ouverture ; aucun code applicatif, asset, test, déploiement ou état distant n'est modifié.
-- Après validation du premier ensemble : implémentation des cinq modales partagées, des fermetures sûres et de la restitution du focus, sans modification des assets ni refonte. Lint, typage ciblé et 31 tests hors rendu serveur réussis ; construction, publication et synchronisation restent à vérifier. La recette exhaustive est disponible dans [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](./PHASE_11_IMPLEMENTATION_CHECKLIST.md).
+- Après validation du premier ensemble : implémentation des cinq modales partagées, des fermetures sûres et de la restitution du focus, sans modification des assets ni refonte. Lint, typage ciblé et 31 tests hors rendu serveur réussis ; construction, publication et synchronisation restent à vérifier. La recette exhaustive est disponible dans [`PHASE_11_IMPLEMENTATION_CHECKLIST.md`](../milestones/PHASE_11_IMPLEMENTATION_CHECKLIST.md).
 - Résultat du premier ensemble : build, lint, typage ciblé et **33 tests réussis** ; code synchronisé directement sur GitHub au commit `4db6c22cb7b75cf531513385f25e952a097c1651`, référence distante vérifiée. La version 25 est sauvegardée mais non déployée ; la version en ligne reste la 24. La demande ultérieure de publication différée remplace la reprise de déploiement initialement prévue. Les identifiants et limites de preuve figurent dans le document de phase.
 
 ## Décisions validées pendant la phase 10
@@ -111,7 +119,7 @@ L'utilisateur demande aussi une analyse de `https://github.com/emilkowalski/skil
 - Après la clôture, l'utilisateur demande une vérification et une mise à jour explicites du dépôt GitHub distant, ainsi que l'obligation de renouveler cette synchronisation à chaque futur jalon validé. La règle est enregistrée dans les instructions du dépôt ; le résultat de synchronisation doit être confirmé par lecture de la référence distante, pas déduit d'un déploiement Sites.
 - La vérification GitHub trouve initialement `main` sur `0810fc5` (phase 9), avec un historique divergent de la source locale acceptée. L'utilisateur autorise explicitement leur réunion sans réécriture ni envoi forcé. La comparaison exhaustive confirme que l'arbre de `0810fc5` est identique à l'ancêtre local `b074020` : aucun changement distant inédit n'est à réintégrer. La fusion locale `99b6df4` conserve le contenu de phase 10 et l'ascendance des deux historiques. Le push échoue faute d'identifiants configurés pour Git HTTPS ; la référence distante, relue après l'échec, reste `0810fc5`. Le connecteur GitHub confirme des droits d'écriture sur le dépôt, mais ne fournit pas au terminal l'authentification nécessaire à un push préservant ces objets Git. Synchronisation distante toujours bloquée, sans contournement ni réécriture. La clôture fonctionnelle de phase 10 reste acquise.
 
-- L'utilisateur accepte ensuite le transfert par bundle Git et les commandes d'envoi depuis son ordinateur authentifié. Le guide [`GITHUB_PHASE_10_TRANSFERT.md`](./GITHUB_PHASE_10_TRANSFERT.md) prévoit un clone dans un nouveau dossier, un push non forcé et une vérification des identifiants local et distant. Cette décision ne vaut pas confirmation d'un envoi : GitHub reste à synchroniser et à vérifier. La règle permanente des futurs jalons reste inchangée.
+- L'utilisateur accepte ensuite le transfert par bundle Git et les commandes d'envoi depuis son ordinateur authentifié. Le guide [`GITHUB_PHASE_10_TRANSFERT.md`](../operations/GITHUB_PHASE_10_TRANSFERT.md) prévoit un clone dans un nouveau dossier, un push non forcé et une vérification des identifiants local et distant. Cette décision ne vaut pas confirmation d'un envoi : GitHub reste à synchroniser et à vérifier. La règle permanente des futurs jalons reste inchangée.
 
 ### Priorité initiale de la découverte
 
@@ -119,7 +127,7 @@ L'utilisateur demande aussi une analyse de `https://github.com/emilkowalski/skil
 - Les lecteurs, les critiques et les listes publiques viennent ensuite enrichir et expliquer cette découverte, puis peuvent conduire progressivement à la constitution d’un cercle de lecteurs.
 - L’expérience initiale ne dépend donc pas de l’existence préalable d’un graphe social.
 - La phase conserve un modèle centré sur l’œuvre et évite de faire du fil social générique son point d’entrée.
-- Le cadrage détaillé est maintenu dans [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md).
+- Le cadrage détaillé est maintenu dans [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](../milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md).
 - Statut : **validé**.
 
 ### D4 — Pertinence progressive
@@ -622,7 +630,7 @@ L'utilisateur demande aussi une analyse de `https://github.com/emilkowalski/skil
 
 ### Prompt-cadre de production des badges
 
-- La spécification des vingt-et-un badges est désormais complète et centralisée dans `docs/PROMPT_PRODUCTION_BADGES_CHAPTER.md`.
+- La spécification des vingt-et-un badges est désormais complète et centralisée dans `docs/design/PROMPT_PRODUCTION_BADGES_CHAPTER.md`.
 - Le prompt impose l’image MM1 comme ancre artistique, une preuve de famille, quatre planches de lignées, une planche des cinq honneurs, une harmonisation globale et seulement ensuite les exports individuels.
 - Les états verrouillés seront produits par désaturation et opacité dans l’interface ; aucun second asset gris n’est généré.
 - Les vingt-et-un assets ont ensuite été générés et validés artistiquement dans la conversation externe de production, puis transmis dans `chapter-badges-complete(1).zip` avec leur planche finale harmonisée.
@@ -1320,4 +1328,4 @@ Leur forme exacte — page, panneau, dialogue ou autre interaction — n’est p
 - Synchronisation achevée sur la branche `main` : le code de l’interface, les ressources graphiques, le README et les documents de décision sont publiés dans le dépôt GitHub.
 - L’unique commit initial du dépôt GitHub a été conservé, puis les quatre jalons significatifs du prototype ont été reproduits dans un historique linéaire lisible : fondation de la page d’œuvre, complétion des parcours, corrections de navigation et documentation des décisions.
 - Le dépôt technique associé à l’hébergement reste configuré comme `origin` ; GitHub est conservé comme dépôt distant secondaire nommé `github`, afin de séparer le déploiement géré du dépôt partagé sans réécriture d’historique.
-- La synchronisation GitHub ne constitue pas l’ouverture de la phase 9. Le prochain travail de conception devra commencer dans une nouvelle conversation du même projet après lecture de `docs/CHAPTER_DECISIONS.md` et `docs/PHASE_08_IMPLEMENTATION.md`.
+- La synchronisation GitHub ne constitue pas l’ouverture de la phase 9. Le prochain travail de conception devra commencer dans une nouvelle conversation du même projet après lecture de `docs/product/CHAPTER_DECISIONS.md` et `docs/milestones/PHASE_08_IMPLEMENTATION.md`.

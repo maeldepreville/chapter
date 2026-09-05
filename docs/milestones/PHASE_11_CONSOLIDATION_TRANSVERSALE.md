@@ -10,7 +10,7 @@ Statut : **phase 11 et lot 1 clôturés le 2 septembre 2026 sur la version Sites
 
 La phase 10 reste terminée et validée sur la version Sites 24. La présente phase termine le lot 1 : « Traiter les états transversaux et finaliser la cohérence, le responsive et l'accessibilité ». La demande, réitérée après une interruption de crédits, ouvre le travail de consolidation, pas une autorisation générale de développement.
 
-Références : `CHAPTER_DECISIONS.md`, `PHASE_10_BILAN_ET_PASSATION.md`, `PHASE_10_IMPLEMENTATION_CHECKLIST.md` et les règles de `../AGENTS.md`. Le dépôt était propre au début de l'examen, sur `bbfadab`. Aucune nouvelle vérification distante GitHub n'est réalisée à cette ouverture ; les confirmations de synchronisation antérieures restent celles de la passation.
+Références : `CHAPTER_DECISIONS.md`, `PHASE_10_BILAN_ET_PASSATION.md`, `PHASE_10_IMPLEMENTATION_CHECKLIST.md` et les règles de `../../AGENTS.md`. Le dépôt était propre au début de l'examen, sur `bbfadab`. Aucune nouvelle vérification distante GitHub n'est réalisée à cette ouverture ; les confirmations de synchronisation antérieures restent celles de la passation.
 
 Préserver les choix PDR1B, PFP1, N1b, QR1, HDE1, HV1 et HMT1, les dessins des badges et le poinçon fourni. Ne pas rouvrir les arbitrages graphiques sans défaut démontré et nouvel accord.
 
@@ -21,7 +21,7 @@ Le prototype conserve des données simulées et des interactions locales à la s
 1. **Superpositions et continuité des actions** : fermetures, focus, clavier, protection des saisies, restitution du contexte et arbitrage des surfaces simultanées.
 2. **États transversaux et cas limites** : absence de données, résultats vides, erreurs d'image ou de partage, noms/titres/écrits longs, données incomplètes, clics répétés. Réutiliser les comportements déjà validés ; ne pas simuler une panne réseau d'un service absent.
 3. **Responsive, cohérence et accessibilité** : petits écrans, seuil de 900 px, texte agrandi, débordements, navigation et contrôles au clavier, lecteurs d'écran, contrastes, cibles tactiles ; discussion dédiée aux animations et transitions (utilité, rythme, cohérence, réduction du mouvement), en conservant les choix S2 et QRM1b sauf nouvel arbitrage.
-4. **Clôture du lot** : non-régression ciblée des parcours personnels et sociaux, bilan technique, checklist exhaustive et validation utilisateur. La validation du jalon déclenchera la synchronisation GitHub directe conformément à `AGENTS.md`.
+4. **Clôture du lot** : non-régression ciblée des parcours personnels et sociaux, bilan technique, checklist exhaustive et validation utilisateur. La validation du jalon déclenchera la synchronisation GitHub directe conformément à `../../AGENTS.md`.
 
 Ces ensembles organisent l'audit et ne constituent pas une autorisation de refonte. Depuis le 1er septembre, les correctifs demandés peuvent être implémentés directement comme candidats à l'évaluation ; les choix de direction encore ambigus restent arbitrés avant développement.
 
@@ -407,11 +407,11 @@ La version 28 remplace la version 27 comme base de recette visible. Elle ne cons
 
 ## 21. Infrastructure documentaire — contexte agent à la demande
 
-Le 1er septembre 2026, l'utilisateur demande d'étudier les méthodes récentes de réduction des tokens des agents et d'intégrer immédiatement les gains sûrs au projet. L'audit constate que les anciennes règles imposaient 225 449 caractères de documentation avant toute lecture de code : `AGENTS.md`, le journal transversal et le présent suivi de phase. Cette charge répétée est disproportionnée et peut aussi enfouir les décisions prioritaires.
+Le 1er septembre 2026, l'utilisateur demande d'étudier les méthodes récentes de réduction des tokens des agents et d'intégrer immédiatement les gains sûrs au projet. L'audit constate que les anciennes règles imposaient 225 449 caractères de documentation avant toute lecture de code : `../../AGENTS.md`, le journal transversal et le présent suivi de phase. Cette charge répétée est disproportionnée et peut aussi enfouir les décisions prioritaires.
 
 Le candidat documentaire remplace cette lecture exhaustive par :
 
-- un `AGENTS.md` automatique limité aux règles dures ;
+- un `../../AGENTS.md` automatique limité aux règles dures ;
 - un `AGENT_CONTEXT.md` compact avec état, prochaine étape, invariants et routage ;
 - une recherche juste à temps dans les journaux longs ;
 - une carte des sources/tests, une procédure conditionnelle et un rapport de recherche sourcé ;
@@ -421,7 +421,7 @@ La source de vérité n'est ni supprimée ni résumée de façon destructive. Le
 
 Ce travail documentaire est intégré à la source technique la plus récente, postérieure à P11-F32. Il ne vaut pas validation du jalon regroupé, ne modifie pas la version Sites 28 et n'autorise pas sa synchronisation GitHub. Les vérifications automatisées doivent confirmer le budget annoncé et la non-régression de la suite existante.
 
-Résultat : `AGENTS.md` mesure 2 673 octets et `AGENT_CONTEXT.md` 4 323 octets. Les trois nouveaux tests contrôlent leurs plafonds, les références et le script de récupération ciblée. **Build de production, lint, `git diff --check` et 95/95 tests réussis**, soit les 92 tests produit antérieurs plus 3 tests d'infrastructure documentaire. Les avertissements de proxy et de classification vinext restent inchangés. Aucun déploiement ni synchronisation GitHub n'accompagne cette intégration.
+Résultat : `../../AGENTS.md` mesure 2 673 octets et `AGENT_CONTEXT.md` 4 323 octets. Les trois nouveaux tests contrôlent leurs plafonds, les références et le script de récupération ciblée. **Build de production, lint, `git diff --check` et 95/95 tests réussis**, soit les 92 tests produit antérieurs plus 3 tests d'infrastructure documentaire. Les avertissements de proxy et de classification vinext restent inchangés. Aucun déploiement ni synchronisation GitHub n'accompagne cette intégration.
 
 ## 22. Reprise de recette — propriété des listes ouvertes depuis un profil
 
@@ -446,7 +446,7 @@ La version 29 remplace la version 28 comme base de recette visible. Elle ne cons
 
 **P11-F34 — corrections candidates :** Découvrir transmet désormais l'identifiant de liste reçu au lieu d'ouvrir systématiquement `places`. Les critiques et réponses utilisent des identifiants d'acteurs stables pour les permissions, le blocage et les destinations de profil ; aucune comparaison du nom visible ne détermine plus un droit. Les identités et présentations simulées sont centralisées dans `app/prototype-data.ts`, le catalogue des listes dans `app/catalogue.ts`, et l'origine ainsi que la route publique dans `app/site-config.ts`. Les vues dérivent leurs noms, initiales, listes, aperçus et URL de ces sources communes.
 
-Le nouveau [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md) consigne les données encore volontairement statiques et leur remplacement futur : session et profils, catalogue, bibliothèque/Journal, listes liées à leur propriétaire, progression, recommandations et interactions sociales. Il signale explicitement que les deux profils partagent encore le même catalogue de listes dans la démonstration. Les seuils produit validés et l'origine sentinelle `https://app.local` de la normalisation d'authentification restent inchangés et ne sont pas traités comme des données métier oubliées.
+Le nouveau [`PROTOTYPE_DATA_REGISTER.md`](../engineering/PROTOTYPE_DATA_REGISTER.md) consigne les données encore volontairement statiques et leur remplacement futur : session et profils, catalogue, bibliothèque/Journal, listes liées à leur propriétaire, progression, recommandations et interactions sociales. Il signale explicitement que les deux profils partagent encore le même catalogue de listes dans la démonstration. Les seuils produit validés et l'origine sentinelle `https://app.local` de la normalisation d'authentification restent inchangés et ne sont pas traités comme des données métier oubliées.
 
 Une régression dédiée protège la transmission des identifiants, l'absence de permission fondée sur un nom et l'unicité des sources canoniques. Vérification complète réussie : **build de production, lint, `git diff --check` et 98/98 tests**. Cette centralisation prépare le futur backend sans l'implémenter et ne change ni le contenu visible attendu, ni le périmètre du lot 1.
 

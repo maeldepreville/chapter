@@ -1,6 +1,6 @@
 # Chapter — procédures de travail des agents
 
-Ce document complète les règles essentielles de `AGENTS.md`. Il est consulté seulement quand la tâche touche la procédure correspondante.
+Ce document complète les règles essentielles de `../../AGENTS.md`. Il est consulté seulement quand la tâche touche la procédure correspondante.
 
 ## Cadrer une tâche
 
@@ -16,7 +16,7 @@ Pour un défaut non ambigu, inspecter puis produire directement un candidat. Pou
 ## Charger le contexte progressivement
 
 1. Lancer `bash scripts/agent-context.sh summary`.
-2. Lire la ligne de routage correspondant à la tâche dans `AGENT_CONTEXT.md`.
+2. Lire la ligne de routage correspondant à la tâche dans `docs/agents/AGENT_CONTEXT.md`.
 3. Rechercher d'abord les symboles, codes de décision ou titres avec `rg`.
 4. Lire des plages ciblées ; élargir seulement si une dépendance ou contradiction apparaît.
 5. Résumer les conclusions utiles dans le plan de travail. Ne pas recopier les sorties brutes longues dans le chat ou dans un nouveau fichier.
@@ -33,8 +33,8 @@ Ne pas générer un instantané complet du dépôt pour un agent qui peut déjà
 
 ## Mettre à jour la mémoire
 
-- **Toujours si l'état change :** `AGENT_CONTEXT.md`.
-- **Décision produit validée/révisée/abandonnée :** section ciblée de `CHAPTER_DECISIONS.md` et document de phase.
+- **Toujours si l'état change :** `docs/agents/AGENT_CONTEXT.md`.
+- **Décision produit validée/révisée/abandonnée :** section ciblée de `docs/product/CHAPTER_DECISIONS.md` et document de phase.
 - **Implémentation candidate :** document actif de phase, bilan/checklist si concernés ; le journal transversal reçoit seulement la synthèse nécessaire à la continuité.
 - **Simple correction documentaire ou technique sans effet produit :** document spécialisé et index concernés ; ne pas gonfler tous les journaux.
 
@@ -44,10 +44,10 @@ Une information possède une source détaillée unique. Les autres fichiers indi
 
 La refonte pré-lot 2 utilise un chat par jalon et la branche `refonte-pre-lot-2`.
 
-1. Au début d'un chat, lancer `npm run context`, vérifier la branche et lire `REFONTE_PRE_LOT_2.md` avec le document du jalon actif.
+1. Au début d'un chat, lancer `npm run context`, vérifier la branche et lire `docs/product/REFONTE_PRE_LOT_2.md` avec le document du jalon actif.
 2. Reformuler le résultat visible à évaluer et les non-objectifs. Ne pas anticiper l'écran du jalon suivant pour rentabiliser une extraction.
 3. Construire une tranche verticale sur fixtures centralisées. Une action visible doit avoir un effet observable, même si le futur service est remplacé par un adaptateur de session.
-4. Documenter les preuves et limites dans le document du jalon. Mettre `AGENT_CONTEXT.md`, `CODEMAP.md` et `PROTOTYPE_DATA_REGISTER.md` à jour seulement si leur contenu change réellement.
+4. Documenter les preuves et limites dans le document du jalon. Mettre `docs/agents/AGENT_CONTEXT.md`, `docs/engineering/CODEMAP.md` et `docs/engineering/PROTOTYPE_DATA_REGISTER.md` à jour seulement si leur contenu change réellement.
 5. Une validation explicite autorise le commit et l'envoi du jalon accepté sur la branche de refonte. Elle n'autorise ni le jalon suivant, ni la fusion vers `main`, ni le déploiement.
 6. Terminer avec une prochaine action unique afin que le chat suivant reprenne sans interpréter l'historique conversationnel.
 

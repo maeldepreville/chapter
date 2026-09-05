@@ -57,15 +57,15 @@ npm test
 Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with:
 
 - [`AGENTS.md`](./AGENTS.md) — short mandatory rules and context-routing entry point;
-- [`AGENT_CONTEXT.md`](./docs/AGENT_CONTEXT.md) — compact current state, invariants and next action;
-- [`REFONTE_PRE_LOT_2.md`](./docs/REFONTE_PRE_LOT_2.md) — validated product doctrine, visual principles and P0–P7 roadmap;
-- [`P0_FONDATIONS_PROTOTYPE.md`](./docs/P0_FONDATIONS_PROTOTYPE.md) — active milestone contract and acceptance criteria;
-- [`ASSET_SYSTEM.md`](./docs/ASSET_SYSTEM.md) — asset direction, scale, hierarchy and review checklist;
-- [`CODEMAP.md`](./docs/CODEMAP.md) — feature-to-source-and-test map;
-- [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;
-- [`CHAPTER_DECISIONS.md`](./docs/CHAPTER_DECISIONS.md) — searchable project-wide decision archive;
-- [`AI_AGENT_CONTEXT_STRATEGY.md`](./docs/AI_AGENT_CONTEXT_STRATEGY.md) — researched strategy for minimizing agent context and token use;
-- [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./docs/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md) — product-growth principles and safeguards.
+- [`AGENT_CONTEXT.md`](./docs/agents/AGENT_CONTEXT.md) — compact current state, invariants and next action;
+- [`REFONTE_PRE_LOT_2.md`](./docs/product/REFONTE_PRE_LOT_2.md) — validated product doctrine, visual principles and P0–P7 roadmap;
+- [`P0_FONDATIONS_PROTOTYPE.md`](./docs/milestones/P0_FONDATIONS_PROTOTYPE.md) — active milestone contract and acceptance criteria;
+- [`ASSET_SYSTEM.md`](./docs/design/ASSET_SYSTEM.md) — asset direction, scale, hierarchy and review checklist;
+- [`CODEMAP.md`](./docs/engineering/CODEMAP.md) — feature-to-source-and-test map;
+- [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;
+- [`CHAPTER_DECISIONS.md`](./docs/product/CHAPTER_DECISIONS.md) — searchable project-wide decision archive;
+- [`AI_AGENT_CONTEXT_STRATEGY.md`](./docs/agents/AI_AGENT_CONTEXT_STRATEGY.md) — researched strategy for minimizing agent context and token use;
+- [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./docs/product/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md) — product-growth principles and safeguards.
 
 Fresh agent sessions start with `npm run context`, then retrieve only the relevant decision sections and source symbols. Conversation history is supplementary context, never the sole project memory.
 

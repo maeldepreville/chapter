@@ -60,7 +60,7 @@ Une œuvre, une liste publique, une critique, un profil public et une conversati
 - Atelier éditorial contemporain : papier, encre, marge, sceau, poinçon et marque-page, sans pastiche ancien.
 - Les couvertures portent la majorité de la couleur ; la brique sert de ponctuation et non de bain chromatique.
 - Conserver les silhouettes fortes déjà conçues : emblème, carte de visite, badges, marque-page et couverture comme objet.
-- Les assets se répartissent en quatre familles : mémoire, découverte, conversation et identité. Un visuel marketing peut idéaliser une atmosphère, jamais inventer une fonction. L'échelle, la hiérarchie et la règle d'une idée par asset sont définies dans [`ASSET_SYSTEM.md`](./ASSET_SYSTEM.md).
+- Les assets se répartissent en quatre familles : mémoire, découverte, conversation et identité. Un visuel marketing peut idéaliser une atmosphère, jamais inventer une fonction. L'échelle, la hiérarchie et la règle d'une idée par asset sont définies dans [`ASSET_SYSTEM.md`](../design/ASSET_SYSTEM.md).
 
 ### Densité
 
@@ -102,7 +102,7 @@ Chaque jalon est une tranche verticale testable. Les écrans ne doivent pas cont
 - P7 : la recette complète et l'accord explicite de l'utilisateur sont requis avant toute fusion vers `main`.
 - Aucun force-push, aucune réécriture d'historique et aucun déploiement implicite.
 - Un nouveau chat peut être utilisé par jalon. Il commence par `npm run context`, vérifie la branche active, lit ce document puis le contrat du jalon concerné. Le chat précédent n'est jamais la seule mémoire.
-- À la fin d'un jalon, `AGENT_CONTEXT.md` précise le statut, les preuves, les reports et l'unique prochaine action. Le document du jalon conserve le détail.
+- À la fin d'un jalon, `docs/agents/AGENT_CONTEXT.md` précise le statut, les preuves, les reports et l'unique prochaine action. Le document du jalon conserve le détail.
 
 ## Hors périmètre immédiat
 

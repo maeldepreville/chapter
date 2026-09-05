@@ -9,7 +9,7 @@ cd "$repo_root"
 
 case "$mode" in
   summary)
-    sed -n '1,240p' docs/AGENT_CONTEXT.md
+    sed -n '1,240p' docs/agents/AGENT_CONTEXT.md
     echo
     echo "## État Git dynamique"
     git status --short --branch
@@ -24,10 +24,10 @@ case "$mode" in
     rg -n -C 3 --glob '*.md' "$1" docs AGENTS.md README.md
     ;;
   map)
-    sed -n '1,240p' docs/CODEMAP.md
+    sed -n '1,240p' docs/engineering/CODEMAP.md
     ;;
   budget)
-    wc -l -w -c AGENTS.md docs/AGENT_CONTEXT.md docs/AGENT_WORKFLOW.md docs/CODEMAP.md docs/AI_AGENT_CONTEXT_STRATEGY.md
+    wc -l -w -c AGENTS.md docs/agents/AGENT_CONTEXT.md docs/agents/AGENT_WORKFLOW.md docs/engineering/CODEMAP.md docs/agents/AI_AGENT_CONTEXT_STRATEGY.md
     ;;
   *)
     echo "Usage: bash scripts/agent-context.sh {summary|find MOTIF|map|budget}" >&2

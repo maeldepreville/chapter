@@ -4,7 +4,7 @@ Dernière mise à jour : 5 septembre 2026.
 
 Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier.
 
-La carte ci-dessous décrit la base acceptée du lot 1. P0 peut extraire les nouveaux tokens, primitives, coquilles et adaptateurs de fixtures lorsqu'ils servent une tranche testable ; chaque extraction réellement implémentée doit être ajoutée ici dans le même changement. Le contrat cible est dans [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md).
+La carte ci-dessous décrit la base acceptée du lot 1. P0 peut extraire les nouveaux tokens, primitives, coquilles et adaptateurs de fixtures lorsqu'ils servent une tranche testable ; chaque extraction réellement implémentée doit être ajoutée ici dans le même changement. Le contrat cible est dans [`P0_FONDATIONS_PROTOTYPE.md`](../milestones/P0_FONDATIONS_PROTOTYPE.md).
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |

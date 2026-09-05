@@ -37,7 +37,7 @@ P0 construit le socle technique et visuel nécessaire aux tranches P1 à P7. Il 
 - une persona avec une Bibliothèque d'environ 500 œuvres pour vérifier recherche, tri, filtres et densité ;
 - cas de couverture absente, texte long, homonymie et contenu retiré.
 
-Le registre canonique reste [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md). Il sera mis à jour en même temps que les fixtures, pas anticipé avec des identifiants fictifs qui ne seraient jamais implémentés.
+Le registre canonique reste [`PROTOTYPE_DATA_REGISTER.md`](../engineering/PROTOTYPE_DATA_REGISTER.md). Il sera mis à jour en même temps que les fixtures, pas anticipé avec des identifiants fictifs qui ne seraient jamais implémentés.
 
 ## Critères d'acceptation
 
@@ -57,4 +57,4 @@ Les compositions finales de l'accueil public, de la page œuvre, du premier rep�
 
 ## Procédure de clôture
 
-Après implémentation, documenter les fichiers extraits ou créés dans `CODEMAP.md`, les fixtures dans `PROTOTYPE_DATA_REGISTER.md`, les preuves et limites ici, puis mettre `AGENT_CONTEXT.md` à jour. Une validation explicite autorise la synchronisation du commit P0 sur `refonte-pre-lot-2`, pas sa fusion dans `main` ni son déploiement.
+Après implémentation, documenter les fichiers extraits ou créés dans `docs/engineering/CODEMAP.md`, les fixtures dans `docs/engineering/PROTOTYPE_DATA_REGISTER.md`, les preuves et limites ici, puis mettre `docs/agents/AGENT_CONTEXT.md` à jour. Une validation explicite autorise la synchronisation du commit P0 sur `refonte-pre-lot-2`, pas sa fusion dans `main` ni son déploiement.
