@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **socle produit et P0 validés ; candidate P1 locale en attente de recette**.
+Statut : **socle produit, P0 et P1 validés ; P2 — Premier repère est le prochain jalon**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 

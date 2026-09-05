@@ -7,9 +7,9 @@ Ce document est le point d'entrée des agents. Il résume l'état utile ; les jo
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2. P1 — Premier contact public possède un correctif de chargement disponible en version Sites 34 ; validation utilisateur toujours requise.
+- **Phase active :** refonte visible pré-lot 2. P1 — Premier contact public est validé sur la version Sites 34. P2 — Premier repère est le prochain jalon.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** les retours, la Recherche immédiate, le catalogue de 24 œuvres et les fiches `/oeuvres/:workId` sont confirmés. La composition de l'ouverture reprise est jugée bonne ; son illustration est republiée en version 34 avec un chargement statique direct après l'échec du service d'optimisation. La prochaine action unique reste la recette utilisateur de ce correctif.
+- **Statut P1 :** clôturé le 5 septembre 2026 après validation explicite de la composition reprise, de l'illustration chargée directement, des retours, de la Recherche, du catalogue de 24 œuvres et des fiches `/oeuvres/:workId`. La synchronisation GitHub cible `refonte-pre-lot-2` ; aucune fusion vers `main` n'est autorisée avant P7.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 
@@ -45,7 +45,8 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Statut, prochaine action, garde-fous | Ce document uniquement |
 | Doctrine et roadmap P0–P7 | `docs/product/REFONTE_PRE_LOT_2.md` |
 | Implémenter ou évaluer P0 | `docs/milestones/P0_FONDATIONS_PROTOTYPE.md`, puis `docs/engineering/CODEMAP.md` |
-| Implémenter ou évaluer P1 | `docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md`, puis `docs/engineering/CODEMAP.md` |
+| Consulter P1 validé | `docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md`, puis `docs/engineering/CODEMAP.md` |
+| Cadrer ou implémenter P2 | `docs/product/REFONTE_PRE_LOT_2.md`, puis créer le document de jalon P2 avant modification applicative |
 | Clôture du lot 1 | `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md` |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |

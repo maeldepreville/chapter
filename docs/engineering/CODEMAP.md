@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 validé et la candidate P1 locale construits au-dessus de la base acceptée du lot 1. Le contrat actif est dans [`P1_PREMIER_CONTACT_PUBLIC.md`](../milestones/P1_PREMIER_CONTACT_PUBLIC.md).
+Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 et le premier contact public P1 validés au-dessus de la base acceptée du lot 1. Le contrat P1 clôturé est dans [`P1_PREMIER_CONTACT_PUBLIC.md`](../milestones/P1_PREMIER_CONTACT_PUBLIC.md) ; P2 doit créer son propre document avant modification applicative.
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
