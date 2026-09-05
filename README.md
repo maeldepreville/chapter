@@ -2,7 +2,7 @@
 
 Chapter is a social reading platform where every book becomes part of your story — track what you read, share what you think, and connect with readers who inspire your next chapter.
 
-The current visible candidate is the grouped phase 11 milestone for completing lot 1. It consolidates the personal and social reading experience across edge cases, responsive layouts, accessibility, motion and recovery states. It remains under user evaluation and is not yet the accepted GitHub milestone.
+The current live baseline is the accepted Sites version 31, which closed phase 11 and lot 1. A user-visible redesign is now being prepared on the dedicated `refonte-pre-lot-2` branch before backend lot 2 begins; its first milestone is P0, the prototype foundation.
 
 ## Live version
 
@@ -58,6 +58,9 @@ Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with
 
 - [`AGENTS.md`](./AGENTS.md) — short mandatory rules and context-routing entry point;
 - [`AGENT_CONTEXT.md`](./docs/AGENT_CONTEXT.md) — compact current state, invariants and next action;
+- [`REFONTE_PRE_LOT_2.md`](./docs/REFONTE_PRE_LOT_2.md) — validated product doctrine, visual principles and P0–P7 roadmap;
+- [`P0_FONDATIONS_PROTOTYPE.md`](./docs/P0_FONDATIONS_PROTOTYPE.md) — active milestone contract and acceptance criteria;
+- [`ASSET_SYSTEM.md`](./docs/ASSET_SYSTEM.md) — asset direction, scale, hierarchy and review checklist;
 - [`CODEMAP.md`](./docs/CODEMAP.md) — feature-to-source-and-test map;
 - [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;
 - [`CHAPTER_DECISIONS.md`](./docs/CHAPTER_DECISIONS.md) — searchable project-wide decision archive;
@@ -68,4 +71,4 @@ Fresh agent sessions start with `npm run context`, then retrieve only the releva
 
 ## Roadmap status
 
-Phases 1 through 10 are complete. Phase 11 is deployed as Sites version 28 for evaluation; lot 1 remains open until explicit acceptance and verified GitHub synchronization.
+Phases 1 through 11 and lot 1 are complete. Sites version 31 is the accepted live baseline. The pre-lot-2 redesign follows milestones P0 through P7 on `refonte-pre-lot-2`; `main` remains unchanged until the complete P7 review is explicitly accepted.

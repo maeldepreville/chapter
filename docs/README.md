@@ -6,6 +6,8 @@ This directory preserves the decisions made during the progressive design of Cha
 
 [`AGENT_CONTEXT.md`](./AGENT_CONTEXT.md) is the compact current-state entry point. [`CHAPTER_DECISIONS.md`](./CHAPTER_DECISIONS.md) remains the transversal decision archive for the validated roadmap, constraints, decisions and justifications; agents search it on demand instead of loading it in full.
 
+The active product source for the redesign is [`REFONTE_PRE_LOT_2.md`](./REFONTE_PRE_LOT_2.md); [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md) is the current milestone contract.
+
 ## Conversation continuity
 
 The concise repository rules in [`../AGENTS.md`](../AGENTS.md) apply to every project chat. Run `bash scripts/agent-context.sh summary`, follow the routing table, then retrieve only the relevant sections. [`AGENT_WORKFLOW.md`](./AGENT_WORKFLOW.md) contains conditional procedures, [`CODEMAP.md`](./CODEMAP.md) routes features to source and tests, and [`AI_AGENT_CONTEXT_STRATEGY.md`](./AI_AGENT_CONTEXT_STRATEGY.md) records the research and token-budget rationale. Chat history complements these files but never replaces them.
@@ -14,6 +16,9 @@ The concise repository rules in [`../AGENTS.md`](../AGENTS.md) apply to every pr
 
 - [`AGENT_CONTEXT.md`](./AGENT_CONTEXT.md) — Compact active state, invariants, routing and next action.
 - [`AGENT_WORKFLOW.md`](./AGENT_WORKFLOW.md) — Conditional procedures for implementation, documentation, validation, GitHub and Sites.
+- [`REFONTE_PRE_LOT_2.md`](./REFONTE_PRE_LOT_2.md) — Validated redesign doctrine, experience model, visual system, milestone roadmap and branch contract.
+- [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md) — Active P0 scope, non-goals, fixture requirements and acceptance checklist.
+- [`ASSET_SYSTEM.md`](./ASSET_SYSTEM.md) — Operational asset direction derived from the supplied brief: desire, scale, consistency, hierarchy and one idea per asset.
 - [`CODEMAP.md`](./CODEMAP.md) — Compact mapping from product areas to source modules and tests.
 - [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md) — Canonical register of intentional prototype fixtures, corrected hardcoding risks and later backend replacements.
 - [`AI_AGENT_CONTEXT_STRATEGY.md`](./AI_AGENT_CONTEXT_STRATEGY.md) — Evidence-backed context and token strategy, measurements and rejected approaches.
@@ -35,3 +40,5 @@ The concise repository rules in [`../AGENTS.md`](../AGENTS.md) apply to every pr
 - [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md)
 
 When a later decision revises an earlier one, update the transversal log explicitly rather than silently contradicting it in another file.
+
+There is no separate `ORCHESTRATOR.md`: orchestration rules intentionally live in [`AGENT_WORKFLOW.md`](./AGENT_WORKFLOW.md) to avoid two procedural sources of truth.

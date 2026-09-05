@@ -1,7 +1,7 @@
 # Chapter — Principes produit, croissance et intégrité UX
 
 Statut : **cadre transversal évolutif**  
-Dernière mise à jour : 22 août 2026
+Dernière mise à jour : 5 septembre 2026
 
 ## Finalité
 
@@ -47,21 +47,23 @@ Associer au résultat principal au moins une mesure de qualité ou de confiance.
 
 ## Acquisition
 
+La refonte pré-lot 2 fixe une priorité : Chapter vise d'abord les jeunes lecteurs, les nouveaux lecteurs et les personnes qui n'ont pas encore construit leur vie de lecture dans un service concurrent. La migration des lecteurs déjà équipés reste une voie secondaire importante : import privé, continuité et réversibilité doivent réduire le coût de changement sans transformer l'accueil en outil de transfert.
+
 Les leviers compatibles avec Chapter comprennent :
 
 - une promesse compréhensible rapidement ;
 - une identité visuelle mémorable mais lisible ;
 - des pages d’œuvres et critiques partageables lorsque leur caractère public aura été conçu ;
 - une découvrabilité organique fondée sur les livres, auteurs et opinions ;
-- un onboarding futur conduisant rapidement à une première valeur personnelle.
+- un onboarding contextuel conduisant directement à une première valeur personnelle.
 
-Les écrans marketing, l’inscription et l’onboarding restent hors du premier lot actuel. Ils seront conçus plus tard avec le même cadre, et non ajoutés implicitement pendant les phases consacrées à l’expérience connectée.
+Le parcours validé est : une œuvre → un statut → un premier repère. L'inscription intervient seulement lorsqu'elle devient nécessaire et restaure l'action engagée. Aucun questionnaire de goûts, profil complété, suivi de personnes ou tutoriel bloquant ne précède cette valeur. La source détaillée de ces décisions est [`REFONTE_PRE_LOT_2.md`](./REFONTE_PRE_LOT_2.md).
 
 ## Activation
 
 L’activation ne doit pas être définie comme la simple création d’un compte. Une activation plus pertinente pour Chapter pourrait correspondre à une séquence telle que :
 
-> trouver une œuvre → l’ajouter avec un statut → retrouver cette trace dans son journal.
+> trouver une œuvre → l'ajouter avec un statut → créer un premier repère → retrouver cette trace dans son journal.
 
 Cette définition restera une hypothèse tant qu’elle n’aura pas été confrontée à des utilisateurs et à des données réelles.
 

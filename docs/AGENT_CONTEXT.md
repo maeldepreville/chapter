@@ -1,67 +1,72 @@
 # Chapter — contexte courant compact
 
-Dernière mise à jour : 2 septembre 2026.
+Dernière mise à jour : 5 septembre 2026.
 
 Ce document est le point d'entrée des agents. Il résume l'état utile ; les journaux longs restent consultables à la demande et ne doivent pas être chargés intégralement par réflexe.
 
 ## État actuel
 
-- **Phase active :** phase 11 et lot 1 clôturés le 2 septembre 2026 ; aucun lot suivant n'est encore ouvert.
-- **Produit :** prototype frontend sur données simulées et état local à la session. Authentification réelle, persistance distante, moteur de recommandation, modération complète et onboarding restent hors lot 1.
-- **Jalon visible accepté :** version Sites 31, déployée en accès propriétaire. Elle synchronise les traces publiques avec les pages d'œuvres et rend chaque identité sociale navigable ; build, lint, `git diff --check` et 101/101 tests réussissent.
-- **Source fonctionnelle acceptée :** version 31 issue du SHA `904d2dfbf8fbcb5bb7dc6b8f710f24907f3d1570`, complétée par ses documents de validation et de clôture.
-- **Validation :** après sa recette et l'acceptation ciblée de P11-F35, l'utilisateur valide explicitement le jalon regroupé le 2 septembre 2026. Cette décision clôt la phase 11 et le lot 1 sans constituer un audit WCAG exhaustif.
-- **GitHub :** la validation du jalon autorise et exige la synchronisation directe de la branche `main`, suivie d'une lecture de contrôle de la référence distante.
-- **Prochaine étape produit :** cadrer explicitement le lot 2 avant tout nouveau développement ; le backend, l'authentification et la persistance restent des candidats de périmètre, pas des travaux déjà ouverts.
+- **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `PHASE_11_BILAN_ET_CLOTURE.md`.
+- **Phase active :** refonte visible pré-lot 2. Le socle produit et la feuille de route P0 à P7 sont validés ; P0 est le jalon courant.
+- **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
+- **Statut P0 :** contrat documenté dans `P0_FONDATIONS_PROTOTYPE.md` ; implémentation non commencée. La prochaine action est l'autorisation explicite de construire P0.
+- **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
+- **Publication :** aucune publication n'est autorisée par le cadrage ou par une implémentation candidate. Le Site accepté reste inchangé tant qu'une mise à disposition n'est pas demandée explicitement.
 
-## Invariants à préserver
+## Doctrine de la refonte
 
-- Direction éditoriale sobre ; pas de refonte ni d'effet gratuit.
-- AM1 : fondu d'opacité seul pour les panneaux ; mouvement réduit respecté.
-- S2 : retours de boutons tonals, sans rebond ni déplacement.
+« Chapter n'est pas l'endroit où l'on compte les livres lus. C'est l'endroit où chaque lecture laisse une trace, et où ces traces deviennent des chemins vers les autres. »
+
+- Acquisition d'abord auprès des lecteurs qui n'ont pas encore investi une application ; migration privée et fiable comme voie secondaire.
+- Activation : une œuvre → `À lire`, `En cours` ou `Lu` → premier repère. Aucun questionnaire de goûts, profil ou abonnement imposé.
+- Journal, Bibliothèque et notes toujours privés. Une critique, une liste ou une conversation publique résulte d'un geste explicite et réversible.
+- Navigation principale : Journal, Bibliothèque, Découvrir et Recherche. Les œuvres, profils, listes, critiques et conversations publiques sont consultables sans compte.
+- Progression facultative et manuelle sous forme de marque-page ; aucun champ de possession.
+- Identité publique demandée à la première action visible : `Nom public` non unique, photo facultative, `user_id` interne stable.
+- Direction d'atelier éditorial contemporain ; Newsreader + Inter ; couvertures comme couleur principale ; densité adaptée au contexte ; microdesign et mouvement inclus dans la refonte.
+
+Le détail et les justifications sont dans `REFONTE_PRE_LOT_2.md`.
+
+## Invariants techniques et comportementaux
+
+- Identifiants stables pour permissions, relations, profils, œuvres et contenus ; jamais le nom, la photo ou la biographie.
+- Données intentionnelles centralisées et consignées dans `PROTOTYPE_DATA_REGISTER.md` lors de leur implémentation.
+- AM1 : surfaces en fondu à leur position finale, texte immobile, transition interruptible et mouvement réduit immédiat.
+- S2 : retours de boutons tonals, sans rebond ni déplacement ; navigation, recherche et tri immédiats.
 - QRM1b : retournement de la carte autour de 440 ms.
-- QR1/QRP1b : carte recto-verso et commandes extérieures préservées.
-- HDE1/HMT1/P11-F32 : hiérarchie des honneurs, fiche tactile et accès au pointeur conservés.
-- P11-F33 : une liste conserve le propriétaire du profil qui l'a ouverte ; aucun suivi de soi-même sur la liste personnelle.
-- P11-F34 : permissions, destinations et relations utilisent des identifiants stables ; les données statiques intentionnelles sont centralisées et consignées dans `PROTOTYPE_DATA_REGISTER.md`.
-- P11-F35 : une critique publique possède une source commune entre profil et œuvre ; toute identité affichée dans une critique ou une réponse ouvre son profil.
 - PFP1 : JPEG/PNG/WebP, 8 Mo, petit côté minimal de 512 px ; gestes confinés à l'image.
-- N1b : nom de la carte sans césure interne.
 - Critiques publiques limitées à 3 000 caractères ; écrits complets conservés.
-- Une implémentation de recette ne vaut ni validation ni autorisation GitHub ; la version 31 constitue l'exception désormais acceptée explicitement.
+- Une implémentation candidate ne vaut ni validation, ni synchronisation GitHub, ni déploiement.
 
 ## Routage du contexte
 
 | Besoin | Lire ou rechercher |
 | --- | --- |
 | Statut, prochaine action, garde-fous | Ce document uniquement |
-| Clôture et recette du lot 1 | `PHASE_11_BILAN_ET_CLOTURE.md`, puis la section utile de `PHASE_11_IMPLEMENTATION_CHECKLIST.md` |
-| Correctif phase 11 | `rg -n "P11-F|mot-clé" docs/PHASE_11_CONSOLIDATION_TRANSVERSALE.md docs/CHAPTER_DECISIONS.md` puis quelques lignes autour du résultat |
-| Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` ; ouvrir seulement le livrable de phase trouvé |
+| Doctrine et roadmap P0–P7 | `REFONTE_PRE_LOT_2.md` |
+| Implémenter ou évaluer P0 | `P0_FONDATIONS_PROTOTYPE.md`, puis `CODEMAP.md` |
+| Clôture du lot 1 | `PHASE_11_BILAN_ET_CLOTURE.md` |
+| Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `CODEMAP.md`, puis les symboles concernés avec `rg` |
-| Donnée en dur ou future source backend | `PROTOTYPE_DATA_REGISTER.md` |
-| Croissance produit | `CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
+| Fixtures ou future source backend | `PROTOTYPE_DATA_REGISTER.md` |
+| Acquisition et croissance | `REFONTE_PRE_LOT_2.md`, puis `CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
+| Créer ou évaluer un asset | `ASSET_SYSTEM.md`, puis la famille concernée dans `REFONTE_PRE_LOT_2.md` |
 | Synchronisation GitHub ou publication | `AGENT_WORKFLOW.md` et l'état Git/Sites réel |
 | Optimisation des agents | `AI_AGENT_CONTEXT_STRATEGY.md` |
 
-`CHAPTER_DECISIONS.md` demeure la source de vérité transversale, mais sert d'archive interrogeable : sa taille n'en fait plus un prérequis de lecture exhaustive.
+`CHAPTER_DECISIONS.md` demeure l'archive transversale : la rechercher de façon ciblée, ne pas la lire entièrement par défaut.
 
-## Commandes usuelles
+## Démarrage d'un nouveau chat
 
 ```bash
-bash scripts/agent-context.sh summary
-bash scripts/agent-context.sh find "P11-F32|HMT1"
-bash scripts/agent-context.sh map
-npm run lint
-npm test
-git diff --check
+npm run context
+git status --short --branch
 ```
 
-Commencer par les tests directement liés au changement. N'exécuter la suite complète qu'une fois le candidat cohérent, sauf si la portée exige immédiatement une vérification globale.
+Vérifier ensuite que la branche correspond au jalon, lire sa ligne de routage et charger seulement les sources concernées. Un chat distinct par jalon est recommandé ; le dépôt, non l'historique du chat, porte le statut durable.
 
 ## Écriture documentaire
 
-- Mettre ce fichier à jour lorsqu'un statut courant, une prochaine étape, une version de recette, un blocage ou un invariant change.
-- Ajouter le détail dans un seul document spécialisé ; ailleurs, conserver une synthèse et un lien.
-- Dans `CHAPTER_DECISIONS.md`, rechercher la section à modifier avant de lire davantage. Ajouter une décision courte en tête seulement lorsqu'elle change réellement le cadre transversal.
-- Conserver les preuves historiques et identifiants de publication dans les bilans de phase, pas dans ce résumé sauf s'ils déterminent l'action suivante.
+- Mettre ce fichier à jour lorsqu'un statut, une prochaine action, un jalon, un blocage ou un invariant change.
+- Garder le détail dans un seul document spécialisé ; ailleurs, résumer et pointer.
+- À la clôture de chaque jalon, consigner preuves, limites, reports et prochaine action avant la synchronisation distante autorisée.

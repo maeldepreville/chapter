@@ -40,16 +40,33 @@ Ne pas générer un instantané complet du dépôt pour un agent qui peut déjà
 
 Une information possède une source détaillée unique. Les autres fichiers indiquent son statut et un lien.
 
+## Enchaîner les jalons de la refonte
+
+La refonte pré-lot 2 utilise un chat par jalon et la branche `refonte-pre-lot-2`.
+
+1. Au début d'un chat, lancer `npm run context`, vérifier la branche et lire `REFONTE_PRE_LOT_2.md` avec le document du jalon actif.
+2. Reformuler le résultat visible à évaluer et les non-objectifs. Ne pas anticiper l'écran du jalon suivant pour rentabiliser une extraction.
+3. Construire une tranche verticale sur fixtures centralisées. Une action visible doit avoir un effet observable, même si le futur service est remplacé par un adaptateur de session.
+4. Documenter les preuves et limites dans le document du jalon. Mettre `AGENT_CONTEXT.md`, `CODEMAP.md` et `PROTOTYPE_DATA_REGISTER.md` à jour seulement si leur contenu change réellement.
+5. Une validation explicite autorise le commit et l'envoi du jalon accepté sur la branche de refonte. Elle n'autorise ni le jalon suivant, ni la fusion vers `main`, ni le déploiement.
+6. Terminer avec une prochaine action unique afin que le chat suivant reprenne sans interpréter l'historique conversationnel.
+
 ## Synchroniser GitHub après validation d'un jalon
 
-L'utilisateur a autorisé durablement une synchronisation directe après chaque validation explicite de jalon, vers `https://github.com/maeldepreville/chapter.git`, branche `main`.
+L'utilisateur a autorisé durablement une synchronisation directe après chaque validation explicite. La cible dépend du cycle :
+
+- lot 1 historique : `main` ;
+- refonte P0 à P6 : `refonte-pre-lot-2` ;
+- P7 : fusion vers `main` seulement après recette complète et accord explicite.
 
 1. Mettre à jour les documents de décision et de clôture du périmètre accepté.
 2. Vérifier le dépôt de travail, la référence GitHub distante et les éventuelles divergences.
 3. Inclure uniquement code, assets, tests et documents du jalon accepté. Préserver tout travail sans rapport et tout candidat non validé.
 4. Utiliser Git authentifié ou la connexion GitHub intégrée. L'absence d'identifiants dans le terminal n'établit pas l'indisponibilité de la connexion intégrée.
 5. Envoyer sans force-push, sans réécriture et sans contournement de branche protégée.
-6. Vérifier après l'envoi que `refs/heads/main` pointe sur le commit attendu et que l'arbre distant correspond au contenu préparé.
+6. Vérifier après l'envoi que la référence cible pointe sur le commit attendu et que l'arbre distant correspond au contenu préparé.
+
+Ne jamais pousser un candidat non validé sous prétexte qu'une branche de travail l'isole. La création initiale de la branche et son cadrage documentaire constituent la préparation explicitement demandée le 5 septembre 2026 ; les implémentations suivent le cycle candidat → recette → validation.
 
 Le bundle de phase 10 était une exception de préservation d'historiques. Ne pas le réintroduire sans blocage réel et accord de l'utilisateur. En cas de divergence ou de refus d'accès, arrêter l'envoi, expliquer le blocage et demander une direction.
 

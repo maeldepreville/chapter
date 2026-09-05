@@ -1,8 +1,10 @@
 # Chapter — carte compacte du code
 
-Dernière mise à jour : 1er septembre 2026.
+Dernière mise à jour : 5 septembre 2026.
 
 Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier.
+
+La carte ci-dessous décrit la base acceptée du lot 1. P0 peut extraire les nouveaux tokens, primitives, coquilles et adaptateurs de fixtures lorsqu'ils servent une tranche testable ; chaque extraction réellement implémentée doit être ajoutée ici dans le même changement. Le contrat cible est dans [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md).
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
@@ -25,6 +27,6 @@ sed -n 'DEBUT,FINp' app/fichier.tsx
 node --test tests/fichier-cible.test.mjs
 ```
 
-`app/page.tsx` et `app/phase10.tsx` restent volumineux. Une extraction mécanique de composants peut être envisagée lorsqu'une fonctionnalité les modifie réellement, mais elle ne doit pas être menée comme une opération isolée de « réduction de tokens » : le risque de régression dépasserait le gain immédiat. La carte et la recherche par symbole fournissent le gain sûr actuel.
+`app/page.tsx` et `app/phase10.tsx` restent volumineux. P0 justifie désormais des extractions orientées vers le nouveau système, mais pas une réécriture en bloc : chaque module extrait doit porter un contrat ou une tranche vérifiable et conserver la base exécutable.
 
 Les données simulées intentionnelles et leur future source persistante sont suivies dans [`PROTOTYPE_DATA_REGISTER.md`](./PROTOTYPE_DATA_REGISTER.md). Une valeur visible ne doit jamais servir d'identifiant de permission ou de navigation.

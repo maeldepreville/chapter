@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 2 septembre 2026
+Dernière mise à jour : 5 septembre 2026
 
 ## Cadre de collaboration
 
@@ -15,8 +15,17 @@ Dernière mise à jour : 2 septembre 2026
 - Lorsqu’un sujet est évoqué, il doit être situé explicitement dans le plan : phase actuelle, phase ultérieure identifiée, hors du premier lot ou nouveau sujet à intégrer.
 - Chaque jalon final publié doit être accompagné d’une checklist exhaustive des points à tester : écrans, parcours, interactions, responsive, états limites, fermetures, annulations, restauration du contexte et reports connus.
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
-- À chaque validation explicite d'un jalon, synchroniser dans le même tour le périmètre accepté et ses documents vers `maeldepreville/chapter`, branche `main`, puis vérifier le commit distant. Cette autorisation permanente, confirmée le 27 août 2026, est inscrite dans `AGENTS.md` pour les futurs chats ; elle ne permet ni push forcé, ni contournement de protection, ni inclusion de travaux non validés. La publication Sites seule ne constitue pas une synchronisation GitHub.
+- À chaque validation explicite d'un jalon, synchroniser dans le même tour le périmètre accepté et ses documents vers `maeldepreville/chapter`, puis vérifier le commit distant. La cible est `refonte-pre-lot-2` pour P0 à P6 ; `main` n'accueille la refonte qu'après recette et validation explicite de P7. Cette autorisation ne permet ni push forcé, ni contournement de protection, ni inclusion de travaux non validés. La publication Sites reste distincte.
 - Méthode confirmée le 27 août 2026 pour les prochains jalons : **synchronisation directe par l'agent**, via Git authentifié ou la connexion GitHub intégrée, sans bundle ni manipulation utilisateur par défaut. Le connecteur peut créer les nouveaux commits sur la référence distante vérifiée, puis l'agent récupère ces mêmes commits localement et contrôle la concordance. Le transfert manuel de phase 10 reste une exception liée à la préservation exacte d'historiques existants ; tout nouveau recours manuel nécessite un blocage explicite et l'accord de l'utilisateur. Les règles de `AGENTS.md` détaillent les contrôles et la protection des historiques.
+
+## Refonte visible pré-lot 2 — cadrage du 5 septembre 2026
+
+- L'utilisateur choisit de reprendre l'application depuis ce que les lecteurs verront avant d'ouvrir le lot 2 backend. Ce travail est une refonte produit et frontend à part entière, pas une retouche cosmétique du lot 1.
+- La doctrine, les décisions d'acquisition, de confidentialité, d'identité, de navigation, de densité, d'assets et de mouvement sont consolidées dans [`REFONTE_PRE_LOT_2.md`](./REFONTE_PRE_LOT_2.md), qui devient la source détaillée active.
+- Le déroulé P0 à P7 est validé. P0 pose les fondations du prototype ; P1 à P6 livrent des tranches verticales visibles ; P7 porte la recette complète et la décision de fusion.
+- La branche `refonte-pre-lot-2` isole toute la refonte du `main` accepté. Les jalons P0 à P6 validés y sont synchronisés ; aucune fusion vers `main` n'est implicite avant P7.
+- Un nouveau chat est prévu par jalon. `AGENT_CONTEXT.md`, le document du jalon et l'état Git constituent la passation durable ; le chat précédent n'est pas requis pour reprendre correctement.
+- Le contrat de P0 est consigné dans [`P0_FONDATIONS_PROTOTYPE.md`](./P0_FONDATIONS_PROTOTYPE.md). Son cadrage et la création de branche sont autorisés ; son implémentation applicative n'est pas encore commencée et ne vaut pas déploiement.
 
 ## Plan de développement de référence
 
@@ -44,7 +53,7 @@ Dernière mise à jour : 2 septembre 2026
 - Phase 8 — implémentation de la première tranche verticale : **terminée et validée**.
 - Phase 9 — consolidation des composants et espace personnel : **terminée et validée**.
 - Phase 10 — découverte et interactions sociales : **terminée et validée le 27 août 2026**, sur la version 24, avec JI1, PDR1B, QR1, HDE1 et les correctifs de recette.
-- Phase 11 — états transversaux, cohérence, responsive et accessibilité : **candidat technique du jalon regroupé publié pour recette en version Sites 31 avec P11-F35**. Trois ensembles puis AM1 sont validés et implémentés ; CT1 est refusé ; les correctifs de carte/gestes, de reflow/contrôles, de fiche d'honneur, de propriété des listes, de données codées en dur et de profils sociaux restent à évaluer. Le volet 4 ajoute la non-régression des parcours racine, le bilan et la checklist de clôture. La synchronisation GitHub reste différée, la recette navigateur reste à effectuer et le lot 1 n'est pas encore déclaré clos. Le plan initial s'arrête à cette consolidation ; l'authentification, l'onboarding et les autres fonctions exclues nécessiteront un périmètre ultérieur explicitement validé.
+- Phase 11 — états transversaux, cohérence, responsive et accessibilité : **terminée et validée le 2 septembre 2026 sur la version Sites 31**. Le lot 1 est clos et synchronisé sur GitHub ; CT1 demeure refusé et les limites de preuve sont conservées dans le bilan de clôture.
 - Reprise du 27 août : l'utilisateur demande d'entamer la phase 11 du lot 1 dans ce nouveau chat, puis réitère sa demande après une interruption de crédits. Cette ouverture remplace explicitement le statut « non encore ouverte » de la passation historique, sans rouvrir la phase 10 ni autoriser automatiquement de développement. Le suivi actif est désormais [`PHASE_11_CONSOLIDATION_TRANSVERSALE.md`](./PHASE_11_CONSOLIDATION_TRANSVERSALE.md).
 - L’interface fonctionnelle reste fondée sur des données simulées ; le jalon permet d’évaluer l’ensemble du parcours personnel sur desktop et mobile.
 - Livrables : [`PHASE_02_CARTE_ECRANS.md`](./PHASE_02_CARTE_ECRANS.md), [`PHASE_03_NAVIGATION.md`](./PHASE_03_NAVIGATION.md), [`PHASE_04_DIRECTION_VISUELLE.md`](./PHASE_04_DIRECTION_VISUELLE.md), [`PHASE_05_PAGE_OEUVRE.md`](./PHASE_05_PAGE_OEUVRE.md), [`PHASE_06_MOBILE.md`](./PHASE_06_MOBILE.md), [`PHASE_07_PARCOURS_PERSONNELS.md`](./PHASE_07_PARCOURS_PERSONNELS.md), [`PHASE_08_IMPLEMENTATION.md`](./PHASE_08_IMPLEMENTATION.md), [`PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`](./PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md), [`PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`](./PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md) et [`CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md`](./CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md).
@@ -55,7 +64,7 @@ Dernière mise à jour : 2 septembre 2026
 - Le présent journal conserve son rôle de source de vérité transversale et d'archive complète. Le changement porte sur sa consultation : rechercher et lire la section pertinente, puis élargir seulement en cas de dépendance ou de contradiction.
 - `AGENT_WORKFLOW.md` porte les procédures conditionnelles, `CODEMAP.md` relie les surfaces aux sources et tests, et `AI_AGENT_CONTEXT_STRATEGY.md` conserve les recherches, mesures et limites. Un test empêche les deux fichiers de démarrage de dépasser leur budget sans décision explicite.
 - Cette organisation remplace la duplication systématique par une source détaillée unique accompagnée de synthèses et de liens. L'état du dépôt demeure la mémoire durable ; le chat reste complémentaire.
-- Aucun comportement produit, asset ou choix visuel n'est modifié. La version Sites 28 demeure la base de recette non validée et GitHub reste volontairement sur `9547a2a` jusqu'à validation du jalon regroupé.
+- Cette réorganisation documentaire n'avait alors modifié aucun comportement produit, asset ou choix visuel. Son ancien statut de recette sur la version 28 a ensuite été remplacé par la validation de la version 31 et la clôture du lot 1 le 2 septembre 2026.
 
 ## Phase 11 — ouverture et audit initial
 

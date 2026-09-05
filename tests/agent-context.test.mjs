@@ -24,6 +24,9 @@ test("context routing references real, specialized files", () => {
     "docs/AGENT_WORKFLOW.md",
     "docs/CODEMAP.md",
     "docs/AI_AGENT_CONTEXT_STRATEGY.md",
+    "docs/REFONTE_PRE_LOT_2.md",
+    "docs/P0_FONDATIONS_PROTOTYPE.md",
+    "docs/ASSET_SYSTEM.md",
     "docs/PHASE_11_BILAN_ET_CLOTURE.md",
     "docs/PHASE_11_IMPLEMENTATION_CHECKLIST.md",
   ];
@@ -45,7 +48,8 @@ test("the context helper returns compact state and supports targeted retrieval",
     encoding: "utf8",
   });
 
-  assert.match(summary, /Phase active.*phase 11/i);
+  assert.match(summary, /Phase active.*refonte visible pré-lot 2/i);
+  assert.match(summary, /refonte-pre-lot-2/);
   assert.match(summary, /État Git dynamique/);
   assert.ok(Buffer.byteLength(summary) < 10_000, "startup summary must remain compact");
   assert.match(targeted, /P11-F32/);
