@@ -2,7 +2,7 @@
 
 Chapter is a social reading platform where every book becomes part of your story — track what you read, share what you think, and connect with readers who inspire your next chapter.
 
-The current live baseline is the accepted Sites version 31, which closed phase 11 and lot 1. A user-visible redesign is now being prepared on the dedicated `refonte-pre-lot-2` branch before backend lot 2 begins; its first milestone is P0, the prototype foundation.
+The current live baseline is the accepted Sites version 31, which closed phase 11 and lot 1. A user-visible redesign is being prepared on the dedicated `refonte-pre-lot-2` branch before backend lot 2 begins; P0 is validated and P1's public first-contact candidate is local pending review.
 
 ## Live version
 
@@ -59,7 +59,7 @@ Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with
 - [`AGENTS.md`](./AGENTS.md) — short mandatory rules and context-routing entry point;
 - [`AGENT_CONTEXT.md`](./docs/agents/AGENT_CONTEXT.md) — compact current state, invariants and next action;
 - [`REFONTE_PRE_LOT_2.md`](./docs/product/REFONTE_PRE_LOT_2.md) — validated product doctrine, visual principles and P0–P7 roadmap;
-- [`P0_FONDATIONS_PROTOTYPE.md`](./docs/milestones/P0_FONDATIONS_PROTOTYPE.md) — active milestone contract and acceptance criteria;
+- [`P1_PREMIER_CONTACT_PUBLIC.md`](./docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md) — active milestone contract, exclusions and review checklist;
 - [`ASSET_SYSTEM.md`](./docs/design/ASSET_SYSTEM.md) — asset direction, scale, hierarchy and review checklist;
 - [`CODEMAP.md`](./docs/engineering/CODEMAP.md) — feature-to-source-and-test map;
 - [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;

@@ -21,7 +21,7 @@ docs/
 ├── product/      doctrine, décisions et croissance produit
 ├── design/       système visuel et briefs d'assets
 ├── engineering/  carte du code et contrats de données simulées
-├── milestones/   jalon actif P0 et archives des phases 2 à 11
+├── milestones/   jalon actif P1, P0 validé et archives des phases 2 à 11
 └── operations/   procédures historiques de transfert et d'exploitation
 ```
 
@@ -54,6 +54,7 @@ Il n'existe pas de `ORCHESTRATOR.md` séparé : `AGENT_WORKFLOW.md` porte volont
 ### Actif
 
 - [`milestones/P0_FONDATIONS_PROTOTYPE.md`](./milestones/P0_FONDATIONS_PROTOTYPE.md) — périmètre, exclusions et critères d'acceptation de P0.
+- [`milestones/P1_PREMIER_CONTACT_PUBLIC.md`](./milestones/P1_PREMIER_CONTACT_PUBLIC.md) — contrat, candidate et recette du premier contact public.
 
 ### Lot 1 archivé
 

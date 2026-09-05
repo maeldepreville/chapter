@@ -25,7 +25,9 @@ Dernière mise à jour : 5 septembre 2026
 - Le déroulé P0 à P7 est validé. P0 pose les fondations du prototype ; P1 à P6 livrent des tranches verticales visibles ; P7 porte la recette complète et la décision de fusion.
 - La branche `refonte-pre-lot-2` isole toute la refonte du `main` accepté. Les jalons P0 à P6 validés y sont synchronisés ; aucune fusion vers `main` n'est implicite avant P7.
 - Un nouveau chat est prévu par jalon. `docs/agents/AGENT_CONTEXT.md`, le document du jalon et l'état Git constituent la passation durable ; le chat précédent n'est pas requis pour reprendre correctement.
-- Le contrat de P0 est consigné dans [`P0_FONDATIONS_PROTOTYPE.md`](../milestones/P0_FONDATIONS_PROTOTYPE.md). Son cadrage et la création de branche sont autorisés ; son implémentation applicative n'est pas encore commencée et ne vaut pas déploiement.
+- Le contrat de P0 est consigné dans [`P0_FONDATIONS_PROTOTYPE.md`](../milestones/P0_FONDATIONS_PROTOTYPE.md). P0 est validé et synchronisé sur `refonte-pre-lot-2` ; cette validation n'a autorisé ni déploiement ni fusion vers `main`.
+- P1 — Premier contact public adopte une racine `Découvrir`, une recherche immédiate par œuvre ou auteur et une fiche œuvre publique sans commandes personnelles. La candidate et ses reports vers P2, P4 et P6 sont détaillés dans [`P1_PREMIER_CONTACT_PUBLIC.md`](../milestones/P1_PREMIER_CONTACT_PUBLIC.md). Sa mise à disposition Sites est directe ; sa synchronisation GitHub attend la validation explicite.
+- Révision de workflow du 5 septembre 2026 : une candidate visuelle complète et vérifiée est désormais mise directement à disposition sur le Site de recette, sans message de confirmation supplémentaire. Cette autorisation permanente ne vaut pas validation du jalon et ne change pas la règle de synchronisation GitHub après validation explicite.
 
 ## Plan de développement de référence
 

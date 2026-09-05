@@ -32,6 +32,10 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 
 ## Données encore volontairement simulées
 
+### Extension P1
+
+`app/p1-public-fixtures.ts` ajoute dix-huit œuvres fictives aux six œuvres cœur, soit 24 œuvres publiques recherchables. Chaque entrée possède un identifiant d'œuvre, d'auteur et d'édition stable, une présentation et un synopsis ; elle ne crée aucun état personnel. Ce catalogue local sera remplacé par le catalogue distant normalisé du lot 2. Le jeu dense de 500 œuvres reste séparé et n'est pas monté par défaut.
+
 | Zone statique actuelle | Remplacement attendu après le lot 1 |
 | --- | --- |
 | Lecteur courant et acteurs de démonstration de compatibilité dans `prototype-data.ts` | Session authentifiée et API de profils. |

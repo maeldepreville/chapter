@@ -111,7 +111,7 @@ test("hover stays on fine hover devices, while active/focus styles and QRM1b rem
   assert.match(css, /\[aria-busy="true"\]::after \{ animation: none !important; \}/);
   assert.match(readFileSync(source("phase10.css"), "utf8"), /transition: transform 440ms cubic-bezier\(0.4, 0, 0.2, 1\)/);
   const page = readFileSync(source("page.tsx"), "utf8");
-  assert.equal((page.match(/scrollTo\(\{ top: 0, behavior: "instant" \}\)/g) ?? []).length, 3);
+  assert.equal((page.match(/scrollTo\(\{ top: 0, behavior: "instant" \}\)/g) ?? []).length, 5);
   assert.doesNotMatch(page, /behavior: "smooth"/);
 });
 

@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 5 septembre 2026.
 
-Statut : **socle produit validé ; P0 validé ; P1 prochain jalon**.
+Statut : **socle produit et P0 validés ; candidate P1 locale en attente de recette**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 
@@ -98,7 +98,7 @@ Chaque jalon est une tranche verticale testable. Les écrans ne doivent pas cont
 ## Contrat Git et continuité entre chats
 
 - Branche de refonte : `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté du lot 1.
-- P0 à P6 : une implémentation candidate reste locale ; après validation explicite, le jalon et ses documents sont poussés sur cette branche, puis la référence distante est relue.
+- P0 à P6 : une candidate visuelle complète et vérifiée est mise directement à disposition sur le Site de recette. Elle reste hors de la branche GitHub de refonte jusqu'à validation explicite ; le jalon accepté et ses documents sont alors poussés sur cette branche, puis la référence distante est relue.
 - P7 : la recette complète et l'accord explicite de l'utilisateur sont requis avant toute fusion vers `main`.
 - Aucun force-push, aucune réécriture d'historique et aucun déploiement implicite.
 - Un nouveau chat peut être utilisé par jalon. Il commence par `npm run context`, vérifie la branche active, lit ce document puis le contrat du jalon concerné. Le chat précédent n'est jamais la seule mémoire.
