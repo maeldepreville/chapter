@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import React from "react";
@@ -27,7 +27,10 @@ test("public discovery explains Chapter and every exposed action has a destinati
     onOpenWork(id) { opened.push(id); },
     onOpenSearch() {},
   }));
-  assert.match(markup, /Chaque lecture laisse une trace/);
+  assert.match(markup, /Ici, on commence par une œuvre/);
+  assert.match(markup, /p1-reading-trace\.webp/);
+  assert.match(markup, /Revue littéraire · journal personnel/);
+  assert.doesNotMatch(markup, /Chaque lecture laisse une trace/);
   assert.match(markup, /Rechercher un titre ou un auteur/);
   assert.match(markup, /Ouvrir l’œuvre/);
   assert.doesNotMatch(markup, /Ajouter au journal|Écrire une critique|Suivre/);
@@ -95,7 +98,16 @@ test("P1 styles preserve responsive reflow and reduced motion", async () => {
   assert.match(css, /@media \(max-width: 899px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /grid-template-columns: 82vw 82vw 82vw/);
+  assert.match(css, /\.p1-intro h1[^}]+4\.35rem/);
+  assert.doesNotMatch(css, /\.p1-intro h1[^}]+6\.2rem/);
   assert.doesNotMatch(css, /animation:/);
+});
+
+test("public discovery ships its editorial illustration in a web-sized format", async () => {
+  const asset = fileURLToPath(new URL("../public/editorial/p1-reading-trace.webp", import.meta.url));
+  const metadata = await stat(asset);
+  assert.ok(metadata.size > 100_000);
+  assert.ok(metadata.size < 300_000);
 });
 
 test("public discovery, search and work URLs render directly", async () => {
@@ -105,7 +117,7 @@ test("public discovery, search and work URLs render directly", async () => {
   const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
   const context = { waitUntil() {}, passThroughOnException() {} };
 
-  for (const [path, expected] of [["/decouvrir", /Chaque lecture laisse une trace/], ["/recherche", /Trouver une œuvre/], ["/oeuvres/atlas", /Atlas des nuits calmes/]]) {
+  for (const [path, expected] of [["/decouvrir", /Ici, on commence par une œuvre/], ["/recherche", /Trouver une œuvre/], ["/oeuvres/atlas", /Atlas des nuits calmes/]]) {
     const response = await worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }), env, context);
     assert.equal(response.status, 200, path);
     assert.match(await response.text(), expected, path);

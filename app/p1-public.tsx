@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { CoverFrame } from "./cover-frame";
 import type { Work } from "./foundation/contracts";
@@ -52,12 +53,23 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
   return (
     <section className="p1-public-page p1-discover" aria-labelledby="p1-discover-title">
       <header className="p1-intro">
-        <p className="eyebrow">Un espace de lecture, avant d’être un réseau</p>
-        <h1 id="p1-discover-title">Chaque lecture laisse une trace.<br />Certaines ouvrent un chemin.</h1>
-        <div className="p1-intro-foot">
-          <p>Chapter réunit une mémoire de lecture privée et des voix publiques choisies. Ici, on commence simplement par une œuvre.</p>
+        <div className="p1-intro-copy">
+          <p className="eyebrow">Revue littéraire · journal personnel</p>
+          <h1 id="p1-discover-title">Ici, on commence par une œuvre.</h1>
+          <p>Pour retrouver un livre, garder ce qu’il vous a laissé et, quand vous le choisissez, ouvrir un chemin vers d’autres lecteurs.</p>
           <button className="p1-search-call" type="button" onClick={onOpenSearch}><span aria-hidden="true">⌕</span> Rechercher un titre ou un auteur</button>
         </div>
+        <figure className="p1-intro-illustration">
+          <Image
+            src="/editorial/p1-reading-trace.webp"
+            alt="Un livre ouvert dont le marque-page rouge rejoint un autre ouvrage."
+            width={1400}
+            height={1050}
+            sizes="(max-width: 899px) calc(100vw - 2rem), 58vw"
+            priority
+          />
+          <figcaption><span>En marge</span> Une lecture, une trace, un chemin.</figcaption>
+        </figure>
       </header>
 
       <section className="p1-featured" aria-labelledby="p1-featured-title">

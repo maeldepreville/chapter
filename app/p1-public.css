@@ -43,28 +43,33 @@
 .p1-public-page h2,
 .p1-public-page h3 { font-family: var(--font-editorial); font-weight: 500; letter-spacing: -0.025em; }
 .p1-public-page button { text-align: left; }
-.p1-intro { padding: var(--space-9) 0 var(--space-8); border-bottom: var(--border-subtle); }
-.p1-intro h1 { max-width: 16ch; margin: var(--space-3) 0 var(--space-7); font-size: clamp(3rem, 6.5vw, 6.2rem); line-height: 0.96; }
-.p1-intro-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 28rem); gap: var(--space-8); align-items: end; }
-.p1-intro-foot > p { max-width: 42rem; margin: 0; font-family: var(--font-editorial); font-size: 1.3rem; line-height: 1.55; }
+.p1-intro { display: grid; grid-template-columns: minmax(17rem, 0.72fr) minmax(28rem, 1.28fr); gap: clamp(2.5rem, 6vw, 6.5rem); align-items: center; padding: var(--space-7) 0 var(--space-8); border-bottom: var(--border-subtle); }
+.p1-intro-copy { display: grid; align-content: center; }
+.p1-intro h1 { max-width: 12ch; margin: var(--space-3) 0 var(--space-5); font-size: clamp(2.55rem, 4.2vw, 4.35rem); line-height: 1.01; }
+.p1-intro-copy > p:not(.eyebrow) { max-width: 33rem; margin: 0 0 var(--space-6); font-family: var(--font-editorial); font-size: 1.2rem; line-height: 1.58; }
+.p1-intro-illustration { position: relative; margin: 0; }
+.p1-intro-illustration::before { position: absolute; top: -0.65rem; right: -0.65rem; width: 4.75rem; height: 4.75rem; border-top: 1px solid var(--color-accent); border-right: 1px solid var(--color-accent); content: ""; }
+.p1-intro-illustration img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.p1-intro-illustration figcaption { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-2); color: var(--color-ink-muted); font-size: var(--text-xs); }
+.p1-intro-illustration figcaption span { color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase; }
 .p1-search-call { display: flex; gap: var(--space-3); align-items: center; min-height: 3.25rem; padding: var(--space-3) 0; background: transparent; border: 0; border-bottom: var(--border-control); color: var(--color-ink-muted); cursor: pointer; }
 .p1-search-call span { color: var(--color-accent); font-size: 1.2rem; }
 
-.p1-featured { display: grid; grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.18fr); gap: clamp(3rem, 8vw, 8rem); align-items: center; padding: var(--space-9) 0; }
-.p1-featured-art { position: relative; display: grid; place-items: center; min-height: 34rem; background: var(--color-surface-muted); }
+.p1-featured { display: grid; grid-template-columns: minmax(16rem, 0.66fr) minmax(0, 1.34fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; padding: var(--space-8) 0; }
+.p1-featured-art { position: relative; display: grid; place-items: center; min-height: 26rem; background: var(--color-surface-muted); }
 .p1-featured-art::before { position: absolute; inset: var(--space-4); border: 1px solid color-mix(in srgb, var(--color-border-strong) 55%, transparent); content: ""; }
 .p1-featured-art > button,
 .p1-path-cover { position: relative; padding: 0; background: transparent; border: 0; cursor: pointer; }
 .p1-folio { position: absolute; top: var(--space-4); left: var(--space-5); z-index: 1; color: var(--color-ink-muted); font-size: var(--text-xs); letter-spacing: 0.12em; }
 .p1-cover { position: relative; display: grid; place-items: stretch; width: 12rem; aspect-ratio: 2 / 3; overflow: hidden; box-shadow: var(--shadow-cover); }
-.p1-cover--featured { width: min(17rem, 58vw); }
+.p1-cover--featured { width: min(13rem, 48vw); }
 .p1-cover--work { width: min(19rem, 58vw); }
 .p1-cover-copy { display: grid; grid-template-rows: auto 1fr auto; width: 100%; height: 100%; padding: var(--space-5); background: linear-gradient(150deg, transparent, rgb(0 0 0 / 0.18)); color: var(--color-on-accent); }
 .p1-cover-copy small { font-size: 0.58rem; letter-spacing: 0.18em; }
 .p1-cover-copy strong { align-self: center; font-family: var(--font-editorial); font-size: clamp(1.15rem, 2vw, 1.75rem); font-weight: 500; line-height: 1.05; }
 .p1-cover-copy > span { font-size: 0.68rem; }
 .p1-featured-copy { max-width: 38rem; }
-.p1-featured-copy h2 { margin: var(--space-3) 0 0; font-size: clamp(2.7rem, 5vw, 5.2rem); line-height: 0.98; }
+.p1-featured-copy h2 { margin: var(--space-3) 0 0; font-size: clamp(2.45rem, 4.2vw, 4.3rem); line-height: 1; }
 .p1-byline { margin: var(--space-3) 0 var(--space-6); color: var(--color-ink-muted); }
 .p1-lede { margin: 0 0 var(--space-6); font-family: var(--font-editorial); font-size: 1.35rem; line-height: 1.55; }
 
@@ -144,9 +149,7 @@
   .p1-public-mobile-nav button { position: relative; min-height: 4rem; background: transparent; border: 0; color: var(--color-ink-muted); cursor: pointer; }
   .p1-public-mobile-nav button.active { color: var(--color-accent); }
   .p1-public-page { width: min(calc(100% - 2rem), var(--density-wide)); }
-  .p1-intro { padding: var(--space-8) 0 var(--space-7); }
-  .p1-intro h1 { margin-bottom: var(--space-6); font-size: clamp(3rem, 14vw, 5rem); }
-  .p1-intro-foot,
+  .p1-intro,
   .p1-featured,
   .p1-paths > header,
   .p1-shelf,
@@ -154,9 +157,13 @@
   .p1-work-opening,
   .p1-work-about,
   .p1-work-related { grid-template-columns: 1fr; }
-  .p1-intro-foot { gap: var(--space-5); }
-  .p1-featured { gap: var(--space-7); padding: var(--space-7) 0 var(--space-8); }
-  .p1-featured-art { min-height: 28rem; }
+  .p1-intro { gap: var(--space-6); padding: var(--space-7) 0; }
+  .p1-intro h1 { max-width: 13ch; margin-bottom: var(--space-4); font-size: clamp(2.6rem, 11vw, 3.75rem); }
+  .p1-intro-copy > p:not(.eyebrow) { margin-bottom: var(--space-5); font-size: 1.1rem; }
+  .p1-intro-illustration::before { top: -0.45rem; right: -0.45rem; width: 3.5rem; height: 3.5rem; }
+  .p1-intro-illustration figcaption { flex-wrap: wrap; }
+  .p1-featured { gap: var(--space-6); padding: var(--space-7) 0 var(--space-8); }
+  .p1-featured-art { min-height: 23rem; }
   .p1-featured-copy h2 { font-size: clamp(2.7rem, 12vw, 4.2rem); }
   .p1-paths { padding: var(--space-7) 0 var(--space-8); }
   .p1-paths > header { gap: var(--space-3); }
