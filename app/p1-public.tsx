@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { CoverFrame } from "./cover-frame";
 import { Button, Dialog, Field, Input, Textarea } from "./foundation/primitives";
 import type { ReadingStatus, Work } from "./foundation/contracts";
+import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
+import { profilePresentations, prototypeActors, type ProfileOwner } from "./prototype-data";
 
 type PublicViewProps = {
   works: readonly Work[];
@@ -123,7 +125,7 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
   );
 }
 
-export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQueryChange }: PublicViewProps & { query?: string; onQueryChange?: (query: string) => void }) {
+export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQueryChange, onOpenProfile, onOpenList }: PublicViewProps & { query?: string; onQueryChange?: (query: string) => void; onOpenProfile?: (owner: ProfileOwner) => void; onOpenList?: (listId: PublicListId) => void }) {
   const [localQuery, setLocalQuery] = useState("");
   const query = controlledQuery ?? localQuery;
   const setQuery = (value: string) => {
@@ -135,14 +137,21 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
     if (!normalized) return works;
     return works.filter((work) => normalize(`${work.title} ${work.author}`).includes(normalized));
   }, [query, works]);
+  const socialQuery = normalize(query);
+  const readerResults = socialQuery && onOpenProfile ? (["self", "lina", "theo", "ines"] as ProfileOwner[]).filter((owner) => {
+    const presentation = profilePresentations[owner];
+    const actor = prototypeActors[presentation.actorId];
+    return normalize(`${actor.name} ${presentation.defaultTitle}`).includes(socialQuery);
+  }) : [];
+  const listResults = socialQuery && onOpenList ? publicListIds.filter((id) => normalize(`${publicListCatalog[id].title} ${publicListCatalog[id].description}`).includes(socialQuery)) : [];
 
   return (
     <section className="p1-public-page p1-search" aria-labelledby="p1-search-title">
       <header className="p1-search-opening">
         <div className="p1-search-heading">
           <p className="eyebrow">Recherche publique</p>
-          <h1 id="p1-search-title">Trouver une œuvre</h1>
-          <p>Un titre ou un auteur suffit. Aucun compte n’est nécessaire pour consulter une œuvre.</p>
+          <h1 id="p1-search-title">Retrouver une œuvre ou une voix</h1>
+          <p>Un titre, un auteur, un lecteur ou une liste suffit. Aucun compte n’est nécessaire pour consulter ces chemins publics.</p>
         </div>
         <figure className="p1-search-sketch" aria-hidden="true">
           <Image src="/editorial/p2-search-atlas.webp" alt="" width={1440} height={960} sizes="(max-width: 899px) 92vw, 56vw" unoptimized priority />
@@ -150,13 +159,13 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
         <p className="p1-search-margin-note" aria-hidden="true"><span>Index</span> Chercher par le texte,<br />retrouver par la trace.</p>
       </header>
       <label className="p1-search-field">
-        <span className="sr-only">Rechercher un titre ou un auteur</span>
+        <span className="sr-only">Rechercher un titre, un auteur, un lecteur ou une liste</span>
         <span aria-hidden="true">⌕</span>
-        <input autoFocus type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titre ou auteur" />
+        <input autoFocus type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titre, auteur, lecteur ou liste" />
         {query && <button type="button" onClick={() => setQuery("")}>Effacer</button>}
       </label>
       <div className="p1-search-summary" aria-live="polite">
-        <span>{query ? `${results.length} résultat${results.length > 1 ? "s" : ""}` : "Sélection de départ"}</span>
+        <span>{query ? `${results.length} œuvre${results.length > 1 ? "s" : ""} · ${readerResults.length + listResults.length} chemin${readerResults.length + listResults.length > 1 ? "s" : ""}` : "Sélection de départ"}</span>
         <span>{works.length} œuvres disponibles</span>
       </div>
       {results.length > 0 ? (
@@ -168,12 +177,25 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
             </article>
           ))}
         </div>
-      ) : (
+      ) : readerResults.length === 0 && listResults.length === 0 ? (
         <div className="p1-search-empty">
           <h2>Aucune œuvre ne correspond à « {query} ».</h2>
           <p>Essayez le nom de l’auteur, un mot du titre ou revenez à la sélection complète.</p>
           <button className="chapter-button chapter-button--quiet" type="button" onClick={() => setQuery("")}>Voir toutes les œuvres</button>
         </div>
+      ) : null}
+      {(readerResults.length > 0 || listResults.length > 0) && (
+        <section className="p4-search-social" aria-labelledby="p4-search-social-title">
+          <div className="p1-section-mark"><span>02</span><h2 id="p4-search-social-title">Lecteurs et listes</h2></div>
+          <div className="p4-search-social-results">
+            {readerResults.map((owner) => {
+              const presentation = profilePresentations[owner];
+              const actor = prototypeActors[presentation.actorId];
+              return <button type="button" key={owner} onClick={() => onOpenProfile?.(owner)}><span className="avatar">{actor.initials}</span><span><strong>{actor.name}</strong><small>{presentation.defaultTitle} · Profil public</small></span><span aria-hidden="true">→</span></button>;
+            })}
+            {listResults.map((id) => <button type="button" key={id} onClick={() => onOpenList?.(id)}><span className="p4-list-glyph" aria-hidden="true">§</span><span><strong>{publicListCatalog[id].title}</strong><small>Liste publique · {publicListCatalog[id].workIds.length} œuvres</small></span><span aria-hidden="true">→</span></button>)}
+          </div>
+        </section>
       )}
     </section>
   );
@@ -181,7 +203,7 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
 
 export type FirstMarkerRecord = { status: ReadingStatus; marker: string };
 
-export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, activated = false, record, backLabel = "Retour à Découvrir" }: {
+export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, activated = false, record, backLabel = "Retour à Découvrir", social }: {
   work: Work;
   works: readonly Work[];
   onBack: () => void;
@@ -192,6 +214,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   activated?: boolean;
   record?: FirstMarkerRecord;
   backLabel?: string;
+  social?: ReactNode;
 }) {
   const related = works.filter((candidate) => candidate.id !== work.id).slice(0, 3);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -296,9 +319,11 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
         <div className="p1-work-prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
       </section>
 
+      {social}
+
       {related.length > 0 && (
         <section className="p1-work-related" aria-labelledby="p1-related-title">
-          <div className="p1-section-mark"><span>02</span><h2 id="p1-related-title">Chemins voisins</h2></div>
+          <div className="p1-section-mark"><span>{social ? "03" : "02"}</span><h2 id="p1-related-title">Chemins voisins</h2></div>
           <div>{related.map((candidate) => <WorkTextButton key={candidate.id} work={candidate} onOpen={() => onOpenWork(candidate.id)} note={candidate.genre} />)}</div>
         </section>
       )}

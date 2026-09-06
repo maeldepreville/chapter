@@ -46,7 +46,7 @@ test("public discovery explains Chapter and every exposed action has a destinati
 test("public search is immediate and work pages introduce only the P2 personal action", () => {
   const searchMarkup = renderToStaticMarkup(React.createElement(PublicSearch, { works: publicWorks, onOpenWork() {} }));
   assert.match(searchMarkup, /24 œuvres disponibles/);
-  assert.match(searchMarkup, /Titre ou auteur/);
+  assert.match(searchMarkup, /Titre, auteur, lecteur ou liste/);
   assert.match(searchMarkup, /src="\/editorial\/p2-search-atlas\.webp"/);
   assert.doesNotMatch(searchMarkup, /_vinext\/image\?url=.*p2-search-atlas/);
 
@@ -135,7 +135,7 @@ test("public discovery, search and work URLs render directly", async () => {
   const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
   const context = { waitUntil() {}, passThroughOnException() {} };
 
-  for (const [path, expected] of [["/decouvrir", /Ici, on commence par une œuvre/], ["/recherche", /Trouver une œuvre/], ["/oeuvres/atlas", /Atlas des nuits calmes/]]) {
+  for (const [path, expected] of [["/decouvrir", /Ici, on commence par une œuvre/], ["/recherche", /Retrouver une œuvre ou une voix/], ["/oeuvres/atlas", /Atlas des nuits calmes/]]) {
     const response = await worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }), env, context);
     assert.equal(response.status, 200, path);
     assert.match(await response.text(), expected, path);
