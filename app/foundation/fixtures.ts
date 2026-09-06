@@ -45,7 +45,7 @@ export const coreEditions: readonly Edition[] = coreWorks.map((work) => ({ id: w
 export const coreActivityOrder: Record<CoreWorkId, number> = { cartographies: 6, rivage: 5, atlas: 4, lucioles: 3, miroirs: 2, sel: 1 };
 
 export const coreEntries = {
-  cartographies: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "4 août 2026", note: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue." },
+  cartographies: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "4 août 2026", note: "La carte semble moins représenter un territoire que la manière dont Ana accepte enfin de ne plus pouvoir le fixer. Cette idée revient dans chaque passage consacré au vent et donne au roman une douceur inattendue.", progress: { kind: "bookmark" as const, page: 146, totalPages: 312, updatedAt: "2026-09-05T18:00:00.000Z" } },
   rivage: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "12 août 2026", note: "Observer comment les différentes heures deviennent une manière de raconter les désaccords du village." },
   atlas: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "8 août 2026", note: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue." },
   lucioles: { ...emptyPersonalEntry, readingStatus: "Lu", readingDate: "19 août 2026", rating: 4 },

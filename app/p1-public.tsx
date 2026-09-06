@@ -181,13 +181,14 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
 
 export type FirstMarkerRecord = { status: ReadingStatus; marker: string };
 
-export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, activated = false, record, backLabel = "Retour à Découvrir" }: {
+export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, activated = false, record, backLabel = "Retour à Découvrir" }: {
   work: Work;
   works: readonly Work[];
   onBack: () => void;
   onOpenWork: (id: string) => void;
   onActivate: (status: ReadingStatus) => void;
   onSaveMarker: (marker: string) => void;
+  onOpenJournal?: () => void;
   activated?: boolean;
   record?: FirstMarkerRecord;
   backLabel?: string;
@@ -279,6 +280,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
               ) : (
                 <Button variant="quiet" onClick={() => setMarkerOpen(true)}>Poser un premier repère</Button>
               )}
+              {!markerOpen && onOpenJournal && <button className="p2-open-journal" type="button" onClick={onOpenJournal}>Ouvrir mon journal <span aria-hidden="true">→</span></button>}
             </section>
           )}
           <dl className="p1-work-facts">

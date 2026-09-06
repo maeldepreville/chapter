@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CoverFrame } from "./cover-frame";
 import { JournalTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
@@ -12,8 +13,9 @@ import type { PublicListId } from "./catalogue";
 import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
-import { shellAttributes, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
+import { shellAttributes, type OptionalProgress, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
 import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
+import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { publicWorks } from "./p1-public-fixtures";
 
@@ -34,13 +36,15 @@ type PersonalEntry = {
   note: string;
   review: string;
   rating: number;
+  progress?: OptionalProgress;
+  completedReadings?: number;
 };
 
-const emptyEntry: PersonalEntry = { ...emptyPersonalEntry };
+const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
 const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
 
-export const defaultWorks = coreWorks;
+export const defaultWorks: readonly Work[] = [...coreWorks, ...denseWorks.slice(0, 494)];
 type WorkId = string;
 type Work = FoundationWork;
 
@@ -69,26 +73,59 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
   );
 }
 
+function renderReadingBookmark(progress: OptionalProgress, compact = false) {
+  const fullLabel = `Marque-page · page ${progress.page}`;
+
+  return (
+    <span className={`reading-bookmark${compact ? " reading-bookmark--compact" : ""}`} role="img" aria-label={fullLabel}>
+      <span className="reading-bookmark-object" aria-hidden="true">
+        <Image src="/editorial/p3-reading-bookmark.webp" alt="" width={420} height={640} sizes={compact ? "76px" : "104px"} unoptimized />
+        <span className="reading-bookmark-page">p. {progress.page}</span>
+      </span>
+    </span>
+  );
+}
+
 const defaultJournalTraces: readonly JournalTrace[] = coreJournalTraces;
-const activityOrder = coreActivityOrder as Record<string, number>;
-const defaultEntries: Record<string, PersonalEntry> = coreEntries;
+const activityOrder: Record<string, number> = {
+  ...coreActivityOrder,
+  ...Object.fromEntries(denseWorks.map((work, index) => [work.id, -(index + 1)])),
+};
+const denseRecords = new Map(habitualPrototypeSession.privateRecords.map((record) => [record.workId, record]));
+const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(defaultWorks.map((work) => {
+  const coreEntry = (coreEntries as Record<string, Partial<PersonalEntry>>)[work.id];
+  const denseRecord = denseRecords.get(work.id);
+  if (coreEntry) return [work.id, { ...emptyEntry, ...coreEntry, completedReadings: coreEntry.readingStatus === "Lu" ? 1 : 0 }];
+  return [work.id, {
+    ...emptyEntry,
+    readingStatus: denseRecord?.readingStatus ?? null,
+    readingDate: denseRecord?.readingDate ?? "",
+    note: denseRecord?.privateNote ?? "",
+    rating: denseRecord?.rating ?? 0,
+    progress: denseRecord?.progress,
+    completedReadings: denseRecord?.readingStatus === "Lu" ? 1 : 0,
+  }];
+}));
 
 // Internal fixture injection only; no public switch, URL parameter or storage.
 type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
 type HomeProps = {
+  refined?: boolean;
   initialProfileOwner?: "public-self" | null;
   initialData?: InitialData;
   initialPublicView?: "discover" | "search";
   initialPublicWorkId?: string | null;
 };
 
-export default function Home({ initialProfileOwner = null, initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
-  const p1Public = !initialProfileOwner && !initialData;
-  const works = initialData?.works ?? (p1Public ? publicWorks : defaultWorks);
+export default function Home({ refined = false, initialProfileOwner = null, initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
+  const startsPublic = !initialProfileOwner && !initialData;
+  const [publicConnected, setPublicConnected] = useState(false);
+  const p1Public = startsPublic && !publicConnected;
+  const works = initialData?.works ?? (startsPublic ? publicWorks : defaultWorks);
   const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
-  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? defaultEntries);
-  const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? defaultJournalTraces);
+  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? (startsPublic ? {} : defaultEntries));
+  const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [statusOrigin, setStatusOrigin] = useState<StatusOrigin>("opening");
   const [statusWorkId, setStatusWorkId] = useState<WorkId>(works[0]?.id ?? "cartographies");
@@ -114,6 +151,10 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
+  const [libraryVisibleCount, setLibraryVisibleCount] = useState(36);
+  const [personalWorkOrigin, setPersonalWorkOrigin] = useState<"journal" | "library">("journal");
+  const [progressEditorWorkId, setProgressEditorWorkId] = useState<WorkId | null>(null);
+  const [progressDraftPage, setProgressDraftPage] = useState("");
   const [profileOwner, setProfileOwner] = useState<ProfileOwner>(initialProfileOwner ?? "self");
   const [followingActors, setFollowingActors] = useState<Record<PrototypeActorId, boolean>>({ self: false, lina: false, theo: false, ines: false });
   const [equippedTitle, setEquippedTitle] = useState("Esprit nomade");
@@ -128,6 +169,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   const [publicListId, setPublicListId] = useState<PublicListId>("places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
+  const privateScroll = useRef({ journal: 0, library: 0 });
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -148,6 +190,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
       if (librarySort === "author") return a.author.localeCompare(b.author, "fr");
       return activityOrder[b.id] - activityOrder[a.id];
     });
+  const visibleLibraryWorks = libraryWorks.slice(0, libraryVisibleCount);
   const libraryCounts = {
     Toutes: works.filter((work) => entries[work.id]?.readingStatus).length,
     "À lire": works.filter((work) => entries[work.id]?.readingStatus === "À lire").length,
@@ -167,12 +210,16 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
     }));
   };
   const updateEntry = (changes: Partial<PersonalEntry>) => updateEntryFor(selectedWorkId, changes);
+  const chooseLibraryFilter = (filter: LibraryFilter) => { setLibraryFilter(filter); setLibraryVisibleCount(36); };
+  const changeLibraryQuery = (query: string) => { setLibraryQuery(query); setLibraryVisibleCount(36); };
 
   const openView = (view: View) => {
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
-    window.scrollTo({ top: 0, behavior: "instant" });
+    const privatePath = view === "journal" ? "/journal" : view === "library" ? "/bibliotheque" : null;
+    if (!p1Public && privatePath && window.location.pathname !== privatePath) window.history?.pushState?.(null, "", privatePath);
+    window.scrollTo({ top: 0 });
   };
 
   const openProfile = (owner: ProfileOwner) => {
@@ -234,6 +281,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   };
 
   const selectWork = (id: WorkId) => {
+    if (currentView === "journal" || currentView === "library") { setPersonalWorkOrigin(currentView); privateScroll.current[currentView] = window.scrollY || 0; }
     setSelectedWorkId(id);
     setCurrentView("work");
     setSearchOpen(false);
@@ -241,6 +289,21 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const enterPersonalSpace = () => {
+    const firstRecord = publicFirstMarkers[selectedWorkId];
+    if (firstRecord) {
+      updateEntryFor(selectedWorkId, { readingStatus: firstRecord.status, note: firstRecord.marker });
+      setJournalTraces((current) => {
+        const withReading = firstRecord.status === "À lire" ? [...current] : saveReadingTrace(current, selectedWorkId, firstRecord.status, "Aujourd’hui");
+        return firstRecord.marker ? saveWrittenTrace(withReading, selectedWorkId, "note", firstRecord.marker, "Aujourd’hui") : withReading;
+      });
+    }
+    setPublicConnected(true);
+    setCurrentView("journal");
+    window.history.pushState(null, "", "/journal");
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
@@ -326,14 +389,51 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   });
 
   const chooseStatus = (status: ReadingStatus) => {
-    if (status !== "À lire" && entries[statusWorkId]?.readingStatus !== status) {
-      setJournalTraces((traces) => saveReadingTrace(traces, statusWorkId, status, "Aujourd’hui"));
+    const targetEntry = entries[statusWorkId] ?? emptyEntry;
+    const completedReadings = targetEntry.completedReadings ?? (targetEntry.readingStatus === "Lu" ? 1 : 0);
+    const isRereading = completedReadings > 0;
+    if (status !== "À lire" && targetEntry.readingStatus !== status) {
+      setJournalTraces((traces) => saveReadingTrace(traces, statusWorkId, status, "Aujourd’hui", isRereading));
     }
-    updateEntryFor(statusWorkId, { readingStatus: status, ...(status === "À lire" ? { readingDate: "" } : {}) });
+    const completedAfterChange = status === "Lu"
+      ? targetEntry.readingStatus === "En cours" ? completedReadings + 1 : Math.max(1, completedReadings)
+      : completedReadings;
+    updateEntryFor(statusWorkId, {
+      readingStatus: status,
+      completedReadings: completedAfterChange,
+      ...(status === "À lire" ? { readingDate: "", progress: undefined } : status === "Lu" ? { progress: undefined } : {}),
+    });
     setStatusMenuOpen(false);
     setRemoveConfirmWorkId(null);
     setCustomDateOpen(false);
     setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
+  };
+
+  const startRereading = (workId: WorkId) => {
+    const targetEntry = entries[workId] ?? emptyEntry;
+    const completedReadings = Math.max(1, targetEntry.completedReadings ?? 1);
+    updateEntryFor(workId, {
+      readingStatus: "En cours",
+      readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()),
+      completedReadings,
+      progress: undefined,
+    });
+    setJournalTraces((traces) => saveReadingTrace(traces, workId, "En cours", "Aujourd’hui", true));
+    setFeedback({ kind: "saved", label: "Relecture commencée", detail: "L’œuvre reste réunie à votre trace précédente." });
+  };
+
+  const openProgressEditor = (workId: WorkId) => {
+    const progress = entries[workId]?.progress;
+    setProgressDraftPage(progress ? String(progress.page) : "");
+    setProgressEditorWorkId(workId);
+  };
+
+  const saveProgress = (workId: WorkId) => {
+    const page = Number(progressDraftPage);
+    if (!Number.isInteger(page) || page < 1) return;
+    updateEntryFor(workId, { progress: { kind: "bookmark", page, updatedAt: new Date().toISOString() } });
+    setProgressEditorWorkId(null);
+    setFeedback({ kind: "saved", label: `Marque-page posé à la page ${page}`, detail: "Ce repère reste facultatif et privé." });
   };
 
   const setToday = () => {
@@ -548,7 +648,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
   const rootShell = shellAttributes(p1Public || initialProfileOwner ? "public" : "connected");
 
   return (
-    <div {...rootShell} className={`${rootShell.className}${p1Public ? " p1-shell" : ""}`}>
+    <div {...rootShell} className={`${rootShell.className}${p1Public ? " p1-shell" : " p3-shell"}`}>
       {p1Public ? (
         <header className="p1-public-header">
           <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}>Chapter<span>.</span></button>
@@ -564,7 +664,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
           {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>}
           {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>}
           <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
-          {initialProfileOwner && <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button>}
+          {!initialProfileOwner && <button className={currentView === "search" ? "active" : ""} type="button" onClick={() => openView("search")}>Recherche</button>}{initialProfileOwner && <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button>}
         </nav>
         {!initialProfileOwner && <label className="header-search">
           <span className="sr-only">Rechercher un livre ou un auteur</span>
@@ -573,7 +673,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
             placeholder="Rechercher un livre ou un auteur"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            onFocus={() => setSearchOpen(true)}
+            onFocus={() => openView("search")}
             onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); openDiscoverWithQuery(searchQuery); } }}
           />
         </label>}
@@ -612,11 +712,12 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
               }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
+              onOpenJournal={enterPersonalSpace}
             />
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
-        ) : currentView === "discover" ? (
+        ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
             works={works}
@@ -654,9 +755,9 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
-              <p className="eyebrow">Votre espace personnel</p>
+              <p className="eyebrow">Carnet personnel · privé</p>
               <h1 id="personal-journal-title">Journal</h1>
-              <p>Vos lectures du moment et les pensées qui construisent votre parcours.</p>
+              <p>Reprendre une lecture. Garder ce qui reste.</p>
             </header>
 
             {currentReadings.length === 0 && journalTraces.length === 0 ? (
@@ -668,18 +769,19 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                     <p className="eyebrow">En ce moment</p>
                     <h2 id="current-readings-title">Lectures en cours</h2>
                   </div>
-                  {libraryCounts["En cours"] > 3 && <button className="text-action" type="button" onClick={() => { setLibraryFilter("En cours"); openView("library"); }}>Voir les {libraryCounts["En cours"]}</button>}
+                  {libraryCounts["En cours"] > 3 && <button className="text-action" type="button" onClick={() => { chooseLibraryFilter("En cours"); openView("library"); }}>Voir les {libraryCounts["En cours"]}</button>}
                 </div>
                 <div className={currentReadings.length ? "current-reading-rail" : undefined}>
                   {currentReadings.length > 0 ? currentReadings.map((work) => (
                     <article className="current-reading" key={work.id}>
-                      <button className="current-reading-main" type="button" onClick={() => selectWork(work.id)}>
+                      <button className={`current-reading-main${entries[work.id]?.progress ? " current-reading-main--with-bookmark" : ""}`} type="button" onClick={() => selectWork(work.id)}>
                         <WorkCover work={work} variant="journal" />
                         <span className="current-reading-copy">
                           <strong>{work.title}</strong>
                           <small>{work.author}</small>
-                          <span>{entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
+                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? `${(entries[work.id]?.completedReadings ?? 0) + 1}e lecture` : entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
                         </span>
+                        {entries[work.id]?.progress && renderReadingBookmark(entries[work.id].progress, true)}
                       </button>
                       <button className="text-action current-note-action" type="button" onClick={() => openNoteForWork(work.id)}>
                         {entries[work.id]?.note ? "Modifier ma note" : "Ajouter une note"}
@@ -688,7 +790,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                   )) : (
                     <div className="journal-empty">
                       <p>Aucune lecture en cours pour le moment.</p>
-                      <button className="text-action" type="button" onClick={() => { if (libraryCounts["À lire"]) { setLibraryFilter("À lire"); openView("library"); } else setSearchOpen(true); }}>{libraryCounts["À lire"] ? "Voir mes livres à lire" : "Rechercher une œuvre"}</button>
+                      <button className="text-action" type="button" onClick={() => { if (libraryCounts["À lire"]) { chooseLibraryFilter("À lire"); openView("library"); } else setSearchOpen(true); }}>{libraryCounts["À lire"] ? "Voir mes livres à lire" : "Rechercher une œuvre"}</button>
                     </div>
                   )}
                 </div>
@@ -708,8 +810,8 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
             {visibleTimelineTraces.length > 0 && <section className="journal-timeline" aria-labelledby="journal-timeline-title">
               <div className="personal-section-heading timeline-heading">
                 <div>
-                  <p className="eyebrow">Chronologie personnelle</p>
-                  <h2 id="journal-timeline-title">La suite du journal</h2>
+                  <p className="eyebrow">Au fil des lectures</p>
+                  <h2 id="journal-timeline-title">Pages précédentes</h2>
                 </div>
               </div>
               <div className="timeline-list">{visibleTimelineTraces.map((trace) => renderJournalTrace(trace))}</div>
@@ -721,9 +823,9 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
         ) : currentView === "library" ? (
           <section className="destination-page library-page" aria-labelledby="library-title">
             <header className="destination-heading">
-              <p className="eyebrow">Votre collection</p>
+              <p className="eyebrow">Collection personnelle · privée</p>
               <h1 id="library-title">Bibliothèque</h1>
-              <p>Toutes les œuvres que vous avez ajoutées, réunies dans une collection personnelle.</p>
+              <p>Retrouver une œuvre, choisir la prochaine.</p>
             </header>
 
             {libraryCounts.Toutes > 0 ? (
@@ -731,7 +833,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                 <div className="library-toolbar">
                   <div className="library-filters" aria-label="Filtrer la bibliothèque">
                     {(["Toutes", "À lire", "En cours", "Lu"] as LibraryFilter[]).map((filter) => (
-                      <button className={libraryFilter === filter ? "active" : ""} type="button" key={filter} aria-pressed={libraryFilter === filter} onClick={() => setLibraryFilter(filter)}>
+                      <button className={libraryFilter === filter ? "active" : ""} type="button" key={filter} aria-pressed={libraryFilter === filter} onClick={() => chooseLibraryFilter(filter)}>
                         {filter} <span>{libraryCounts[filter]}</span>
                       </button>
                     ))}
@@ -739,7 +841,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                   <div className="library-tools">
                     <label className="library-search">
                       <span className="sr-only">Rechercher dans ma bibliothèque</span>
-                      <input type="search" placeholder="Rechercher dans ma bibliothèque" value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} />
+                      <input type="search" placeholder="Rechercher dans ma bibliothèque" value={libraryQuery} onChange={(event) => changeLibraryQuery(event.target.value)} />
                     </label>
                     <LibrarySortControl value={librarySort} onChange={setLibrarySort} />
                   </div>
@@ -750,8 +852,8 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                 )}
 
                 {libraryWorks.length > 0 ? (
-              <div className="library-grid" aria-live="polite">
-              {libraryWorks.map((work) => (
+              <><div className="library-grid" aria-live="polite">
+              {visibleLibraryWorks.map((work) => (
                 <article className="library-work" key={work.id}>
                   <button className="library-work-main" type="button" onClick={() => selectWork(work.id)}>
                     <WorkCover work={work} variant="library" />
@@ -767,11 +869,18 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
                 </article>
               ))}
               </div>
+                  {visibleLibraryWorks.length < libraryWorks.length && (
+                    <div className="library-more">
+                      <p>{visibleLibraryWorks.length} sur {libraryWorks.length} œuvres affichées</p>
+                      <button className="quiet-action" type="button" onClick={() => setLibraryVisibleCount((count) => count + 36)}>Afficher 36 œuvres supplémentaires</button>
+                    </div>
+                  )}
+              </>
                 ) : (
                   <div className="library-empty" aria-live="polite">
                     <h2>{libraryQuery.trim() && libraryFilter !== "Toutes" ? `Aucun résultat pour « ${libraryQuery.trim()} » parmi les œuvres ${libraryFilter.toLocaleLowerCase("fr")}.` : libraryQuery.trim() ? `Aucun résultat pour « ${libraryQuery.trim()} ».` : `Aucune œuvre dans « ${libraryFilter} ».`}</h2>
                     <p>{libraryQuery.trim() && libraryFilter !== "Toutes" ? "La recherche et le filtre sont tous deux actifs." : libraryQuery.trim() ? "Essayez un autre titre ou auteur." : "Vos autres catégories restent inchangées."}</p>
-                    <button className="text-action" type="button" onClick={() => libraryQuery.trim() ? setLibraryQuery("") : setLibraryFilter("Toutes")}>{libraryQuery.trim() ? "Effacer la recherche" : "Voir toutes les œuvres"}</button>
+                    <button className="text-action" type="button" onClick={() => libraryQuery.trim() ? changeLibraryQuery("") : chooseLibraryFilter("Toutes")}>{libraryQuery.trim() ? "Effacer la recherche" : "Voir toutes les œuvres"}</button>
                   </div>
                 )}
               </>
@@ -787,6 +896,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
           <section className="destination-page"><h1>Œuvre indisponible</h1><p>Cette œuvre n’est pas disponible dans le catalogue.</p><button className="text-action" type="button" onClick={() => openView("journal")}>Revenir au Journal</button></section>
         ) : (
           <>
+        <button className="personal-work-back" type="button" onClick={() => { openView(personalWorkOrigin); requestAnimationFrame(() => window.scrollTo({ top: privateScroll.current[personalWorkOrigin], behavior: "instant" })); }}><span aria-hidden="true">←</span> Retour {personalWorkOrigin === "library" ? "à la Bibliothèque" : "au Journal"}</button>
         <section className="book-opening" aria-labelledby="book-title">
           <div className="cover-stage">
             <WorkCover work={selectedWork} variant="book" />
@@ -831,18 +941,29 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
               </div>
             </div>
 
-            <div className="journal-row">
-              <div>
+            <div className="journal-row journal-reading-row">
+              <div className="journal-reading-summary">
                 <p className="row-label">Ma lecture</p>
                 <p className="row-value">{entry.readingStatus ?? "Pas encore ajoutée"}</p>
+                {(entry.completedReadings ?? 0) > 0 && <p className="privacy-note">{entry.readingStatus === "En cours" ? `${(entry.completedReadings ?? 0) + 1}e lecture en cours` : `${entry.completedReadings} lecture${entry.completedReadings === 1 ? "" : "s"} terminée${entry.completedReadings === 1 ? "" : "s"}`}</p>}
                 {displayReadingDate && <p className="privacy-note">Date enregistrée · {displayReadingDate}</p>}
               </div>
+              {entry.readingStatus === "En cours" && entry.progress && renderReadingBookmark(entry.progress)}
               <div className="status-control journal-status-control">
                 <button className="text-action" type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} aria-controls={`status-popover-journal-${selectedWork.id}`} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
+                {entry.readingStatus === "En cours" && <button className="text-action" type="button" aria-expanded={progressEditorWorkId === selectedWork.id} onClick={() => progressEditorWorkId === selectedWork.id ? setProgressEditorWorkId(null) : openProgressEditor(selectedWork.id)}>{entry.progress ? "Déplacer le marque-page" : "Poser un marque-page"}</button>}
+                {entry.readingStatus === "Lu" && <button className="text-action" type="button" onClick={() => startRereading(selectedWork.id)}>Relire cette œuvre</button>}
                 {renderStatusPopover("journal", selectedWork.id)}
               </div>
             </div>
             {renderDateInvitation("journal", selectedWork.id)}
+            {progressEditorWorkId === selectedWork.id && entry.readingStatus === "En cours" && (
+              <div className="progress-editor" role="region" aria-label="Mettre à jour le marque-page">
+                <div><p className="eyebrow">Repère facultatif</p><strong>Où en êtes-vous ?</strong><span>Ce marque-page reste privé et se met à jour seulement lorsque vous le souhaitez.</span></div>
+                <label><span>Page</span><input inputMode="numeric" min="1" step="1" type="number" value={progressDraftPage} onChange={(event) => setProgressDraftPage(event.target.value)} /></label>
+                <div className="progress-editor-actions"><button className="text-action" type="button" onClick={() => setProgressEditorWorkId(null)}>Annuler</button><button className="primary-action" type="button" disabled={!progressDraftPage || Number(progressDraftPage) < 1} onClick={() => saveProgress(selectedWork.id)}>Enregistrer</button></div>
+              </div>
+            )}
             <div className="journal-row">
               <div>
                 <p className="row-label">Ma note</p>
@@ -907,7 +1028,7 @@ export default function Home({ initialProfileOwner = null, initialData, initialP
         {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>}
         {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>}
         <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}><span aria-hidden="true">⌕</span>Découvrir</button>
-        <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}><span aria-hidden="true">⌕</span>Recherche</button>
+        <button type="button" aria-expanded={searchOpen} onClick={() => openView("search")}><span aria-hidden="true">⌕</span>Recherche</button>
       </nav>}
 
       {!initialProfileOwner && <Fade show={accountOpen} kind="modal">{accountOpen && (
