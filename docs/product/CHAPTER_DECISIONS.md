@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 5 septembre 2026
+Dernière mise à jour : 6 septembre 2026
 
 ## Cadre de collaboration
 
@@ -31,6 +31,7 @@ Dernière mise à jour : 5 septembre 2026
 - Retour de recette P1 sur la version Sites 33 : la nouvelle composition est jugée bonne, mais l'illustration ne charge pas. Le défaut est technique et circonscrit à la réécriture de son URL par l'optimiseur Vinext ; le WebP déjà optimisé doit être servi directement, sans reprise visuelle.
 - Validation finale P1 le 5 septembre 2026 : après correction du chargement direct de l'illustration en version Sites 34, l'utilisateur juge le résultat parfait et autorise la poursuite. P1 est clôturé ; sa synchronisation cible `refonte-pre-lot-2`, tandis que `main` reste inchangé jusqu'à P7.
 - Révision de workflow du 5 septembre 2026 : une candidate visuelle complète et vérifiée est désormais mise directement à disposition sur le Site de recette, sans message de confirmation supplémentaire. Cette autorisation permanente ne vaut pas validation du jalon et ne change pas la règle de synchronisation GitHub après validation explicite.
+- P2 — Premier repère est validé le 6 septembre 2026 sur la version Sites 38. Le choix de statut survit à l’inscription simulée, le premier repère reste privé et les corrections de recette couvrent Recherche, le panneau AJ2 et les débordements mobiles. Le contrôle d’effacement natif du champ de recherche est retiré au profit de l’action Chapter. Le jalon est synchronisé sur `refonte-pre-lot-2` sans fusion vers `main` ; P3 devient la prochaine tranche.
 
 ## Plan de développement de référence
 

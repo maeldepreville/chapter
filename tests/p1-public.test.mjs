@@ -43,17 +43,20 @@ test("public discovery explains Chapter and every exposed action has a destinati
   assert.deepEqual(opened, ["cartographies"]);
 });
 
-test("public search is immediate and work pages remain account-free", () => {
+test("public search is immediate and work pages introduce only the P2 personal action", () => {
   const searchMarkup = renderToStaticMarkup(React.createElement(PublicSearch, { works: publicWorks, onOpenWork() {} }));
   assert.match(searchMarkup, /24 œuvres disponibles/);
   assert.match(searchMarkup, /Titre ou auteur/);
+  assert.match(searchMarkup, /src="\/editorial\/p2-search-atlas\.webp"/);
+  assert.doesNotMatch(searchMarkup, /_vinext\/image\?url=.*p2-search-atlas/);
 
   const workMarkup = renderToStaticMarkup(React.createElement(PublicWork, {
-    work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {},
+    work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {}, onActivate() {}, onSaveMarker() {},
   }));
   assert.match(workMarkup, /À propos/);
   assert.match(workMarkup, /Chemins voisins/);
-  assert.doesNotMatch(workMarkup, /Ajouter au journal|Ma note|Ma critique|Créer un compte/);
+  assert.match(workMarkup, /Ajouter au journal/);
+  assert.doesNotMatch(workMarkup, /Ma critique|Créer mon compte|Nom public|Suivre/);
 });
 
 test("the root visitor journey opens search and a work while keeping public navigation", () => {
@@ -109,6 +112,20 @@ test("public discovery ships its editorial illustration in a web-sized format", 
   const metadata = await stat(asset);
   assert.ok(metadata.size > 100_000);
   assert.ok(metadata.size < 300_000);
+});
+
+test("public search ships a distinct transparent editorial accent", async () => {
+  const asset = fileURLToPath(new URL("../public/editorial/p2-search-atlas.webp", import.meta.url));
+  const metadata = await stat(asset);
+  assert.ok(metadata.size > 80_000);
+  assert.ok(metadata.size < 300_000);
+  const css = await readFile(source("p1-public.css"), "utf8");
+  assert.match(css, /\.p1-search-sketch \{ position: absolute/);
+  assert.doesNotMatch(css, /\.p1-search-sketch[^}]*border:/);
+  assert.match(css, /width: min\(150vw, 38rem\)/);
+  assert.doesNotMatch(css, /right: -11rem/);
+  assert.match(css, /input\[type="search"\]::\-webkit-search-cancel-button/);
+  assert.match(css, /input\[type="search"\]::\-ms-clear/);
 });
 
 test("public discovery, search and work URLs render directly", async () => {

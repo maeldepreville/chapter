@@ -1,8 +1,8 @@
 # Chapter — carte compacte du code
 
-Dernière mise à jour : 5 septembre 2026.
+Dernière mise à jour : 6 septembre 2026.
 
-Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 et le premier contact public P1 validés au-dessus de la base acceptée du lot 1. Le contrat P1 clôturé est dans [`P1_PREMIER_CONTACT_PUBLIC.md`](../milestones/P1_PREMIER_CONTACT_PUBLIC.md) ; P2 doit créer son propre document avant modification applicative.
+Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 et les jalons P1–P2 validés au-dessus de la base acceptée du lot 1. P3 — Usage personnel quotidien est la prochaine tranche ; son cadrage part de la feuille de route et des composants personnels déjà validés en phase 9.
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
@@ -11,7 +11,9 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | Fixtures et sessions P0 | `app/foundation/fixtures.ts` | `foundation/dense-fixtures.ts`, `foundation/session.ts`, `page.tsx`, `journal-model.ts` | `p0-foundation`, `phase11-empty-states`, `phase11-journeys` |
 | Premier contact public P1 | `app/p1-public.tsx` | `p1-public.css`, `p1-public-fixtures.ts`, `page.tsx` | `p1-public`, `rendered-html`, `fade-behavior` |
 | Illustration éditoriale P1 | `public/editorial/p1-reading-trace.webp` | `assets/editorial/p1-reading-trace-master.png`, `app/p1-public.tsx`, `docs/design/ASSET_SYSTEM.md` | `p1-public` |
+| Accent éditorial Recherche | `public/editorial/p2-search-atlas.webp` | `assets/editorial/p2-search-atlas-master.png`, `app/p1-public.tsx`, `p1-public.css`, `docs/design/ASSET_SYSTEM.md` | `p1-public` |
 | Routes publiques P1 | `app/decouvrir/page.tsx`, `app/recherche/page.tsx`, `app/oeuvres/[workId]/page.tsx` | `p1-public-fixtures.ts`, `page.tsx` | `p1-public` |
+| Premier repère P2 | `PublicWork` dans `app/p1-public.tsx` | `p2-first-marker.css`, `page.tsx`, `foundation/primitives.tsx`, `modal.tsx` | `p2-first-marker`, `p1-public` |
 | Journal, œuvre, Bibliothèque, état racine | `app/page.tsx` | `foundation/fixtures.ts`, `journal-model.ts`, `library-sort.tsx`, `catalogue.ts`, `cover-frame.tsx` | `rendered-html`, `library-sort`, `phase11-empty-states`, `phase11-journeys` |
 | Identités et données de profils simulées | `app/prototype-data.ts` | `social-data.ts`, `site-config.ts`, `profile-share.ts` | `hardcoded-data`, `social-profiles`, `profile-layout`, `profile-qr` |
 | Découvrir | `DiscoverView` dans `app/phase10.tsx` | `catalogue.ts`, `prototype-data.ts`, `cover-frame.tsx` | `social-controls`, `hardcoded-data`, `phase11-polish`, `phase11-journeys` |

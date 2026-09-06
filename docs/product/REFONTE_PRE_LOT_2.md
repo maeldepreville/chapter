@@ -1,8 +1,8 @@
 # Chapter — doctrine et feuille de route de la refonte pré-lot 2
 
-Dernière mise à jour : 5 septembre 2026.
+Dernière mise à jour : 6 septembre 2026.
 
-Statut : **socle produit, P0 et P1 validés ; P2 — Premier repère est le prochain jalon**.
+Statut : **socle produit et jalons P0 à P2 validés ; P3 — Usage personnel quotidien est le prochain jalon**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 

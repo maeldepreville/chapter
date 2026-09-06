@@ -27,7 +27,7 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 
 - État, invariants et routage : `docs/agents/AGENT_CONTEXT.md`
 - Doctrine et feuille de route de la refonte : `docs/product/REFONTE_PRE_LOT_2.md`
-- Contrat actif de P1 : `docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md`
+- Contrat actif de P2 : `docs/milestones/P2_PREMIER_REPERE.md`
 - Procédures de travail, tests, GitHub et publication : `docs/agents/AGENT_WORKFLOW.md`
 - Carte du code : `docs/engineering/CODEMAP.md`
 - Recherche et stratégie de tokens : `docs/agents/AI_AGENT_CONTEXT_STRATEGY.md`

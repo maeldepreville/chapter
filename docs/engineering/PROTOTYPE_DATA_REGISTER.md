@@ -36,6 +36,10 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 
 `app/p1-public-fixtures.ts` ajoute dix-huit œuvres fictives aux six œuvres cœur, soit 24 œuvres publiques recherchables. Chaque entrée possède un identifiant d'œuvre, d'auteur et d'édition stable, une présentation et un synopsis ; elle ne crée aucun état personnel. Ce catalogue local sera remplacé par le catalogue distant normalisé du lot 2. Le jeu dense de 500 œuvres reste séparé et n'est pas monté par défaut.
 
+### État de parcours P2
+
+`page.tsx` conserve, pour la durée de la session React uniquement, l’activation simulée et un dictionnaire `publicFirstMarkers` indexé par l’identifiant stable de l’œuvre. Chaque valeur contient le statut privé choisi et le premier repère écrit. L’adresse e-mail, le mot de passe et l’intention de statut avant inscription restent locaux au composant de fiche et ne sont ni persistés ni utilisés comme identifiants. Le lot 2 remplacera cet état par la session authentifiée et le stockage privé ; un rechargement réinitialise volontairement la candidate.
+
 | Zone statique actuelle | Remplacement attendu après le lot 1 |
 | --- | --- |
 | Lecteur courant et acteurs de démonstration de compatibilité dans `prototype-data.ts` | Session authentifiée et API de profils. |
