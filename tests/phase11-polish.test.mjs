@@ -9,6 +9,7 @@ const [component, stylesheet] = await Promise.all([
   readFile(new URL("../app/phase10.tsx", import.meta.url), "utf8"),
   readFile(new URL("../app/phase10.css", import.meta.url), "utf8"),
 ]);
+const globals = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
 test("mobile card back owns one centered body between masthead and URL", () => {
   assert.match(component, /profile-card-back-masthead[\s\S]*profile-card-back-body[\s\S]*profile-card-qr-field[\s\S]*profile-card-back-copy[\s\S]*profile-card-public-url/);
@@ -40,4 +41,9 @@ test("Discover replaces the native search cross with a Chapter text action", () 
   assert.equal(nodes(render(), (node) => node.type === "input" && node.props.id === "discover-query")[0].props.value, "");
   assert.match(stylesheet, /\.discover-search input\[type="search"\]::\-webkit-search-cancel-button\s*\{[^}]*display:\s*none;/s);
   assert.match(stylesheet, /\.discover-search-clear\s*\{[^}]*position:\s*absolute;[^}]*font-size:\s*0\.72rem;/s);
+});
+
+test("Library hides the browser-native search clear control", () => {
+  assert.match(globals, /\.library-search input\[type="search"\]::\-webkit-search-cancel-button,[\s\S]*?display:\s*none;[^}]*appearance:\s*none;/s);
+  assert.match(globals, /\.library-search input\[type="search"\]::\-ms-clear,[\s\S]*?display:\s*none;[^}]*width:\s*0;[^}]*height:\s*0;/s);
 });

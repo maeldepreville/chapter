@@ -427,6 +427,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .library-tools { display: grid; grid-template-columns: minmax(16rem, 1fr) auto; gap: 1rem; align-items: end; }
 .library-search input, .library-sort-trigger { width: 100%; min-height: 2.75rem; color: var(--ink); background: var(--surface); border: 1px solid var(--control-line); border-radius: 0.3rem; }
 .library-search input { padding: 0.65rem 0.8rem; }
+.library-search input[type="search"]::-webkit-search-cancel-button,
+.library-search input[type="search"]::-webkit-search-decoration { display: none; -webkit-appearance: none; appearance: none; }
+.library-search input[type="search"]::-ms-clear,
+.library-search input[type="search"]::-ms-reveal { display: none; width: 0; height: 0; }
 .library-sort { display: grid; grid-template-columns: auto auto; gap: 0.6rem; align-items: center; }
 .library-sort-label { color: var(--muted); font-size: 0.76rem; white-space: nowrap; }
 .library-sort-control { position: relative; min-width: 0; }

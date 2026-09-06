@@ -46,7 +46,8 @@ Les œuvres, profils, critiques, réponses, listes et suivis restent des fixture
 
 - construction de production avec routes publiques œuvre, lecteur et liste ;
 - tests P4 dédiés : recherche sociale, ordre de composition, conversations, reprise après identité et rendu direct ;
+- contrôle natif d’effacement masqué dans la recherche de la Bibliothèque, conformément au traitement des autres recherches Chapter ;
 - non-régression P1 à P3 et tests historiques sociaux ;
-- lint réussi, construction réussie, **135/135 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
+- lint réussi, construction réussie, **136/136 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
 
 Une candidate publiée ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion vers `main`.
