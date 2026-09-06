@@ -123,6 +123,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   margin: 0 auto;
   padding: 5rem 3rem 4.5rem;
 }
+.personal-work-back { display: flex; gap: 0.55rem; align-items: center; width: min(70rem, calc(100% - 6rem)); margin: 1.5rem auto -2.5rem; padding: 0.5rem 0; color: var(--muted); background: transparent; border: 0; cursor: pointer; font-size: 0.82rem; }
 .cover-stage { display: grid; place-items: center; }
 .book-cover {
   position: relative;
@@ -360,6 +361,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .section-nav a.active { color: var(--brick); }
 @media (hover: hover) and (pointer: fine) {
   .section-nav a:hover { color: var(--brick); }
+  .personal-work-back:hover { color: var(--brick); }
 }
 .section-nav a.active { text-decoration: underline; text-underline-offset: 0.45rem; }
 
@@ -386,6 +388,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .current-reading-copy strong { font-family: var(--font-editorial); font-size: 1.08rem; font-weight: 500; line-height: 1.15; }
 .current-reading-copy small { color: var(--muted); }
 .current-reading-copy > span { margin-top: 0.45rem; color: var(--muted); font-size: 0.72rem; }
+.current-reading-copy > .reading-bookmark--compact { justify-self: start; margin-top: 0.6rem; padding: 0.18rem 0.45rem 0.35rem; color: var(--brick-dark); background: var(--soft-brick); clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%); font-weight: 600; }
 .current-note-action { align-self: end; font-size: 0.78rem; }
 .latest-trace .personal-section-heading { margin-bottom: 1.6rem; }
 .personal-trace { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1.3rem; padding: 1.7rem 0; border-top: 1px solid var(--line); }
@@ -444,6 +447,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .library-sort-options [role="option"] svg { visibility: hidden; }
 .library-sort-options [aria-selected="true"] svg { visibility: visible; }
 .library-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1.5rem, 3vw, 2.6rem); }
+.library-more { display: grid; justify-items: center; gap: 0.8rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.library-more p { margin: 0; color: var(--muted); font-size: 0.8rem; }
 .library-work { position: relative; display: grid; align-content: start; min-width: 0; }
 .library-work-main { display: grid; gap: 0.9rem; min-width: 0; padding: 0; text-align: left; background: transparent; border: 0; cursor: pointer; }
 @media (hover: hover) and (pointer: fine) {
@@ -494,6 +499,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-top: 1px solid var(--line);
 }
 .journal-row:last-child { border-bottom: 1px solid var(--line); }
+.journal-status-control { display: grid; justify-items: end; gap: 0.15rem; }
+.reading-bookmark { display: inline-flex; gap: 0.45rem; align-items: center; margin-top: 0.7rem; padding: 0.4rem 0.65rem 0.65rem; color: var(--brick-dark); background: var(--soft-brick); clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%); font-size: 0.78rem; font-weight: 600; }
+.progress-editor { display: grid; grid-template-columns: minmax(14rem, 1fr) 6.5rem 7.5rem auto; gap: 1rem; align-items: end; margin: -0.1rem 0 1.5rem; padding: 1.2rem; background: color-mix(in srgb, var(--surface) 78%, transparent); border-block: 1px solid var(--line); }
+.progress-editor > div:first-child { display: grid; }
+.progress-editor > div:first-child .eyebrow { margin-bottom: 0.15rem; }
+.progress-editor > div:first-child strong { font-family: var(--font-editorial); font-size: 1.3rem; font-weight: 500; }
+.progress-editor > div:first-child span { color: var(--muted); font-size: 0.78rem; }
+.progress-editor label { display: grid; gap: 0.35rem; color: var(--muted); font-size: 0.75rem; }
+.progress-editor label small { font-weight: 400; }
+.progress-editor input { width: 100%; min-height: 2.65rem; padding: 0.55rem; color: var(--ink); background: var(--paper); border: 1px solid var(--control-line); border-radius: 0.3rem; }
+.progress-editor-actions { display: flex; gap: 0.8rem; align-items: center; }
 .row-label { margin: 0 0 0.2rem; color: var(--muted); font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 .row-value { margin: 0; font-family: var(--font-editorial); font-size: 1.25rem; }
 .privacy-note { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.76rem; }
@@ -671,6 +687,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
     border-bottom: 1px solid var(--line);
     backdrop-filter: blur(12px);
   }
+  .personal-work-back { width: auto; margin: 0.8rem 1.1rem -0.5rem; }
   .book-opening { grid-template-columns: minmax(7.5rem, 10rem) minmax(0, 1fr); gap: 1.4rem; min-height: auto; padding: 2rem 1.1rem 2.5rem; align-items: start; }
   .cover-stage { grid-column: 1; grid-row: 1 / 4; }
   .book-identity { display: contents; }
@@ -697,6 +714,10 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .section-heading > div > p { font-size: 0.88rem; }
   .journal-row { align-items: flex-start; gap: 1rem; padding: 1.35rem 0; }
   .journal-row .text-action { align-self: center; }
+  .journal-status-control { justify-items: start; }
+  .progress-editor { grid-template-columns: 1fr 1fr; }
+  .progress-editor > div:first-child, .progress-editor-actions { grid-column: 1 / -1; }
+  .progress-editor-actions { justify-content: flex-end; }
   .row-value { font-size: 1.1rem; }
   .about-layout { grid-template-columns: 1fr; gap: 2rem; }
   .prose { font-size: 1.12rem; }
@@ -845,6 +866,10 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .opening-actions { grid-template-columns: 1fr; }
   .journal-row { display: grid; }
   .journal-row .text-action { justify-self: start; }
+  .progress-editor { grid-template-columns: 1fr; margin-inline: -1.1rem; padding-inline: 1.1rem; }
+  .progress-editor > div:first-child, .progress-editor-actions { grid-column: auto; }
+  .progress-editor-actions { display: grid; grid-template-columns: 1fr; }
+  .progress-editor-actions .primary-action { grid-row: 1; width: 100%; }
   .work-facts { grid-template-columns: 1fr 1fr; }
   .modal-actions { display: grid; grid-template-columns: 1fr; }
   .modal-actions .primary-action { grid-row: 1; }
