@@ -18,6 +18,8 @@
 .p4-public-reviews .review-copy { font-size: clamp(1.05rem, 1.8vw, 1.22rem); }
 .p4-public-reviews .reply-preview,
 .p4-public-reviews .reply-list { background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.reply-preview .reply-author-button { display: block; width: max-content; margin: 0 0 0.22rem; }
+.reply-preview-text { display: block; }
 
 .p4-publication-contract {
   display: grid;
@@ -82,6 +84,7 @@
 .p1-shell .profile-page,
 .p1-shell .public-list-page,
 .p1-shell .honors-page { padding-top: clamp(3rem, 7vw, 6rem); }
+.profile-back-action { margin-bottom: clamp(2rem, 5vw, 4rem); }
 .p1-shell .profile-opening { align-items: start; }
 .p1-shell .profile-identity-card { background-color: #f5f0e7; }
 .p1-shell .profile-wide-content { margin-top: clamp(3rem, 6vw, 5rem); }

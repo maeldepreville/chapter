@@ -81,8 +81,94 @@ test("P4 restores a public review after the minimal identity step", () => {
     tree = render();
     nodes(tree, (node) => node.type === "button" && textOf(node) === "Continuer vers la critique")[0].props.onClick();
     tree = render();
+    assert.equal(tree.props["data-shell"], "public");
+    assert.equal(nodes(tree, (node) => node.type === "button" && (textOf(node) === "Journal" || textOf(node) === "Bibliothèque")).length, 0);
     assert.match(textOf(tree), /Visible par tous après publication/);
     assert.match(textOf(tree), /Publier la critique/);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
+test("P4 returns from a public profile to its exact Search source", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    location: { pathname: "/recherche" },
+    history: { pushState() {}, replaceState() {} },
+    scrollY: 184,
+    scrollTo() {},
+    requestAnimationFrame(callback) { callback(); return 1; },
+    addEventListener() {}, removeEventListener() {},
+  };
+  try {
+    const render = () => harness.render(Home, { initialPublicView: "search" });
+    let tree = render();
+    nodes(tree, (node) => node.type?.name === "PublicSearch")[0].props.onOpenProfile("lina");
+    tree = render();
+    const profile = nodes(tree, (node) => node.type?.name === "ProfileView")[0];
+    assert.equal(profile.props.backLabel, "Retour à Recherche");
+    profile.props.onBack();
+    tree = render();
+    assert.equal(nodes(tree, (node) => node.type?.name === "PublicSearch").length, 1);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
+test("P4 returns from a Search list to Search instead of Discover", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    location: { pathname: "/recherche" },
+    history: { pushState() {}, replaceState() {} },
+    scrollY: 96,
+    scrollTo() {},
+    requestAnimationFrame(callback) { callback(); return 1; },
+    addEventListener() {}, removeEventListener() {},
+  };
+  try {
+    const render = () => harness.render(Home, { initialPublicView: "search" });
+    let tree = render();
+    nodes(tree, (node) => node.type?.name === "PublicSearch")[0].props.onOpenList("lights");
+    tree = render();
+    const list = nodes(tree, (node) => node.type?.name === "PublicListView")[0];
+    assert.equal(list.props.backLabel, "Retour à Recherche");
+    list.props.onBack();
+    tree = render();
+    assert.equal(nodes(tree, (node) => node.type?.name === "PublicSearch").length, 1);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
+test("P4 returns from a connected Discover work to Discover", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    location: { pathname: "/" },
+    history: { pushState() {}, replaceState() {} },
+    scrollY: 240,
+    scrollTo() {},
+    requestAnimationFrame(callback) { callback(); return 1; },
+    addEventListener() {}, removeEventListener() {},
+  };
+  try {
+    const render = () => harness.render(Home, { refined: true, initialData: { view: "discover" } });
+    let tree = render();
+    nodes(tree, (node) => node.type?.name === "PublicDiscover")[0].props.onOpenWork("cartographies");
+    tree = render();
+    const back = nodes(tree, (node) => node.type === "button" && node.props.className === "personal-work-back")[0];
+    assert.equal(textOf(back).trim(), "← Retour à Découvrir");
+    back.props.onClick();
+    tree = render();
+    assert.equal(nodes(tree, (node) => node.type?.name === "PublicDiscover").length, 1);
   } finally {
     if (previousWindow === undefined) delete globalThis.window;
     else globalThis.window = previousWindow;

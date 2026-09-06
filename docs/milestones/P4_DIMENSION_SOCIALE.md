@@ -21,6 +21,14 @@ P4 transforme une trace volontairement publique en chemin continu entre une œuv
 - publication immédiate et annulable, critique réinjectée dans la page d’œuvre et dans le profil public au sein de la session ;
 - réponses à plat, aperçu de la dernière réponse et développement local de la conversation.
 
+## Corrections de recette
+
+- les profils publics exposent toujours une action de retour, y compris lorsqu’ils sont ouverts directement ;
+- œuvres, profils, listes et honneurs partagent une pile de navigation contextuelle : le retour restaure la destination exacte, l’entité affichée, l’URL et la position de défilement de la source ;
+- les listes ouvertes depuis Recherche reviennent à Recherche et les œuvres ouvertes depuis Découvrir dans l’espace connecté reviennent à Découvrir ;
+- l’aperçu d’une réponse sépare explicitement le nom de son auteur et le corps du message ;
+- le mode d’accès et l’identité publique sont deux états indépendants : créer une identité minimale autorise les gestes publics sans faire apparaître Journal ou Bibliothèque. Seule l’entrée explicite dans l’espace personnel change la navigation principale.
+
 ## Choix de composition
 
 La page d’œuvre reste le centre de gravité. Le social ne devient ni une racine supplémentaire de navigation, ni un fil général : la conversation naît sous une critique rattachée à une œuvre. La section publique adopte une composition en marge sur desktop et une colonne continue sur mobile. Les profils et listes conservent leurs silhouettes éditoriales validées tout en devenant accessibles depuis le parcours public refondu.
@@ -36,6 +44,6 @@ Les œuvres, profils, critiques, réponses, listes et suivis restent des fixture
 - construction de production avec routes publiques œuvre, lecteur et liste ;
 - tests P4 dédiés : recherche sociale, ordre de composition, conversations, reprise après identité et rendu direct ;
 - non-régression P1 à P3 et tests historiques sociaux ;
-- lint réussi, construction réussie, **129/129 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
+- lint réussi, construction réussie, **132/132 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
 
 Une candidate publiée ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion vers `main`.

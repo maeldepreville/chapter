@@ -317,9 +317,11 @@ type ProfileProps = {
   equippedTitle: string;
   showcase: BadgeId[];
   personalReviews?: readonly PrototypePublicReview[];
+  onBack?: () => void;
+  backLabel?: string;
 };
 
-export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [] }: ProfileProps) {
+export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [], onBack, backLabel = "Retour" }: ProfileProps) {
   const isOwnProfile = owner === "self";
   const presentation = profilePresentations[owner];
   const actor = prototypeActors[presentation.actorId];
@@ -353,6 +355,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
 
   return (
     <section className="profile-page" aria-labelledby="profile-name">
+      {onBack && <button className="text-action back-action profile-back-action" type="button" onClick={onBack}>← {backLabel}</button>}
       <div className="profile-opening">
         <aside className="profile-identity-column">
           <div className={`profile-card-flip-shell ${cardFlipped ? "is-flipped" : ""}`}>
@@ -662,7 +665,7 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
         <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
         {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
-        {latest && !isExpanded && <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].name}</button>{latest.text}</p></div>}
+        {latest && !isExpanded && <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].name}</button><span className="reply-preview-text">{latest.text}</span></p></div>}
         <div className="conversation-actions">
           {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
           {!isExpanded && replyAction}
