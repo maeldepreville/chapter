@@ -30,7 +30,12 @@
 .p2-marker-editor > div { display: flex; justify-content: flex-end; gap: var(--space-4); align-items: center; }
 .p2-marker-saved { margin-top: var(--space-4); }
 .p2-marker-saved blockquote { margin: 0; padding-left: var(--space-4); border-left: 2px solid var(--color-accent); font-family: var(--font-editorial); font-size: 1.12rem; line-height: 1.58; }
-.p2-open-journal { display: inline-flex; gap: var(--space-2); align-items: center; margin-top: var(--space-4); padding: var(--space-2) 0; color: var(--color-accent); background: transparent; border: 0; cursor: pointer; font-weight: 600; }
+.p2-space-confirmation { display: grid; gap: var(--space-4); margin-top: var(--space-5); padding-top: var(--space-4); border-top: var(--border-subtle); }
+.p2-space-confirmation > p { display: grid; gap: var(--space-1); margin: 0; }
+.p2-space-confirmation > p strong { font-family: var(--font-editorial); font-size: 1.15rem; font-weight: 500; }
+.p2-space-confirmation > p span { color: var(--color-ink-muted); font-size: var(--text-sm); }
+.p2-space-actions { display: flex; justify-content: space-between; gap: var(--space-4); align-items: center; }
+.p2-space-actions > button:first-child { padding: var(--space-2) 0; color: var(--color-accent); background: transparent; border: 0; cursor: pointer; font-weight: 600; }
 
 .p2-auth-panel { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1.1fr); gap: clamp(2rem, 5vw, 4rem); width: min(100%, 58rem); max-height: calc(100vh - 2.5rem); overflow: auto; padding: clamp(1.5rem, 5vw, 3.5rem); background: var(--color-surface); border: var(--border-subtle); border-radius: var(--radius-md); box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2); }
 .p2-auth-heading h2 { margin: var(--space-2) 0 var(--space-4); font-family: var(--font-editorial); font-size: clamp(2.5rem, 5vw, 4.25rem); font-weight: 500; line-height: 0.96; }
@@ -47,7 +52,7 @@
   .p2-pending button:hover,
   .p2-marker-editor button:first-child:hover,
   .p2-marker-saved button:hover,
-  .p2-open-journal:hover,
+  .p2-space-actions > button:first-child:hover,
   .p2-auth-actions > button:first-child:hover { color: var(--color-accent-strong); text-decoration: underline; text-underline-offset: 0.2rem; }
   .p2-auth-close:hover { background: var(--color-surface-muted); }
 }
@@ -65,6 +70,9 @@
   .p2-pending { align-items: start; }
   .p2-pending button { max-width: 9rem; text-align: right; }
   .p2-first-marker { margin-inline: calc(var(--space-4) * -1); padding-inline: var(--space-4); }
+  .p2-space-actions { display: grid; }
+  .p2-space-actions .chapter-button { grid-row: 1; width: 100%; justify-content: center; }
+  .p2-space-actions > button:first-child { text-align: center; }
   .p2-auth-panel { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); align-self: end; width: 100%; max-width: 100vw; max-height: 100vh; max-height: 100dvh; margin: 0; padding: var(--space-6) max(var(--space-4), env(safe-area-inset-left)) calc(var(--space-5) + env(safe-area-inset-bottom)) max(var(--space-4), env(safe-area-inset-right)); border-right: 0; border-bottom: 0; border-left: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
   .p2-auth-panel > *,
   .p2-auth-panel form,
