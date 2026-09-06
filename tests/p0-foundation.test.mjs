@@ -31,7 +31,7 @@ test("P0 centralizes the visual roles and the 900px responsive contract", async 
 
 test("public and connected shells expose only live destinations", () => {
   assert.deepEqual(chapterNavigation.connected.map((item) => item.label), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
-  assert.deepEqual(chapterNavigation.public.map((item) => item.label), ["Découvrir", "Recherche"]);
+  assert.deepEqual(chapterNavigation.public.map((item) => item.label), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
   for (const destination of [...chapterNavigation.connected, ...chapterNavigation.public]) assert.ok(destination.result.length > 0);
   assert.equal(shellAttributes("public")["data-shell"], "public");
   assert.match(shellAttributes("connected").className, /chapter-shell--connected/);

@@ -203,6 +203,61 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
 
 export type FirstMarkerRecord = { status: ReadingStatus; marker: string };
 
+const personalIntroContent = {
+  journal: {
+    eyebrow: "Journal personnel · privé",
+    title: "Ce que vous lisez mérite mieux qu’un compteur.",
+    description: "Le Journal rassemble les lectures en cours, les repères que vous choisissez de garder et les traces auxquelles vous voudrez revenir.",
+    steps: [
+      ["Reprendre", "Retrouvez immédiatement la lecture qui vous accompagne."],
+      ["Garder", "Consignez une phrase, une impression ou une page, uniquement pour vous."],
+      ["Relire", "Voyez se construire la mémoire de vos lectures au fil du temps."],
+    ],
+    note: "Votre Journal est encore vierge. Il prendra forme dès votre première œuvre.",
+  },
+  library: {
+    eyebrow: "Bibliothèque personnelle · privée",
+    title: "Une bibliothèque pour choisir, pas pour compter.",
+    description: "La Bibliothèque garde les œuvres que vous souhaitez lire, celles qui vous accompagnent et celles qui ont déjà laissé une trace.",
+    steps: [
+      ["À lire", "Préparez les prochaines œuvres sans perdre le chemin qui vous y a mené."],
+      ["En cours", "Situez vos lectures présentes et reprenez-les depuis votre Journal."],
+      ["Lu", "Retrouvez une œuvre par son titre, son auteur ou votre dernière activité."],
+    ],
+    note: "Votre Bibliothèque est encore vierge. Une première œuvre suffit pour l’ouvrir.",
+  },
+} as const;
+
+export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
+  kind: "journal" | "library";
+  onExplore: () => void;
+  onSearch: () => void;
+}) {
+  const content = personalIntroContent[kind];
+  const titleId = `p1-${kind}-intro-title`;
+
+  return (
+    <section className={`p1-public-page p1-personal-intro p1-personal-intro--${kind}`} aria-labelledby={titleId}>
+      <header className="p1-personal-intro-opening">
+        <div className="p1-personal-intro-copy">
+          <p className="eyebrow">{content.eyebrow}</p>
+          <h1 id={titleId}>{content.title}</h1>
+          <p>{content.description}</p>
+        </div>
+        <ol className="p1-personal-intro-preview" aria-label={kind === "journal" ? "Fonctions du Journal" : "Fonctions de la Bibliothèque"}>
+          {content.steps.map(([label, description], index) => (
+            <li key={label}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><small>{description}</small></li>
+          ))}
+        </ol>
+      </header>
+      <footer className="p1-personal-intro-invitation">
+        <p><strong>{content.note}</strong><span>Aucun profil public n’est nécessaire pour conserver une lecture.</span></p>
+        <div><Button onClick={onExplore}>Commencer avec une œuvre</Button><button type="button" onClick={onSearch}>Rechercher un titre</button></div>
+      </footer>
+    </section>
+  );
+}
+
 export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, activated = false, record, backLabel = "Retour à Découvrir", social }: {
   work: Work;
   works: readonly Work[];
@@ -303,7 +358,12 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
               ) : (
                 <Button variant="quiet" onClick={() => setMarkerOpen(true)}>Poser un premier repère</Button>
               )}
-              {!markerOpen && onOpenJournal && <button className="p2-open-journal" type="button" onClick={onOpenJournal}>Ouvrir mon journal <span aria-hidden="true">→</span></button>}
+              {!markerOpen && onOpenJournal && (
+                <div className="p2-space-confirmation">
+                  <p><strong>{record.marker ? "Votre première trace est enregistrée dans votre Journal." : "Cette œuvre est enregistrée dans votre Journal."}</strong><span>Vous pourrez la retrouver ici, sans rien rendre public.</span></p>
+                  <div className="p2-space-actions"><button type="button" onClick={onBack}>Continuer à explorer</button><Button onClick={onOpenJournal}>Voir mon Journal</Button></div>
+                </div>
+              )}
             </section>
           )}
           <dl className="p1-work-facts">

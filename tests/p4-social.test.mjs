@@ -72,6 +72,9 @@ test("P4 restores a public review after the minimal identity step", () => {
   try {
     const render = () => harness.render(Home, { initialPublicView: "discover", initialPublicWorkId: "cartographies" });
     let tree = render();
+    const publicDestinationLabels = () => nodes(tree, (node) => node.type === "button").map(textOf).filter((label) => ["Journal", "Bibliothèque", "Découvrir", "Recherche"].includes(label));
+    assert.ok(publicDestinationLabels().includes("Journal"));
+    assert.ok(publicDestinationLabels().includes("Bibliothèque"));
     const work = nodes(tree, (node) => node.type?.name === "PublicWork")[0];
     const social = nodes(work.props.social, (node) => node.type?.name === "SocialReviews")[0];
     social.props.onWriteReview();
@@ -82,7 +85,8 @@ test("P4 restores a public review after the minimal identity step", () => {
     nodes(tree, (node) => node.type === "button" && textOf(node) === "Continuer vers la critique")[0].props.onClick();
     tree = render();
     assert.equal(tree.props["data-shell"], "public");
-    assert.equal(nodes(tree, (node) => node.type === "button" && (textOf(node) === "Journal" || textOf(node) === "Bibliothèque")).length, 0);
+    assert.ok(publicDestinationLabels().includes("Journal"));
+    assert.ok(publicDestinationLabels().includes("Bibliothèque"));
     assert.match(textOf(tree), /Visible par tous après publication/);
     assert.match(textOf(tree), /Publier la critique/);
   } finally {

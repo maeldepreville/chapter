@@ -97,6 +97,68 @@ test("the root visitor journey opens search and a work while keeping public navi
   }
 });
 
+test("the public shell keeps personal destinations stable and gives them real introductory states", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    location: { pathname: "/" },
+    history: { pushState(_state, _title, path) { globalThis.window.location.pathname = path; }, replaceState() {} },
+    scrollTo() {}, addEventListener() {}, removeEventListener() {},
+  };
+  try {
+    const render = () => harness.render(Home, {});
+    let root = render();
+    const mainNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    assert.deepEqual(nodes(mainNavigation, (node) => node.type === "button").map(textOf), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
+
+    nodes(mainNavigation, (node) => node.type === "button" && textOf(node) === "Journal")[0].props.onClick();
+    root = render();
+    let intro = nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0];
+    assert.equal(root.props["data-shell"], "public");
+    assert.equal(intro.props.kind, "journal");
+    assert.match(textOf(intro.type(intro.props)), /Ce que vous lisez mérite mieux qu’un compteur/);
+
+    const desktopNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    nodes(desktopNavigation, (node) => node.type === "button" && textOf(node) === "Bibliothèque")[0].props.onClick();
+    root = render();
+    intro = nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0];
+    assert.equal(intro.props.kind, "library");
+    assert.match(textOf(intro.type(intro.props)), /Une bibliothèque pour choisir, pas pour compter/);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
+test("a first private record fills the same Journal destination without changing its place", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    location: { pathname: "/oeuvres/cartographies" },
+    history: { pushState(_state, _title, path) { globalThis.window.location.pathname = path; }, replaceState() {} },
+    scrollTo() {}, requestAnimationFrame(callback) { callback(); return 1; }, addEventListener() {}, removeEventListener() {},
+  };
+  try {
+    const render = () => harness.render(Home, { initialPublicWorkId: "cartographies" });
+    let root = render();
+    nodes(root, (node) => node.type?.name === "PublicWork")[0].props.onActivate("En cours");
+    root = render();
+    const mainNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    nodes(mainNavigation, (node) => node.type === "button" && textOf(node) === "Journal")[0].props.onClick();
+    root = render();
+    assert.equal(root.props["data-shell"], "connected");
+    assert.match(textOf(root), /Lectures en cours/);
+    assert.match(textOf(root), new RegExp(publicWorks[0].title));
+    const connectedNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    assert.deepEqual(nodes(connectedNavigation, (node) => node.type === "button").map(textOf), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
 test("P1 styles preserve responsive reflow and reduced motion", async () => {
   const css = await readFile(source("p1-public.css"), "utf8");
   assert.match(css, /@media \(max-width: 899px\)/);

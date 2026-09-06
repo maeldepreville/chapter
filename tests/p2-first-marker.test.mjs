@@ -51,6 +51,12 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   tree = render();
   nodes(tree, (node) => node.type?.name === "Button" && textOf(node) === "Enregistrer le repère")[0].props.onClick();
   assert.deepEqual(markers, ["Retrouver l’image des cartes mouvantes."]);
+
+  props = { ...props, onOpenJournal() {}, record: { status: "En cours", marker: "Retrouver l’image des cartes mouvantes." } };
+  tree = render();
+  assert.match(textOf(tree), /Votre première trace est enregistrée dans votre Journal/);
+  assert.match(textOf(tree), /Continuer à explorer/);
+  assert.match(textOf(tree), /Voir mon Journal/);
 });
 
 test("P2 styling provides desktop anchoring, a mobile bottom sheet and reduced motion", async () => {

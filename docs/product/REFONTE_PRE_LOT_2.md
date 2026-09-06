@@ -34,7 +34,9 @@ Chapter se distingue d'un catalogue social par trois engagements :
 - **Découvrir** : chemins éditoriaux compréhensibles, utiles même sans historique.
 - **Recherche** : accès exact et immédiat aux œuvres, auteurs, lecteurs et listes.
 
-Une œuvre, une liste publique, une critique, un profil public et une conversation publique sont consultables sans compte. Journal et Bibliothèque ne sont jamais publics.
+Une œuvre, une liste publique, une critique, un profil public et une conversation publique sont consultables sans compte. Les contenus personnels du Journal et de la Bibliothèque ne sont jamais publics.
+
+La navigation conserve les quatre mêmes destinations dès la visite publique. Avant toute donnée personnelle, Journal et Bibliothèque ouvrent des états introductifs qui expliquent leur rôle sans simuler de contenu ni imposer une inscription. Un premier enregistrement transforme ces mêmes destinations en espaces privés alimentés ; leur position et leur libellé ne changent pas. Sur mobile, la barre reste limitée à **Journal · Découvrir · Bibliothèque** et Recherche demeure accessible depuis l’en-tête.
 
 ### Lecture et traces
 

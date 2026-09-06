@@ -85,6 +85,8 @@ export const CHAPTER_BREAKPOINTS = { compact: 900 } as const;
 
 export const chapterNavigation = {
   public: [
+    { id: "journal", label: "Journal", result: "open-journal-introduction" },
+    { id: "library", label: "Bibliothèque", result: "open-library-introduction" },
     { id: "discover", label: "Découvrir", result: "open-discover" },
     { id: "search", label: "Recherche", result: "open-search" },
   ],
