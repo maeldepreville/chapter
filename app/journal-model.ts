@@ -2,7 +2,7 @@ export type JournalTrace = {
   id: string;
   workId: string;
   date: string;
-  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée";
+  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée" | "Relecture commencée" | "Relecture terminée";
   text?: string;
   action?: "note" | "review";
 };
@@ -17,8 +17,10 @@ export function saveWrittenTrace(traces: readonly JournalTrace[], workId: string
     kind: action === "note" ? "Note privée" : "Critique publique", action, text: text.trim() }, ...rest];
 }
 
-export function saveReadingTrace(traces: readonly JournalTrace[], workId: string, status: "En cours" | "Lu", date: string): JournalTrace[] {
-  const kind = status === "En cours" ? "Lecture commencée" : "Lecture terminée";
-  const id = `trace-${status === "En cours" ? "start" : "finished"}-${workId}`;
+export function saveReadingTrace(traces: readonly JournalTrace[], workId: string, status: "En cours" | "Lu", date: string, rereading = false): JournalTrace[] {
+  const kind = rereading
+    ? status === "En cours" ? "Relecture commencée" : "Relecture terminée"
+    : status === "En cours" ? "Lecture commencée" : "Lecture terminée";
+  const id = `trace-${rereading ? "reread-" : ""}${status === "En cours" ? "start" : "finished"}-${workId}`;
   return [{ id, workId, date, kind }, ...traces.filter((trace) => trace.id !== id)];
 }

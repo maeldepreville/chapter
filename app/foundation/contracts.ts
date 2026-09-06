@@ -99,10 +99,10 @@ export const chapterNavigation = {
 export const journeyContracts = {
   P1: { surface: "public-home-and-work", primaryAction: "open-public-work", observableResult: "public-work-visible", requiresAccount: false },
   P2: { surface: "first-reading-mark", primaryAction: "save-reading-status", observableResult: "private-reading-mark-visible", requiresAccount: true },
-  P3: { surface: "search", primaryAction: "submit-search", observableResult: "search-results-visible", requiresAccount: false },
-  P4: { surface: "journal-and-library", primaryAction: "filter-private-library", observableResult: "filtered-library-visible", requiresAccount: true },
-  P5: { surface: "discover", primaryAction: "open-editorial-path", observableResult: "editorial-path-visible", requiresAccount: false },
-  P6: { surface: "public-profile-and-lists", primaryAction: "publish-visible-trace", observableResult: "public-trace-visible", requiresAccount: true },
+  P3: { surface: "journal-library-and-personal-work", primaryAction: "maintain-private-reading", observableResult: "private-reading-continuity-visible", requiresAccount: true },
+  P4: { surface: "public-reviews-profiles-lists-and-conversations", primaryAction: "publish-visible-trace", observableResult: "public-trace-visible", requiresAccount: true },
+  P5: { surface: "privacy-and-data-controls", primaryAction: "review-private-data", observableResult: "privacy-controls-visible", requiresAccount: true },
+  P6: { surface: "cross-cutting-states", primaryAction: "exercise-extreme-state", observableResult: "resilient-state-visible", requiresAccount: false },
   P7: { surface: "settings-and-migration", primaryAction: "reset-prototype-session", observableResult: "selected-session-restored", requiresAccount: true },
 } as const satisfies Record<JourneyId, { surface: string; primaryAction: string; observableResult: string; requiresAccount: boolean }>;
 

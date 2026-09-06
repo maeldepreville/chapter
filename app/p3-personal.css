@@ -1,0 +1,63 @@
+/* P3: a reading desk, with the active shelf and the written page. */
+.p3-shell .desktop-header { grid-template-columns: auto 1fr auto; padding-inline: max(3rem, calc((100vw - 80rem)/2)); gap: 3rem; min-height: 5.5rem; }
+.p3-shell .desktop-header nav { justify-self: center; gap: 2rem; }
+.p3-shell .header-search { display: none; }
+.p3-shell .destination-page { max-width: 80rem; padding-top: 3rem; }
+.p3-shell .destination-heading { max-width: none; margin-bottom: 2.5rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--line); }
+.p3-shell .destination-heading h1 { font-size: clamp(2.8rem, 5vw, 4rem); letter-spacing: -.035em; line-height: 1.05; }
+.p3-shell .destination-heading > p:last-child { font-family: var(--font-interface); font-size: .95rem; margin-top: .75rem; }
+.p3-shell .journal-opening-grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.15fr); gap: 3.5rem; padding-bottom: 3rem; border-bottom: 0; }
+.p3-shell .personal-section-heading h2 { font-size: 2rem; }
+.p3-shell .current-readings { padding-top: 1rem; }
+.p3-shell .current-reading { grid-template-columns: 1fr; gap: .4rem; padding-block: 1.25rem; }
+.p3-shell .current-reading-main { grid-template-columns: 4.5rem 1fr; gap: 1.25rem; }
+.p3-shell .current-reading-copy strong { font-size: 1.35rem; line-height: 1.15; }
+.p3-shell .current-reading-copy small { font-size: .875rem; }
+.p3-shell .current-note-action { margin-left: 5.75rem; justify-self: start; font-size: .875rem; }
+.p3-shell .latest-trace { position: relative; align-self: stretch; background: var(--surface); padding: 2rem 2.25rem; border: 1px solid var(--line); border-radius: 2px; box-shadow: 5px 5px 0 var(--paper), 6px 6px 0 var(--line); }
+.p3-shell .latest-trace .personal-section-heading { margin-bottom: 1.5rem; }
+.p3-shell .featured-trace { border-block: 0; padding: 0; }
+.p3-shell .featured-trace .trace-copy { font-size: 1.45rem; line-height: 1.55; margin-top: 1.25rem; }
+.p3-shell .trace-kind { font-size: .75rem; letter-spacing: .035em; }
+.p3-shell .featured-trace time { margin-top: 1.5rem; }
+.p3-shell .journal-timeline { max-width: 61rem; padding-top: 2rem; }
+.p3-shell .timeline-heading { padding-bottom: 1rem; margin-bottom: 0; }
+.p3-shell .personal-trace:not(.featured-trace) { grid-template-columns: 9rem minmax(0, 1fr); padding-block: 2rem; }
+.p3-shell .trace-work-link strong { font-size: 1.25rem; }
+.p3-shell .trace-actions .text-action { font-size: .875rem; }
+.p3-shell .library-toolbar { gap: 1.5rem; margin-bottom: 2rem; }
+.p3-shell .library-filters { gap: 1.5rem; }
+.p3-shell .library-filters button { border: 0; border-radius: 0; border-bottom: 2px solid transparent; padding: .65rem .1rem; font-size: .95rem; }
+.p3-shell .library-filters button.active { color: var(--brick); background: transparent; border-bottom-color: var(--brick); }
+.p3-shell .library-filters button span { font-size: .8rem; color: var(--muted); }
+.p3-shell .library-tools { grid-template-columns: minmax(0, 1fr) auto; }
+.p3-shell .library-grid { grid-template-columns: repeat(6,minmax(0,1fr)); gap: 2.25rem 1.6rem; }
+.p3-shell .library-work { padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.p3-shell .library-work-copy > strong { font-size: 1.15rem; line-height: 1.2; }
+.p3-shell .library-work-copy small { font-family: var(--font-interface); font-size: .8rem; margin-top: .35rem; }
+.p3-shell .library-status-trigger { font-size: .8rem; text-transform: none; letter-spacing: 0; }
+.p3-shell .book-opening { min-height: auto; padding-block: 4rem; }
+.p3-shell .page-section { padding-block: 3rem; }
+.p3-shell .section-heading h2 { font-size: 2.5rem; }
+/* Compact bookmark control: vertical proportions, not a horizontal banner. */
+.p3-shell .reading-bookmark { clip-path: none; background: transparent; padding: 0; color: var(--brick-dark); font-size: .875rem; gap: .65rem; }
+.p3-shell .reading-bookmark > span { display: grid; place-items: center; width: 1.75rem; height: 3rem; padding-bottom: .5rem; background: var(--brick); color: var(--surface); clip-path: polygon(0 0,100% 0,100% 100%,50% 82%,0 100%); font-size: 1rem; }
+.p3-shell .current-reading-copy > .reading-bookmark--compact { clip-path: polygon(0 0,100% 0,100% 100%,50% 86%,0 100%); display: grid; place-items: center; width: 4.25rem; min-height: 3.5rem; padding: .4rem .25rem .9rem; margin-top: .65rem; color: var(--surface); background: var(--brick); border-top: 3px solid var(--brick-dark); font-size: .75rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 1100px) { .p3-shell .library-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+@media (max-width: 899px) {
+ .p3-shell .destination-page { padding: 1.75rem 1.1rem 4rem; }
+ .p3-shell .destination-heading { margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
+ .p3-shell .journal-opening-grid { grid-template-columns: minmax(0,1fr); gap: 2rem; }
+ .p3-shell .current-readings { padding-top: 0; }
+ .p3-shell .current-reading { flex-basis: min(80vw,22rem); padding: 1rem; background: transparent; border-width: 0 1px 1px 0; border-radius: 0; min-height: 14rem; }
+ .p3-shell .current-note-action { margin-left: 0; }
+ .p3-shell .latest-trace { padding: 1.5rem; margin-right: .4rem; }
+ .p3-shell .featured-trace .trace-copy { font-size: 1.3rem; }
+ .p3-shell .personal-trace:not(.featured-trace) { grid-template-columns: minmax(0,1fr); gap: .8rem; }
+ .p3-shell .library-tools { grid-template-columns: minmax(0,1fr); }
+ .p3-shell .library-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem 1rem; }
+ .p3-shell .library-filters { gap: 1rem; }
+ .p3-shell .book-opening { padding-block: 2rem; }
+ .p3-shell .mobile-nav button { font-size: .78rem; }
+}
+@media (max-width: 520px) { .p3-shell .library-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
