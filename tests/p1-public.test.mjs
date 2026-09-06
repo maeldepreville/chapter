@@ -9,7 +9,7 @@ import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-t
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
 const load = createSourceLoader();
 const { publicWorks } = load(source("p1-public-fixtures.ts"));
-const { PublicDiscover, PublicSearch, PublicWork } = load(source("p1-public.tsx"));
+const { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork } = load(source("p1-public.tsx"));
 
 test("P1 exposes a useful public catalogue with stable work relations", () => {
   assert.equal(publicWorks.length, 24);
@@ -122,9 +122,9 @@ test("the public shell keeps personal destinations stable and gives them real in
     assert.match(textOf(renderedIntro), /Votre première action/);
     nodes(renderedIntro, (node) => node.type === "button" && node.props.className === "p1-personal-intro-primary")[0].props.onClick();
     root = render();
-    const work = nodes(root, (node) => node.type?.name === "PublicWork")[0];
-    assert.equal(work.props.backLabel, "Retour au Journal");
-    work.props.onBack();
+    assert.equal(nodes(root, (node) => node.type?.name === "PublicDiscover").length, 1);
+    const discoveryNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    nodes(discoveryNavigation, (node) => node.type === "button" && textOf(node) === "Journal")[0].props.onClick();
     root = render();
     assert.equal(nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0].props.kind, "journal");
 
@@ -135,10 +135,26 @@ test("the public shell keeps personal destinations stable and gives them real in
     assert.equal(intro.props.kind, "library");
     renderedIntro = intro.type(intro.props);
     assert.match(textOf(renderedIntro), /Une bibliothèque pour choisir, pas pour compter/);
-    assert.match(textOf(renderedIntro), /Ajouter une première œuvre/);
+    assert.match(textOf(renderedIntro), /Choisir une première œuvre/);
   } finally {
     if (previousWindow === undefined) delete globalThis.window;
     else globalThis.window = previousWindow;
+  }
+});
+
+test("personal introductions use neutral editorial assets and lead primarily to Discover", async () => {
+  for (const kind of ["journal", "library"]) {
+    let explored = 0;
+    const markup = renderToStaticMarkup(React.createElement(PublicPersonalIntro, { kind, onExplore() { explored += 1; }, onSearch() {} }));
+    assert.match(markup, new RegExp(`/editorial/p4-${kind}-threshold\\.webp`));
+    assert.doesNotMatch(markup, new RegExp(publicWorks[0].title));
+    const tree = PublicPersonalIntro({ kind, onExplore() { explored += 1; }, onSearch() {} });
+    nodes(tree, (node) => node.type === "button" && node.props.className === "p1-personal-intro-primary")[0].props.onClick();
+    assert.equal(explored, 1);
+    const asset = fileURLToPath(new URL(`../public/editorial/p4-${kind}-threshold.webp`, import.meta.url));
+    const metadata = await stat(asset);
+    assert.ok(metadata.size > 40_000);
+    assert.ok(metadata.size < 150_000);
   }
 });
 

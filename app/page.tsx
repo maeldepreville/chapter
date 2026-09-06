@@ -24,7 +24,7 @@ type View = "work" | "journal" | "library" | "discover" | "search" | "profile" |
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "search" | "profile";
-type PublicWorkOrigin = "discover" | "search" | "profile" | "list" | "journal" | "library";
+type PublicWorkOrigin = "discover" | "search" | "profile" | "list";
 type PersonalWorkOrigin = "journal" | "library" | "discover" | "search" | "profile" | "list";
 type PublicIntent = "review" | "reply" | "follow";
 type NavigationSnapshot = {
@@ -840,8 +840,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         <header className="p1-public-header">
           <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}>Chapter<span>.</span></button>
           <nav aria-label="Navigation principale">
-            <button className={currentView === "journal" || (currentView === "work" && publicWorkOrigin === "journal") ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}>Journal</button>
-            <button className={currentView === "library" || (currentView === "work" && publicWorkOrigin === "library") ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}>Bibliothèque</button>
+            <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}>Journal</button>
+            <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}>Bibliothèque</button>
             <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
             <button className={currentView === "search" || (currentView === "work" && publicWorkOrigin === "search") ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
           </nav>
@@ -887,7 +887,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       <main id="top">
         {p1Public ? (
           currentView === "journal" || currentView === "library" ? (
-            <PublicPersonalIntro kind={currentView} works={works} onStartWork={(id) => openPublicWork(id, currentView)} onExplore={() => openPublicView("discover")} onSearch={() => openPublicView("search")} />
+            <PublicPersonalIntro kind={currentView} onExplore={() => openPublicView("discover")} onSearch={() => openPublicView("search")} />
           ) : currentView === "search" ? (
             <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "search", "lina")} />
           ) : currentView === "profile" ? (
@@ -1244,9 +1244,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
       {p1Public ? (
         <nav className="p1-public-mobile-nav" aria-label="Navigation principale mobile">
-          <button className={currentView === "journal" || (currentView === "work" && publicWorkOrigin === "journal") ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}><span aria-hidden="true">◫</span>Journal</button>
+          <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}><span aria-hidden="true">◫</span>Journal</button>
           <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}><span aria-hidden="true">⌕</span>Découvrir</button>
-          <button className={currentView === "library" || (currentView === "work" && publicWorkOrigin === "library") ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
+          <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
         </nav>
       ) : <nav className="mobile-nav" aria-label="Navigation principale mobile">
         {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}><span aria-hidden="true">◫</span>Journal</button>}
