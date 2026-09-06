@@ -28,7 +28,7 @@ P4 transforme une trace volontairement publique en chemin continu entre une œuv
 - les listes ouvertes depuis Recherche reviennent à Recherche et les œuvres ouvertes depuis Découvrir dans l’espace connecté reviennent à Découvrir ;
 - l’aperçu d’une réponse sépare explicitement le nom de son auteur et le corps du message ;
 - Journal, Bibliothèque, Découvrir et Recherche forment une architecture stable dès la visite publique ; Journal et Bibliothèque présentent alors des états introductifs sans donnée personnelle, puis accueillent les contenus privés au premier repère sans changer de place ;
-- les états introductifs sont composés comme des seuils d’action : une œuvre réelle et ses couvertures portent une cible principale fortement contrastée, ouvrent directement une fiche et conservent le retour vers l’espace d’origine ; les explications deviennent un second rythme sous cette action ;
+- les états introductifs sont composés comme des seuils d’action : deux assets éditoriaux neutres, sans œuvre identifiable, portent une cible principale fortement contrastée vers Découvrir ; Recherche reste l’alternative d’une intention déjà précise et les explications deviennent un second rythme sous l’action ;
 - le mode d’accès, l’identité publique et la maturité des espaces personnels sont trois états indépendants : l’identité minimale autorise les gestes publics, tandis que seul un premier enregistrement alimente Journal et Bibliothèque ;
 - la confirmation du premier repère indique explicitement sa destination et laisse choisir entre « Voir mon Journal » et « Continuer à explorer ».
 
@@ -47,6 +47,6 @@ Les œuvres, profils, critiques, réponses, listes et suivis restent des fixture
 - construction de production avec routes publiques œuvre, lecteur et liste ;
 - tests P4 dédiés : recherche sociale, ordre de composition, conversations, reprise après identité et rendu direct ;
 - non-régression P1 à P3 et tests historiques sociaux ;
-- lint réussi, construction réussie, **134/134 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
+- lint réussi, construction réussie, **135/135 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
 
 Une candidate publiée ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion vers `main`.

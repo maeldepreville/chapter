@@ -228,17 +228,16 @@ const personalIntroContent = {
   },
 } as const;
 
-export function PublicPersonalIntro({ kind, works, onStartWork, onExplore, onSearch }: {
+export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   kind: "journal" | "library";
-  works: readonly Work[];
-  onStartWork: (id: string) => void;
   onExplore: () => void;
   onSearch: () => void;
 }) {
   const content = personalIntroContent[kind];
   const titleId = `p1-${kind}-intro-title`;
-  const featuredWork = works[kind === "journal" ? 0 : 1] ?? works[0];
-  const visualWorks = kind === "journal" ? works.slice(0, 1) : works.slice(0, 3);
+  const asset = kind === "journal"
+    ? { src: "/editorial/p4-journal-threshold.webp", width: 600, height: 900 }
+    : { src: "/editorial/p4-library-threshold.webp", width: 1100, height: 733 };
 
   return (
     <section className={`p1-public-page p1-personal-intro p1-personal-intro--${kind}`} aria-labelledby={titleId}>
@@ -249,21 +248,18 @@ export function PublicPersonalIntro({ kind, works, onStartWork, onExplore, onSea
           <p>{content.description}</p>
         </div>
         <div className="p1-personal-intro-action">
-          {featuredWork ? (
-            <button className="p1-personal-intro-primary" type="button" onClick={() => onStartWork(featuredWork.id)}>
+            <button className="p1-personal-intro-primary" type="button" onClick={onExplore}>
               <span className="p1-personal-intro-assets" aria-hidden="true">
-                {visualWorks.map((work) => <PublicCover key={work.id} work={work} className="p1-cover p1-cover--intro" />)}
-                {kind === "journal" && <span className="p1-intro-trace-sheet"><i /><i /><i /></span>}
+                <Image className="p1-personal-intro-asset" src={asset.src} alt="" width={asset.width} height={asset.height} sizes="(max-width: 899px) 70vw, 30vw" unoptimized />
               </span>
               <span className="p1-personal-intro-primary-copy">
                 <small>Votre première action</small>
-                <strong>{kind === "journal" ? "Commencer le Journal avec une œuvre" : "Ajouter une première œuvre"}</strong>
-                <span>{featuredWork.title} · {featuredWork.author}</span>
-                <em>Choisir cette œuvre <b aria-hidden="true">→</b></em>
+                <strong>{kind === "journal" ? "Commencer le Journal par une œuvre" : "Choisir une première œuvre"}</strong>
+                <span>{kind === "journal" ? "Explorez les chemins de Chapter et gardez ce que votre lecture vous laisse." : "Parcourez les chemins éditoriaux avant de décider ce que vous souhaitez lire."}</span>
+                <em>Ouvrir Découvrir <b aria-hidden="true">→</b></em>
               </span>
             </button>
-          ) : <Button onClick={onExplore}>Parcourir les œuvres</Button>}
-          <div className="p1-personal-intro-alternatives"><span>Ou partir d’un autre livre</span><button type="button" onClick={onExplore}>Parcourir les œuvres</button><button type="button" onClick={onSearch}>Rechercher un titre</button></div>
+          <div className="p1-personal-intro-alternatives"><span>Vous avez déjà un titre en tête ?</span><button type="button" onClick={onSearch}>Rechercher un titre</button></div>
         </div>
       </header>
       <section className="p1-personal-intro-details" aria-labelledby={`${titleId}-details`}>
