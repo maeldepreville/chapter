@@ -122,6 +122,8 @@ test("public search ships a distinct transparent editorial accent", async () => 
   const css = await readFile(source("p1-public.css"), "utf8");
   assert.match(css, /\.p1-search-sketch \{ position: absolute/);
   assert.doesNotMatch(css, /\.p1-search-sketch[^}]*border:/);
+  assert.match(css, /width: min\(150vw, 38rem\)/);
+  assert.doesNotMatch(css, /right: -11rem/);
 });
 
 test("public discovery, search and work URLs render directly", async () => {

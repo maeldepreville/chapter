@@ -183,7 +183,8 @@
   .p1-search-heading { padding: var(--space-7) 1rem 10rem; }
   .p1-search-heading h1 { max-width: 8ch; font-size: clamp(3.3rem, 16vw, 5rem); }
   .p1-search-heading > p:last-child { max-width: 22rem; }
-  .p1-search-sketch { top: 8rem; right: -11rem; bottom: -1rem; width: 38rem; opacity: 0.62; }
+  .p1-search-sketch { top: 8.5rem; right: max(-10rem, -22vw); bottom: 0; width: min(150vw, 38rem); height: 23rem; opacity: 0.62; }
+  .p1-search-sketch img { object-position: center; }
   .p1-search-sketch::after { background: linear-gradient(180deg, var(--color-paper) 0%, transparent 30%, transparent 82%, var(--color-paper) 100%); }
   .p1-search-margin-note { display: none; }
   .p1-search-field { padding-inline: var(--space-3); }

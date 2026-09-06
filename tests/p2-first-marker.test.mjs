@@ -60,5 +60,8 @@ test("P2 styling provides desktop anchoring, a mobile bottom sheet and reduced m
   assert.match(css, /\.p2-status-control\.open \{ z-index: 62; \}/);
   assert.match(css, /\.p2-status-backdrop \{ z-index: 60;/);
   assert.match(css, /safe-area-inset-bottom/);
+  assert.match(css, /dialog\.p2-auth-dialog \{ place-items: end stretch; padding: 0; overflow: hidden; \}/);
+  assert.match(css, /max-width: 100vw; max-height: 100vh; max-height: 100dvh/);
+  assert.doesNotMatch(css, /width: calc\(100% \+ 2\.5rem\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });
