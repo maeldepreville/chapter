@@ -117,14 +117,25 @@ test("the public shell keeps personal destinations stable and gives them real in
     let intro = nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0];
     assert.equal(root.props["data-shell"], "public");
     assert.equal(intro.props.kind, "journal");
-    assert.match(textOf(intro.type(intro.props)), /Ce que vous lisez mérite mieux qu’un compteur/);
+    let renderedIntro = intro.type(intro.props);
+    assert.match(textOf(renderedIntro), /Ce que vous lisez mérite mieux qu’un compteur/);
+    assert.match(textOf(renderedIntro), /Votre première action/);
+    nodes(renderedIntro, (node) => node.type === "button" && node.props.className === "p1-personal-intro-primary")[0].props.onClick();
+    root = render();
+    const work = nodes(root, (node) => node.type?.name === "PublicWork")[0];
+    assert.equal(work.props.backLabel, "Retour au Journal");
+    work.props.onBack();
+    root = render();
+    assert.equal(nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0].props.kind, "journal");
 
     const desktopNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
     nodes(desktopNavigation, (node) => node.type === "button" && textOf(node) === "Bibliothèque")[0].props.onClick();
     root = render();
     intro = nodes(root, (node) => node.type?.name === "PublicPersonalIntro")[0];
     assert.equal(intro.props.kind, "library");
-    assert.match(textOf(intro.type(intro.props)), /Une bibliothèque pour choisir, pas pour compter/);
+    renderedIntro = intro.type(intro.props);
+    assert.match(textOf(renderedIntro), /Une bibliothèque pour choisir, pas pour compter/);
+    assert.match(textOf(renderedIntro), /Ajouter une première œuvre/);
   } finally {
     if (previousWindow === undefined) delete globalThis.window;
     else globalThis.window = previousWindow;

@@ -228,13 +228,17 @@ const personalIntroContent = {
   },
 } as const;
 
-export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
+export function PublicPersonalIntro({ kind, works, onStartWork, onExplore, onSearch }: {
   kind: "journal" | "library";
+  works: readonly Work[];
+  onStartWork: (id: string) => void;
   onExplore: () => void;
   onSearch: () => void;
 }) {
   const content = personalIntroContent[kind];
   const titleId = `p1-${kind}-intro-title`;
+  const featuredWork = works[kind === "journal" ? 0 : 1] ?? works[0];
+  const visualWorks = kind === "journal" ? works.slice(0, 1) : works.slice(0, 3);
 
   return (
     <section className={`p1-public-page p1-personal-intro p1-personal-intro--${kind}`} aria-labelledby={titleId}>
@@ -244,16 +248,32 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
           <h1 id={titleId}>{content.title}</h1>
           <p>{content.description}</p>
         </div>
+        <div className="p1-personal-intro-action">
+          {featuredWork ? (
+            <button className="p1-personal-intro-primary" type="button" onClick={() => onStartWork(featuredWork.id)}>
+              <span className="p1-personal-intro-assets" aria-hidden="true">
+                {visualWorks.map((work) => <PublicCover key={work.id} work={work} className="p1-cover p1-cover--intro" />)}
+                {kind === "journal" && <span className="p1-intro-trace-sheet"><i /><i /><i /></span>}
+              </span>
+              <span className="p1-personal-intro-primary-copy">
+                <small>Votre première action</small>
+                <strong>{kind === "journal" ? "Commencer le Journal avec une œuvre" : "Ajouter une première œuvre"}</strong>
+                <span>{featuredWork.title} · {featuredWork.author}</span>
+                <em>Choisir cette œuvre <b aria-hidden="true">→</b></em>
+              </span>
+            </button>
+          ) : <Button onClick={onExplore}>Parcourir les œuvres</Button>}
+          <div className="p1-personal-intro-alternatives"><span>Ou partir d’un autre livre</span><button type="button" onClick={onExplore}>Parcourir les œuvres</button><button type="button" onClick={onSearch}>Rechercher un titre</button></div>
+        </div>
+      </header>
+      <section className="p1-personal-intro-details" aria-labelledby={`${titleId}-details`}>
+        <div><p className="eyebrow">Ce qui se construit</p><h2 id={`${titleId}-details`}>{content.note}</h2><small>Aucun profil public n’est nécessaire pour conserver une lecture.</small></div>
         <ol className="p1-personal-intro-preview" aria-label={kind === "journal" ? "Fonctions du Journal" : "Fonctions de la Bibliothèque"}>
           {content.steps.map(([label, description], index) => (
             <li key={label}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><small>{description}</small></li>
           ))}
         </ol>
-      </header>
-      <footer className="p1-personal-intro-invitation">
-        <p><strong>{content.note}</strong><span>Aucun profil public n’est nécessaire pour conserver une lecture.</span></p>
-        <div><Button onClick={onExplore}>Commencer avec une œuvre</Button><button type="button" onClick={onSearch}>Rechercher un titre</button></div>
-      </footer>
+      </section>
     </section>
   );
 }
