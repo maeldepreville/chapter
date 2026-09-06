@@ -109,6 +109,10 @@
 .p1-search-field { position: relative; z-index: 3; display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-4) var(--space-5); background: color-mix(in srgb, var(--color-surface) 88%, transparent); border: var(--border-control); border-width: 1px 0 2px; backdrop-filter: blur(12px); }
 .p1-search-field > span { color: var(--color-accent); font-size: 1.5rem; }
 .p1-search-field input { min-width: 0; padding: 0; background: transparent; border: 0; font-family: var(--font-editorial); font-size: clamp(1.6rem, 3vw, 2.7rem); }
+.p1-search-field input[type="search"]::-webkit-search-cancel-button,
+.p1-search-field input[type="search"]::-webkit-search-decoration { display: none; -webkit-appearance: none; appearance: none; }
+.p1-search-field input[type="search"]::-ms-clear,
+.p1-search-field input[type="search"]::-ms-reveal { display: none; width: 0; height: 0; }
 .p1-search-field input:focus-visible { outline: 0; }
 .p1-search-field button { padding: var(--space-2); background: transparent; border: 0; color: var(--color-accent); cursor: pointer; }
 .p1-search-summary { display: flex; justify-content: space-between; padding: var(--space-4) 0; color: var(--color-ink-muted); font-size: var(--text-sm); border-bottom: var(--border-subtle); }

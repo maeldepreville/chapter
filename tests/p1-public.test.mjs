@@ -124,6 +124,8 @@ test("public search ships a distinct transparent editorial accent", async () => 
   assert.doesNotMatch(css, /\.p1-search-sketch[^}]*border:/);
   assert.match(css, /width: min\(150vw, 38rem\)/);
   assert.doesNotMatch(css, /right: -11rem/);
+  assert.match(css, /input\[type="search"\]::\-webkit-search-cancel-button/);
+  assert.match(css, /input\[type="search"\]::\-ms-clear/);
 });
 
 test("public discovery, search and work URLs render directly", async () => {
