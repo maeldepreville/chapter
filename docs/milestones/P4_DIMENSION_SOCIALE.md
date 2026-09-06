@@ -28,6 +28,7 @@ P4 transforme une trace volontairement publique en chemin continu entre une œuv
 - les listes ouvertes depuis Recherche reviennent à Recherche et les œuvres ouvertes depuis Découvrir dans l’espace connecté reviennent à Découvrir ;
 - l’aperçu d’une réponse sépare explicitement le nom de son auteur et le corps du message ;
 - Journal, Bibliothèque, Découvrir et Recherche forment une architecture stable dès la visite publique ; Journal et Bibliothèque présentent alors des états introductifs sans donnée personnelle, puis accueillent les contenus privés au premier repère sans changer de place ;
+- les états introductifs sont composés comme des seuils d’action : une œuvre réelle et ses couvertures portent une cible principale fortement contrastée, ouvrent directement une fiche et conservent le retour vers l’espace d’origine ; les explications deviennent un second rythme sous cette action ;
 - le mode d’accès, l’identité publique et la maturité des espaces personnels sont trois états indépendants : l’identité minimale autorise les gestes publics, tandis que seul un premier enregistrement alimente Journal et Bibliothèque ;
 - la confirmation du premier repère indique explicitement sa destination et laisse choisir entre « Voir mon Journal » et « Continuer à explorer ».
 
