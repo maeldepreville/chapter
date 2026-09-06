@@ -7,7 +7,7 @@ Ce document résume l'état utile ; les journaux longs restent consultables à l
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — P4 Dimension sociale. P0 à P3 sont validés et synchronisés ; la candidate P4 relie critiques, profils, listes et conversations avec publication explicite. Elle attend sa recette et reste hors GitHub.
+- **Phase active :** refonte visible pré-lot 2 — P4 Dimension sociale. P0 à P3 sont validés et synchronisés ; la candidate P4 corrigée relie critiques, profils, listes et conversations, restaure chaque contexte de retour et sépare la coque d’accès de l’identité publique. Elle est publiée sur le Site de recette, attend sa validation et reste hors GitHub.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.

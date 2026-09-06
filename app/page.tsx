@@ -23,8 +23,21 @@ type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
-type PublicListOrigin = "discover" | "profile";
+type PublicListOrigin = "discover" | "search" | "profile";
+type PersonalWorkOrigin = "journal" | "library" | "discover" | "search" | "profile" | "list";
 type PublicIntent = "review" | "reply" | "follow";
+type NavigationSnapshot = {
+  view: View;
+  selectedWorkId: WorkId;
+  profileOwner: ProfileOwner;
+  publicListId: PublicListId;
+  publicListOwner: ProfileOwner;
+  publicListOrigin: PublicListOrigin;
+  publicWorkOrigin: "discover" | "search" | "profile" | "list";
+  personalWorkOrigin: PersonalWorkOrigin;
+  publicShell: boolean;
+  scrollY: number;
+};
 type Feedback = {
   kind: "publication" | "removal" | "saved";
   label: string;
@@ -123,8 +136,8 @@ type HomeProps = {
 
 export default function Home({ refined = false, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
   const startsPublic = !initialData;
-  const [publicConnected, setPublicConnected] = useState(false);
-  const p1Public = startsPublic && !publicConnected;
+  const [accessMode, setAccessMode] = useState<"public" | "personal">(startsPublic ? "public" : "personal");
+  const p1Public = accessMode === "public";
   const works = initialData?.works ?? (startsPublic ? publicWorks : defaultWorks);
   const [currentView, setCurrentView] = useState<View>(initialPublicListId ? "list" : initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
@@ -156,7 +169,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [librarySort, setLibrarySort] = useState<LibrarySort>("activity");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [libraryVisibleCount, setLibraryVisibleCount] = useState(36);
-  const [personalWorkOrigin, setPersonalWorkOrigin] = useState<"journal" | "library">("journal");
+  const [personalWorkOrigin, setPersonalWorkOrigin] = useState<PersonalWorkOrigin>("journal");
   const [progressEditorWorkId, setProgressEditorWorkId] = useState<WorkId | null>(null);
   const [progressDraftPage, setProgressDraftPage] = useState("");
   const [profileOwner, setProfileOwner] = useState<ProfileOwner>(initialProfileOwner ?? "self");
@@ -177,6 +190,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicIdentityOpen, setPublicIdentityOpen] = useState(false);
   const [publicName, setPublicName] = useState("");
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
+  const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
   const privateScroll = useRef({ journal: 0, library: 0 });
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
@@ -187,6 +201,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const discoverySavedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const pendingPublicAction = useRef<(() => void) | null>(null);
+  const navigationStack = useRef<NavigationSnapshot[]>([]);
   const selectedWork = works.find((work) => work.id === selectedWorkId);
   const entry = entries[selectedWorkId] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
@@ -222,7 +237,81 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const chooseLibraryFilter = (filter: LibraryFilter) => { setLibraryFilter(filter); setLibraryVisibleCount(36); };
   const changeLibraryQuery = (query: string) => { setLibraryQuery(query); setLibraryVisibleCount(36); };
 
+  const rememberNavigation = () => {
+    const snapshot: NavigationSnapshot = {
+      view: currentView,
+      selectedWorkId,
+      profileOwner,
+      publicListId,
+      publicListOwner,
+      publicListOrigin,
+      publicWorkOrigin,
+      personalWorkOrigin,
+      publicShell: p1Public,
+      scrollY: window.scrollY || 0,
+    };
+    navigationStack.current.push(snapshot);
+    setNavigationSource(snapshot);
+  };
+
+  const pathForSnapshot = (snapshot: NavigationSnapshot) => {
+    if (!snapshot.publicShell) {
+      if (snapshot.view === "journal") return "/journal";
+      if (snapshot.view === "library") return "/bibliotheque";
+      return "/";
+    }
+    if (snapshot.view === "search") return "/recherche";
+    if (snapshot.view === "discover") return "/decouvrir";
+    if (snapshot.view === "work") return `/oeuvres/${snapshot.selectedWorkId}`;
+    if (snapshot.view === "list") return `/listes/${snapshot.publicListId}`;
+    if (snapshot.view === "profile" || snapshot.view === "honors") {
+      const actorId = actorIdForProfile(snapshot.profileOwner);
+      return actorId === "self" ? PUBLIC_PROFILE_PATH : `/lecteurs/${actorId}`;
+    }
+    return "/";
+  };
+
+  const restoreNavigation = (fallback: () => void) => {
+    const snapshot = navigationStack.current.pop();
+    if (!snapshot) return fallback();
+    setNavigationSource(navigationStack.current[navigationStack.current.length - 1] ?? null);
+    setAccessMode(snapshot.publicShell ? "public" : "personal");
+    setSelectedWorkId(snapshot.selectedWorkId);
+    setProfileOwner(snapshot.profileOwner);
+    setPublicListId(snapshot.publicListId);
+    setPublicListOwner(snapshot.publicListOwner);
+    setPublicListOrigin(snapshot.publicListOrigin);
+    setPublicWorkOrigin(snapshot.publicWorkOrigin);
+    setPersonalWorkOrigin(snapshot.personalWorkOrigin);
+    setCurrentView(snapshot.view);
+    setAccountOpen(false);
+    setSearchOpen(false);
+    const path = pathForSnapshot(snapshot);
+    if (window.location.pathname !== path) window.history.pushState(null, "", path);
+    const restoreScroll = () => window.scrollTo({ top: snapshot.scrollY, behavior: "instant" });
+    if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(restoreScroll);
+    else restoreScroll();
+  };
+
+  const navigationBackLabel = (fallback: string) => {
+    const snapshot = navigationSource;
+    if (!snapshot) return fallback;
+    if (snapshot.view === "journal") return "Retour au Journal";
+    if (snapshot.view === "library") return "Retour à la Bibliothèque";
+    if (snapshot.view === "discover") return "Retour à Découvrir";
+    if (snapshot.view === "search") return "Retour à Recherche";
+    if (snapshot.view === "work") return "Retour à l’œuvre";
+    if (snapshot.view === "list") return "Retour à la liste";
+    if (snapshot.view === "profile" || snapshot.view === "honors") {
+      if (snapshot.profileOwner === "self" || snapshot.profileOwner === "public-self") return "Retour à mon profil";
+      return `Retour au profil de ${prototypeActors[actorIdForProfile(snapshot.profileOwner)].firstName}`;
+    }
+    return fallback;
+  };
+
   const openView = (view: View) => {
+    navigationStack.current = [];
+    setNavigationSource(null);
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
@@ -231,7 +320,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     window.scrollTo({ top: 0 });
   };
 
-  const openProfile = (owner: ProfileOwner) => {
+  const restoreProfile = (owner: ProfileOwner) => {
     const visibleOwner: ProfileOwner = p1Public && owner === "self" ? "public-self" : owner;
     setProfileOwner(visibleOwner);
     setCurrentView("profile");
@@ -244,10 +333,19 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
+  const openProfile = (owner: ProfileOwner) => {
+    rememberNavigation();
+    restoreProfile(owner);
+  };
+
+  const returnFromProfile = () => restoreNavigation(() => p1Public ? openPublicView("discover") : openView("discover"));
+  const profileBackLabel = navigationBackLabel("Retour à Découvrir");
+
   const openActorProfile = (actorId: PrototypeActorId) => openProfile(profileOwnerForActor(actorId));
   const toggleFollow = (actorId: PrototypeActorId) => setFollowingActors((current) => ({ ...current, [actorId]: !current[actorId] }));
 
   const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
+    rememberNavigation();
     setPublicListId(listId);
     setPublicListOrigin(origin);
     setPublicListOwner(owner);
@@ -287,6 +385,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   });
 
   const openDiscoverWithQuery = (query: string) => {
+    navigationStack.current = [];
+    setNavigationSource(null);
     setDiscoverInitialQuery(query.trim());
     setSearchOpen(false);
     setCurrentView("discover");
@@ -294,6 +394,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openPublicView = (view: "discover" | "search", path = view === "search" ? "/recherche" : "/decouvrir") => {
+    navigationStack.current = [];
+    setNavigationSource(null);
     setCurrentView(view);
     setSearchOpen(false);
     if (window.location.pathname !== path) window.history.pushState(null, "", path);
@@ -303,6 +405,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const openPublicWork = (id: string, origin: "discover" | "search" | "profile" | "list" = "discover") => {
     const work = works.find((candidate) => candidate.id === id);
     if (!work) return;
+    rememberNavigation();
     setPublicWorkOrigin(origin);
     setSelectedWorkId(work.id);
     setCurrentView("work");
@@ -324,7 +427,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const selectWork = (id: WorkId) => {
-    if (currentView === "journal" || currentView === "library") { setPersonalWorkOrigin(currentView); privateScroll.current[currentView] = window.scrollY || 0; }
+    rememberNavigation();
+    if (["journal", "library", "discover", "search", "profile", "list"].includes(currentView)) {
+      setPersonalWorkOrigin(currentView as PersonalWorkOrigin);
+      if (currentView === "journal" || currentView === "library") privateScroll.current[currentView] = window.scrollY || 0;
+    }
     setSelectedWorkId(id);
     setCurrentView("work");
     setSearchOpen(false);
@@ -332,6 +439,15 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const returnFromPersonalWork = () => restoreNavigation(() => openView("journal"));
+  const personalWorkBackLabel = navigationBackLabel("Retour au Journal");
+
+  const openHonors = () => {
+    rememberNavigation();
+    setCurrentView("honors");
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
@@ -344,7 +460,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         return firstRecord.marker ? saveWrittenTrace(withReading, selectedWorkId, "note", firstRecord.marker, "Aujourd’hui") : withReading;
       });
     }
-    setPublicConnected(true);
+    setAccessMode("personal");
     setCurrentView("journal");
     window.history.pushState(null, "", "/journal");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -353,6 +469,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   useEffect(() => {
     if (!p1Public) return;
     const syncPublicLocation = () => {
+      navigationStack.current = [];
+      setNavigationSource(null);
       const path = window.location.pathname;
       if (path === "/recherche") return setCurrentView("search");
       const readerId = path.match(/^\/lecteurs\/([^/]+)\/?$/)?.[1];
@@ -754,7 +872,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       <main id="top">
         {p1Public ? (
           currentView === "search" ? (
-            <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "discover", "lina")} />
+            <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "search", "lina")} />
           ) : currentView === "profile" ? (
             <ProfileView
               owner={profileOwner}
@@ -762,7 +880,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               following={followingActors[actorIdForProfile(profileOwner)]}
               onToggleFollow={() => { const actorId = actorIdForProfile(profileOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }}
               onOpenWork={(id) => openPublicWork(id, "profile")}
-              onOpenHonors={() => setCurrentView("honors")}
+              onOpenHonors={openHonors}
               onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
               photo={null}
               onEditPhoto={() => undefined}
@@ -770,19 +888,21 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               equippedTitle={equippedTitle}
               showcase={showcaseBadges}
               personalReviews={personalPublicReviews}
+              onBack={returnFromProfile}
+              backLabel={profileBackLabel}
             />
           ) : currentView === "honors" ? (
-            <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => setCurrentView("profile")} />
+            <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
           ) : currentView === "list" ? (
-            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openPublicView("discover")} backLabel={publicListOrigin === "profile" ? `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}` : "Retour à Découvrir"} />
+            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
               works={works}
               activated={publicActivated}
               record={publicFirstMarkers[selectedWork.id]}
-              backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : publicWorkOrigin === "profile" ? `Retour au profil de ${prototypeActors[actorIdForProfile(profileOwner)].firstName}` : publicWorkOrigin === "list" ? "Retour à la liste" : "Retour à Découvrir"}
-              onBack={() => publicWorkOrigin === "profile" ? openProfile(profileOwner) : publicWorkOrigin === "list" ? openPublicList(publicListId, publicListOrigin, publicListOwner) : openPublicView(publicWorkOrigin)}
+              backLabel={navigationBackLabel("Retour à Découvrir")}
+              onBack={() => restoreNavigation(() => openPublicView("discover"))}
               onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)}
               onActivate={(status) => {
                 setPublicActivated(true);
@@ -801,7 +921,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
-        ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "discover", "lina")} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
+        ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "search", "lina")} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
             works={works}
@@ -823,7 +943,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             following={followingActors[actorIdForProfile(profileOwner)]}
             onToggleFollow={() => toggleFollow(actorIdForProfile(profileOwner))}
             onOpenWork={(id) => selectWork(id as WorkId)}
-            onOpenHonors={() => openView("honors")}
+            onOpenHonors={openHonors}
             onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
             photo={profilePhoto}
             onEditPhoto={() => setPhotoCropOpen(true)}
@@ -831,11 +951,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             equippedTitle={equippedTitle}
             showcase={showcaseBadges}
             personalReviews={personalPublicReviews}
+            onBack={returnFromProfile}
+            backLabel={profileBackLabel}
           />
         ) : currentView === "honors" ? (
-          <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => openView("profile")} />
+          <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openView("discover")} backLabel={publicListOrigin === "discover" ? "Retour à Découvrir" : publicListOwner === "self" ? "Retour à mon profil" : `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}`} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -980,7 +1102,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           <section className="destination-page"><h1>Œuvre indisponible</h1><p>Cette œuvre n’est pas disponible dans le catalogue.</p><button className="text-action" type="button" onClick={() => openView("journal")}>Revenir au Journal</button></section>
         ) : (
           <>
-        <button className="personal-work-back" type="button" onClick={() => { openView(personalWorkOrigin); requestAnimationFrame(() => window.scrollTo({ top: privateScroll.current[personalWorkOrigin], behavior: "instant" })); }}><span aria-hidden="true">←</span> Retour {personalWorkOrigin === "library" ? "à la Bibliothèque" : "au Journal"}</button>
+        <button className="personal-work-back" type="button" onClick={returnFromPersonalWork}><span aria-hidden="true">←</span> {personalWorkBackLabel}</button>
         <section className="book-opening" aria-labelledby="book-title">
           <div className="cover-stage">
             <WorkCover work={selectedWork} variant="book" />
