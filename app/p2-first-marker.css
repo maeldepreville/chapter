@@ -51,6 +51,7 @@
 }
 
 @media (max-width: 899px) {
+  .p2-status-control.open { z-index: 62; }
   .p2-work-opening .p1-work-cover-stage { position: static; }
   .p2-action-cluster { grid-template-columns: 1fr; }
   .p2-action-cluster > p { max-width: none; }

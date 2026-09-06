@@ -57,6 +57,8 @@ test("P2 styling provides desktop anchoring, a mobile bottom sheet and reduced m
   const css = await readFile(source("p2-first-marker.css"), "utf8");
   assert.match(css, /position: sticky; top: 7\.5rem/);
   assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.p2-status-menu \{ position: fixed/);
+  assert.match(css, /\.p2-status-control\.open \{ z-index: 62; \}/);
+  assert.match(css, /\.p2-status-backdrop \{ z-index: 60;/);
   assert.match(css, /safe-area-inset-bottom/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });

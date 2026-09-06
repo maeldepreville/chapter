@@ -54,6 +54,12 @@ Le compte, le statut et le repère vivent uniquement dans l’état local de la 
 
 - construction de production réussie ;
 - lint réussi ;
-- 117 tests automatisés réussis, dont deux tests P2 consacrés à la restauration du statut, au repère privé et au responsive ;
+- 118 tests automatisés réussis, dont les protections P2 consacrées à la restauration du statut, au repère privé, au panneau mobile et au responsive ;
 - `git diff --check` réussi ;
 - aucune recette navigateur n’est revendiquée : l’évaluation visuelle et tactile appartient à la recette utilisateur de cette candidate.
+
+## Corrections de recette ouvertes le 6 septembre 2026
+
+- **Recherche trop vide :** la composition est reprise avec un atlas graphique sans cadre, aux bords diffus, placé en débordement derrière l’ouverture et distinct de la nature morte rectangulaire de Découvrir. Le champ reste l’action principale et passe devant l’illustration.
+- **Sélecteur mobile invisible :** le panneau existait sous le voile d’arrière-plan à cause de deux contextes d’empilement contradictoires. L’état ouvert élève désormais le contrôle et son panneau au-dessus du voile, tout en conservant le panneau inférieur AJ2.
+- Ces deux changements forment une nouvelle candidate de recette. Ils ne valent ni validation de P1 ou P2, ni synchronisation GitHub.

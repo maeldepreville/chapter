@@ -138,10 +138,16 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
 
   return (
     <section className="p1-public-page p1-search" aria-labelledby="p1-search-title">
-      <header>
-        <p className="eyebrow">Recherche publique</p>
-        <h1 id="p1-search-title">Trouver une œuvre</h1>
-        <p>Un titre ou un auteur suffit. Aucun compte n’est nécessaire pour consulter une œuvre.</p>
+      <header className="p1-search-opening">
+        <div className="p1-search-heading">
+          <p className="eyebrow">Recherche publique</p>
+          <h1 id="p1-search-title">Trouver une œuvre</h1>
+          <p>Un titre ou un auteur suffit. Aucun compte n’est nécessaire pour consulter une œuvre.</p>
+        </div>
+        <figure className="p1-search-sketch" aria-hidden="true">
+          <Image src="/editorial/p2-search-atlas.webp" alt="" width={1440} height={960} sizes="(max-width: 899px) 92vw, 56vw" unoptimized priority />
+        </figure>
+        <p className="p1-search-margin-note" aria-hidden="true"><span>Index</span> Chercher par le texte,<br />retrouver par la trace.</p>
       </header>
       <label className="p1-search-field">
         <span className="sr-only">Rechercher un titre ou un auteur</span>
@@ -235,7 +241,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
           <p className="p1-work-author">de {work.author}</p>
           <p className="p1-lede">{work.lede}</p>
           <div className="p2-action-cluster">
-            <div className="p2-status-control">
+            <div className={`p2-status-control ${statusOpen ? "open" : ""}`}>
               <Button aria-expanded={statusOpen} aria-controls="p2-status-menu" onClick={() => setStatusOpen((open) => !open)}>
                 {record?.status ?? "Ajouter au journal"}<span aria-hidden="true">⌄</span>
               </Button>

@@ -96,12 +96,17 @@
 .p1-work-line em { color: var(--color-ink-muted); font-size: var(--text-sm); font-style: normal; }
 .p1-line-arrow { color: var(--color-accent); font-size: 1.1rem; transition: transform var(--motion-feedback) var(--ease-standard); }
 
-.p1-search { padding: var(--space-9) 0; }
-.p1-search > header { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-7); align-items: end; padding-bottom: var(--space-7); }
-.p1-search > header .eyebrow { align-self: start; }
-.p1-search > header h1 { margin: 0; font-size: clamp(3.2rem, 7vw, 6.5rem); line-height: 0.95; }
-.p1-search > header p:last-child { max-width: 36rem; margin: var(--space-4) 0 0; color: var(--color-ink-muted); }
-.p1-search-field { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-bottom: 2px solid var(--color-ink); }
+.p1-search { padding: 0 0 var(--space-9); }
+.p1-search-opening { position: relative; display: grid; grid-template-columns: minmax(18rem, 0.82fr) minmax(24rem, 1.18fr); min-height: 32rem; margin-bottom: calc(var(--space-7) * -1); isolation: isolate; }
+.p1-search-heading { position: relative; z-index: 2; align-self: center; padding: var(--space-8) 0 calc(var(--space-9) + var(--space-7)); }
+.p1-search-heading h1 { max-width: 8ch; margin: var(--space-3) 0 var(--space-5); font-size: clamp(3.6rem, 7vw, 6.8rem); line-height: 0.88; }
+.p1-search-heading > p:last-child { max-width: 29rem; margin: 0; color: var(--color-ink-muted); }
+.p1-search-sketch { position: absolute; z-index: 0; top: -4rem; right: -8vw; bottom: 0; width: min(66vw, 53rem); margin: 0; opacity: 0.82; pointer-events: none; }
+.p1-search-sketch::after { position: absolute; inset: 0; background: linear-gradient(90deg, var(--color-paper) 0%, transparent 30%, transparent 78%, var(--color-paper) 100%); content: ""; }
+.p1-search-sketch img { width: 100%; height: 100%; object-fit: contain; object-position: center right; }
+.p1-search-margin-note { position: absolute; right: 0; bottom: var(--space-9); z-index: 2; margin: 0; padding-left: var(--space-4); color: var(--color-ink-muted); border-left: 1px solid var(--color-accent); font-family: var(--font-editorial); font-size: var(--text-sm); line-height: 1.45; }
+.p1-search-margin-note span { display: block; margin-bottom: var(--space-1); color: var(--color-accent); font-family: var(--font-interface); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; }
+.p1-search-field { position: relative; z-index: 3; display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-4) var(--space-5); background: color-mix(in srgb, var(--color-surface) 88%, transparent); border: var(--border-control); border-width: 1px 0 2px; backdrop-filter: blur(12px); }
 .p1-search-field > span { color: var(--color-accent); font-size: 1.5rem; }
 .p1-search-field input { min-width: 0; padding: 0; background: transparent; border: 0; font-family: var(--font-editorial); font-size: clamp(1.6rem, 3vw, 2.7rem); }
 .p1-search-field input:focus-visible { outline: 0; }
@@ -173,9 +178,15 @@
   .p1-shelf { gap: var(--space-5); }
   .p1-work-line { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); padding-right: var(--space-2); }
   .p1-work-line em { display: none; }
-  .p1-search { padding: var(--space-7) 0; }
-  .p1-search > header { gap: var(--space-3); }
-  .p1-search > header h1 { font-size: clamp(3.1rem, 15vw, 5rem); }
+  .p1-search { padding: 0 0 var(--space-7); }
+  .p1-search-opening { display: block; min-height: 29rem; margin: 0 -1rem calc(var(--space-5) * -1); overflow: hidden; }
+  .p1-search-heading { padding: var(--space-7) 1rem 10rem; }
+  .p1-search-heading h1 { max-width: 8ch; font-size: clamp(3.3rem, 16vw, 5rem); }
+  .p1-search-heading > p:last-child { max-width: 22rem; }
+  .p1-search-sketch { top: 8rem; right: -11rem; bottom: -1rem; width: 38rem; opacity: 0.62; }
+  .p1-search-sketch::after { background: linear-gradient(180deg, var(--color-paper) 0%, transparent 30%, transparent 82%, var(--color-paper) 100%); }
+  .p1-search-margin-note { display: none; }
+  .p1-search-field { padding-inline: var(--space-3); }
   .p1-search-summary { gap: var(--space-3); }
   .p1-search-results article { grid-template-columns: 2.4rem 1fr; }
   .p1-public-work { padding-top: var(--space-4); }

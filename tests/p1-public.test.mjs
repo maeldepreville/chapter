@@ -47,6 +47,8 @@ test("public search is immediate and work pages introduce only the P2 personal a
   const searchMarkup = renderToStaticMarkup(React.createElement(PublicSearch, { works: publicWorks, onOpenWork() {} }));
   assert.match(searchMarkup, /24 œuvres disponibles/);
   assert.match(searchMarkup, /Titre ou auteur/);
+  assert.match(searchMarkup, /src="\/editorial\/p2-search-atlas\.webp"/);
+  assert.doesNotMatch(searchMarkup, /_vinext\/image\?url=.*p2-search-atlas/);
 
   const workMarkup = renderToStaticMarkup(React.createElement(PublicWork, {
     work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {}, onActivate() {}, onSaveMarker() {},
@@ -110,6 +112,16 @@ test("public discovery ships its editorial illustration in a web-sized format", 
   const metadata = await stat(asset);
   assert.ok(metadata.size > 100_000);
   assert.ok(metadata.size < 300_000);
+});
+
+test("public search ships a distinct transparent editorial accent", async () => {
+  const asset = fileURLToPath(new URL("../public/editorial/p2-search-atlas.webp", import.meta.url));
+  const metadata = await stat(asset);
+  assert.ok(metadata.size > 80_000);
+  assert.ok(metadata.size < 300_000);
+  const css = await readFile(source("p1-public.css"), "utf8");
+  assert.match(css, /\.p1-search-sketch \{ position: absolute/);
+  assert.doesNotMatch(css, /\.p1-search-sketch[^}]*border:/);
 });
 
 test("public discovery, search and work URLs render directly", async () => {
