@@ -50,7 +50,7 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 | Badges, titres exposables et progression | Progression calculée et persistée par compte. |
 | Parcours de recommandation, œuvre d'ancrage et liste mise en avant | Moteur de recommandation et configuration éditoriale administrable. |
 | Critiques, réponses, états de suivi et dates sociales centralisés dans `social-data.ts` | Service social persistant avec profils navigables, modération et permissions côté serveur. |
-| Route fixe `/profil/mael-depreville` | Route de profil dynamique fondée sur un identifiant ou un slug durable. |
+| Route historique `/profil/mael-depreville` et routes candidates `/lecteurs/:actorId`, `/listes/:listId` | Slugs publics durables résolus par les services de profils et de listes. |
 
 Toute nouvelle donnée simulée doit rejoindre l'un de ces modules canoniques ou être ajoutée à ce tableau. Elle ne doit pas être recopiée dans un composant pour piloter une permission, une destination ou une relation.
 

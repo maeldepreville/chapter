@@ -24,6 +24,7 @@ type View = "work" | "journal" | "library" | "discover" | "search" | "profile" |
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "profile";
+type PublicIntent = "review" | "reply" | "follow";
 type Feedback = {
   kind: "publication" | "removal" | "saved";
   label: string;
@@ -43,6 +44,7 @@ type PersonalEntry = {
 const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
 const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
+const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
 
 export const defaultWorks: readonly Work[] = [...coreWorks, ...denseWorks.slice(0, 494)];
 type WorkId = string;
@@ -111,18 +113,20 @@ const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(default
 type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
 type HomeProps = {
   refined?: boolean;
-  initialProfileOwner?: "public-self" | null;
+  initialProfileOwner?: ProfileOwner | null;
+  initialPublicListId?: PublicListId | null;
+  initialPublicListOwner?: ProfileOwner;
   initialData?: InitialData;
   initialPublicView?: "discover" | "search";
   initialPublicWorkId?: string | null;
 };
 
-export default function Home({ refined = false, initialProfileOwner = null, initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
-  const startsPublic = !initialProfileOwner && !initialData;
+export default function Home({ refined = false, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
+  const startsPublic = !initialData;
   const [publicConnected, setPublicConnected] = useState(false);
   const p1Public = startsPublic && !publicConnected;
   const works = initialData?.works ?? (startsPublic ? publicWorks : defaultWorks);
-  const [currentView, setCurrentView] = useState<View>(initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
+  const [currentView, setCurrentView] = useState<View>(initialPublicListId ? "list" : initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? (startsPublic ? {} : defaultEntries));
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
@@ -163,12 +167,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [discoverInitialQuery, setDiscoverInitialQuery] = useState("");
   const [publicSearchQuery, setPublicSearchQuery] = useState("");
-  const [publicWorkOrigin, setPublicWorkOrigin] = useState<"discover" | "search">("discover");
+  const [publicWorkOrigin, setPublicWorkOrigin] = useState<"discover" | "search" | "profile" | "list">("discover");
   const [publicActivated, setPublicActivated] = useState(false);
   const [publicFirstMarkers, setPublicFirstMarkers] = useState<Record<string, FirstMarkerRecord>>({});
-  const [publicListId, setPublicListId] = useState<PublicListId>("places");
+  const [publicListId, setPublicListId] = useState<PublicListId>(initialPublicListId ?? "places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
-  const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>("lina");
+  const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>(initialPublicListOwner);
+  const [publicIdentityReady, setPublicIdentityReady] = useState(false);
+  const [publicIdentityOpen, setPublicIdentityOpen] = useState(false);
+  const [publicName, setPublicName] = useState("");
+  const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const privateScroll = useRef({ journal: 0, library: 0 });
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
@@ -178,6 +186,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const previousReviewTrace = useRef<{ trace: JournalTrace | undefined; index: number }>({ trace: undefined, index: -1 });
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const discoverySavedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
+  const pendingPublicAction = useRef<(() => void) | null>(null);
   const selectedWork = works.find((work) => work.id === selectedWorkId);
   const entry = entries[selectedWorkId] ?? emptyEntry;
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
@@ -223,9 +232,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openProfile = (owner: ProfileOwner) => {
-    if (window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
-    setProfileOwner(owner);
-    openView("profile");
+    const visibleOwner: ProfileOwner = p1Public && owner === "self" ? "public-self" : owner;
+    setProfileOwner(visibleOwner);
+    setCurrentView("profile");
+    setAccountOpen(false);
+    if (p1Public) {
+      const actorId = actorIdForProfile(visibleOwner);
+      const path = actorId === "self" ? PUBLIC_PROFILE_PATH : `/lecteurs/${actorId}`;
+      if (window.location.pathname !== path) window.history.pushState(null, "", path);
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const openActorProfile = (actorId: PrototypeActorId) => openProfile(profileOwnerForActor(actorId));
@@ -235,7 +251,34 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setPublicListId(listId);
     setPublicListOrigin(origin);
     setPublicListOwner(owner);
-    openView("list");
+    setCurrentView("list");
+    if (p1Public) {
+      const path = `/listes/${listId}`;
+      if (window.location.pathname !== path) window.history.pushState(null, "", path);
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const requirePublicIdentity = (intent: PublicIntent, resume?: () => void) => {
+    if (!p1Public || publicIdentityReady) return true;
+    setPublicIntent(intent);
+    pendingPublicAction.current = resume ?? null;
+    setPublicIdentityOpen(true);
+    return false;
+  };
+
+  const beginPublicReview = () => {
+    if (requirePublicIdentity("review", openReview)) return openReview();
+  };
+
+  const finishPublicIdentity = () => {
+    if (!publicName.trim()) return;
+    setPublicIdentityReady(true);
+    setPublicIdentityOpen(false);
+    setFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
+    const resume = pendingPublicAction.current;
+    pendingPublicAction.current = null;
+    if (resume) window.requestAnimationFrame(resume);
   };
 
   const personalPublicReviews: readonly PrototypePublicReview[] = works.flatMap((work) => {
@@ -257,7 +300,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  const openPublicWork = (id: string, origin: "discover" | "search" = "discover") => {
+  const openPublicWork = (id: string, origin: "discover" | "search" | "profile" | "list" = "discover") => {
     const work = works.find((candidate) => candidate.id === id);
     if (!work) return;
     setPublicWorkOrigin(origin);
@@ -312,6 +355,20 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     const syncPublicLocation = () => {
       const path = window.location.pathname;
       if (path === "/recherche") return setCurrentView("search");
+      const readerId = path.match(/^\/lecteurs\/([^/]+)\/?$/)?.[1];
+      if (readerId && readerId in prototypeActors) {
+        setProfileOwner(profileOwnerForActor(readerId as PrototypeActorId));
+        return setCurrentView("profile");
+      }
+      if (path === PUBLIC_PROFILE_PATH) {
+        setProfileOwner("public-self");
+        return setCurrentView("profile");
+      }
+      const listId = path.match(/^\/listes\/([^/]+)\/?$/)?.[1];
+      if (listId === "places" || listId === "lights") {
+        setPublicListId(listId);
+        return setCurrentView("list");
+      }
       const workId = path.match(/^\/oeuvres\/([^/]+)\/?$/)?.[1];
       if (workId && works.some((work) => work.id === workId)) {
         setSelectedWorkId(workId as WorkId);
@@ -697,15 +754,35 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       <main id="top">
         {p1Public ? (
           currentView === "search" ? (
-            <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} />
+            <PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => openPublicWork(id, "search")} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "discover", "lina")} />
+          ) : currentView === "profile" ? (
+            <ProfileView
+              owner={profileOwner}
+              works={works}
+              following={followingActors[actorIdForProfile(profileOwner)]}
+              onToggleFollow={() => { const actorId = actorIdForProfile(profileOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }}
+              onOpenWork={(id) => openPublicWork(id, "profile")}
+              onOpenHonors={() => setCurrentView("honors")}
+              onOpenList={(listId) => openPublicList(listId, "profile", profileOwner)}
+              photo={null}
+              onEditPhoto={() => undefined}
+              onRemovePhoto={() => undefined}
+              equippedTitle={equippedTitle}
+              showcase={showcaseBadges}
+              personalReviews={personalPublicReviews}
+            />
+          ) : currentView === "honors" ? (
+            <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => setCurrentView("profile")} />
+          ) : currentView === "list" ? (
+            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => publicListOrigin === "profile" ? openProfile(publicListOwner) : openPublicView("discover")} backLabel={publicListOrigin === "profile" ? `Retour au profil de ${prototypeActors[actorIdForProfile(publicListOwner)].firstName}` : "Retour à Découvrir"} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
               works={works}
               activated={publicActivated}
               record={publicFirstMarkers[selectedWork.id]}
-              backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : "Retour à Découvrir"}
-              onBack={() => openPublicView(publicWorkOrigin)}
+              backLabel={publicWorkOrigin === "search" ? "Retour à Recherche" : publicWorkOrigin === "profile" ? `Retour au profil de ${prototypeActors[actorIdForProfile(profileOwner)].firstName}` : publicWorkOrigin === "list" ? "Retour à la liste" : "Retour à Découvrir"}
+              onBack={() => publicWorkOrigin === "profile" ? openProfile(profileOwner) : publicWorkOrigin === "list" ? openPublicList(publicListId, publicListOrigin, publicListOwner) : openPublicView(publicWorkOrigin)}
               onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)}
               onActivate={(status) => {
                 setPublicActivated(true);
@@ -713,11 +790,18 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
               onOpenJournal={enterPersonalSpace}
+              social={(
+                <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
+                  <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
+                  <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button></div>
+                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicName.trim() ? { name: publicName.trim(), initials: initialsFor(publicName) } : undefined} followedActorIds={[]} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
+                </section>
+              )}
             />
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
-        ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
+        ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "discover", "lina")} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
             works={works}
@@ -1115,6 +1199,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               </div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
             </div>
+            {!reviewCloseConfirm && <div className="p4-publication-contract"><span aria-hidden="true">●</span><p><strong>Visible par tous après publication</strong><small>Votre note privée reste séparée. Vous pourrez retirer cette critique sans rendre votre Journal public.</small></p></div>}
             <label className="editor-field">
               <span>Votre critique</span>
               <textarea readOnly={reviewCloseConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
@@ -1171,6 +1256,20 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{entry.review ? "Enregistrer les modifications" : "Publier la critique"}</button>
               </div>
             )}
+          </section>
+        </Modal>
+      )}</Fade>
+
+      <Fade show={publicIdentityOpen} kind="modal">{publicIdentityOpen && (
+        <Modal labelledBy="p4-identity-title" describedBy="p4-identity-description" initialFocus="#p4-public-name" onRequestClose={() => setPublicIdentityOpen(false)}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)} />
+          <section className="p4-identity-panel">
+            <button className="close-button" type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)}>×</button>
+            <Image className="p4-identity-mark" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} aria-hidden="true" unoptimized />
+            <div><p className="eyebrow">Premier geste public</p><h2 id="p4-identity-title">Choisissez le nom qui signera vos traces.</h2><p id="p4-identity-description">Ce nom n’a pas besoin d’être unique. Il accompagne seulement ce que vous décidez de publier ; votre Journal et votre Bibliothèque restent privés.</p></div>
+            <label htmlFor="p4-public-name"><span>Nom public</span><input id="p4-public-name" maxLength={60} value={publicName} onChange={(event) => setPublicName(event.target.value)} placeholder="Votre nom de lecteur" /></label>
+            <p className="p4-identity-note">Photo facultative · modifiable plus tard</p>
+            <div className="modal-actions"><button className="quiet-action" type="button" onClick={() => setPublicIdentityOpen(false)}>Pas maintenant</button><button className="primary-action" type="button" disabled={!publicName.trim()} onClick={finishPublicIdentity}>{publicIntent === "review" ? "Continuer vers la critique" : publicIntent === "reply" ? "Continuer vers la réponse" : "Continuer"}</button></div>
           </section>
         </Modal>
       )}</Fade>

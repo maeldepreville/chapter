@@ -7,11 +7,11 @@ Ce document résume l'état utile ; les journaux longs restent consultables à l
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2. P0 à P2 sont validés et synchronisés sur la branche GitHub de refonte. La candidate P3 — Usage personnel quotidien est implémentée ; sa recette utilisateur est l’unique prochaine action.
+- **Phase active :** refonte visible pré-lot 2 — P4 Dimension sociale. P0 à P3 sont validés et synchronisés ; la candidate P4 relie critiques, profils, listes et conversations avec publication explicite. Elle attend sa recette et reste hors GitHub.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** clôturé le 5 septembre 2026 après validation explicite de la composition reprise, de l'illustration chargée directement, des retours, de la Recherche, du catalogue de 24 œuvres et des fiches `/oeuvres/:workId`. Le jalon complet est synchronisé sur `refonte-pre-lot-2`, y compris le WebP public et son PNG source explicitement autorisés. Aucune fusion vers `main` n'est autorisée avant P7.
-- **Statut P2 :** clôturé le 6 septembre 2026 sur la version Sites 38 après validation du parcours du premier repère et des corrections de Recherche, du panneau AJ2, du croquis responsive, de la feuille d’inscription mobile et de l’effacement natif. Le jalon complet est synchronisé sur `refonte-pre-lot-2` ; `main` reste inchangé jusqu’à P7.
-- **Statut P3 :** candidate vérifiée et mise à disposition le 6 septembre 2026 : routes personnelles, 500 œuvres par lots, marque-page, relecture sans duplication et continuité P2. Recette attendue ; aucune validation ou synchronisation GitHub.
+- **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
+- **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
+- **Statut P3 :** validé explicitement le 6 septembre 2026 sur la version Sites 42 et synchronisé sur `refonte-pre-lot-2` : routes personnelles, 500 œuvres par lots, marque-page matériel latéral, relecture sans duplication, continuité P2 et compositions finales du Journal et de la Bibliothèque. `main` reste exclu jusqu’à P7.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 
@@ -50,6 +50,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Consulter P1 validé | `docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md`, puis `docs/engineering/CODEMAP.md` |
 | Cadrer, implémenter ou évaluer P2 | `docs/milestones/P2_PREMIER_REPERE.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P3 | `docs/milestones/P3_USAGE_PERSONNEL_QUOTIDIEN.md`, `docs/milestones/PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`, puis `docs/engineering/CODEMAP.md` |
+| Implémenter ou évaluer P4 | `docs/milestones/P4_DIMENSION_SOCIALE.md`, `docs/milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`, puis `docs/engineering/CODEMAP.md` |
 | Clôture du lot 1 | `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md` |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |

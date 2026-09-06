@@ -598,7 +598,7 @@ export function PublicListView({ owner, listId, works, following, onToggleFollow
 type Reply = { id: string; authorId: PrototypeActorId; text: string; date: string };
 type SocialReview = PrototypePublicReview & { own?: boolean };
 
-export function SocialReviews({ workId, personalReview, personalRating, followedActorIds = [], onOpenProfile, onWriteReview }: { workId: string; personalReview: string; personalRating: number; followedActorIds?: readonly PrototypeActorId[]; onOpenProfile: (actorId: PrototypeActorId) => void; onWriteReview: () => void }) {
+export function SocialReviews({ workId, personalReview, personalRating, followedActorIds = [], onOpenProfile, onWriteReview, onBeforeReply, personalActor }: { workId: string; personalReview: string; personalRating: number; followedActorIds?: readonly PrototypeActorId[]; onOpenProfile: (actorId: PrototypeActorId) => void; onWriteReview: () => void; onBeforeReply?: (resume: () => void) => boolean; personalActor?: { name: string; initials: string } }) {
   const contextualReviews = prototypeReviewsForWork(workId);
   const reviews: SocialReview[] = personalReview ? [{ authorId: CURRENT_READER_ID, workId, rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : [...contextualReviews];
   const [expanded, setExpanded] = useState<string[]>([]);
@@ -617,6 +617,7 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
     ],
     theo: [{ id: "r3", authorId: "ines", date: "13 août", text: "Le dernier tiers m’a aussi fait relire les premières pages autrement." }],
   });
+  const actorFor = (actorId: PrototypeActorId) => actorId === CURRENT_READER_ID && personalActor ? { ...prototypeActors[actorId], ...personalActor } : prototypeActors[actorId];
 
   const publishReply = (reviewId: string) => {
     if (!draft.trim()) return;
@@ -632,7 +633,7 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
   };
 
   const renderReview = (review: SocialReview, compact = false) => {
-    const reviewActor = prototypeActors[review.authorId];
+    const reviewActor = actorFor(review.authorId);
     const reviewReplies = (replies[review.authorId] ?? []).filter((reply) => !blockedActorIds.includes(reply.authorId));
     const isExpanded = expanded.includes(review.authorId);
     const textKey = `${workId}-${review.authorId}`;
@@ -640,7 +641,17 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
     const longText = Array.from(review.text).length > 280;
     const isClosed = closed.includes(review.authorId);
     const latest = reviewReplies.at(-1);
-    const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Répondre</button>;
+    const revealReply = () => {
+      setComposer(review.authorId);
+      setReplyingTo(null);
+      setEditingReply(null);
+      setDraft("");
+    };
+    const openReply = () => {
+      if (onBeforeReply && !onBeforeReply(revealReply)) return;
+      revealReply();
+    };
+    const replyAction = isClosed ? <p className="conversation-closed">Conversation fermée · l’historique reste visible.</p> : <button className="text-action reply-action" type="button" onClick={openReply}>Répondre</button>;
     return (
       <article className={`review social-review ${compact ? "compact-review" : ""}`} key={review.authorId}>
         <header className="review-header">

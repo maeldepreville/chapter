@@ -1,6 +1,6 @@
 # Chapter — P3 : usage personnel quotidien
 
-Statut : **candidate vérifiée et mise à disposition — recette utilisateur attendue**
+Statut : **validé sur la version Sites 42 et synchronisé sur `refonte-pre-lot-2`**
 
 Dernière mise à jour : 6 septembre 2026.
 
@@ -32,15 +32,15 @@ La Bibliothèque dense ne recourt pas au défilement infini. Trente-six œuvres 
 
 La collection de 500 œuvres est une fixture déterministe de densité : six œuvres cœur conservent leur contenu éditorial, complétées par 494 notices de charge. L’état demeure local à la session ; le compte, le backend et la persistance distante restent au lot 2. Les critiques et interactions sociales ne sont pas étendues dans P3 et restent le périmètre de P4.
 
-## Preuves automatisées de la candidate
+## Preuves automatisées du jalon validé
 
 - construction de production réussie avec les routes `/journal` et `/bibliotheque` ;
 - tests P3 ciblés : densité progressive, marque-page, relecture et rendu direct des routes ;
 - non-régression ciblée P1, P2 et parcours personnels historiques ;
-- lint, 118 tests automatisés, construction complète et `git diff --check` réussis avant publication de la candidate.
+- lint, 123 tests automatisés, construction complète et `git diff --check` réussis avant publication de la candidate finale.
 
-La recette visuelle et tactile réelle reste distincte des preuves automatisées. La candidate publiée ne vaut ni validation de P3, ni synchronisation GitHub, ni fusion vers `main`.
+La recette visuelle et tactile réelle reste distincte des preuves automatisées. L’utilisateur a validé explicitement la version Sites 42 le 6 septembre 2026. Le seul périmètre P3 est synchronisé sur `refonte-pre-lot-2` ; aucune fusion vers `main` n’est autorisée.
 
 ## Reprise de recette
 
-La première candidate conservait trop de la composition historique. La reprise applique une coquille personnelle harmonisée, relie Découvrir et Recherche aux surfaces refondues, distingue lectures actives, feuille de dernière trace et archives et densifie la Bibliothèque. Après recette, la feuille de dernière trace a été resserrée à la hauteur de son contenu puis simplifiée en une surface à contour unique et marge brique intérieure, sans traits superposés ou coupés. Le repère CSS a été remplacé par un véritable objet transparent en carton ivoire et cordon textile brique ; il est placé latéralement aux informations de lecture sur Journal comme sur la fiche d’œuvre. Seule la page actuelle est inscrite sur l’objet en HTML net et accessible. La Bibliothèque remplie ne reçoit pas d’illustration supplémentaire : ses couvertures assurent déjà sa présence visuelle sans transformer chaque destination en démonstration d’asset. Le nouveau lecteur conserve un état vierge, distinct de la persona dense. Le retour contextuel restaure la position. Recette utilisateur attendue.
+La première candidate conservait trop de la composition historique. La reprise applique une coquille personnelle harmonisée, relie Découvrir et Recherche aux surfaces refondues, distingue lectures actives, feuille de dernière trace et archives et densifie la Bibliothèque. Après recette, la feuille de dernière trace a été resserrée à la hauteur de son contenu puis simplifiée en une surface à contour unique et marge brique intérieure, sans traits superposés ou coupés. Le repère CSS a été remplacé par un véritable objet transparent en carton ivoire et cordon textile brique ; il est placé latéralement aux informations de lecture sur Journal comme sur la fiche d’œuvre. Seule la page actuelle est inscrite sur l’objet en HTML net et accessible. La Bibliothèque remplie ne reçoit pas d’illustration supplémentaire : ses couvertures assurent déjà sa présence visuelle sans transformer chaque destination en démonstration d’asset. Le nouveau lecteur conserve un état vierge, distinct de la persona dense. Le retour contextuel restaure la position. Cette composition finale est validée.
