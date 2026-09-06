@@ -1,6 +1,6 @@
 # Chapter — P4 : dimension sociale
 
-Statut : **candidate vérifiée, en attente de recette utilisateur**
+Statut : **validé le 6 septembre 2026 sur la version Sites 49**
 
 Dernière mise à jour : 6 septembre 2026.
 
@@ -42,7 +42,7 @@ L’identité minimale n’est pas un onboarding complet. Elle intervient au mom
 
 Les œuvres, profils, critiques, réponses, listes et suivis restent des fixtures et un état local de session. Les permissions reposent sur les identifiants d’acteurs existants ; le nom public n’est jamais utilisé comme clé. L’authentification, la persistance, la modération opérationnelle, le blocage transversal et les réglages d’identité complets restent respectivement au lot 2 ou à P5. Les cas vides, erreurs, contenus extrêmes et l’audit exhaustif responsive/accessibilité relèvent de P6.
 
-## Preuves automatisées de la candidate
+## Preuves de validation
 
 - construction de production avec routes publiques œuvre, lecteur et liste ;
 - tests P4 dédiés : recherche sociale, ordre de composition, conversations, reprise après identité et rendu direct ;
@@ -50,4 +50,4 @@ Les œuvres, profils, critiques, réponses, listes et suivis restent des fixture
 - non-régression P1 à P3 et tests historiques sociaux ;
 - lint réussi, construction réussie, **136/136 tests automatisés** et `git diff --check` sans erreur avant publication sur le Site de recette.
 
-Une candidate publiée ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion vers `main`.
+La recette de la version Sites 49 est validée explicitement. P4 est synchronisé sur `refonte-pre-lot-2` ; cette clôture n’autorise aucune fusion vers `main`, qui reste réservée à P7.

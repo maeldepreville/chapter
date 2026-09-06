@@ -7,11 +7,12 @@ Ce document résume l'état utile ; les journaux longs restent consultables à l
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — P4 Dimension sociale. P0 à P3 sont validés et synchronisés ; la candidate P4 corrigée relie critiques, profils, listes et conversations, restaure chaque contexte de retour et stabilise Journal, Bibliothèque, Découvrir et Recherche dès la visite publique. Les espaces personnels commencent par un seuil d’action vers Découvrir, porté par un asset éditorial neutre sans œuvre identifiable, puis accueillent le contenu privé après un premier enregistrement. La candidate est publiée sur le Site de recette, attend sa validation et reste hors GitHub.
+- **Phase active :** refonte visible pré-lot 2 — P5 Confiance et contrôle devient la prochaine tranche. P0 à P4 sont validés et synchronisés sur la branche de refonte ; aucune fusion vers `main` n’est autorisée avant P7.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
 - **Statut P3 :** validé explicitement le 6 septembre 2026 sur la version Sites 42 et synchronisé sur `refonte-pre-lot-2` : routes personnelles, 500 œuvres par lots, marque-page matériel latéral, relecture sans duplication, continuité P2 et compositions finales du Journal et de la Bibliothèque. `main` reste exclu jusqu’à P7.
+- **Statut P4 :** validé explicitement le 6 septembre 2026 sur la version Sites 49 et synchronisé sur `refonte-pre-lot-2` : critiques, profils, listes et conversations publiques, identité minimale avant geste visible, retours contextuels fiables, navigation personnelle stable et seuils d’action illustrés vers Découvrir. `main` reste exclu jusqu’à P7.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 

@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 6 septembre 2026.
 
-Statut : **P0 à P3 validés ; candidate P4 — Dimension sociale en recette**.
+Statut : **P0 à P4 validés ; P5 — Confiance et contrôle devient la prochaine tranche**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 
