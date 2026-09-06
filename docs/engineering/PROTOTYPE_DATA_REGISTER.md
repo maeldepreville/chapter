@@ -24,7 +24,7 @@ Ce registre distingue les valeurs figées qui faussaient un parcours de celles q
 | États de lecture privés | `PrivateReadingRecord` dans `app/foundation/contracts.ts` | Statut, date, note, note chiffrée et progression facultative `bookmark` ; aucun champ de possession | Bibliothèque privée persistée |
 | Écrits et relations publics | `PublicReview`, `PublicReply`, `PublicList`, `Follow` | Critique, réponse, liste, suivi et contenu retiré reliés uniquement par identifiants | Services social et modération |
 | Sessions | `prototypeSessionSeeds` et `foundation/session.ts` | `blank`, `activated`, `habitual`, clonage et remise à zéro déterministes | Session authentifiée et stockage |
-| Densité | `foundation/dense-fixtures.ts` | 500 œuvres et 500 entrées privées, générées de façon déterministe et absentes du chemin de chargement normal | Jeu de test/seed contrôlé |
+| Densité | `foundation/dense-fixtures.ts` | 500 œuvres et 500 entrées privées générées de façon déterministe ; P3 monte six œuvres cœur et 494 notices de charge dans les routes personnelles, avec rendu initial par lots de 36 | Jeu de test/seed contrôlé puis catalogue et Bibliothèque persistants |
 
 Les objets privés et publics sont volontairement séparés. Une note privée ne partage pas le type d'une critique publique ; le nom public, les initiales, la photo ou la biographie ne servent jamais de clé relationnelle. La progression est absente par défaut et, lorsqu'elle existe, prend la forme d'un marque-page manuel.
 
