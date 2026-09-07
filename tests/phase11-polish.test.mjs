@@ -22,7 +22,8 @@ test("the owner profile opens with a quiet reading-room welcome without changing
   assert.match(component, /isOwnProfile \? "profile-home" : "profile-public"/);
   assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room\.webp/);
   assert.match(component, /Bienvenue chez vous, \{profile\.firstName\}/);
-  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*min-height:[^}]*overflow:\s*hidden;/s);
+  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*grid-template-columns:/s);
+  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*opacity:\s*0\.72;[^}]*mask-image:/s);
   assert.match(stylesheet, /\.profile-home \.profile-wide-content > \.profile-section\s*\{[^}]*grid-template-columns:/s);
 });
 

@@ -99,8 +99,13 @@ test("settings track their visible chapter and account controls reuse the saved 
 });
 
 test("connected desktop navigation keeps the public sizing and animated brick marker", async () => {
-  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const [css, personalCss] = await Promise.all([
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/p3-personal.css", import.meta.url), "utf8"),
+  ]);
   assert.match(css, /\.desktop-header nav \{[^}]*align-self: stretch[^}]*font-size: 1rem/);
   assert.match(css, /\.desktop-header nav button::after \{[^}]*background: var\(--brick\)[^}]*transition: opacity/);
   assert.match(css, /\.desktop-header nav button\.active::after \{ opacity: 1; \}/);
+  assert.match(personalCss, /\.p3-shell \.desktop-header \{[^}]*grid-template-columns: 1fr auto 1fr;[^}]*min-height: 4\.75rem;[^}]*padding-inline: var\(--space-7\);/);
+  assert.match(personalCss, /\.p3-shell \.desktop-header nav \{[^}]*gap: var\(--space-6\);/);
 });

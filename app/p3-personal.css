@@ -1,6 +1,6 @@
 /* P3: a reading desk, with the active shelf and the written page. */
-.p3-shell .desktop-header { grid-template-columns: auto 1fr auto; padding-inline: max(3rem, calc((100vw - 80rem)/2)); gap: 3rem; min-height: 5.5rem; }
-.p3-shell .desktop-header nav { justify-self: center; gap: 2rem; }
+.p3-shell .desktop-header { grid-template-columns: 1fr auto 1fr; gap: var(--space-6); min-height: 4.75rem; padding-inline: var(--space-7); }
+.p3-shell .desktop-header nav { justify-self: center; gap: var(--space-6); }
 .p3-shell .header-search { display: none; }
 .p3-shell .destination-page { max-width: 80rem; padding-top: 3rem; }
 .p3-shell .destination-heading { max-width: none; margin-bottom: 2.5rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--line); }

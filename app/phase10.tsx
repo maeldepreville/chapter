@@ -362,7 +362,9 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       {onBack && <button className="text-action back-action profile-back-action" type="button" onClick={onBack}>← {backLabel}</button>}
       {isOwnProfile && (
         <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
-          <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room.webp" alt="Un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 100vw, 1312px" priority unoptimized />
+          <div className="profile-homecoming-art">
+            <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room.webp" alt="Un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
+          </div>
           <div className="profile-homecoming-copy">
             <p className="eyebrow">Votre espace</p>
             <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>

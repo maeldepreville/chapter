@@ -239,27 +239,31 @@
 }
 .profile-home { padding-top: clamp(2rem, 4vw, 3.5rem); }
 .profile-homecoming {
-  position: relative;
   display: grid;
+  grid-template-columns: minmax(19rem, 0.92fr) minmax(22rem, 1.08fr);
+  gap: clamp(3rem, 8vw, 8rem);
   align-items: center;
-  min-height: clamp(19rem, 34vw, 27rem);
-  margin-bottom: clamp(4rem, 7vw, 6rem);
-  overflow: hidden;
-  background: #e7d8c7;
-  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
-  border-radius: 0.24rem;
-  box-shadow: 0 1.2rem 3.2rem rgb(55 39 26 / 0.075);
-  isolation: isolate;
+  margin: -1rem 0 clamp(4rem, 7vw, 6rem) clamp(-2rem, -2vw, -1rem);
 }
-.profile-homecoming::after {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(90deg, rgb(245 240 232 / 0.98) 0%, rgb(245 240 232 / 0.9) 30%, rgb(245 240 232 / 0.28) 61%, transparent 78%);
-  content: "";
+.profile-homecoming-art {
+  position: relative;
+  min-height: clamp(18rem, 30vw, 25rem);
+  opacity: 0.72;
+  filter: saturate(0.78) contrast(0.94);
+  mix-blend-mode: multiply;
+  -webkit-mask-image:
+    radial-gradient(ellipse 72% 66% at 47% 48%, #000 42%, rgb(0 0 0 / 0.76) 61%, transparent 82%),
+    radial-gradient(ellipse 28% 34% at 78% 38%, #000 20%, transparent 78%),
+    radial-gradient(ellipse 32% 30% at 28% 70%, #000 18%, transparent 76%);
+  mask-image:
+    radial-gradient(ellipse 72% 66% at 47% 48%, #000 42%, rgb(0 0 0 / 0.76) 61%, transparent 82%),
+    radial-gradient(ellipse 28% 34% at 78% 38%, #000 20%, transparent 78%),
+    radial-gradient(ellipse 32% 30% at 28% 70%, #000 18%, transparent 76%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
-.profile-homecoming-image { z-index: -2; object-fit: cover; }
-.profile-homecoming-copy { width: min(43%, 29rem); padding: clamp(2rem, 5vw, 4.5rem); }
+.profile-homecoming-image { object-fit: cover; object-position: 66% center; }
+.profile-homecoming-copy { max-width: 31rem; padding-right: clamp(1rem, 4vw, 3rem); }
 .profile-homecoming-copy .eyebrow { margin-bottom: 0.65rem; color: var(--brick); }
 .profile-homecoming-title { margin: 0; font-family: var(--font-editorial); font-size: clamp(2.8rem, 5vw, 4.8rem); font-weight: 450; line-height: 0.94; letter-spacing: -0.045em; text-wrap: balance; }
 .profile-homecoming-copy > p:last-child { max-width: 25rem; margin: 1.2rem 0 0; color: #5d554d; font-family: var(--font-editorial); font-size: clamp(1rem, 1.45vw, 1.2rem); line-height: 1.45; }
@@ -587,10 +591,9 @@
   .compact-path .intent-panel { display: none; }
   .profile-page { min-height: auto; padding: 3rem 1.1rem 6rem; }
   .profile-home { padding-top: 1.5rem; }
-  .profile-homecoming { min-height: 25rem; margin-bottom: 4rem; }
-  .profile-homecoming::after { background: linear-gradient(90deg, rgb(245 240 232 / 0.96) 0%, rgb(245 240 232 / 0.82) 46%, rgb(245 240 232 / 0.15) 82%); }
-  .profile-homecoming-image { object-position: 66% center; }
-  .profile-homecoming-copy { width: min(72%, 28rem); padding: 2rem; }
+  .profile-homecoming { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; margin: -1rem 0 4rem -1rem; }
+  .profile-homecoming-art { width: min(100%, 38rem); min-height: clamp(17rem, 62vw, 24rem); }
+  .profile-homecoming-copy { max-width: 34rem; padding: 0 1rem; }
   .profile-home .profile-wide-content > .profile-section { grid-template-columns: 1fr; gap: 1.8rem; }
   .profile-opening { grid-template-columns: 1fr; gap: 4rem; }
   .profile-identity-column { width: min(100%, 32rem); }
@@ -630,10 +633,9 @@
 }
 
 @media (max-width: 560px) {
-  .profile-homecoming { min-height: 28rem; }
-  .profile-homecoming::after { background: linear-gradient(180deg, rgb(245 240 232 / 0.96) 0%, rgb(245 240 232 / 0.84) 44%, rgb(245 240 232 / 0.12) 78%); }
+  .profile-homecoming-art { min-height: 17rem; opacity: 0.66; }
   .profile-homecoming-image { object-position: 70% center; }
-  .profile-homecoming-copy { align-self: start; width: 100%; padding: 1.5rem; }
+  .profile-homecoming-copy { width: 100%; padding: 0 1rem; }
   .profile-homecoming-title { max-width: 18rem; font-size: clamp(2.65rem, 13vw, 3.65rem); }
   .profile-homecoming-copy > p:last-child { max-width: 20rem; font-size: 0.98rem; }
   .destination-heading h1,
