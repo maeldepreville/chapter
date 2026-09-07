@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 52**
+Statut : **candidate ajustée publiée pour recette sur la version Sites 53**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -33,6 +33,9 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - toutes les zones de défilement utilisent une poignée crème fine, arrondie et discrète, avec une piste transparente et un état de survol plus soutenu sur les dispositifs qui le permettent ;
 - la gouttière de la page reste stable : le menu de compte ne verrouille plus inutilement le scroll sur desktop et les fenêtres modales ne déplacent plus le header ni le contenu sous-jacent ;
 - les panneaux scrollables arrondis contiennent leur propre défilement et éloignent la piste de leurs angles afin d'éviter tout coin droit parasite.
+- la fermeture des réglages occupe désormais une barre persistante dédiée et ne recouvre plus le contenu pendant le défilement ;
+- l'index latéral colore en brique la section réellement visible, reprend ce signal au survol et anime nativement les déplacements demandés tout en respectant la réduction des mouvements ;
+- après enregistrement d'une photo recadrée, les boutons de compte desktop et mobile affichent immédiatement cette photo à la place des initiales.
 
 ## Données et limites
 
@@ -42,7 +45,7 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 
 - tests P5 dédiés sur la composition, les frontières de confidentialité, le blocage transversal et le retour public après suppression ;
 - non-régression P0 à P4 et historique lot 1 ;
-- lint et construction réussis, **144/144 tests automatisés**, contrôle visuel des surfaces principales et `git diff --check` sans erreur ;
+- lint et construction réussis, **145/145 tests automatisés**, contrôle visuel des surfaces principales et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 52 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition intègre les ajustements de navigation, de présentation des réglages et de défilement transversal, mais ne vaut ni validation de P5, ni synchronisation GitHub.
+La version Sites 53 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition intègre les ajustements de navigation, de présentation des réglages, de défilement transversal et de personnalisation du bouton de compte, mais ne vaut ni validation de P5, ni synchronisation GitHub.
