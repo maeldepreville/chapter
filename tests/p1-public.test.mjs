@@ -172,7 +172,10 @@ test("a first private record fills the same Journal destination without changing
     let root = render();
     nodes(root, (node) => node.type?.name === "PublicWork")[0].props.onActivate("En cours");
     root = render();
+    assert.equal(root.props["data-shell"], "connected");
+    assert.equal(nodes(root, (node) => node.type === "button" && node.props.className === "account-button").length, 2);
     const mainNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    assert.deepEqual(nodes(mainNavigation, (node) => node.type === "button").map(textOf), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
     nodes(mainNavigation, (node) => node.type === "button" && textOf(node) === "Journal")[0].props.onClick();
     root = render();
     assert.equal(root.props["data-shell"], "connected");

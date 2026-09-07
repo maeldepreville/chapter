@@ -322,6 +322,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openView = (view: View) => {
+    if (p1Public && publicActivated && (view === "journal" || view === "library")) {
+      enterPersonalSpace(view);
+      return;
+    }
     navigationStack.current = [];
     setNavigationSource(null);
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
@@ -346,6 +350,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openProfile = (owner: ProfileOwner) => {
+    if (p1Public && publicActivated && owner === "self") {
+      enterPersonalSpace("profile");
+      return;
+    }
     rememberNavigation();
     restoreProfile(owner);
   };
@@ -544,7 +552,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  const enterPersonalSpace = (destination: "journal" | "library" = "journal") => {
+  const enterPersonalSpace = (destination: "journal" | "library" | "profile" = "journal") => {
     const firstRecord = publicFirstMarkers[selectedWorkId];
     if (firstRecord) {
       updateEntryFor(selectedWorkId, { readingStatus: firstRecord.status, note: firstRecord.marker });
@@ -554,8 +562,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       });
     }
     setAccessMode("personal");
+    if (destination === "profile") setProfileOwner("self");
     setCurrentView(destination);
-    window.history.pushState(null, "", destination === "journal" ? "/journal" : "/bibliotheque");
+    const path = destination === "journal" ? "/journal" : destination === "library" ? "/bibliotheque" : PUBLIC_PROFILE_PATH;
+    window.history.pushState(null, "", path);
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
@@ -924,11 +934,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     );
   };
 
-  const rootShell = shellAttributes(p1Public || initialProfileOwner ? "public" : "connected");
+  const personalShellReady = !p1Public || publicActivated;
+  const rootShell = shellAttributes(!personalShellReady || initialProfileOwner ? "public" : "connected");
 
   return (
-    <div {...rootShell} className={`${rootShell.className}${p1Public ? " p1-shell" : " p3-shell"}`}>
-      {p1Public ? (
+    <div {...rootShell} className={`${rootShell.className}${personalShellReady ? " p3-shell" : " p1-shell"}`}>
+      {!personalShellReady ? (
         <header className="p1-public-header">
           <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}>Chapter<span>.</span></button>
           <nav aria-label="Navigation principale">
@@ -1341,7 +1352,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => { setStatusMenuOpen(false); setDatePrompt(null); setRemoveConfirmWorkId(null); }} />
       )}
 
-      {p1Public ? (
+      {!personalShellReady ? (
         <nav className="p1-public-mobile-nav" aria-label="Navigation principale mobile">
           <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}><span aria-hidden="true">◫</span>Journal</button>
           <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}><span aria-hidden="true">⌕</span>Découvrir</button>

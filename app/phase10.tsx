@@ -358,8 +358,18 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   }, [shareController, owner]);
 
   return (
-    <section className="profile-page" aria-labelledby="profile-name">
+    <section className={`profile-page ${isOwnProfile ? "profile-home" : "profile-public"}`} aria-labelledby="profile-name">
       {onBack && <button className="text-action back-action profile-back-action" type="button" onClick={onBack}>← {backLabel}</button>}
+      {isOwnProfile && (
+        <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
+          <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room.webp" alt="Un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 100vw, 1312px" priority unoptimized />
+          <div className="profile-homecoming-copy">
+            <p className="eyebrow">Votre espace</p>
+            <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
+            <p>Vos livres, vos traces et les chemins que vous choisissez de partager vivent ici, à leur rythme.</p>
+          </div>
+        </section>
+      )}
       <div className="profile-opening">
         <aside className="profile-identity-column">
           <div className={`profile-card-flip-shell ${cardFlipped ? "is-flipped" : ""}`}>

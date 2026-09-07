@@ -18,6 +18,14 @@ test("mobile card back owns one centered body between masthead and URL", () => {
   assert.doesNotMatch(stylesheet, /@media \(max-width: (?:899|560)px\)[\s\S]*?\.profile-identity-card(?::not\([^)]*\))?\s*\{\s*grid-template-columns:/);
 });
 
+test("the owner profile opens with a quiet reading-room welcome without changing the public portrait", () => {
+  assert.match(component, /isOwnProfile \? "profile-home" : "profile-public"/);
+  assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room\.webp/);
+  assert.match(component, /Bienvenue chez vous, \{profile\.firstName\}/);
+  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*min-height:[^}]*overflow:\s*hidden;/s);
+  assert.match(stylesheet, /\.profile-home \.profile-wide-content > \.profile-section\s*\{[^}]*grid-template-columns:/s);
+});
+
 test("all Lina follow entry points share the profile state, colors and wording", () => {
   assert.equal((component.match(/className="primary-action profile-follow-action"/g) ?? []).length, 3);
   assert.ok((component.match(/\? "Suivi" : "Suivre"/g) ?? []).length >= 3);
