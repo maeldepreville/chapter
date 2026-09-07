@@ -16,6 +16,8 @@
   --color-danger: #8e362f;
   --color-on-accent: #fffaf5;
   --color-disabled: #9b817c;
+  --color-scroll-thumb: #c8bbad;
+  --color-scroll-thumb-hover: #a99583;
 
   /* Alias de compatibilité avec le lot 1 ; aucune nouvelle couleur ne doit les contourner. */
   --paper: var(--color-paper);

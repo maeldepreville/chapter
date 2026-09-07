@@ -104,7 +104,8 @@
 }
 
 @media (max-width: 560px) {
-  .p4-identity-panel { grid-template-columns: 3.5rem minmax(0, 1fr); gap: 1rem; width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow-y: auto; padding: 1.35rem; }
+  .p4-identity-panel { grid-template-columns: 3.5rem minmax(0, 1fr); gap: 1rem; width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow: hidden auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 1.35rem; }
+  .p4-identity-panel::-webkit-scrollbar-track { margin-block: 0.45rem; }
   .p4-identity-mark { width: 3.1rem; }
   .p4-identity-panel h2 { font-size: clamp(1.9rem, 10vw, 2.6rem); }
   .p4-public-reviews-intro .chapter-button { width: 100%; }

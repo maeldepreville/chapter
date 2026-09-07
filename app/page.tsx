@@ -629,7 +629,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   }, [currentView, selectedWorkId]);
 
   useEffect(() => {
-    if (accountOpen) return lockBodyScroll(document);
+    if (accountOpen && window.matchMedia("(max-width: 899px)").matches) return lockBodyScroll(document);
   }, [accountOpen]);
 
   useEffect(() => {

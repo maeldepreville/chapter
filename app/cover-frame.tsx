@@ -18,7 +18,7 @@ function CoverFrameState({ work, className, sizes, priority, decorative, childre
   return (
     <span className={`${className} ${showImage ? "cover-image" : `typographic-cover ${work.coverTone}`}`}
       aria-hidden={decorative || undefined} aria-label={decorative ? undefined : `Couverture de ${work.title}, de ${work.author}`}>
-      {showImage ? <Image src={work.coverSrc ?? "/chapter-cover-art.png"} alt="" fill sizes={sizes} priority={priority}
+      {showImage ? <Image src={work.coverSrc ?? "/chapter-cover-art.png"} alt="" fill sizes={sizes} priority={priority} unoptimized
         style={{ opacity: imageState === "loaded" ? 1 : 0 }}
         onLoad={() => setImageState("loaded")} onError={() => setImageState("failed")} /> : children}
     </span>

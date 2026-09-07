@@ -4,8 +4,25 @@
 @import "./foundation/primitives.css";
 @import "./p5-trust.css";
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 9rem; }
+* {
+  box-sizing: border-box;
+  scrollbar-color: var(--color-scroll-thumb) transparent;
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar { width: 0.72rem; height: 0.72rem; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  min-height: 2.75rem;
+  background: var(--color-scroll-thumb);
+  background-clip: padding-box;
+  border: 0.2rem solid transparent;
+  border-radius: var(--radius-pill);
+}
+*::-webkit-scrollbar-corner { background: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  *::-webkit-scrollbar-thumb:hover { background-color: var(--color-scroll-thumb-hover); }
+}
+html { scroll-behavior: smooth; scroll-padding-top: 9rem; scrollbar-gutter: stable; }
 body {
   margin: 0;
   background: var(--paper);
@@ -586,13 +603,16 @@ dialog.chapter-modal::backdrop { background: transparent; }
   z-index: 1;
   width: min(100%, 42rem);
   max-height: calc(100vh - 2.5rem);
-  overflow: auto;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   padding: clamp(1.3rem, 4vw, 2.3rem);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 0.55rem;
   box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2);
 }
+.editor-modal::-webkit-scrollbar-track, .search-panel::-webkit-scrollbar-track { margin-block: 0.45rem; }
 .private-editor { width: min(100%, 36rem); }
 .modal-heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 1.8rem; }
 .modal-heading .eyebrow { margin-bottom: 0.35rem; }

@@ -506,7 +506,8 @@
 .empty-reviews { padding: 2rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .empty-reviews p { margin: 0; color: var(--muted); }
 
-.photo-crop-modal { position: relative; z-index: 1; width: min(100%, 48rem); max-height: calc(100vh - 2.5rem); overflow: auto; padding: clamp(1.3rem, 4vw, 2.3rem); background: var(--surface); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2); }
+.photo-crop-modal { position: relative; z-index: 1; width: min(100%, 48rem); max-height: calc(100vh - 2.5rem); overflow: hidden auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: clamp(1.3rem, 4vw, 2.3rem); background: var(--surface); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2); }
+.photo-crop-modal::-webkit-scrollbar-track { margin-block: 0.45rem; }
 .photo-crop-layout { display: grid; grid-template-columns: 20rem minmax(7rem, 1fr); gap: 2rem; align-items: center; }
 .crop-stage { position: relative; width: 20rem; height: 20rem; overflow: hidden; touch-action: none; background: var(--ink); cursor: grab; user-select: none; }
 .crop-stage:active { cursor: grabbing; }
