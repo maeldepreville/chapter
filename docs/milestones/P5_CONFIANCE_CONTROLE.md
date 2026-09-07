@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate complète et vérifiée, en attente de recette**
+Statut : **candidate publiée pour recette sur la version Sites 50**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -34,3 +34,5 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 - non-régression P0 à P4 et historique lot 1 ;
 - lint et construction réussis, **140/140 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
+
+La version Sites 50 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition ouvre la recette visuelle mais ne vaut ni validation de P5, ni synchronisation GitHub.

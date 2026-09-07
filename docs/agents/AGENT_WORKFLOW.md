@@ -48,7 +48,7 @@ La refonte pré-lot 2 utilise un chat par jalon et la branche `refonte-pre-lot-2
 2. Reformuler le résultat visible à évaluer et les non-objectifs. Ne pas anticiper l'écran du jalon suivant pour rentabiliser une extraction.
 3. Construire une tranche verticale sur fixtures centralisées. Une action visible doit avoir un effet observable, même si le futur service est remplacé par un adaptateur de session.
 4. Documenter les preuves et limites dans le document du jalon. Mettre `docs/agents/AGENT_CONTEXT.md`, `docs/engineering/CODEMAP.md` et `docs/engineering/PROTOTYPE_DATA_REGISTER.md` à jour seulement si leur contenu change réellement.
-5. Dès que la candidate visuelle est complète et que les vérifications adaptées réussissent, la mettre directement à disposition sur le Site de recette avec son accès existant, sans attendre une nouvelle demande.
+5. Dès que la candidate visuelle est complète et que les vérifications adaptées réussissent, la mettre directement à disposition sur le Site de recette avec son accès existant. La demande de lancer ou poursuivre le jalon constitue cette autorisation durable : ne jamais demander de confirmation intermédiaire.
 6. Une validation explicite autorise ensuite l'envoi du jalon accepté sur la branche GitHub de refonte. Elle n'autorise ni le jalon suivant, ni la fusion vers `main`.
 7. Terminer avec une prochaine action unique afin que le chat suivant reprenne sans interpréter l'historique conversationnel.
 
@@ -74,7 +74,7 @@ Le bundle de phase 10 était une exception de préservation d'historiques. Ne pa
 ## Publication Sites
 
 - Publication, sauvegarde de version et synchronisation GitHub sont trois actions distinctes.
-- L'utilisateur autorise durablement, à partir du 5 septembre 2026, la mise à disposition directe de toute candidate visuelle complète et vérifiée afin de supprimer un aller-retour inutile. Aucune demande intermédiaire n'est requise.
+- L'utilisateur autorise durablement, confirmé le 7 septembre 2026, la mise à disposition directe de toute candidate visuelle complète et vérifiée afin de supprimer un aller-retour inutile. « Lancer » ou « poursuivre » un jalon inclut cette publication de recette ; aucune confirmation intermédiaire ne doit être demandée.
 - Préserver le `project_id` existant, construire et tester la source exacte, pousser le commit correspondant sur le dépôt technique du Site, sauvegarder cette version puis déployer selon l'accès existant.
 - Le commit et l'envoi techniques nécessaires au Site restent distincts de la synchronisation vers GitHub. Ne jamais déduire une validation utilisateur du succès d'un déploiement.
 
