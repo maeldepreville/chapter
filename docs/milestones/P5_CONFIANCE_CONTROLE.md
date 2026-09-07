@@ -10,7 +10,7 @@ P5 rassemble les garanties qui permettent de confier durablement son histoire de
 
 ## Périmètre de la candidate
 
-- nouvel espace `Réglages et données`, accessible depuis le menu du compte sur desktop et mobile et directement par `/reglages` ;
+- grande carte superposée `Réglages et données`, accessible depuis le menu du compte sur desktop et mobile et directement par `/reglages`, sans quitter la section active ;
 - nom public modifiable indépendamment de l'identifiant interne, photo toujours facultative et accès au recadrage existant ;
 - registre de confidentialité distinguant Journal, Bibliothèque, notes privées et publications volontaires ;
 - blocage porté au niveau de la session : un compte bloqué disparaît des critiques et réponses, ses profils et listes deviennent des surfaces masquées, le suivi est interrompu ;
@@ -22,7 +22,14 @@ P5 rassemble les garanties qui permettent de confier durablement son histoire de
 
 ## Composition
 
-L'espace adopte une densité utilitaire et non une succession de cartes. Une marge-index stable sur desktop devient une bande horizontale sur mobile. Chaque famille de contrôle forme un chapitre séparé par un filet : identité, confidentialité, relations, portabilité et suppression. La zone destructive reste en dernier et ne partage pas la même emphase que les actions courantes.
+L'espace adopte une densité utilitaire dans une grande carte fermable posée au-dessus de la fenêtre active. Une marge-index stable sur desktop devient une bande horizontale sur mobile, où le panneau occupe l'écran sans modifier la navigation sous-jacente. Chaque famille de contrôle forme un chapitre séparé par un filet : identité, confidentialité, relations, portabilité et suppression. La zone destructive reste en dernier et ne partage pas la même emphase que les actions courantes.
+
+## Ajustements de recette
+
+- après le premier repère, la navigation connectée conserve la taille des libellés publics, le filet brique de la section active et sa transition d'opacité ;
+- `Réglages et données` n'est plus une destination plein écran : la fenêtre courante reste visible derrière une grande carte fermable par croix, clic extérieur ou Échap ;
+- la route directe `/reglages` ouvre cette même carte au-dessus du Journal ;
+- sur mobile, la carte devient un panneau plein écran scrollable et conserve une fermeture accessible.
 
 ## Données et limites
 
@@ -32,7 +39,7 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 
 - tests P5 dédiés sur la composition, les frontières de confidentialité, le blocage transversal et le retour public après suppression ;
 - non-régression P0 à P4 et historique lot 1 ;
-- lint et construction réussis, **140/140 tests automatisés** et `git diff --check` sans erreur ;
+- lint et construction réussis, **141/141 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
 La version Sites 50 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition ouvre la recette visuelle mais ne vaut ni validation de P5, ni synchronisation GitHub.

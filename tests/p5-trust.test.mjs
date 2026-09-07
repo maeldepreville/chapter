@@ -18,7 +18,7 @@ const trustProps = {
   privateNoteCount: 4,
   publicationCount: 2,
   blockedActorIds: ["theo"],
-  onBack() {}, onSavePublicName() {}, onEditPhoto() {}, onToggleBlock() {},
+  onClose() {}, onSavePublicName() {}, onEditPhoto() {}, onToggleBlock() {},
   createExport() { return { format: "chapter-export", version: 1, exportedAt: "2026-09-07T00:00:00.000Z", account: { publicName: "Maël Depréville" }, privacy: { journal: "private", library: "private", notes: "private" }, privateRecords: [], journalTraces: [], publications: [], followingActorIds: [], blockedActorIds: [] }; },
   onImport() { return { records: 0, traces: 0 }; }, onDeleteAccount() {},
 };
@@ -46,13 +46,13 @@ test("P5 global blocking removes an actor from conversations and masks profile a
   assert.match(listMarkup, /liste est masquée/);
 });
 
-test("P5 settings are reachable as a connected view and account deletion returns to public discovery", () => {
+test("P5 settings open over the connected view and account deletion returns to public discovery", () => {
   const harness = hookHarness();
   const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
   const previousWindow = globalThis.window;
   globalThis.window = { location: { pathname: "/reglages" }, history: { pushState() {}, replaceState() {} }, scrollTo() {}, requestAnimationFrame(callback) { callback(); return 1; }, addEventListener() {}, removeEventListener() {} };
   try {
-    const render = () => harness.render(Home, { refined: true, initialData: { view: "settings" } });
+    const render = () => harness.render(Home, { refined: true, initialData: { view: "journal" }, initialSettingsOpen: true });
     let tree = render();
     const settings = nodes(tree, (node) => node.type?.name === "TrustSettings")[0];
     assert.ok(settings);
@@ -69,9 +69,19 @@ test("P5 settings are reachable as a connected view and account deletion returns
   }
 });
 
-test("P5 has a direct settings route and dedicated responsive styling", async () => {
+test("P5 has a direct modal route and dedicated responsive styling", async () => {
   const [route, css, globals] = await Promise.all([readFile(new URL("../app/reglages/page.tsx", import.meta.url), "utf8"), readFile(new URL("../app/p5-trust.css", import.meta.url), "utf8"), readFile(new URL("../app/globals.css", import.meta.url), "utf8")]);
-  assert.match(route, /view: "settings"/);
+  assert.match(route, /view: "journal"/);
+  assert.match(route, /initialSettingsOpen/);
+  assert.match(css, /\.trust-overlay \{ position: fixed/);
+  assert.match(css, /\.trust-card \{[^}]*max-height:/);
   assert.match(css, /@media \(max-width: 899px\)/);
   assert.match(globals, /p5-trust\.css/);
+});
+
+test("connected desktop navigation keeps the public sizing and animated brick marker", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.desktop-header nav \{[^}]*align-self: stretch[^}]*font-size: 1rem/);
+  assert.match(css, /\.desktop-header nav button::after \{[^}]*background: var\(--brick\)[^}]*transition: opacity/);
+  assert.match(css, /\.desktop-header nav button\.active::after \{ opacity: 1; \}/);
 });

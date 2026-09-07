@@ -25,7 +25,7 @@ type TrustSettingsProps = {
   privateNoteCount: number;
   publicationCount: number;
   blockedActorIds: readonly PrototypeActorId[];
-  onBack: () => void;
+  onClose: () => void;
   onSavePublicName: (name: string) => void;
   onEditPhoto: () => void;
   onToggleBlock: (actorId: PrototypeActorId) => void;
@@ -34,7 +34,7 @@ type TrustSettingsProps = {
   onDeleteAccount: () => void;
 };
 
-export function TrustSettings({ publicName, privateRecordCount, privateNoteCount, publicationCount, blockedActorIds, onBack, onSavePublicName, onEditPhoto, onToggleBlock, createExport, onImport, onDeleteAccount }: TrustSettingsProps) {
+export function TrustSettings({ publicName, privateRecordCount, privateNoteCount, publicationCount, blockedActorIds, onClose, onSavePublicName, onEditPhoto, onToggleBlock, createExport, onImport, onDeleteAccount }: TrustSettingsProps) {
   const [nameDraft, setNameDraft] = useState(publicName);
   const [notice, setNotice] = useState("");
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -81,8 +81,8 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
   };
 
   return (
-    <section className="trust-page" aria-labelledby="trust-title">
-      <button className="text-action back-action trust-back" type="button" onClick={onBack}>← Retour au Journal</button>
+    <section className="trust-card" aria-labelledby="trust-title">
+      <button className="close-button trust-card-close" type="button" aria-label="Fermer les réglages" onClick={onClose}>×</button>
       <header className="trust-heading">
         <p className="eyebrow">Compte · confiance et contrôle</p>
         <h1 id="trust-title">Vos lectures vous appartiennent.</h1>

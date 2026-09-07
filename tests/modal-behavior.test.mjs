@@ -158,7 +158,7 @@ test("Escape requests one safe transition, prevents native cancellation and does
 test("all blocking surfaces use the shared modal and NSV2 keeps one alert surface", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const profile = await readFile(new URL("../app/phase10.tsx", import.meta.url), "utf8");
-  assert.equal((page.match(/<Modal\b/g) ?? []).length, 4);
+  assert.equal((page.match(/<Modal\b/g) ?? []).length, 5);
   assert.equal((profile.match(/<Modal\b/g) ?? []).length, 3);
   for (const kind of ["note", "review"]) {
     assert.ok(page.includes(`initialFocus={${kind}CloseConfirm ? "[data-safe-return]" : "textarea"}`));

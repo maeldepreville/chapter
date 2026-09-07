@@ -21,7 +21,7 @@ import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 
 type DatePrompt = "start" | "finish" | null;
-type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list" | "settings";
+type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "search" | "profile";
@@ -134,9 +134,10 @@ type HomeProps = {
   initialData?: InitialData;
   initialPublicView?: "discover" | "search";
   initialPublicWorkId?: string | null;
+  initialSettingsOpen?: boolean;
 };
 
-export default function Home({ refined = false, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null }: HomeProps) {
+export default function Home({ refined = false, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null, initialSettingsOpen = false }: HomeProps) {
   const startsPublic = !initialData;
   const [accessMode, setAccessMode] = useState<"public" | "personal">(startsPublic ? "public" : "personal");
   const p1Public = accessMode === "public";
@@ -165,6 +166,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(initialSettingsOpen);
   const [expandedJournalTraces, setExpandedJournalTraces] = useState<string[]>([]);
   const [olderJournalVisible, setOlderJournalVisible] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>("Toutes");
@@ -262,7 +264,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!snapshot.publicShell) {
       if (snapshot.view === "journal") return "/journal";
       if (snapshot.view === "library") return "/bibliotheque";
-      if (snapshot.view === "settings") return "/reglages";
       return "/";
     }
     if (snapshot.view === "search") return "/recherche";
@@ -307,7 +308,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (snapshot.view === "search") return "Retour à Recherche";
     if (snapshot.view === "work") return "Retour à l’œuvre";
     if (snapshot.view === "list") return "Retour à la liste";
-    if (snapshot.view === "settings") return "Retour aux réglages";
     if (snapshot.view === "profile" || snapshot.view === "honors") {
       if (snapshot.profileOwner === "self" || snapshot.profileOwner === "public-self") return "Retour à mon profil";
       return `Retour au profil de ${prototypeActors[actorIdForProfile(snapshot.profileOwner)].firstName}`;
@@ -321,7 +321,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
-    const privatePath = view === "journal" ? "/journal" : view === "library" ? "/bibliotheque" : view === "settings" ? "/reglages" : null;
+    const privatePath = view === "journal" ? "/journal" : view === "library" ? "/bibliotheque" : null;
     if (!p1Public && privatePath && window.location.pathname !== privatePath) window.history?.pushState?.(null, "", privatePath);
     window.scrollTo({ top: 0 });
   };
@@ -447,6 +447,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setAccessMode("public");
     setCurrentView("discover");
     setFeedback(null);
+    setSettingsOpen(false);
     window.history.pushState(null, "", "/decouvrir");
     window.scrollTo({ top: 0, behavior: "instant" });
   };
@@ -455,8 +456,19 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setAccessMode("public");
     setCurrentView("discover");
     setAccountOpen(false);
+    setSettingsOpen(false);
     window.history.pushState(null, "", "/decouvrir");
     window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const openSettings = () => {
+    setAccountOpen(false);
+    setSettingsOpen(true);
+  };
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+    if (window.location.pathname === "/reglages") window.history.replaceState(null, "", "/journal");
   };
 
   const openDiscoverWithQuery = (query: string) => {
@@ -947,7 +959,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <div className="account-menu" id="desktop-account-menu">
               <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
               <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
-              <button type="button" onClick={() => openView("settings")}>Réglages et données</button>
+              <button type="button" onClick={openSettings}>Réglages et données</button>
               <button type="button" onClick={signOut}>Se déconnecter</button>
             </div>
           )}</Fade>
@@ -1016,21 +1028,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
-        ) : currentView === "settings" ? (
-          <TrustSettings
-            publicName={publicProfileName}
-            privateRecordCount={Object.values(entries).filter((personalEntry) => personalEntry.readingStatus).length}
-            privateNoteCount={Object.values(entries).filter((personalEntry) => personalEntry.note.trim()).length}
-            publicationCount={personalPublicReviews.length}
-            blockedActorIds={blockedActorIds}
-            onBack={() => openView("journal")}
-            onSavePublicName={setPublicProfileName}
-            onEditPhoto={() => setPhotoCropOpen(true)}
-            onToggleBlock={toggleBlock}
-            createExport={createChapterExport}
-            onImport={importChapterExport}
-            onDeleteAccount={deletePrototypeAccount}
-          />
         ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "search", "lina")} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
@@ -1359,10 +1356,30 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
             <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
-            <button type="button" onClick={() => openView("settings")}>Réglages et données</button>
+            <button type="button" onClick={openSettings}>Réglages et données</button>
             <button type="button" onClick={signOut}>Se déconnecter</button>
           </section>
         </div>
+      )}</Fade>}
+
+      {!p1Public && <Fade show={settingsOpen} kind="modal">{settingsOpen && (
+        <Modal className="trust-overlay" labelledBy="trust-title" initialFocus=".trust-card-close" onRequestClose={closeSettings}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer les réglages" onClick={closeSettings} />
+          <TrustSettings
+            publicName={publicProfileName}
+            privateRecordCount={Object.values(entries).filter((personalEntry) => personalEntry.readingStatus).length}
+            privateNoteCount={Object.values(entries).filter((personalEntry) => personalEntry.note.trim()).length}
+            publicationCount={personalPublicReviews.length}
+            blockedActorIds={blockedActorIds}
+            onClose={closeSettings}
+            onSavePublicName={setPublicProfileName}
+            onEditPhoto={() => { setSettingsOpen(false); setPhotoCropOpen(true); }}
+            onToggleBlock={toggleBlock}
+            createExport={createChapterExport}
+            onImport={importChapterExport}
+            onDeleteAccount={deletePrototypeAccount}
+          />
+        </Modal>
       )}</Fade>}
 
       {!p1Public && <Fade show={searchOpen} kind="modal">{searchOpen && (
