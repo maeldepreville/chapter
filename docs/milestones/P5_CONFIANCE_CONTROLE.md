@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 51**
+Statut : **candidate ajustée publiée pour recette sur la version Sites 52**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -30,6 +30,9 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - `Réglages et données` n'est plus une destination plein écran : la fenêtre courante reste visible derrière une grande carte fermable par croix, clic extérieur ou Échap ;
 - la route directe `/reglages` ouvre cette même carte au-dessus du Journal ;
 - sur mobile, la carte devient un panneau plein écran scrollable et conserve une fermeture accessible.
+- toutes les zones de défilement utilisent une poignée crème fine, arrondie et discrète, avec une piste transparente et un état de survol plus soutenu sur les dispositifs qui le permettent ;
+- la gouttière de la page reste stable : le menu de compte ne verrouille plus inutilement le scroll sur desktop et les fenêtres modales ne déplacent plus le header ni le contenu sous-jacent ;
+- les panneaux scrollables arrondis contiennent leur propre défilement et éloignent la piste de leurs angles afin d'éviter tout coin droit parasite.
 
 ## Données et limites
 
@@ -39,7 +42,7 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 
 - tests P5 dédiés sur la composition, les frontières de confidentialité, le blocage transversal et le retour public après suppression ;
 - non-régression P0 à P4 et historique lot 1 ;
-- lint et construction réussis, **141/141 tests automatisés** et `git diff --check` sans erreur ;
+- lint et construction réussis, **144/144 tests automatisés**, contrôle visuel des surfaces principales et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 51 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition intègre les ajustements de navigation et de présentation des réglages, mais ne vaut ni validation de P5, ni synchronisation GitHub.
+La version Sites 52 est publiée avec l'accès existant le 7 septembre 2026. Cette mise à disposition intègre les ajustements de navigation, de présentation des réglages et de défilement transversal, mais ne vaut ni validation de P5, ni synchronisation GitHub.
