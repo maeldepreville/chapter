@@ -18,9 +18,10 @@ import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPers
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { publicWorks } from "./p1-public-fixtures";
+import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 
 type DatePrompt = "start" | "finish" | null;
-type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
+type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list" | "settings";
 type LibraryFilter = "Toutes" | ReadingStatus;
 type StatusOrigin = "opening" | "journal" | "library";
 type PublicListOrigin = "discover" | "search" | "profile";
@@ -190,6 +191,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicIdentityReady, setPublicIdentityReady] = useState(false);
   const [publicIdentityOpen, setPublicIdentityOpen] = useState(false);
   const [publicName, setPublicName] = useState("");
+  const [publicProfileName, setPublicProfileName] = useState(currentReader.name);
+  const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
   const privateScroll = useRef({ journal: 0, library: 0 });
@@ -259,6 +262,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!snapshot.publicShell) {
       if (snapshot.view === "journal") return "/journal";
       if (snapshot.view === "library") return "/bibliotheque";
+      if (snapshot.view === "settings") return "/reglages";
       return "/";
     }
     if (snapshot.view === "search") return "/recherche";
@@ -303,6 +307,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (snapshot.view === "search") return "Retour à Recherche";
     if (snapshot.view === "work") return "Retour à l’œuvre";
     if (snapshot.view === "list") return "Retour à la liste";
+    if (snapshot.view === "settings") return "Retour aux réglages";
     if (snapshot.view === "profile" || snapshot.view === "honors") {
       if (snapshot.profileOwner === "self" || snapshot.profileOwner === "public-self") return "Retour à mon profil";
       return `Retour au profil de ${prototypeActors[actorIdForProfile(snapshot.profileOwner)].firstName}`;
@@ -316,7 +321,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
-    const privatePath = view === "journal" ? "/journal" : view === "library" ? "/bibliotheque" : null;
+    const privatePath = view === "journal" ? "/journal" : view === "library" ? "/bibliotheque" : view === "settings" ? "/reglages" : null;
     if (!p1Public && privatePath && window.location.pathname !== privatePath) window.history?.pushState?.(null, "", privatePath);
     window.scrollTo({ top: 0 });
   };
@@ -344,6 +349,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const openActorProfile = (actorId: PrototypeActorId) => openProfile(profileOwnerForActor(actorId));
   const toggleFollow = (actorId: PrototypeActorId) => setFollowingActors((current) => ({ ...current, [actorId]: !current[actorId] }));
+  const toggleBlock = (actorId: PrototypeActorId) => {
+    if (actorId === CURRENT_READER_ID) return;
+    setBlockedActorIds((current) => current.includes(actorId) ? current.filter((id) => id !== actorId) : [...current, actorId]);
+    setFollowingActors((current) => ({ ...current, [actorId]: false }));
+  };
 
   const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
     rememberNavigation();
@@ -384,6 +394,70 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     const personalEntry = entries[work.id];
     return personalEntry?.review ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
   });
+
+  const createChapterExport = (): ChapterExportSnapshot => ({
+    format: "chapter-export",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    account: { publicName: publicProfileName },
+    privacy: { journal: "private", library: "private", notes: "private" },
+    privateRecords: Object.entries(entries).filter(([, personalEntry]) => personalEntry.readingStatus || personalEntry.note || personalEntry.review || personalEntry.rating > 0).map(([workId, personalEntry]) => ({ workId, ...personalEntry })),
+    journalTraces: journalTraces.map((trace) => ({ ...trace })),
+    publications: personalPublicReviews.map((review) => ({ ...review })),
+    followingActorIds: (Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId]),
+    blockedActorIds: [...blockedActorIds],
+  });
+
+  const importChapterExport = (snapshot: ChapterExportSnapshot) => {
+    let records = 0;
+    setEntries((current) => {
+      const next = { ...current };
+      snapshot.privateRecords.forEach((record) => {
+        const workId = typeof record.workId === "string" ? record.workId : "";
+        if (!works.some((work) => work.id === workId)) return;
+        const status = record.readingStatus;
+        next[workId] = {
+          ...emptyEntry,
+          ...next[workId],
+          readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : null,
+          readingDate: typeof record.readingDate === "string" ? record.readingDate : "",
+          note: typeof record.note === "string" ? record.note : "",
+          review: typeof record.review === "string" ? record.review : "",
+          rating: typeof record.rating === "number" && record.rating >= 0 && record.rating <= 5 ? record.rating : 0,
+          completedReadings: typeof record.completedReadings === "number" ? record.completedReadings : 0,
+        };
+        records += 1;
+      });
+      return next;
+    });
+    const importedTraces = snapshot.journalTraces.filter((trace): trace is unknown & JournalTrace => typeof trace.id === "string" && typeof trace.workId === "string" && typeof trace.date === "string" && typeof trace.kind === "string").map((trace) => ({ ...trace }));
+    if (importedTraces.length) setJournalTraces(importedTraces);
+    return { records, traces: importedTraces.length };
+  };
+
+  const deletePrototypeAccount = () => {
+    setEntries({});
+    setJournalTraces([]);
+    setFollowingActors({ self: false, lina: false, theo: false, ines: false });
+    setBlockedActorIds([]);
+    setProfilePhoto(null);
+    setPublicIdentityReady(false);
+    setPublicActivated(false);
+    setPublicFirstMarkers({});
+    setAccessMode("public");
+    setCurrentView("discover");
+    setFeedback(null);
+    window.history.pushState(null, "", "/decouvrir");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const signOut = () => {
+    setAccessMode("public");
+    setCurrentView("discover");
+    setAccountOpen(false);
+    window.history.pushState(null, "", "/decouvrir");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
 
   const openDiscoverWithQuery = (query: string) => {
     navigationStack.current = [];
@@ -873,7 +947,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <div className="account-menu" id="desktop-account-menu">
               <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
               <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
-              <button type="button">Se déconnecter</button>
+              <button type="button" onClick={() => openView("settings")}>Réglages et données</button>
+              <button type="button" onClick={signOut}>Se déconnecter</button>
             </div>
           )}</Fade>
         </div>}
@@ -905,13 +980,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               equippedTitle={equippedTitle}
               showcase={showcaseBadges}
               personalReviews={personalPublicReviews}
+              displayName={publicProfileName}
+              blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}
+              onToggleBlock={actorIdForProfile(profileOwner) === CURRENT_READER_ID ? undefined : () => toggleBlock(actorIdForProfile(profileOwner))}
               onBack={returnFromProfile}
               backLabel={profileBackLabel}
             />
           ) : currentView === "honors" ? (
             <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
           ) : currentView === "list" ? (
-            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
@@ -931,13 +1009,28 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
                   <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
                   <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button></div>
-                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicName.trim() ? { name: publicName.trim(), initials: initialsFor(publicName) } : undefined} followedActorIds={[]} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
+                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicName.trim() ? { name: publicName.trim(), initials: initialsFor(publicName) } : undefined} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
                 </section>
               )}
             />
           ) : (
             <PublicDiscover works={works} onOpenWork={(id) => openPublicWork(id, "discover")} onOpenSearch={() => openPublicView("search")} />
           )
+        ) : currentView === "settings" ? (
+          <TrustSettings
+            publicName={publicProfileName}
+            privateRecordCount={Object.values(entries).filter((personalEntry) => personalEntry.readingStatus).length}
+            privateNoteCount={Object.values(entries).filter((personalEntry) => personalEntry.note.trim()).length}
+            publicationCount={personalPublicReviews.length}
+            blockedActorIds={blockedActorIds}
+            onBack={() => openView("journal")}
+            onSavePublicName={setPublicProfileName}
+            onEditPhoto={() => setPhotoCropOpen(true)}
+            onToggleBlock={toggleBlock}
+            createExport={createChapterExport}
+            onImport={importChapterExport}
+            onDeleteAccount={deletePrototypeAccount}
+          />
         ) : currentView === "search" ? (<PublicSearch works={works} query={publicSearchQuery} onQueryChange={setPublicSearchQuery} onOpenWork={(id) => selectWork(id)} onOpenProfile={openProfile} onOpenList={(listId) => openPublicList(listId, "search", "lina")} />) : currentView === "discover" && (refined || !initialData) ? (<PublicDiscover works={works} onOpenWork={(id) => selectWork(id)} onOpenSearch={() => openView("search")} />) : currentView === "discover" ? (
           <DiscoverView
             key={discoverInitialQuery}
@@ -968,13 +1061,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             equippedTitle={equippedTitle}
             showcase={showcaseBadges}
             personalReviews={personalPublicReviews}
+            displayName={publicProfileName}
+            blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}
+            onToggleBlock={actorIdForProfile(profileOwner) === CURRENT_READER_ID ? undefined : () => toggleBlock(actorIdForProfile(profileOwner))}
             onBack={returnFromProfile}
             backLabel={profileBackLabel}
           />
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -1231,7 +1327,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
@@ -1263,7 +1359,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
             <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
-            <button type="button">Se déconnecter</button>
+            <button type="button" onClick={() => openView("settings")}>Réglages et données</button>
+            <button type="button" onClick={signOut}>Se déconnecter</button>
           </section>
         </div>
       )}</Fade>}

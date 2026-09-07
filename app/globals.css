@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "./foundation/tokens.css";
 @import "./foundation/primitives.css";
+@import "./p5-trust.css";
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 9rem; }

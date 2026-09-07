@@ -6,8 +6,8 @@ Ce document résume l'état utile ; les journaux longs restent consultables à l
 
 ## État actuel
 
-- **Base acceptée :** la version Sites 31 clôt la phase 11 et le lot 1 depuis le 2 septembre 2026. Elle reste la référence fonctionnelle publique ; sa clôture est documentée dans `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — P5 Confiance et contrôle devient la prochaine tranche. P0 à P4 sont validés et synchronisés sur la branche de refonte ; aucune fusion vers `main` n’est autorisée avant P7.
+- **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
+- **Phase active :** refonte visible pré-lot 2 — candidate P5 complète, en attente de recette. P0 à P4 sont validés ; P5 reste hors GitHub avant validation et `main` attend P7.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
@@ -52,6 +52,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Cadrer, implémenter ou évaluer P2 | `docs/milestones/P2_PREMIER_REPERE.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P3 | `docs/milestones/P3_USAGE_PERSONNEL_QUOTIDIEN.md`, `docs/milestones/PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P4 | `docs/milestones/P4_DIMENSION_SOCIALE.md`, `docs/milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`, puis `docs/engineering/CODEMAP.md` |
+| Implémenter ou évaluer P5 | `docs/milestones/P5_CONFIANCE_CONTROLE.md`, puis `docs/engineering/CODEMAP.md` |
 | Clôture du lot 1 | `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md` |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |
