@@ -92,8 +92,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 0.35rem;
 }
 .account-button {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 2.75rem;
   height: 2.75rem;
+  overflow: hidden;
   border: 1px solid var(--control-line);
   border-radius: 50%;
   background: var(--surface);
@@ -101,6 +105,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 600;
   cursor: pointer;
 }
+.account-button img { object-fit: cover; }
 .account-control { position: relative; justify-self: end; }
 .account-menu {
   position: absolute;

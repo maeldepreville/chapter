@@ -90,6 +90,12 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
   );
 }
 
+function AccountAvatar({ photo }: { photo: ProfilePhoto | null }) {
+  return photo
+    ? <Image src={photo.preview} alt="" fill sizes="44px" unoptimized />
+    : <>{currentReader.initials}</>;
+}
+
 function renderReadingBookmark(progress: OptionalProgress, compact = false) {
   const fullLabel = `Marque-page · page ${progress.page}`;
 
@@ -954,7 +960,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           />
         </label>}
         {!initialProfileOwner && <div className="account-control" ref={accountControlRef}>
-          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button>
+          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} /></button>
           <Fade show={accountOpen}>{accountOpen && (
             <div className="account-menu" id="desktop-account-menu">
               <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
@@ -968,7 +974,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
       <header className="mobile-header">
         <button className="wordmark wordmark-button" type="button" onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
-        {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}>{currentReader.initials}</button></div>}
+        {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} /></button></div>}
       </header></>}
 
       <main id="top">

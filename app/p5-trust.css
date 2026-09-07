@@ -1,16 +1,18 @@
 .trust-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: clamp(1rem, 4vw, 3rem); }
-.trust-card { position: relative; z-index: 1; width: min(76rem, 100%); max-height: calc(100dvh - clamp(2rem, 8vw, 6rem)); overflow: hidden auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: clamp(2rem, 4vw, 4rem); background: var(--surface); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.8rem 5rem rgb(36 33 31 / 0.24); }
+.trust-card { --trust-card-padding: clamp(2rem, 4vw, 4rem); position: relative; z-index: 1; width: min(76rem, 100%); max-height: calc(100dvh - clamp(2rem, 8vw, 6rem)); overflow: hidden auto; overscroll-behavior: contain; scroll-behavior: smooth; scrollbar-gutter: stable; padding: 0 var(--trust-card-padding) var(--trust-card-padding); background: var(--surface); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.8rem 5rem rgb(36 33 31 / 0.24); }
 .trust-card::-webkit-scrollbar-track { margin-block: 0.45rem; }
-.trust-card-close { position: sticky; top: 0; z-index: 4; float: right; margin: -0.6rem -0.6rem 0 1rem; background: var(--surface); box-shadow: 0 0 0 0.45rem var(--surface); }
+.trust-card-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: flex-end; width: calc(100% + var(--trust-card-padding) + var(--trust-card-padding)); min-height: 4.75rem; margin-inline: calc(0px - var(--trust-card-padding)); padding: 0 var(--trust-card-padding); background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(8px); }
+.trust-card-close { flex: 0 0 auto; background: var(--surface); }
 .trust-heading { max-width: 49rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
 .trust-heading h1 { max-width: 44rem; margin: 0.35rem 0 1rem; font-family: var(--font-editorial); font-size: clamp(2.6rem, 5vw, 4.5rem); font-weight: 400; line-height: 0.96; letter-spacing: -0.045em; }
 .trust-heading > p:last-child { max-width: 42rem; margin: 0; color: var(--muted); font-size: 1.06rem; }
 .trust-notice { display: flex; justify-content: space-between; gap: 2rem; margin-top: 1.5rem; padding: 0.9rem 1rem; background: color-mix(in srgb, var(--brick) 8%, var(--surface)); border-left: 3px solid var(--brick); }
 .trust-notice button { flex: 0 0 auto; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
 .trust-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: clamp(3rem, 8vw, 8rem); align-items: start; padding-top: 3rem; }
-.trust-index { position: sticky; top: 1.5rem; display: grid; gap: 0.2rem; }
-.trust-index a { padding: 0.55rem 0; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 0.86rem; }
-.trust-index a:hover { color: var(--brick); }
+.trust-index { position: sticky; top: 5.75rem; display: grid; gap: 0.2rem; }
+.trust-index a { padding: 0.55rem 0; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 0.86rem; transition: color var(--motion-feedback) var(--ease-standard); }
+.trust-index a.active { color: var(--brick); }
+@media (hover: hover) and (pointer: fine) { .trust-index a:hover { color: var(--brick); } }
 .trust-sections { min-width: 0; }
 .trust-section { padding: 0 0 4rem; margin-bottom: 4rem; border-bottom: 1px solid var(--line); scroll-margin-top: 2rem; }
 .trust-section-heading { display: grid; grid-template-columns: 2.4rem 1fr; gap: 1rem; align-items: start; margin-bottom: 1.1rem; }
@@ -56,8 +58,8 @@
 
 @media (max-width: 899px) {
   .trust-overlay { padding: 0; }
-  .trust-card { width: 100%; height: 100dvh; max-height: none; padding: 1.25rem 1rem 6rem; border: 0; border-radius: 0; }
-  .trust-card-close { top: 0.25rem; margin: 0 0 0 1rem; }
+  .trust-card { --trust-card-padding: 1rem; width: 100%; height: 100dvh; max-height: none; padding-bottom: 6rem; border: 0; border-radius: 0; }
+  .trust-card-toolbar { min-height: 3.75rem; padding-top: 0.25rem; }
   .trust-heading { padding-bottom: 2.5rem; }
   .trust-heading h1 { font-size: clamp(2.6rem, 13vw, 4.2rem); }
   .trust-layout { display: block; padding-top: 2rem; }
@@ -72,4 +74,8 @@
   .blocked-list button { grid-column: 2; justify-self: start; }
   .trust-notice { align-items: start; }
   .delete-account-dialog .modal-actions { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-card { scroll-behavior: auto; }
 }

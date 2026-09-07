@@ -75,8 +75,27 @@ test("P5 has a direct modal route and dedicated responsive styling", async () =>
   assert.match(route, /initialSettingsOpen/);
   assert.match(css, /\.trust-overlay \{ position: fixed/);
   assert.match(css, /\.trust-card \{[^}]*max-height:/);
+  assert.match(css, /\.trust-card-toolbar \{[^}]*position: sticky;[^}]*justify-content: flex-end/);
+  assert.match(css, /\.trust-index a\.active \{ color: var\(--brick\); \}/);
+  assert.match(css, /\.trust-card \{[^}]*scroll-behavior: smooth/);
+  assert.match(css, /prefers-reduced-motion: reduce[\s\S]*?\.trust-card \{ scroll-behavior: auto; \}/);
   assert.match(css, /@media \(max-width: 899px\)/);
   assert.match(globals, /p5-trust\.css/);
+});
+
+test("settings track their visible chapter and account controls reuse the saved profile photo", async () => {
+  const [settings, page, globals] = await Promise.all([
+    readFile(new URL("../app/p5-trust.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(settings, /onScroll=\{syncActiveSection\}/);
+  assert.match(settings, /card\.scrollTo\(\{ top: Math\.max\(0, top\), behavior: reducedMotion \? "auto" : "smooth" \}\)/);
+  assert.equal((settings.match(/aria-current=\{activeSection ===/g) ?? []).length, 5);
+  assert.equal((page.match(/<AccountAvatar photo=\{profilePhoto\} \/>/g) ?? []).length, 2);
+  assert.match(page, /<Image src=\{photo\.preview\} alt="" fill sizes="44px" unoptimized \/>/);
+  assert.match(globals, /\.account-button \{[^}]*position: relative;[^}]*overflow: hidden;/);
+  assert.match(globals, /\.account-button img \{ object-fit: cover; \}/);
 });
 
 test("connected desktop navigation keeps the public sizing and animated brick marker", async () => {

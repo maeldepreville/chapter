@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent, type MouseEvent, type UIEvent } from "react";
 import { Dialog, Input } from "./foundation/primitives";
 import { prototypeActors, type PrototypeActorId } from "./prototype-data";
 
@@ -18,6 +18,8 @@ export type ChapterExportSnapshot = {
 };
 
 type ImportResult = { records: number; traces: number };
+const trustSectionIds = ["identity", "privacy", "blocked", "data", "deletion"] as const;
+type TrustSectionId = typeof trustSectionIds[number];
 
 type TrustSettingsProps = {
   publicName: string;
@@ -35,7 +37,9 @@ type TrustSettingsProps = {
 };
 
 export function TrustSettings({ publicName, privateRecordCount, privateNoteCount, publicationCount, blockedActorIds, onClose, onSavePublicName, onEditPhoto, onToggleBlock, createExport, onImport, onDeleteAccount }: TrustSettingsProps) {
+  const cardRef = useRef<HTMLElement>(null);
   const [nameDraft, setNameDraft] = useState(publicName);
+  const [activeSection, setActiveSection] = useState<TrustSectionId>("identity");
   const [notice, setNotice] = useState("");
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [password, setPassword] = useState("");
@@ -80,9 +84,32 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
     onDeleteAccount();
   };
 
+  const syncActiveSection = (event: UIEvent<HTMLElement>) => {
+    const card = event.currentTarget;
+    const readingLine = card.getBoundingClientRect().top + Math.min(card.clientHeight * 0.28, 190);
+    let nextSection: TrustSectionId = trustSectionIds[0];
+    for (const id of trustSectionIds) {
+      const section = card.querySelector<HTMLElement>(`#${id}`);
+      if (section && section.getBoundingClientRect().top <= readingLine) nextSection = id;
+    }
+    if (Math.ceil(card.scrollTop + card.clientHeight) >= card.scrollHeight - 2) nextSection = trustSectionIds.at(-1) ?? nextSection;
+    setActiveSection((current) => current === nextSection ? current : nextSection);
+  };
+
+  const openSection = (event: MouseEvent<HTMLAnchorElement>, id: TrustSectionId) => {
+    event.preventDefault();
+    const card = cardRef.current;
+    const section = card?.querySelector<HTMLElement>(`#${id}`);
+    if (!card || !section) return;
+    const top = card.scrollTop + section.getBoundingClientRect().top - card.getBoundingClientRect().top - 76;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setActiveSection(id);
+    card.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? "auto" : "smooth" });
+  };
+
   return (
-    <section className="trust-card" aria-labelledby="trust-title">
-      <button className="close-button trust-card-close" type="button" aria-label="Fermer les réglages" onClick={onClose}>×</button>
+    <section ref={cardRef} className="trust-card" aria-labelledby="trust-title" onScroll={syncActiveSection}>
+      <div className="trust-card-toolbar"><button className="close-button trust-card-close" type="button" aria-label="Fermer les réglages" onClick={onClose}>×</button></div>
       <header className="trust-heading">
         <p className="eyebrow">Compte · confiance et contrôle</p>
         <h1 id="trust-title">Vos lectures vous appartiennent.</h1>
@@ -93,11 +120,11 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
 
       <div className="trust-layout">
         <nav className="trust-index" aria-label="Sections des réglages">
-          <a href="#identity">Identité publique</a>
-          <a href="#privacy">Confidentialité</a>
-          <a href="#blocked">Comptes bloqués</a>
-          <a href="#data">Vos données</a>
-          <a href="#deletion">Suppression</a>
+          <a className={activeSection === "identity" ? "active" : ""} aria-current={activeSection === "identity" ? "location" : undefined} href="#identity" onClick={(event) => openSection(event, "identity")}>Identité publique</a>
+          <a className={activeSection === "privacy" ? "active" : ""} aria-current={activeSection === "privacy" ? "location" : undefined} href="#privacy" onClick={(event) => openSection(event, "privacy")}>Confidentialité</a>
+          <a className={activeSection === "blocked" ? "active" : ""} aria-current={activeSection === "blocked" ? "location" : undefined} href="#blocked" onClick={(event) => openSection(event, "blocked")}>Comptes bloqués</a>
+          <a className={activeSection === "data" ? "active" : ""} aria-current={activeSection === "data" ? "location" : undefined} href="#data" onClick={(event) => openSection(event, "data")}>Vos données</a>
+          <a className={activeSection === "deletion" ? "active" : ""} aria-current={activeSection === "deletion" ? "location" : undefined} href="#deletion" onClick={(event) => openSection(event, "deletion")}>Suppression</a>
         </nav>
 
         <div className="trust-sections">
