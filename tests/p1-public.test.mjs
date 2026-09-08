@@ -28,7 +28,7 @@ test("public discovery explains Chapter and every exposed action has a destinati
     onOpenSearch() {},
   }));
   assert.match(markup, /Ici, on commence par une œuvre/);
-  assert.match(markup, /src="\/editorial\/p1-reading-trace\.webp"/);
+  assert.match(markup, /src="\/editorial\/p1-reading-trace\.webp\?v=[^"]+"/);
   assert.doesNotMatch(markup, /_vinext\/image\?url=.*p1-reading-trace/);
   assert.match(markup, /Revue littéraire · journal personnel/);
   assert.doesNotMatch(markup, /Chaque lecture laisse une trace/);
@@ -47,7 +47,7 @@ test("public search is immediate and work pages introduce only the P2 personal a
   const searchMarkup = renderToStaticMarkup(React.createElement(PublicSearch, { works: publicWorks, onOpenWork() {} }));
   assert.match(searchMarkup, /24 œuvres disponibles/);
   assert.match(searchMarkup, /Titre, auteur, lecteur ou liste/);
-  assert.match(searchMarkup, /src="\/editorial\/p2-search-atlas\.webp"/);
+  assert.match(searchMarkup, /src="\/editorial\/p2-search-atlas\.webp\?v=[^"]+"/);
   assert.doesNotMatch(searchMarkup, /_vinext\/image\?url=.*p2-search-atlas/);
 
   const workMarkup = renderToStaticMarkup(React.createElement(PublicWork, {
@@ -172,7 +172,10 @@ test("a first private record fills the same Journal destination without changing
     let root = render();
     nodes(root, (node) => node.type?.name === "PublicWork")[0].props.onActivate("En cours");
     root = render();
+    assert.equal(root.props["data-shell"], "connected");
+    assert.equal(nodes(root, (node) => node.type === "button" && node.props.className === "account-button").length, 2);
     const mainNavigation = nodes(root, (node) => node.type === "nav" && node.props["aria-label"] === "Navigation principale")[0];
+    assert.deepEqual(nodes(mainNavigation, (node) => node.type === "button").map(textOf), ["Journal", "Bibliothèque", "Découvrir", "Recherche"]);
     nodes(mainNavigation, (node) => node.type === "button" && textOf(node) === "Journal")[0].props.onClick();
     root = render();
     assert.equal(root.props["data-shell"], "connected");

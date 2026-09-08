@@ -18,6 +18,22 @@ test("mobile card back owns one centered body between masthead and URL", () => {
   assert.doesNotMatch(stylesheet, /@media \(max-width: (?:899|560)px\)[\s\S]*?\.profile-identity-card(?::not\([^)]*\))?\s*\{\s*grid-template-columns:/);
 });
 
+test("the owner profile opens with a quiet reading-room welcome without changing the public portrait", () => {
+  assert.match(component, /isOwnProfile \? "profile-home" : "profile-public"/);
+  assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room-wash\.webp/);
+  assert.match(component, /Bienvenue chez vous, \{profile\.firstName\}/);
+  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*position:\s*relative;[^}]*border-bottom:\s*1px solid var\(--line\);/s);
+  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*position:\s*absolute;[^}]*right:\s*-1rem;[^}]*opacity:\s*0\.76;/s);
+  assert.match(stylesheet, /\.profile-homecoming-art::after\s*\{[^}]*linear-gradient\(90deg,[^}]*linear-gradient\(180deg,/s);
+  assert.doesNotMatch(stylesheet, /\.profile-homecoming-art\s*\{[^}]*mask-image:/s);
+  assert.match(stylesheet, /\.profile-homecoming-image\s*\{[^}]*object-fit:\s*contain;[^}]*object-position:\s*right top;/s);
+  assert.match(stylesheet, /\.profile-home \.profile-opening\s*\{[^}]*grid-template-columns:[^}]*gap:/s);
+  assert.match(stylesheet, /\.profile-library-portrait\s*\{[^}]*grid-template-columns:[^}]*border-top:[^}]*border-bottom:/s);
+  assert.match(stylesheet, /\.profile-wide-content\s*\{[^}]*grid-template-columns:/s);
+  assert.match(stylesheet, /\.profile-lists-section\s*\{[^}]*border-right:/s);
+  assert.match(stylesheet, /\.profile-review::before\s*\{[^}]*content:\s*"“"/s);
+});
+
 test("all Lina follow entry points share the profile state, colors and wording", () => {
   assert.equal((component.match(/className="primary-action profile-follow-action"/g) ?? []).length, 3);
   assert.ok((component.match(/\? "Suivi" : "Suivre"/g) ?? []).length >= 3);

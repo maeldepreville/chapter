@@ -158,8 +158,9 @@ test("Escape requests one safe transition, prevents native cancellation and does
 test("all blocking surfaces use the shared modal and NSV2 keeps one alert surface", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const profile = await readFile(new URL("../app/phase10.tsx", import.meta.url), "utf8");
-  assert.equal((page.match(/<Modal\b/g) ?? []).length, 4);
-  assert.equal((profile.match(/<Modal\b/g) ?? []).length, 2);
+  assert.equal((page.match(/<Modal\b/g) ?? []).length, 7);
+  assert.equal((page.match(/className="destination-overlay"/g) ?? []).length, 2);
+  assert.equal((profile.match(/<Modal\b/g) ?? []).length, 3);
   for (const kind of ["note", "review"]) {
     assert.ok(page.includes(`initialFocus={${kind}CloseConfirm ? "[data-safe-return]" : "textarea"}`));
     assert.ok(page.includes(`onRequestClose={() => ${kind}CloseConfirm ? set${kind[0].toUpperCase() + kind.slice(1)}CloseConfirm(false) : request${kind[0].toUpperCase() + kind.slice(1)}Close()}`));
@@ -167,6 +168,7 @@ test("all blocking surfaces use the shared modal and NSV2 keeps one alert surfac
   assert.doesNotMatch(page, /className="editor-confirmation" role="alertdialog"/);
   assert.match(page, /event\.defaultPrevented \|\| document\.querySelector\("dialog\[open\]"\)/);
   assert.match(profile, /initialFocus="\[data-keep-photo\]" returnFocusSelector="\[data-photo-edit\]" onRequestClose=\{\(\) => setRemovePhotoConfirm\(false\)\}/);
+  assert.match(profile, /initialFocus="\[data-cancel-block\]"/);
   assert.doesNotMatch(page, /autoFocus/);
 });
 

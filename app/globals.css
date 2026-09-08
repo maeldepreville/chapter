@@ -2,9 +2,27 @@
 @import "tailwindcss";
 @import "./foundation/tokens.css";
 @import "./foundation/primitives.css";
+@import "./p5-trust.css";
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 9rem; }
+* {
+  box-sizing: border-box;
+  scrollbar-color: var(--color-scroll-thumb) transparent;
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar { width: 0.72rem; height: 0.72rem; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  min-height: 2.75rem;
+  background: var(--color-scroll-thumb);
+  background-clip: padding-box;
+  border: 0.2rem solid transparent;
+  border-radius: var(--radius-pill);
+}
+*::-webkit-scrollbar-corner { background: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  *::-webkit-scrollbar-thumb:hover { background-color: var(--color-scroll-thumb-hover); }
+}
+html { scroll-behavior: smooth; scroll-padding-top: 9rem; scrollbar-gutter: stable; }
 body {
   margin: 0;
   background: var(--paper);
@@ -14,7 +32,7 @@ body {
   line-height: 1.6;
 }
 button, input, select, textarea { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
+button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform var(--motion-press) var(--ease-standard); }
 button { color: inherit; }
 a { color: inherit; text-decoration: none; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -56,9 +74,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .wordmark-button { padding: 0; background: transparent; border: 0; cursor: pointer; }
 .wordmark span { color: var(--brick); }
-.desktop-header nav { display: flex; gap: 1.5rem; font-size: 0.9rem; }
-.desktop-header nav button { padding: 0; background: transparent; border: 0; cursor: pointer; }
-.desktop-header nav button.active { color: var(--brick); }
+.desktop-header nav { display: flex; align-items: stretch; align-self: stretch; gap: var(--space-6); font-size: 1rem; }
+.desktop-header nav button { position: relative; padding: 0; color: var(--muted); background: transparent; border: 0; cursor: pointer; }
+.desktop-header nav button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--brick); content: ""; opacity: 0; transition: opacity var(--motion-feedback) var(--ease-standard); }
+.desktop-header nav button.active { color: var(--ink); }
+.desktop-header nav button.active::after { opacity: 1; }
 @media (hover: hover) and (pointer: fine) {
   .desktop-header nav button:hover { color: var(--brick); }
 }
@@ -72,8 +92,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 0.35rem;
 }
 .account-button {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 2.75rem;
   height: 2.75rem;
+  overflow: hidden;
   border: 1px solid var(--control-line);
   border-radius: 50%;
   background: var(--surface);
@@ -81,6 +105,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 600;
   cursor: pointer;
 }
+.account-button img { object-fit: cover; }
 .account-control { position: relative; justify-self: end; }
 .account-menu {
   position: absolute;
@@ -165,7 +190,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .book-cover .cover-copy > small { font-family: var(--font-editorial); font-size: 1rem; }
 .cover-image { background: #e8e1d7; }
-.cover-image img { object-fit: cover; }
+.cover-image img { object-fit: cover; transition: opacity var(--motion-surface) var(--ease-surface); }
 .cover-title-short { -webkit-line-clamp: 2; }
 .cover-title-medium { -webkit-line-clamp: 3; }
 .cover-title-long { -webkit-line-clamp: 4; }
@@ -583,13 +608,16 @@ dialog.chapter-modal::backdrop { background: transparent; }
   z-index: 1;
   width: min(100%, 42rem);
   max-height: calc(100vh - 2.5rem);
-  overflow: auto;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   padding: clamp(1.3rem, 4vw, 2.3rem);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 0.55rem;
   box-shadow: 0 1.6rem 4rem rgb(36 33 31 / 0.2);
 }
+.editor-modal::-webkit-scrollbar-track, .search-panel::-webkit-scrollbar-track { margin-block: 0.45rem; }
 .private-editor { width: min(100%, 36rem); }
 .modal-heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 1.8rem; }
 .modal-heading .eyebrow { margin-bottom: 0.35rem; }
@@ -673,7 +701,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
 .temporary-feedback small { color: #d9d1c7; font-size: 0.72rem; }
 .feedback-separator { align-self: stretch; width: 1px; background: rgb(255 250 245 / 0.22); }
 .temporary-feedback button { min-height: 2.5rem; padding: 0 0.25rem; color: #fffaf5; background: transparent; border: 0; cursor: pointer; font-weight: 600; }
-.temporary-feedback button:first-of-type { text-decoration: underline; text-underline-offset: 0.2rem; }
+.temporary-feedback .feedback-undo { text-decoration: underline; text-underline-offset: 0.2rem; }
 
 @media (max-width: 899px) {
   html { scroll-padding-top: 7.5rem; }
@@ -898,6 +926,30 @@ dialog.chapter-modal::backdrop { background: transparent; }
 .title-link, .profile-section-link, .profile-card-turn-action,
 .library-status-trigger, .library-sort-trigger, .close-button,
 .account-menu button, .status-popover > button {
-  transition: color var(--motion-feedback) var(--ease-standard), background-color var(--motion-feedback) var(--ease-standard), border-color var(--motion-feedback) var(--ease-standard);
+  transition: color var(--motion-feedback) var(--ease-standard), background-color var(--motion-feedback) var(--ease-standard), border-color var(--motion-feedback) var(--ease-standard), opacity var(--motion-feedback) var(--ease-standard), transform var(--motion-feedback) var(--ease-standard);
 }
-button:active, a:active, button:focus-visible, a:focus-visible { transition-duration: 0ms; }
+button:not(.overlay-backdrop, .status-backdrop):active, a:active { transform: scale(0.985); transition-duration: var(--motion-press); }
+button:focus-visible, a:focus-visible { transition-duration: 0ms; }
+
+dialog.chapter-modal[open] > :not(.overlay-backdrop) { animation: chapter-surface-in var(--motion-surface) var(--ease-surface) both; }
+.account-menu, .status-popover, .library-sort-options, .p2-status-menu { transform-origin: top center; animation: chapter-menu-in var(--motion-feedback) var(--ease-surface) both; }
+.mobile-account-sheet { animation: chapter-sheet-in var(--motion-surface) var(--ease-surface) both; }
+.temporary-feedback, .p2-feedback, .conversation-notice { animation: chapter-toast-in var(--motion-surface) var(--ease-surface) both; }
+.fade-host[data-exiting] .mobile-account-sheet { opacity: 0; transform: translateY(0.75rem); transition: opacity var(--motion-feedback) var(--ease-standard), transform var(--motion-surface) var(--ease-surface); }
+
+@keyframes chapter-surface-in {
+  from { opacity: 0.9; transform: translateY(0.65rem) scale(0.992); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-menu-in {
+  from { opacity: 0; transform: translateY(-0.35rem) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-sheet-in {
+  from { opacity: 0.92; transform: translateY(1rem); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-toast-in {
+  from { opacity: 0; transform: translateY(0.55rem) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}

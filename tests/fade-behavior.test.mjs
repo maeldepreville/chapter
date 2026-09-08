@@ -30,7 +30,7 @@ function fixture({ reduced = false, visible = true, animate = true } = {}) {
 }
 
 test("AM1 uses only opacity with the approved timings and curve", async () => {
-  for (const kind of ["menu", "modal", "feedback"]) {
+  for (const kind of ["menu", "modal", "feedback", "page"]) {
     const f = fixture(); f.controller.update(true, kind);
     assert.deepEqual(f.animations[0].frames, [{ opacity: 0 }, { opacity: 1 }]);
     assert.deepEqual(f.animations[0].options, { duration: fadeTiming[kind][0], easing: fadeEasing, fill: "both" });
@@ -107,9 +107,11 @@ test("hover stays on fine hover devices, while active/focus styles and QRM1b rem
     });
   }
   const css = readFileSync(source("globals.css"), "utf8");
-  assert.match(css, /button:active, a:active, button:focus-visible, a:focus-visible \{ transition-duration: 0ms; \}/);
+  assert.match(css, /button:not\(\.overlay-backdrop, \.status-backdrop\):active, a:active \{[^}]*transition-duration: var\(--motion-press\);/);
+  assert.match(css, /button:focus-visible, a:focus-visible \{ transition-duration: 0ms; \}/);
+  assert.match(css, /chapter-surface-in var\(--motion-surface\) var\(--ease-surface\)/);
   assert.match(css, /\[aria-busy="true"\]::after \{ animation: none !important; \}/);
-  assert.match(readFileSync(source("phase10.css"), "utf8"), /transition: transform 440ms cubic-bezier\(0.4, 0, 0.2, 1\)/);
+  assert.match(readFileSync(source("phase10.css"), "utf8"), /transition: transform 520ms var\(--ease-surface\)/);
   const page = readFileSync(source("page.tsx"), "utf8");
   assert.ok((page.match(/scrollTo\(\{ top: 0, behavior: "instant" \}\)/g) ?? []).length >= 5);
   assert.doesNotMatch(page, /behavior: "smooth"/);

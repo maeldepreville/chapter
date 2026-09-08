@@ -11,7 +11,7 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 ## Travail et mémoire
 
 - Une demande de correctif ou d'implémentation autorise une réalisation candidate directe. Demander un arbitrage seulement si une ambiguïté produit ou visuelle changerait matériellement le résultat.
-- Une candidate visuelle complète et vérifiée est mise directement à disposition sur le Site de recette, sans demande intermédiaire. Cette mise à disposition n'autorise ni validation du jalon, ni synchronisation GitHub, ni fusion.
+- Une demande de lancer ou poursuivre un jalon autorise durablement la mise à disposition directe de sa candidate complète et vérifiée sur le Site de recette. Ne jamais redemander cette autorisation. Cette mise à disposition n'autorise ni validation du jalon, ni synchronisation GitHub, ni fusion.
 - Après une décision validée, révisée ou abandonnée, mettre à jour l'état compact, la section pertinente du journal transversal et le document de phase. Signaler explicitement tout remplacement de décision.
 - Le dépôt est la mémoire durable ; le chat n'est qu'un complément. Ne pas dupliquer un même détail dans plusieurs fichiers : résumer et pointer vers la source détaillée.
 - Pour une comparaison de rendus visibles, présenter les visuels dans le même ordre que les options. Un jalon final reçoit une checklist exhaustive.

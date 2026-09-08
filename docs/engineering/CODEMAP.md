@@ -20,6 +20,7 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | Profil et carte de lecteur | `ProfileView` dans `app/phase10.tsx` | `prototype-data.ts`, `site-config.ts`, `profile-share.ts`, `photo-processing.ts` | `profile-layout`, `profile-qr`, `hardcoded-data`, `phase11-recovery`, `phase11-polish` |
 | Honneurs | `HonorsView` dans `app/phase10.tsx` | `honors-layout.ts`, `fade.tsx`, `fade-behavior.ts` | `honors-layout`, `fade-behavior`, `phase11-accessibility`, `phase11-polish` |
 | P4 : profils, listes, critiques et conversations publiques | `PublicListView` / `ProfileView` / `SocialReviews` dans `app/phase10.tsx` | `p1-public.tsx`, `p4-social.css`, `catalogue.ts`, `prototype-data.ts`, `social-data.ts`, `lecteurs/[actorId]/page.tsx`, `listes/[listId]/page.tsx` | `p4-social`, `social-controls`, `social-profiles`, `hardcoded-data`, `phase11-recovery`, `phase11-journeys` |
+| P5 : identité, confidentialité, blocage et données | `TrustSettings` dans `app/p5-trust.tsx` | `p5-trust.css`, `page.tsx`, `phase10.tsx`, `reglages/page.tsx` | `p5-trust`, `p4-social`, `social-controls`, `phase11-journeys` |
 | Modales et focus | `modal.tsx` | `modal-behavior.ts` | `modal-behavior`, `phase11-accessibility` |
 | Styles globaux | `app/globals.css` | `foundation/tokens.css`, `foundation/primitives.css` | `p0-foundation`, `rendered-html`, `phase11-accessibility`, `phase11-polish` |
 | Styles sociaux/profil/honneurs | `app/phase10.css` | — | `profile-layout`, `profile-qr`, `phase11-polish` |

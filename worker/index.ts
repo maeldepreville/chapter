@@ -40,7 +40,19 @@ const worker = {
       }, allowedWidths);
     }
 
-    return handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, env, ctx);
+    if (request.method !== "GET" || !response.ok) return response;
+
+    const isVersionedAsset = url.searchParams.has("v") && /\.(?:avif|gif|jpe?g|png|svg|webp|woff2?)$/i.test(url.pathname);
+    const isBundledAsset = url.pathname.startsWith("/assets/");
+    const isStaticAsset = /\.(?:avif|gif|jpe?g|png|svg|webp|woff2?)$/i.test(url.pathname);
+    if (!isStaticAsset && !isBundledAsset) return response;
+
+    const headers = new Headers(response.headers);
+    headers.set("Cache-Control", isVersionedAsset || isBundledAsset
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=3600, stale-while-revalidate=604800");
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
   },
 };
 

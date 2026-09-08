@@ -13,6 +13,7 @@ import { Fade, useSurfaceActive } from "./fade";
 import { actorIdForProfile, CURRENT_READER_ID, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import { prototypeReviewsForActor, prototypeReviewsForWork, type PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_URL } from "./site-config";
+import { staticAsset } from "./static-assets";
 
 export type { PublicListId } from "./catalogue";
 export type { ProfileOwner } from "./prototype-data";
@@ -55,6 +56,14 @@ const normalizeText = (value: string) => value
 
 const searchStopWords = new Set(["avec", "dans", "des", "les", "pour", "une"]);
 const searchTokens = (value: string) => normalizeText(value).split(" ").filter((token) => token.length > 2 && !searchStopWords.has(token));
+
+const readerInitials = (name: string) => name
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => Array.from(part)[0]?.toLocaleUpperCase("fr") ?? "")
+  .join("");
 
 const tokensAreClose = (queryToken: string, candidateToken: string) => {
   const prefixLength = Math.max(3, Math.min(queryToken.length, candidateToken.length) - 2);
@@ -300,7 +309,7 @@ export type BadgeId = keyof typeof badgeCatalog;
 
 function BadgeImage({ badgeId, locked = false }: { badgeId: BadgeId; locked?: boolean }) {
   const badge = badgeCatalog[badgeId];
-  return <img className={locked ? "locked" : ""} src={badge.src} alt="" width="220" height="220" loading="eager" decoding="async" />;
+  return <img className={locked ? "locked" : ""} src={staticAsset(badge.src)} alt="" width="220" height="220" loading="eager" decoding="async" />;
 }
 
 type ProfileProps = {
@@ -317,22 +326,34 @@ type ProfileProps = {
   equippedTitle: string;
   showcase: BadgeId[];
   personalReviews?: readonly PrototypePublicReview[];
+  displayName?: string;
+  blocked?: boolean;
+  onToggleBlock?: () => void;
   onBack?: () => void;
   backLabel?: string;
 };
 
-export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [], onBack, backLabel = "Retour" }: ProfileProps) {
+export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [], displayName, blocked = false, onToggleBlock, onBack, backLabel = "Retour" }: ProfileProps) {
   const isOwnProfile = owner === "self";
   const presentation = profilePresentations[owner];
   const actor = prototypeActors[presentation.actorId];
   const isMael = presentation.actorId === "self";
   const [removePhotoConfirm, setRemovePhotoConfirm] = useState(false);
+  const [blockConfirm, setBlockConfirm] = useState(false);
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
   const [shareBusy, setShareBusy] = useState(false);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
   const publicProfileUrl = PUBLIC_PROFILE_URL;
-  const profile = { ...actor, ...presentation, title: isMael ? equippedTitle : presentation.defaultTitle };
+  const profileName = isMael && displayName?.trim() ? displayName.trim() : actor.name;
+  const profile = {
+    ...actor,
+    ...presentation,
+    name: profileName,
+    firstName: isMael ? profileName.split(/\s+/)[0] : actor.firstName,
+    initials: isMael ? readerInitials(profileName) : actor.initials,
+    title: isMael ? equippedTitle : presentation.defaultTitle,
+  };
   const workById = (id: string) => works.find((work) => work.id === id);
   const favorites = availableWorks(works, profile.favorites);
   const publicReviews = (profile.actorId === CURRENT_READER_ID ? personalReviews : prototypeReviewsForActor(profile.actorId))
@@ -341,7 +362,6 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
-
   useEffect(() => {
     if (!shareNotice) return;
     const timer = window.setTimeout(() => setShareNotice(""), 5000);
@@ -354,7 +374,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   }, [shareController, owner]);
 
   return (
-    <section className="profile-page" aria-labelledby="profile-name">
+    <section className={`profile-page ${isOwnProfile ? "profile-home" : "profile-public"}`} aria-labelledby="profile-name">
       {onBack && <button className="text-action back-action profile-back-action" type="button" onClick={onBack}>← {backLabel}</button>}
       <div className="profile-opening">
         <aside className="profile-identity-column">
@@ -369,18 +389,18 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 <div className="profile-heading-copy">
                   <p className="eyebrow">{isOwnProfile ? "Votre portrait" : "Portrait de lecteur"}</p>
                   <p className="equipped-title">{profile.title}</p>
-                  {!isOwnProfile && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}
+                  {!isOwnProfile && <div className="profile-actions">{!blocked && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}{onToggleBlock && <button className="quiet-action" type="button" onClick={() => blocked ? onToggleBlock() : setBlockConfirm(true)}>{blocked ? "Débloquer" : "Bloquer"}</button>}</div>}
                 </div>
                 <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
                 <p className="profile-intro">{profile.intro}</p>
-                <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
+                <Image className="profile-card-seal" src={staticAsset("/branding/chapter-profile-seal.webp")} alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
               </div>
               {isOwnProfile && (
                 <div className="profile-identity-card profile-card-back" aria-hidden={!cardFlipped} inert={!cardFlipped ? true : undefined}>
                   <div className="profile-card-masthead profile-card-back-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>Profil public</small></div>
                   <div className="profile-card-back-body">
                     <div className="profile-card-qr-field">
-                      <img src="/branding/chapter-profile-qr.svg" alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
+                      <img src={staticAsset("/branding/chapter-profile-qr.svg")} alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
                     </div>
                     <div className="profile-card-back-copy">
                       <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>
@@ -405,26 +425,41 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               </div>
             </div>
           )}
-          <section className="profile-honors" aria-labelledby="profile-honors-title">
-            <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
-            <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
-          </section>
         </aside>
-        <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
-          <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
+        {isOwnProfile && (
+          <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
+            <div className="profile-homecoming-art">
+              <Image className="profile-homecoming-image" src={staticAsset("/editorial/p5-profile-reading-room-wash.webp")} alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
+            </div>
+            <div className="profile-homecoming-copy">
+              <p className="eyebrow">Votre espace</p>
+              <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
+              <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
+            </div>
+          </section>
+        )}
+        {blocked && <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section>}
+      </div>
+      {!blocked && <section className="profile-library-portrait" aria-label={isOwnProfile ? "Votre bibliothèque personnelle" : "Sa bibliothèque personnelle"}>
+        <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
+          <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2><p>Trois présences qui racontent une sensibilité mieux qu’une longue biographie.</p></div>
           {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
         </section>
-      </div>
-      <div className="profile-wide-content">
-        <section className="profile-section" aria-labelledby="profile-lists-title">
-          <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
+        <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
+          <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
+          <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
+        </section>
+      </section>}
+      {!blocked && <div className="profile-wide-content">
+        <section id="profile-lists" className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
+          <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>
           {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
         </section>
-        <section className="profile-section" aria-labelledby="profile-reviews-title">
-          <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
+        <section id="profile-reviews" className="profile-section profile-reviews-section" aria-labelledby="profile-reviews-title">
+          <div className="profile-section-heading"><p className="eyebrow">Traces publiques</p><h2 id="profile-reviews-title">Des lectures laissées ouvertes</h2></div>
           {publicReviews.length ? publicReviews.map((review) => { const work = workById(review.workId)!; return <article className="profile-review" key={`${review.authorId}-${review.workId}`}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{review.text}</p></article>; }) : <p className="journal-empty">Aucune critique publiée pour le moment.</p>}
         </section>
-      </div>
+      </div>}
       <Fade show={isOwnProfile && removePhotoConfirm} kind="modal">{isOwnProfile && removePhotoConfirm && (
         <Modal className="profile-photo-remove-overlay" alert labelledBy="remove-photo-title" initialFocus="[data-keep-photo]" returnFocusSelector="[data-photo-edit]" onRequestClose={() => setRemovePhotoConfirm(false)}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Conserver la photo" onClick={() => setRemovePhotoConfirm(false)} />
@@ -433,6 +468,17 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
             <h2 id="remove-photo-title">Retirer cette photo ?</h2>
             <p>Vos initiales reprendront leur place sur votre carte de lecteur.</p>
             <div className="modal-actions"><button data-keep-photo className="quiet-action" type="button" onClick={() => setRemovePhotoConfirm(false)}>Conserver</button><button className="destructive-action" type="button" onClick={() => { onRemovePhoto(); setRemovePhotoConfirm(false); }}>Retirer la photo</button></div>
+          </section>
+        </Modal>
+      )}</Fade>
+      <Fade show={blockConfirm} kind="modal">{blockConfirm && (
+        <Modal className="profile-photo-remove-overlay" alert labelledBy="block-account-title" initialFocus="[data-cancel-block]" onRequestClose={() => setBlockConfirm(false)}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Annuler le blocage" onClick={() => setBlockConfirm(false)} />
+          <section className="profile-photo-remove-dialog">
+            <p className="eyebrow">Bloquer ce compte</p>
+            <h2 id="block-account-title">Masquer {profile.firstName} partout ?</h2>
+            <p>Ses critiques, réponses et listes seront masquées, et les interactions directes seront interrompues.</p>
+            <div className="modal-actions"><button data-cancel-block className="quiet-action" type="button" onClick={() => setBlockConfirm(false)}>Annuler</button><button className="destructive-action" type="button" onClick={() => { onToggleBlock?.(); setBlockConfirm(false); }}>Bloquer</button></div>
           </section>
         </Modal>
       )}</Fade>
@@ -577,11 +623,13 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ owner, listId, works, following, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+export function PublicListView({ owner, listId, works, following, blocked = false, displayName, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; blocked?: boolean; displayName?: string; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
   const list = publicListCatalog[listId];
   const chosen = availableWorks(works, list.workIds);
   const isOwnList = owner === "self";
-  const author = prototypeActors[actorIdForProfile(owner)];
+  const actor = prototypeActors[actorIdForProfile(owner)];
+  const canonicalName = isOwnList && displayName?.trim() ? displayName.trim() : actor.name;
+  const author = { ...actor, name: canonicalName, initials: isOwnList ? readerInitials(canonicalName) : actor.initials };
   const authorRelationship = isOwnList ? "Votre liste publique" : owner === "lina" ? "Autrice de la liste" : "Auteur de la liste";
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
@@ -591,9 +639,9 @@ export function PublicListView({ owner, listId, works, following, onToggleFollow
         <h1 id="list-page-title">{list.title}</h1>
         <p>{list.description}</p>
         {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
-        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{authorRelationship}</small></span></button>{!isOwnList && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
+        <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{blocked ? "Compte bloqué" : authorRelationship}</small></span></button>{!isOwnList && !blocked && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
       </header>
-      {chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
+      {blocked ? <p className="trust-empty">Cette liste est masquée parce que vous avez bloqué son auteur.</p> : chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <p className="journal-empty">Aucune œuvre de cette liste n’est disponible pour le moment.</p>}
     </section>
   );
 }
@@ -601,15 +649,14 @@ export function PublicListView({ owner, listId, works, following, onToggleFollow
 type Reply = { id: string; authorId: PrototypeActorId; text: string; date: string };
 type SocialReview = PrototypePublicReview & { own?: boolean };
 
-export function SocialReviews({ workId, personalReview, personalRating, followedActorIds = [], onOpenProfile, onWriteReview, onBeforeReply, personalActor }: { workId: string; personalReview: string; personalRating: number; followedActorIds?: readonly PrototypeActorId[]; onOpenProfile: (actorId: PrototypeActorId) => void; onWriteReview: () => void; onBeforeReply?: (resume: () => void) => boolean; personalActor?: { name: string; initials: string } }) {
+export function SocialReviews({ workId, personalReview, personalRating, followedActorIds = [], blockedActorIds = [], onOpenProfile, onWriteReview, onBeforeReply, onBlockActor, personalActor }: { workId: string; personalReview: string; personalRating: number; followedActorIds?: readonly PrototypeActorId[]; blockedActorIds?: readonly PrototypeActorId[]; onOpenProfile: (actorId: PrototypeActorId) => void; onWriteReview: () => void; onBeforeReply?: (resume: () => void) => boolean; onBlockActor?: (actorId: PrototypeActorId) => void; personalActor?: { name: string; initials: string } }) {
   const contextualReviews = prototypeReviewsForWork(workId);
-  const reviews: SocialReview[] = personalReview ? [{ authorId: CURRENT_READER_ID, workId, rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : [...contextualReviews];
+  const reviews: SocialReview[] = (personalReview ? [{ authorId: CURRENT_READER_ID, workId, rating: personalRating, date: "Aujourd’hui", text: personalReview, own: true }, ...contextualReviews] : [...contextualReviews]).filter((review) => !blockedActorIds.includes(review.authorId));
   const [expanded, setExpanded] = useState<string[]>([]);
   const [expandedTexts, setExpandedTexts] = useState<string[]>([]);
   const [composer, setComposer] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ name: string; text: string } | null>(null);
   const [editingReply, setEditingReply] = useState<{ reviewId: string; replyId: string } | null>(null);
-  const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [draft, setDraft] = useState("");
   const [closed, setClosed] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
@@ -665,12 +712,12 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
         <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
         {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
-        {latest && !isExpanded && <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].name}</button><span className="reply-preview-text">{latest.text}</span></p></div>}
+        {latest && !isExpanded && (() => { const latestActor = actorFor(latest.authorId); return <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${latestActor.name}`} onClick={() => onOpenProfile(latest.authorId)}>{latestActor.initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${latestActor.name}`} onClick={() => onOpenProfile(latest.authorId)}>{latestActor.name}</button><span className="reply-preview-text">{latest.text}</span></p></div>; })()}
         <div className="conversation-actions">
           {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
           {!isExpanded && replyAction}
         </div>
-        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = prototypeActors[reply.authorId]; return <article key={reply.id} className="reply"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.initials}</button><div><header><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.name}</button><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply({ reviewId: review.authorId, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.authorId]: (current[review.authorId] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { setBlockedActorIds((current) => [...current, reply.authorId]); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
+        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = actorFor(reply.authorId); return <article key={reply.id} className="reply"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.initials}</button><div><header><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.name}</button><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply({ reviewId: review.authorId, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.authorId]: (current[review.authorId] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { onBlockActor?.(reply.authorId); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
         {isExpanded && <div className="conversation-actions">{replyAction}</div>}
         {composer === review.authorId && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.authorId)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
       </article>

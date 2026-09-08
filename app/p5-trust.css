@@ -1,0 +1,81 @@
+.trust-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: clamp(1rem, 4vw, 3rem); }
+.trust-card { --trust-card-padding: clamp(2rem, 4vw, 4rem); position: relative; z-index: 1; width: min(76rem, 100%); max-height: calc(100dvh - clamp(2rem, 8vw, 6rem)); overflow: hidden auto; overscroll-behavior: contain; scroll-behavior: smooth; scrollbar-gutter: stable; padding: 0 var(--trust-card-padding) var(--trust-card-padding); background: var(--surface); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.8rem 5rem rgb(36 33 31 / 0.24); }
+.trust-card::-webkit-scrollbar-track { margin-block: 0.45rem; }
+.trust-card-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: flex-end; width: calc(100% + var(--trust-card-padding) + var(--trust-card-padding)); min-height: 4.75rem; margin-inline: calc(0px - var(--trust-card-padding)); padding: 0 var(--trust-card-padding); background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(8px); }
+.trust-card-close { flex: 0 0 auto; background: var(--surface); }
+.trust-heading { max-width: 49rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+.trust-heading h1 { max-width: 44rem; margin: 0.35rem 0 1rem; font-family: var(--font-editorial); font-size: clamp(2.6rem, 5vw, 4.5rem); font-weight: 400; line-height: 0.96; letter-spacing: -0.045em; }
+.trust-heading > p:last-child { max-width: 42rem; margin: 0; color: var(--muted); font-size: 1.06rem; }
+.trust-notice { display: flex; justify-content: space-between; gap: 2rem; margin-top: 1.5rem; padding: 0.9rem 1rem; background: color-mix(in srgb, var(--brick) 8%, var(--surface)); border-left: 3px solid var(--brick); }
+.trust-notice button { flex: 0 0 auto; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
+.trust-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: clamp(3rem, 8vw, 8rem); align-items: start; padding-top: 3rem; }
+.trust-index { position: sticky; top: 5.75rem; display: grid; gap: 0.2rem; }
+.trust-index a { padding: 0.55rem 0; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 0.86rem; transition: color var(--motion-feedback) var(--ease-standard); }
+.trust-index a.active { color: var(--brick); }
+@media (hover: hover) and (pointer: fine) { .trust-index a:hover { color: var(--brick); } }
+.trust-sections { min-width: 0; }
+.trust-section { padding: 0 0 4rem; margin-bottom: 4rem; border-bottom: 1px solid var(--line); scroll-margin-top: 2rem; }
+.trust-section-heading { display: grid; grid-template-columns: 2.4rem 1fr; gap: 1rem; align-items: start; margin-bottom: 1.1rem; }
+.trust-section-heading > span { padding-top: 0.28rem; color: var(--brick); font-size: 0.75rem; letter-spacing: 0.12em; }
+.trust-section-heading p { margin: 0 0 0.2rem; }
+.trust-section h2 { margin: 0; font-family: var(--font-editorial); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1; }
+.trust-section-intro, .trust-footnote { max-width: 43rem; color: var(--muted); }
+.trust-form-row { display: grid; grid-template-columns: minmax(0, 24rem) auto; gap: 1rem; align-items: end; margin: 1.75rem 0 0.8rem; }
+.trust-form-row label, .delete-account-dialog label { display: grid; gap: 0.45rem; font-size: 0.82rem; font-weight: 600; }
+.trust-form-row input { width: 100%; }
+.privacy-ledger { margin-top: 1.8rem; border-top: 1px solid var(--line); }
+.privacy-ledger > div { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: 1rem; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.privacy-seal { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--ink); border-radius: 50%; font-family: var(--font-editorial); }
+.privacy-ledger p { display: grid; margin: 0; }
+.privacy-ledger small { color: var(--muted); }
+.privacy-ledger b { color: var(--muted); font-size: 0.82rem; font-weight: 500; }
+.privacy-ledger .privacy-public .privacy-seal { color: var(--brick); border-color: var(--brick); }
+.privacy-ledger .privacy-public b { color: var(--brick); }
+.trust-footnote { margin-top: 1rem; font-size: 0.86rem; }
+.blocked-list { margin-top: 1.5rem; border-top: 1px solid var(--line); }
+.blocked-list > div { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+.blocked-list p { display: grid; margin: 0; }
+.blocked-list small { color: var(--muted); }
+.trust-empty { margin-top: 1.5rem; padding: 1.5rem; color: var(--muted); background: var(--surface); border: 1px solid var(--line); }
+.data-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.8rem; }
+.data-actions article { display: flex; flex-direction: column; align-items: flex-start; padding: 1.5rem; background: var(--surface); border: 1px solid var(--line); }
+.data-actions h3 { margin: 0; font-family: var(--font-editorial); font-size: 1.55rem; font-weight: 500; }
+.data-actions p { flex: 1; color: var(--muted); }
+.import-control { position: relative; cursor: pointer; }
+.import-control input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.danger-zone { border-bottom: 0; }
+.danger-zone > p { max-width: 43rem; color: var(--muted); }
+.delete-account-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1rem; }
+.delete-account-dialog { position: relative; z-index: 1; width: min(34rem, 100%); padding: clamp(1.5rem, 4vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1.5rem 4rem rgb(36 33 31 / 0.2); }
+.delete-account-dialog h2 { margin: 0.35rem 0 0.8rem; font-family: var(--font-editorial); font-size: 2.3rem; font-weight: 500; line-height: 1; }
+.delete-account-dialog > p { color: var(--muted); }
+.delete-account-dialog label { margin-top: 1rem; }
+.delete-account-dialog .modal-actions { margin-top: 1.5rem; }
+.profile-actions { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; }
+.blocked-profile-notice { align-self: stretch; display: grid; place-items: center; padding: 3rem; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+.blocked-profile-notice h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
+.blocked-profile-notice p { max-width: 28rem; color: var(--muted); }
+
+@media (max-width: 899px) {
+  .trust-overlay { padding: 0; }
+  .trust-card { --trust-card-padding: 1rem; width: 100%; height: 100dvh; max-height: none; padding-bottom: 6rem; border: 0; border-radius: 0; }
+  .trust-card-toolbar { min-height: 3.75rem; padding-top: 0.25rem; }
+  .trust-heading { padding-bottom: 2.5rem; }
+  .trust-heading h1 { font-size: clamp(2.6rem, 13vw, 4.2rem); }
+  .trust-layout { display: block; padding-top: 2rem; }
+  .trust-index { position: static; grid-template-columns: repeat(5, max-content); gap: 0.8rem; margin: 0 -1rem 3rem; padding: 0 1rem 0.75rem; overflow-x: auto; overscroll-behavior-inline: contain; }
+  .trust-index a { border-bottom: 0; white-space: nowrap; }
+  .trust-section { padding-bottom: 3rem; margin-bottom: 3rem; }
+  .trust-form-row, .data-actions { grid-template-columns: 1fr; }
+  .trust-form-row .chapter-button { justify-self: start; }
+  .privacy-ledger > div { grid-template-columns: 2.3rem minmax(0, 1fr); }
+  .privacy-ledger b { grid-column: 2; }
+  .blocked-list > div { grid-template-columns: auto 1fr; }
+  .blocked-list button { grid-column: 2; justify-self: start; }
+  .trust-notice { align-items: start; }
+  .delete-account-dialog .modal-actions { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-card { scroll-behavior: auto; }
+}

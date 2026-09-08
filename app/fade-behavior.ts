@@ -1,6 +1,6 @@
-export type FadeKind = "menu" | "modal" | "feedback";
-export const fadeTiming = { menu: [140, 100], modal: [180, 120], feedback: [120, 120] } as const;
-export const fadeEasing = "cubic-bezier(0.23, 1, 0.32, 1)";
+export type FadeKind = "menu" | "modal" | "feedback" | "page";
+export const fadeTiming = { menu: [190, 150], modal: [260, 200], feedback: [180, 150], page: [280, 180] } as const;
+export const fadeEasing = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 // Only the visual lifetime is deferred. Actions, focus and inertness belong to
 // the caller and change immediately. No stale completion can close a new view.

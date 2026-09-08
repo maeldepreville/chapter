@@ -10,13 +10,13 @@ test("keeps QR1 on the owner's card with a fixed external control rail", async (
     readFile(new URL("../app/profile-share.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(component, /src="\/branding\/chapter-profile-qr\.svg"/);
+  assert.match(component, /src=\{staticAsset\("\/branding\/chapter-profile-qr\.svg"\)\}/);
   assert.match(component, /Scannez pour ouvrir mon profil/);
   assert.match(component, /cardFlipped \? "Voir le recto" : "Retourner la carte"/);
   assert.match(component, /Copier le lien/);
   assert.match(component, /shareController\.run\("share", publicProfileUrl\)/);
   assert.match(sharing, /navigator\.share/);
-  assert.match(stylesheet, /transition:\s*transform 440ms/);
+  assert.match(stylesheet, /transition:\s*transform 520ms var\(--ease-surface\)/);
   assert.match(stylesheet, /\.profile-card-front,\s*\.profile-card-back\s*\{[^}]*-webkit-backface-visibility:\s*hidden;[^}]*backface-visibility:\s*hidden;/s);
   assert.match(stylesheet, /\.profile-card-front\s*\{[^}]*rotateY\(0deg\)[^}]*opacity:\s*1;/s);
   assert.match(stylesheet, /\.profile-identity-card\.profile-card-back\s*\{[^}]*grid-template-columns:\s*1fr;[^}]*rotateY\(180deg\)[^}]*opacity:\s*0;/s);

@@ -1,7 +1,7 @@
 import type { JournalTrace } from "../journal-model";
 import type { Author, Edition, Follow, PrototypeSession, PublicList, PublicProfile, PublicReply, PublicReview, Reader, Work } from "./contracts";
 
-export const emptyPersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", rating: 0 } as const;
+export const emptyPersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", reviewPublished: false, rating: 0 } as const;
 
 export const coreWorks = [
   {
@@ -49,7 +49,7 @@ export const coreEntries = {
   rivage: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "12 août 2026", note: "Observer comment les différentes heures deviennent une manière de raconter les désaccords du village." },
   atlas: { ...emptyPersonalEntry, readingStatus: "En cours", readingDate: "8 août 2026", note: "Garder l’image des fenêtres éclairées comme une constellation qui n’existe que depuis la rue." },
   lucioles: { ...emptyPersonalEntry, readingStatus: "Lu", readingDate: "19 août 2026", rating: 4 },
-  miroirs: { ...emptyPersonalEntry, readingStatus: "Lu", readingDate: "2 août 2026", review: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.", rating: 4 },
+  miroirs: { ...emptyPersonalEntry, readingStatus: "Lu", readingDate: "2 août 2026", review: "Une maison décrite comme un organisme discret, avec des reflets qui ne servent jamais de simple artifice. Le dernier tiers resserre admirablement tout ce que le roman avait laissé en suspens.", reviewPublished: true, rating: 4 },
   sel: { ...emptyPersonalEntry, readingStatus: "À lire" },
 } as const;
 
