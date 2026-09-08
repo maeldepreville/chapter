@@ -23,11 +23,14 @@ test("the owner profile opens with a quiet reading-room welcome without changing
   assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room-wash\.webp/);
   assert.match(component, /Bienvenue chez vous, \{profile\.firstName\}/);
   assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*position:\s*relative;[^}]*border-bottom:\s*1px solid var\(--line\);/s);
-  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*position:\s*absolute;[^}]*right:\s*0;[^}]*opacity:\s*0\.8;/s);
+  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*position:\s*absolute;[^}]*right:\s*-1rem;[^}]*opacity:\s*0\.76;/s);
   assert.match(stylesheet, /\.profile-homecoming-art::after\s*\{[^}]*linear-gradient\(90deg,[^}]*linear-gradient\(180deg,/s);
   assert.doesNotMatch(stylesheet, /\.profile-homecoming-art\s*\{[^}]*mask-image:/s);
   assert.match(stylesheet, /\.profile-homecoming-image\s*\{[^}]*object-fit:\s*contain;[^}]*object-position:\s*right top;/s);
-  assert.match(stylesheet, /\.profile-home \.profile-wide-content > \.profile-section\s*\{[^}]*grid-template-columns:/s);
+  assert.match(stylesheet, /\.profile-home \.profile-opening\s*\{[^}]*grid-template-areas:[^}]*"identity companion"[^}]*"honors honors"/s);
+  assert.match(stylesheet, /\.profile-wide-content\s*\{[^}]*grid-template-columns:/s);
+  assert.match(stylesheet, /\.profile-lists-section\s*\{[^}]*border-right:/s);
+  assert.match(stylesheet, /\.profile-review::before\s*\{[^}]*content:\s*"“"/s);
 });
 
 test("all Lina follow entry points share the profile state, colors and wording", () => {

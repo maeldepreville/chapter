@@ -360,18 +360,6 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   return (
     <section className={`profile-page ${isOwnProfile ? "profile-home" : "profile-public"}`} aria-labelledby="profile-name">
       {onBack && <button className="text-action back-action profile-back-action" type="button" onClick={onBack}>← {backLabel}</button>}
-      {isOwnProfile && (
-        <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
-          <div className="profile-homecoming-art">
-            <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room-wash.webp" alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
-          </div>
-          <div className="profile-homecoming-copy">
-            <p className="eyebrow">Votre espace</p>
-            <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
-            <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
-          </div>
-        </section>
-      )}
       <div className="profile-opening">
         <aside className="profile-identity-column">
           <div className={`profile-card-flip-shell ${cardFlipped ? "is-flipped" : ""}`}>
@@ -421,23 +409,37 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               </div>
             </div>
           )}
-          <section className="profile-honors" aria-labelledby="profile-honors-title">
-            <button className="profile-section-link" type="button" onClick={onOpenHonors}><span id="profile-honors-title">Chapitres d’honneur</span><span aria-hidden="true">→</span></button>
-            <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
-          </section>
         </aside>
-        {blocked ? <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section> : <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
-          <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
-          {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
+        <div className="profile-opening-companion">
+          {isOwnProfile && (
+            <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
+              <div className="profile-homecoming-art">
+                <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room-wash.webp" alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
+              </div>
+              <div className="profile-homecoming-copy">
+                <p className="eyebrow">Votre espace</p>
+                <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
+                <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
+              </div>
+            </section>
+          )}
+          {blocked ? <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section> : <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
+            <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
+            {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
+          </section>}
+        </div>
+        {!blocked && <section className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
+          <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
+          <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
         </section>}
       </div>
       {!blocked && <div className="profile-wide-content">
-        <section className="profile-section" aria-labelledby="profile-lists-title">
-          <div className="profile-section-heading"><p className="eyebrow">Listes publiques</p><h2 id="profile-lists-title">Composer des chemins</h2></div>
+        <section className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
+          <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>
           {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
         </section>
-        <section className="profile-section" aria-labelledby="profile-reviews-title">
-          <div className="profile-section-heading"><p className="eyebrow">Critiques choisies</p><h2 id="profile-reviews-title">Quelques traces publiques</h2></div>
+        <section className="profile-section profile-reviews-section" aria-labelledby="profile-reviews-title">
+          <div className="profile-section-heading"><p className="eyebrow">Traces publiques</p><h2 id="profile-reviews-title">Des lectures laissées ouvertes</h2></div>
           {publicReviews.length ? publicReviews.map((review) => { const work = workById(review.workId)!; return <article className="profile-review" key={`${review.authorId}-${review.workId}`}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{review.text}</p></article>; }) : <p className="journal-empty">Aucune critique publiée pour le moment.</p>}
         </section>
       </div>}
