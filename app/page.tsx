@@ -28,6 +28,7 @@ type PublicListOrigin = "discover" | "search" | "profile";
 type PublicWorkOrigin = "discover" | "search" | "profile" | "list";
 type PersonalWorkOrigin = "journal" | "library" | "discover" | "search" | "profile" | "list";
 type PublicIntent = "review" | "reply" | "follow";
+type DestinationOverlay = "honors" | "list" | null;
 type NavigationSnapshot = {
   view: View;
   selectedWorkId: WorkId;
@@ -148,7 +149,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [accessMode, setAccessMode] = useState<"public" | "personal">(startsPublic ? "public" : "personal");
   const p1Public = accessMode === "public";
   const works = initialData?.works ?? (startsPublic ? publicWorks : defaultWorks);
-  const [currentView, setCurrentView] = useState<View>(initialPublicListId ? "list" : initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialData?.view ?? "work");
+  const initialRequestedView = initialData?.view;
+  const [currentView, setCurrentView] = useState<View>(initialPublicListId ? "discover" : initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialRequestedView === "list" ? "discover" : initialRequestedView === "honors" ? "profile" : initialRequestedView ?? "work");
+  const [destinationOverlay, setDestinationOverlay] = useState<DestinationOverlay>(initialPublicListId || initialRequestedView === "list" ? "list" : initialRequestedView === "honors" ? "honors" : null);
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? (startsPublic ? {} : defaultEntries));
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
@@ -346,6 +349,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     }
     navigationStack.current = [];
     setNavigationSource(null);
+    setDestinationOverlay(null);
     if (view !== "profile" && window.location.pathname === PUBLIC_PROFILE_PATH) window.history.replaceState(null, "", "/");
     setCurrentView(view);
     setAccountOpen(false);
@@ -357,6 +361,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const restoreProfile = (owner: ProfileOwner) => {
     const visibleOwner: ProfileOwner = p1Public && owner === "self" ? "public-self" : owner;
     setProfileOwner(visibleOwner);
+    setDestinationOverlay(null);
     setCurrentView("profile");
     setAccountOpen(false);
     if (p1Public) {
@@ -390,17 +395,35 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
-    if (keepCurrentDestination("list", `${owner}:${listId}`)) return;
-    rememberNavigation();
+    if (destinationOverlay === "list" && publicListOwner === owner && publicListId === listId) return;
     setPublicListId(listId);
     setPublicListOrigin(origin);
     setPublicListOwner(owner);
-    setCurrentView("list");
+    setDestinationOverlay("list");
+    setAccountOpen(false);
+    setSearchOpen(false);
     if (p1Public) {
       const path = `/listes/${listId}`;
       if (window.location.pathname !== path) window.history.pushState(null, "", path);
     }
-    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const closeDestinationOverlay = () => {
+    setDestinationOverlay(null);
+    if (!p1Public || !window.location.pathname.startsWith("/listes/")) return;
+    const snapshot: NavigationSnapshot = {
+      view: currentView,
+      selectedWorkId,
+      profileOwner,
+      publicListId,
+      publicListOwner,
+      publicListOrigin,
+      publicWorkOrigin,
+      personalWorkOrigin,
+      publicShell: true,
+      scrollY: window.scrollY || 0,
+    };
+    window.history.replaceState(null, "", pathForSnapshot(snapshot));
   };
 
   const requirePublicIdentity = (intent: PublicIntent, resume?: () => void) => {
@@ -520,6 +543,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const openPublicView = (view: "discover" | "search", path = view === "search" ? "/recherche" : "/decouvrir") => {
     navigationStack.current = [];
     setNavigationSource(null);
+    setDestinationOverlay(null);
     setCurrentView(view);
     setSearchOpen(false);
     if (window.location.pathname !== path) window.history.pushState(null, "", path);
@@ -531,6 +555,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!work) return;
     if (keepCurrentDestination("work", work.id)) return;
     rememberNavigation();
+    setDestinationOverlay(null);
     setPublicWorkOrigin(origin);
     setSelectedWorkId(work.id);
     setCurrentView("work");
@@ -554,6 +579,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const selectWork = (id: WorkId) => {
     if (keepCurrentDestination("work", id)) return;
     rememberNavigation();
+    setDestinationOverlay(null);
     if (["journal", "library", "discover", "search", "profile", "list"].includes(currentView)) {
       setPersonalWorkOrigin(currentView as PersonalWorkOrigin);
       if (currentView === "journal" || currentView === "library") privateScroll.current[currentView] = window.scrollY || 0;
@@ -572,10 +598,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const personalWorkBackLabel = navigationBackLabel("Retour au Journal");
 
   const openHonors = () => {
-    if (keepCurrentDestination("honors", profileOwner)) return;
-    rememberNavigation();
-    setCurrentView("honors");
-    window.scrollTo({ top: 0, behavior: "instant" });
+    if (destinationOverlay === "honors") return;
+    setDestinationOverlay("honors");
+    setAccountOpen(false);
+    setSearchOpen(false);
   };
 
   const enterPersonalSpace = (destination: "journal" | "library" | "profile" = "journal") => {
@@ -588,6 +614,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       });
     }
     setAccessMode("personal");
+    setDestinationOverlay(null);
     if (destination === "profile") setProfileOwner("self");
     setCurrentView(destination);
     const path = destination === "journal" ? "/journal" : destination === "library" ? "/bibliotheque" : PUBLIC_PROFILE_PATH;
@@ -612,6 +639,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       navigationStack.current = [];
       setNavigationSource(null);
       const path = window.location.pathname;
+      setDestinationOverlay(null);
       if (path === "/recherche") return setCurrentView("search");
       const readerId = path.match(/^\/lecteurs\/([^/]+)\/?$/)?.[1];
       if (readerId && readerId in prototypeActors) {
@@ -625,7 +653,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       const listId = path.match(/^\/listes\/([^/]+)\/?$/)?.[1];
       if (listId === "places" || listId === "lights") {
         setPublicListId(listId);
-        return setCurrentView("list");
+        setCurrentView("discover");
+        return setDestinationOverlay("list");
       }
       const workId = path.match(/^\/oeuvres\/([^/]+)\/?$/)?.[1];
       if (workId && works.some((work) => work.id === workId)) {
@@ -1404,6 +1433,45 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           </section>
         </div>
       )}</Fade>}
+
+      <Fade show={destinationOverlay === "honors"} kind="modal">{destinationOverlay === "honors" && (
+        <Modal className="destination-overlay" labelledBy="honors-title" initialFocus=".destination-card-close" onRequestClose={closeDestinationOverlay}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer les chapitres d’honneur" onClick={closeDestinationOverlay} />
+          <section className="destination-card destination-card--honors" aria-label="Chapitres d’honneur">
+            <div className="destination-card-toolbar"><button className="close-button destination-card-close" type="button" aria-label="Fermer les chapitres d’honneur" onClick={closeDestinationOverlay}>×</button></div>
+            <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={closeDestinationOverlay} />
+          </section>
+        </Modal>
+      )}</Fade>
+
+      <Fade show={destinationOverlay === "list"} kind="modal">{destinationOverlay === "list" && (
+        <Modal className="destination-overlay" labelledBy="list-page-title" initialFocus=".destination-card-close" onRequestClose={closeDestinationOverlay}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la liste" onClick={closeDestinationOverlay} />
+          <section className="destination-card destination-card--list" aria-label="Liste publique">
+            <div className="destination-card-toolbar"><button className="close-button destination-card-close" type="button" aria-label="Fermer la liste" onClick={closeDestinationOverlay}>×</button></div>
+            <PublicListView
+              owner={publicListOwner}
+              listId={publicListId}
+              works={works}
+              following={followingActors[actorIdForProfile(publicListOwner)]}
+              blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))}
+              displayName={publicProfileName}
+              onToggleFollow={() => {
+                const actorId = actorIdForProfile(publicListOwner);
+                if (!p1Public || requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId);
+              }}
+              onOpenProfile={() => {
+                closeDestinationOverlay();
+                const visibleOwner: ProfileOwner = p1Public && publicListOwner === "self" ? "public-self" : publicListOwner;
+                if (currentView !== "profile" || profileOwner !== visibleOwner) openProfile(publicListOwner);
+              }}
+              onOpenWork={(id) => p1Public ? openPublicWork(id, "list") : selectWork(id as WorkId)}
+              onBack={closeDestinationOverlay}
+              backLabel="Fermer la liste"
+            />
+          </section>
+        </Modal>
+      )}</Fade>
 
       {!p1Public && <Fade show={settingsOpen} kind="modal">{settingsOpen && (
         <Modal className="trust-overlay" labelledBy="trust-title" initialFocus=".trust-card-close" onRequestClose={closeSettings}>

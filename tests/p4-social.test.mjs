@@ -141,7 +141,8 @@ test("P4 returns from a Search list to Search instead of Discover", () => {
     nodes(tree, (node) => node.type?.name === "PublicSearch")[0].props.onOpenList("lights");
     tree = render();
     const list = nodes(tree, (node) => node.type?.name === "PublicListView")[0];
-    assert.equal(list.props.backLabel, "Retour à Recherche");
+    assert.equal(list.props.backLabel, "Fermer la liste");
+    assert.equal(nodes(tree, (node) => node.type?.name === "PublicSearch").length, 1);
     list.props.onBack();
     tree = render();
     assert.equal(nodes(tree, (node) => node.type?.name === "PublicSearch").length, 1);
