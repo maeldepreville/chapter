@@ -56,6 +56,14 @@ const normalizeText = (value: string) => value
 const searchStopWords = new Set(["avec", "dans", "des", "les", "pour", "une"]);
 const searchTokens = (value: string) => normalizeText(value).split(" ").filter((token) => token.length > 2 && !searchStopWords.has(token));
 
+const readerInitials = (name: string) => name
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => Array.from(part)[0]?.toLocaleUpperCase("fr") ?? "")
+  .join("");
+
 const tokensAreClose = (queryToken: string, candidateToken: string) => {
   const prefixLength = Math.max(3, Math.min(queryToken.length, candidateToken.length) - 2);
   return candidateToken === queryToken
@@ -336,7 +344,15 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const [shareBusy, setShareBusy] = useState(false);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
   const publicProfileUrl = PUBLIC_PROFILE_URL;
-  const profile = { ...actor, ...presentation, name: isMael && displayName ? displayName : actor.name, title: isMael ? equippedTitle : presentation.defaultTitle };
+  const profileName = isMael && displayName?.trim() ? displayName.trim() : actor.name;
+  const profile = {
+    ...actor,
+    ...presentation,
+    name: profileName,
+    firstName: isMael ? profileName.split(/\s+/)[0] : actor.firstName,
+    initials: isMael ? readerInitials(profileName) : actor.initials,
+    title: isMael ? equippedTitle : presentation.defaultTitle,
+  };
   const workById = (id: string) => works.find((work) => work.id === id);
   const favorites = availableWorks(works, profile.favorites);
   const publicReviews = (profile.actorId === CURRENT_READER_ID ? personalReviews : prototypeReviewsForActor(profile.actorId))
@@ -345,12 +361,6 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
-  const openProfileSection = (id: string) => {
-    const section = document.getElementById(id);
-    if (!section) return;
-    section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-  };
-
   useEffect(() => {
     if (!shareNotice) return;
     const timer = window.setTimeout(() => setShareNotice(""), 5000);
@@ -414,37 +424,32 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               </div>
             </div>
           )}
-          {!blocked && <nav className="profile-card-index" aria-label="Sommaire du portrait">
-            <p className="eyebrow">{isOwnProfile ? "Dans votre portrait" : "Dans ce portrait"}</p>
-            <button type="button" onClick={() => openProfileSection("profile-favorites")}><span>01</span><strong>Œuvres de chevet</strong><i aria-hidden="true">→</i></button>
-            <button type="button" onClick={() => openProfileSection("profile-honors")}><span>02</span><strong>Chapitres d’honneur</strong><i aria-hidden="true">→</i></button>
-            <button type="button" onClick={() => openProfileSection("profile-lists")}><span>03</span><strong>Listes publiques</strong><i aria-hidden="true">→</i></button>
-            <button type="button" onClick={() => openProfileSection("profile-reviews")}><span>04</span><strong>Traces publiques</strong><i aria-hidden="true">→</i></button>
-          </nav>}
         </aside>
-        <div className="profile-opening-companion">
-          {isOwnProfile && (
-            <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
-              <div className="profile-homecoming-art">
-                <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room-wash.webp" alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
-              </div>
-              <div className="profile-homecoming-copy">
-                <p className="eyebrow">Votre espace</p>
-                <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
-                <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
-              </div>
-            </section>
-          )}
-          {blocked ? <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section> : <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
-            <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
-            {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
-          </section>}
-        </div>
-        {!blocked && <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
+        {isOwnProfile && (
+          <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
+            <div className="profile-homecoming-art">
+              <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room-wash.webp" alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
+            </div>
+            <div className="profile-homecoming-copy">
+              <p className="eyebrow">Votre espace</p>
+              <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
+              <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
+            </div>
+          </section>
+        )}
+        {blocked && <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section>}
+      </div>
+      {!blocked && <section className="profile-library-portrait" aria-label={isOwnProfile ? "Votre bibliothèque personnelle" : "Sa bibliothèque personnelle"}>
+        <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
+          <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2><p>Trois présences qui racontent une sensibilité mieux qu’une longue biographie.</p></div>
+          {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
+        </section>
+        <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
           <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
-        </section>}
-      </div>
+        </section>
+      </section>}
+      {!blocked && <header className="profile-public-chapter"><p className="eyebrow">Ce que vous ouvrez aux autres</p><h2>Des chemins et des voix.</h2></header>}
       {!blocked && <div className="profile-wide-content">
         <section id="profile-lists" className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>
@@ -618,11 +623,13 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ owner, listId, works, following, blocked = false, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; blocked?: boolean; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+export function PublicListView({ owner, listId, works, following, blocked = false, displayName, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; blocked?: boolean; displayName?: string; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
   const list = publicListCatalog[listId];
   const chosen = availableWorks(works, list.workIds);
   const isOwnList = owner === "self";
-  const author = prototypeActors[actorIdForProfile(owner)];
+  const actor = prototypeActors[actorIdForProfile(owner)];
+  const canonicalName = isOwnList && displayName?.trim() ? displayName.trim() : actor.name;
+  const author = { ...actor, name: canonicalName, initials: isOwnList ? readerInitials(canonicalName) : actor.initials };
   const authorRelationship = isOwnList ? "Votre liste publique" : owner === "lina" ? "Autrice de la liste" : "Auteur de la liste";
   return (
     <section className="destination-page public-list-page" aria-labelledby="list-page-title">
@@ -705,12 +712,12 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
         <p className="review-copy" id={`review-copy-${textKey}`}>{longText && !textExpanded ? `${Array.from(review.text).slice(0, 280).join("")}…` : review.text}</p>
         {longText && <button className="text-action review-text-toggle" type="button" aria-expanded={textExpanded} aria-controls={`review-copy-${textKey}`} onClick={() => setExpandedTexts((current) => textExpanded ? current.filter((id) => id !== textKey) : [...current, textKey])}>{textExpanded ? "Réduire" : "Lire la suite"}</button>}
         {review.own && <button className="text-action conversation-toggle" type="button" onClick={() => setClosed((current) => isClosed ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isClosed ? "Rouvrir les réponses" : "Fermer les réponses"}</button>}
-        {latest && !isExpanded && <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${prototypeActors[latest.authorId].name}`} onClick={() => onOpenProfile(latest.authorId)}>{prototypeActors[latest.authorId].name}</button><span className="reply-preview-text">{latest.text}</span></p></div>}
+        {latest && !isExpanded && (() => { const latestActor = actorFor(latest.authorId); return <div className="reply-preview"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${latestActor.name}`} onClick={() => onOpenProfile(latest.authorId)}>{latestActor.initials}</button><p><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${latestActor.name}`} onClick={() => onOpenProfile(latest.authorId)}>{latestActor.name}</button><span className="reply-preview-text">{latest.text}</span></p></div>; })()}
         <div className="conversation-actions">
           {reviewReplies.length > 0 && <button className="text-action conversation-toggle" type="button" aria-expanded={isExpanded} onClick={() => setExpanded((current) => isExpanded ? current.filter((id) => id !== review.authorId) : [...current, review.authorId])}>{isExpanded ? "Réduire" : `Voir la conversation · ${reviewReplies.length}`}</button>}
           {!isExpanded && replyAction}
         </div>
-        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = prototypeActors[reply.authorId]; return <article key={reply.id} className="reply"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.initials}</button><div><header><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.name}</button><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply({ reviewId: review.authorId, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.authorId]: (current[review.authorId] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { onBlockActor?.(reply.authorId); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
+        {isExpanded && <div className="reply-list">{reviewReplies.map((reply) => { const replyActor = actorFor(reply.authorId); return <article key={reply.id} className="reply"><button className="avatar avatar-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.initials}</button><div><header><button className="reply-author-button" type="button" aria-label={`Ouvrir le profil de ${replyActor.name}`} onClick={() => onOpenProfile(reply.authorId)}>{replyActor.name}</button><small>{reply.date}</small></header><p>{reply.text}</p><div>{reply.authorId === CURRENT_READER_ID ? <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo(null); setEditingReply({ reviewId: review.authorId, replyId: reply.id }); setDraft(reply.text); }}>Modifier</button><button className="text-action muted-action" type="button" onClick={() => setReplies((current) => ({ ...current, [review.authorId]: (current[review.authorId] ?? []).filter((item) => item.id !== reply.id) }))}>Supprimer</button></> : <><button className="text-action" type="button" onClick={() => { setComposer(review.authorId); setReplyingTo({ name: replyActor.name, text: reply.text }); setEditingReply(null); setDraft(""); }}>Répondre</button><button className="text-action muted-action" type="button" onClick={() => setNotice("Réponse signalée. Elle reste visible pendant son examen.")}>Signaler</button><button className="text-action muted-action" type="button" onClick={() => { onBlockActor?.(reply.authorId); setNotice(`${replyActor.name} est bloqué·e. Ses réponses sont masquées et les interactions directes sont désactivées.`); }}>Bloquer</button></>}</div></div></article>; })}</div>}
         {isExpanded && <div className="conversation-actions">{replyAction}</div>}
         {composer === review.authorId && !isClosed && <div className="inline-composer">{replyingTo && <div className="reply-context"><p>En réponse à <strong>{replyingTo.name}</strong> <button type="button" aria-label="Retirer la mention" onClick={() => setReplyingTo(null)}>×</button></p><blockquote>{replyingTo.text.length > 90 ? `${replyingTo.text.slice(0, 90)}…` : replyingTo.text}</blockquote></div>}<label><span className="sr-only">Votre réponse</span><textarea autoFocus rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Poursuivre la conversation…" /></label><div><button className="quiet-action" type="button" onClick={() => { setComposer(null); setReplyingTo(null); setEditingReply(null); setDraft(""); }}>Annuler</button><button className="primary-action" type="button" disabled={!draft.trim()} onClick={() => publishReply(review.authorId)}>{editingReply ? "Enregistrer" : "Publier"}</button></div></div>}
       </article>

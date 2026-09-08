@@ -46,6 +46,26 @@ test("P5 global blocking removes an actor from conversations and masks profile a
   assert.match(listMarkup, /liste est masquée/);
 });
 
+test("the saved public identity is projected into reviews, replies, lists and the profile card", async () => {
+  const personalActor = { name: "Lectora des Brumes", initials: "LD" };
+  const reviewMarkup = renderToStaticMarkup(React.createElement(SocialReviews, { workId: "cartographies", personalReview: "Une trace personnelle.", personalRating: 4, personalActor, onOpenProfile() {}, onWriteReview() {} }));
+  assert.match(reviewMarkup, /Lectora des Brumes/);
+  assert.match(reviewMarkup, />LD</);
+
+  const profileMarkup = renderToStaticMarkup(React.createElement(ProfileView, { owner: "self", displayName: personalActor.name, works: publicWorks, following: false, onToggleFollow() {}, onOpenWork() {}, onOpenHonors() {}, onOpenList() {}, photo: null, onEditPhoto() {}, onRemovePhoto() {}, equippedTitle: "Esprit nomade", showcase: [] }));
+  assert.match(profileMarkup, /Lectora des Brumes/);
+  assert.match(profileMarkup, />LD</);
+
+  const listMarkup = renderToStaticMarkup(React.createElement(PublicListView, { owner: "self", displayName: personalActor.name, listId: "places", works: publicWorks, following: false, onToggleFollow() {}, onOpenProfile() {}, onOpenWork() {}, onBack() {}, backLabel: "Retour" }));
+  assert.match(listMarkup, /Lectora des Brumes/);
+  assert.match(listMarkup, />LD</);
+
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /const publicActor = \{ name: publicProfileName, initials: initialsFor\(publicProfileName\) \}/);
+  assert.equal((page.match(/personalActor=\{publicActor\}/g) ?? []).length, 2);
+  assert.doesNotMatch(page, /personalActor=\{publicName/);
+});
+
 test("P5 settings open over the connected view and account deletion returns to public discovery", () => {
   const harness = hookHarness();
   const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;

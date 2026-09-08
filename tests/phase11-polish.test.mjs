@@ -27,7 +27,8 @@ test("the owner profile opens with a quiet reading-room welcome without changing
   assert.match(stylesheet, /\.profile-homecoming-art::after\s*\{[^}]*linear-gradient\(90deg,[^}]*linear-gradient\(180deg,/s);
   assert.doesNotMatch(stylesheet, /\.profile-homecoming-art\s*\{[^}]*mask-image:/s);
   assert.match(stylesheet, /\.profile-homecoming-image\s*\{[^}]*object-fit:\s*contain;[^}]*object-position:\s*right top;/s);
-  assert.match(stylesheet, /\.profile-home \.profile-opening\s*\{[^}]*grid-template-areas:[^}]*"identity companion"[^}]*"honors honors"/s);
+  assert.match(stylesheet, /\.profile-home \.profile-opening\s*\{[^}]*grid-template-columns:[^}]*gap:/s);
+  assert.match(stylesheet, /\.profile-library-portrait\s*\{[^}]*grid-template-columns:[^}]*border-top:[^}]*border-bottom:/s);
   assert.match(stylesheet, /\.profile-wide-content\s*\{[^}]*grid-template-columns:/s);
   assert.match(stylesheet, /\.profile-lists-section\s*\{[^}]*border-right:/s);
   assert.match(stylesheet, /\.profile-review::before\s*\{[^}]*content:\s*"“"/s);

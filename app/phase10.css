@@ -278,15 +278,12 @@
 }
 .profile-home .profile-opening {
   grid-template-columns: minmax(25rem, 0.94fr) minmax(0, 1.06fr);
-  grid-template-areas:
-    "identity companion"
-    "honors honors";
-  gap: clamp(4rem, 6vw, 6rem) clamp(4rem, 7vw, 7rem);
+  gap: clamp(4rem, 7vw, 7rem);
 }
 .profile-identity-column { min-width: 0; }
-.profile-home .profile-identity-column { grid-area: identity; width: min(100%, 30rem); }
-.profile-opening-companion { min-width: 0; }
-.profile-home .profile-opening-companion { grid-area: companion; padding-top: 0.5rem; }
+.profile-home .profile-identity-column { width: min(100%, 30rem); }
+.profile-home .profile-homecoming { display: grid; align-items: center; align-self: stretch; min-height: 100%; margin: 0; padding-block: clamp(2rem, 4vw, 4rem); border-bottom: 0; }
+.profile-public .profile-opening { grid-template-columns: minmax(19rem, 30rem); justify-content: center; }
 .profile-card-flip-shell { -webkit-perspective: 75rem; perspective: 75rem; }
 .profile-card-flip {
   display: grid;
@@ -408,29 +405,6 @@
 .profile-card-share-row.is-visible { visibility: visible; opacity: 1; pointer-events: auto; }
 .profile-card-share-row .text-action { font-size: 0.72rem; }
 .profile-card-share-notice { flex: 1 1 9rem; margin: 0; color: var(--muted); font-size: 0.7rem; }
-.profile-card-index { margin-top: clamp(2rem, 4vw, 3rem); padding-top: 1.25rem; border-top: 1px solid var(--line); }
-.profile-card-index > p { margin: 0 0 0.7rem; color: var(--brick); }
-.profile-card-index button {
-  display: grid;
-  grid-template-columns: 1.8rem minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 0.65rem;
-  width: 100%;
-  padding: 0.8rem 0;
-  color: var(--ink);
-  text-align: left;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
-  cursor: pointer;
-}
-.profile-card-index button > span { color: var(--brick); font-family: var(--font-editorial); font-size: 0.78rem; }
-.profile-card-index button > strong { font-family: var(--font-editorial); font-size: 1.02rem; font-weight: 450; }
-.profile-card-index button > i { color: var(--muted); font-size: 0.75rem; font-style: normal; }
-@media (hover: hover) and (pointer: fine) {
-  .profile-card-index button:hover strong,
-  .profile-card-index button:hover > i { color: var(--brick); }
-}
 #profile-favorites,
 #profile-honors,
 #profile-lists,
@@ -450,7 +424,6 @@
   padding: 2rem 0;
   border-bottom: 1px solid var(--line);
 }
-.profile-home .profile-honors-band { grid-area: honors; }
 .profile-section-link { display: flex; justify-content: space-between; width: 100%; padding: 0 0 0.9rem; background: transparent; border: 0; font-family: var(--font-editorial); font-size: 1.2rem; cursor: pointer; }
 .profile-honors-band .profile-section-link { align-items: end; padding: 0; text-align: left; }
 .profile-honors-band .profile-section-link > span:first-child { display: grid; gap: 0.2rem; }
@@ -466,15 +439,34 @@
 .profile-badge-row span { font-size: 0.68rem; line-height: 1.25; }
 .profile-honors-band .profile-badge-row { justify-self: end; width: min(100%, 31rem); gap: clamp(1rem, 3vw, 2rem); }
 .profile-honors-band .profile-badge-row img { width: min(100%, 6.4rem); }
-.profile-section.profile-opening-favorites { align-self: center; min-width: 0; padding: 0; border-bottom: 0; }
-.profile-opening-companion .profile-section-heading { margin-bottom: 1.6rem; }
-.profile-opening-companion .profile-section-heading h2 { font-size: clamp(2.35rem, 3.6vw, 3.25rem); }
+.profile-library-portrait {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.55fr);
+  gap: clamp(3rem, 7vw, 7rem);
+  margin-top: clamp(2.75rem, 4.5vw, 4.5rem);
+  padding: clamp(3rem, 5vw, 4.5rem) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.profile-library-portrait .profile-section.profile-opening-favorites { min-width: 0; padding: 0; border: 0; }
+.profile-library-portrait .profile-section-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.7fr); gap: 1rem 2.5rem; align-items: end; margin-bottom: 2rem; }
+.profile-library-portrait .profile-section-heading .eyebrow { grid-column: 1 / -1; margin: 0; }
+.profile-library-portrait .profile-section-heading h2 { margin: 0; font-size: clamp(2.8rem, 4.5vw, 4.2rem); line-height: 0.92; }
+.profile-library-portrait .profile-section-heading > p:last-child { margin: 0 0 0.25rem; color: var(--muted); font-family: var(--font-editorial); font-size: 0.95rem; line-height: 1.45; }
+.profile-library-portrait .profile-honors-band { grid-column: auto; display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 2rem; margin: 0; padding: 0 0 0 clamp(2rem, 4vw, 4rem); border: 0; border-left: 1px solid var(--line); }
+.profile-library-portrait .profile-honors-band .profile-section-link { align-items: start; gap: 1.5rem; }
+.profile-library-portrait .profile-honors-band .profile-section-link > span:last-child { padding-top: 0.25rem; white-space: nowrap; }
+.profile-library-portrait .profile-honors-band .profile-badge-row { grid-template-columns: repeat(3, minmax(0, 1fr)); justify-self: stretch; width: 100%; gap: 0.7rem; }
+.profile-library-portrait .profile-honors-band .profile-badge-row img { width: min(100%, 5.4rem); }
+.profile-public-chapter { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-top: clamp(5rem, 9vw, 8rem); padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+.profile-public-chapter .eyebrow { margin: 0 0 0.35rem; color: var(--brick); }
+.profile-public-chapter h2 { margin: 0; font-size: clamp(2.6rem, 4.8vw, 4.5rem); line-height: 0.94; }
 .profile-wide-content {
   display: grid;
   grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.18fr);
   gap: clamp(4rem, 8vw, 8rem);
   min-width: 0;
-  margin-top: clamp(5rem, 8vw, 7.5rem);
+  margin-top: clamp(2.5rem, 4vw, 4rem);
 }
 .profile-wide-content > .profile-section:first-child { padding-top: clamp(3.5rem, 6vw, 5rem); }
 .profile-section { padding: 1rem 0 4.5rem; border-bottom: 1px solid var(--line); }
@@ -663,15 +655,15 @@
   .compact-path .intent-panel { display: none; }
   .profile-page { min-height: auto; padding: 3rem 1.1rem 6rem; }
   .profile-home { padding-top: 1.25rem; }
-  .profile-homecoming { min-height: clamp(12rem, 36vw, 14rem); margin: 0 0 2.75rem; padding: 1.4rem 0 1.8rem; }
+  .profile-homecoming { min-height: clamp(12rem, 36vw, 14rem); margin: 0; padding: 1.4rem 0 1.8rem; }
   .profile-homecoming-art { top: -1rem; right: -2rem; bottom: -0.5rem; width: min(66%, 28rem); }
   .profile-homecoming-copy { max-width: min(62%, 22rem); padding: 0; }
   .profile-homecoming-title { font-size: clamp(2.2rem, 7vw, 2.8rem); }
   .profile-opening { grid-template-columns: 1fr; gap: 4rem; }
-  .profile-home .profile-opening { grid-template-columns: 1fr; grid-template-areas: "identity" "honors" "companion"; gap: 3.5rem; }
+  .profile-home .profile-opening { grid-template-columns: 1fr; gap: 3.5rem; }
   .profile-identity-column { width: min(100%, 32rem); }
   .profile-home .profile-identity-column { width: min(100%, 32rem); }
-  .profile-card-index { display: none; }
+  .profile-home .profile-homecoming { min-height: clamp(12rem, 36vw, 14rem); padding: 1.4rem 0 1.8rem; }
   .profile-card-front { grid-template-columns: 7.2rem minmax(0, 1fr); }
   .profile-card-name { font-size: clamp(2.6rem, 10vw, 3.5rem); }
   .profile-card-name.medium { font-size: clamp(2.15rem, 8vw, 2.9rem); }
@@ -680,7 +672,12 @@
   .profile-honors-band { grid-template-columns: 1fr; gap: 1.5rem; width: 100%; max-width: none; margin: 0; padding: 1.75rem 0; }
   .profile-honors-band .profile-section-link { max-width: 32rem; }
   .profile-honors-band .profile-badge-row { justify-self: start; width: min(100%, 28rem); }
-  .profile-section.profile-opening-favorites { align-self: stretch; padding-bottom: 4rem; border-bottom: 1px solid var(--line); }
+  .profile-library-portrait { display: flex; flex-direction: column; gap: 3.5rem; margin-top: 4rem; padding: 3rem 0 4rem; }
+  .profile-library-portrait .profile-honors-band { order: -1; padding: 0 0 3rem; border-bottom: 1px solid var(--line); border-left: 0; }
+  .profile-library-portrait .profile-section-heading { grid-template-columns: 1fr; gap: 0.7rem; }
+  .profile-library-portrait .profile-section-heading .eyebrow { grid-column: auto; }
+  .profile-library-portrait .profile-section.profile-opening-favorites { align-self: stretch; padding: 0; border: 0; }
+  .profile-public-chapter { display: block; margin-top: 4.5rem; }
   .profile-wide-content { grid-template-columns: 1fr; gap: 0; margin-top: 4.5rem; border-top: 0; }
   .profile-wide-content > .profile-section:first-child { padding-top: 0; }
   .profile-home .profile-wide-content .profile-section-heading { min-height: 0; }
@@ -713,7 +710,7 @@
 }
 
 @media (max-width: 560px) {
-  .profile-homecoming { min-height: 12rem; margin-bottom: 2.5rem; padding-top: 1.15rem; }
+  .profile-homecoming { min-height: 12rem; margin-bottom: 0; padding-top: 1.15rem; }
   .profile-homecoming-art { top: -0.25rem; right: -5rem; bottom: 0; width: 22rem; opacity: 0.64; }
   .profile-homecoming-art::after {
     background:

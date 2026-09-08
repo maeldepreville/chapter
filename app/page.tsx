@@ -201,6 +201,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicName, setPublicName] = useState("");
   const [publicProfileName, setPublicProfileName] = useState(currentReader.name);
   const publicProfileFirstName = publicProfileName.trim().split(/\s+/)[0] || currentReader.firstName;
+  const publicActor = { name: publicProfileName, initials: initialsFor(publicProfileName) };
   const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
@@ -396,7 +397,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const finishPublicIdentity = () => {
-    if (!publicName.trim()) return;
+    const canonicalName = publicName.trim();
+    if (!canonicalName) return;
+    setPublicProfileName(canonicalName);
     setPublicIdentityReady(true);
     setPublicIdentityOpen(false);
     setFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
@@ -1019,7 +1022,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : currentView === "honors" ? (
             <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
           ) : currentView === "list" ? (
-            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
@@ -1039,7 +1042,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
                   <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
                   <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button></div>
-                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicName.trim() ? { name: publicName.trim(), initials: initialsFor(publicName) } : undefined} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
+                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
                 </section>
               )}
             />
@@ -1085,7 +1088,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -1342,7 +1345,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
