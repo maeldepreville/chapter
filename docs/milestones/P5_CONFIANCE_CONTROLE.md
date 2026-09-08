@@ -47,6 +47,8 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - l'ouverture du Profil devient un bandeau éditorial compact : l'accueil et l'aquarelle introduisent immédiatement la carte, les honneurs et les œuvres de chevet, sans hero surdimensionné ; listes et traces conservent ensuite leur respiration pleine largeur.
 - l'import fusionne les lectures et traces reconnues sans effacer l'historique local absent de l'archive ; une critique contenue dans l'archive devient un brouillon privé et sa trace est explicitement marquée `Critique importée · privée`. Elle reste absente des critiques publiques et du Profil jusqu'à une nouvelle publication volontaire ; une critique déjà publique dans la session n'est jamais remplacée par l'import.
 - l'export et l'import réussis déclenchent le retour temporaire global déjà utilisé pour les actions publiques, visible au-dessus de la carte de réglages et refermable ; une archive invalide conserve son explication contextualisée dans la section `Vos données`.
+- l'accès au Profil depuis le menu du compte ferme désormais immédiatement ce menu ; réouvrir le Profil déjà affiché ne pousse plus une destination identique dans l'historique de retour.
+- le sélecteur d'archive n'est réinitialisé qu'après la lecture du fichier, ce qui préserve l'import dans les navigateurs qui invalident tôt le fichier associé au champ.
 
 ## Données et limites
 
@@ -56,7 +58,7 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 
 - tests P5 dédiés sur la composition, les frontières de confidentialité, le blocage transversal et le retour public après suppression ;
 - non-régression P0 à P4 et historique lot 1 ;
-- lint et construction réussis, **152/152 tests automatisés** et `git diff --check` sans erreur ;
+- lint et construction réussis, **153/153 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La candidate publiée avec l'accès existant complète la colonne de la carte par un sommaire de navigation, propage immédiatement toute modification du nom public dans la coque personnelle et garantit désormais qu'un contenu importé reste privé jusqu'à une nouvelle publication volontaire. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
+La candidate auditée sur l'interface complète la colonne de la carte par un sommaire de navigation, propage immédiatement toute modification du nom public dans la coque personnelle, garantit qu'un contenu importé reste privé jusqu'à une nouvelle publication volontaire et évite les superpositions ou auto-empilements du Profil. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
