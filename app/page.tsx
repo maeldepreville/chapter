@@ -1678,8 +1678,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
           <span><strong>{feedback.label}</strong><small>{feedback.detail}</small></span>
           <span className="feedback-separator" aria-hidden="true" />
-          <button type="button" onClick={undoFeedback}>Annuler</button>
-          <button type="button" aria-label="Fermer" onClick={() => setFeedback(null)}>×</button>
+          <button className="feedback-undo" type="button" onClick={undoFeedback}>Annuler</button>
+          <button className="feedback-close" type="button" aria-label="Fermer" onClick={() => setFeedback(null)}>×</button>
         </div>
       )}</Fade>
     </div>

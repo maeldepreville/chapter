@@ -701,7 +701,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
 .temporary-feedback small { color: #d9d1c7; font-size: 0.72rem; }
 .feedback-separator { align-self: stretch; width: 1px; background: rgb(255 250 245 / 0.22); }
 .temporary-feedback button { min-height: 2.5rem; padding: 0 0.25rem; color: #fffaf5; background: transparent; border: 0; cursor: pointer; font-weight: 600; }
-.temporary-feedback button:first-of-type { text-decoration: underline; text-underline-offset: 0.2rem; }
+.temporary-feedback .feedback-undo { text-decoration: underline; text-underline-offset: 0.2rem; }
 
 @media (max-width: 899px) {
   html { scroll-padding-top: 7.5rem; }

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { createSourceLoader, hookHarness, nodes } from "./helpers/load-tsx.mjs";
+import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-tsx.mjs";
 
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
 const load = createSourceLoader();
@@ -31,6 +31,39 @@ test("P5 exposes identity, immutable private spaces, blocking and data portabili
   assert.match(markup, /Importer en privé/);
   assert.match(markup, /Théo Renaud/);
   assert.match(markup, /Demander la suppression/);
+});
+
+test("successful export and import use the same visible feedback surface as public actions", async () => {
+  const harness = hookHarness();
+  const HarnessedTrustSettings = createSourceLoader({ react: harness.react })(source("p5-trust.tsx")).TrustSettings;
+  const previousDocument = globalThis.document;
+  const previousCreateObjectURL = URL.createObjectURL;
+  const previousRevokeObjectURL = URL.revokeObjectURL;
+  globalThis.document = { createElement() { return { click() {} }; } };
+  URL.createObjectURL = () => "blob:chapter-export";
+  URL.revokeObjectURL = () => {};
+  try {
+    const render = () => harness.render(HarnessedTrustSettings, trustProps);
+    let tree = render();
+    const exportButton = nodes(tree, (node) => node.type === "button" && textOf(node) === "Télécharger mon archive")[0];
+    exportButton.props.onClick();
+    tree = render();
+    let feedback = nodes(tree, (node) => node.props?.className === "temporary-feedback")[0];
+    assert.match(textOf(feedback), /Téléchargement lancé/);
+    assert.equal(feedback.props.role, "status");
+
+    const importInput = nodes(tree, (node) => node.type === "input" && node.props?.type === "file")[0];
+    await importInput.props.onChange({ target: { files: [{ text: async () => JSON.stringify(trustProps.createExport()) }], value: "archive.json" } });
+    tree = render();
+    feedback = nodes(tree, (node) => node.props?.className === "temporary-feedback")[0];
+    assert.match(textOf(feedback), /Import privé terminé/);
+    assert.doesNotMatch(textOf(feedback), /Annuler/);
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+    URL.createObjectURL = previousCreateObjectURL;
+    URL.revokeObjectURL = previousRevokeObjectURL;
+  }
 });
 
 test("P5 global blocking removes an actor from conversations and masks profile and list content", () => {
