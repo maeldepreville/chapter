@@ -449,7 +449,6 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
         </section>
       </section>}
-      {!blocked && <header className="profile-public-chapter"><p className="eyebrow">Ce que vous ouvrez aux autres</p><h2>Des chemins et des voix.</h2></header>}
       {!blocked && <div className="profile-wide-content">
         <section id="profile-lists" className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>

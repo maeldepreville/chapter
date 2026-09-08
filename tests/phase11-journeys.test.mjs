@@ -95,6 +95,25 @@ test("a list opened from Maël's profile preserves its owner and return context"
   });
 });
 
+test("opening the destination already on screen never stacks it as its own return target", () => {
+  const ui = journey({ view: "profile" });
+  withWindow(() => {
+    let profile = ui.component("ProfileView");
+    assert.equal(profile.props.backLabel, "Retour à Découvrir");
+
+    const account = nodes(ui.render(), (node) => node.type === "button" && node.props["aria-label"] === "Ouvrir le compte de Maël")[0];
+    assert.ok(account);
+    account.props.onClick();
+    ui.button("Voir mon profil").props.onClick();
+    profile = ui.component("ProfileView");
+    assert.equal(profile.props.owner, "self");
+    assert.equal(profile.props.backLabel, "Retour à Découvrir");
+
+    profile.props.onBack();
+    assert.equal(ui.component("DiscoverView").type.name, "DiscoverView");
+  });
+});
+
 test("reading status, optional date and Journal traces remain continuous", () => {
   const ui = journey({ view: "work", entries: {}, traces: [] });
   withWindow(() => {
