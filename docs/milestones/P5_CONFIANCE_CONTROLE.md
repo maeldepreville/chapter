@@ -1,8 +1,8 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 59**
+Statut : **candidate ajustée publiée pour recette**
 
-Dernière mise à jour : 7 septembre 2026.
+Dernière mise à jour : 8 septembre 2026.
 
 ## Résultat à évaluer
 
@@ -45,16 +45,17 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - la barre personnelle reprend strictement la géométrie de la barre visiteur — hauteur, marges, espacement et centrage — afin que la création du compte ne produise plus aucune réduction perceptible des titres ;
 - l'illustration du Profil quitte la grande bannière : une véritable scène peinte à l'aquarelle, détourée sur transparence sans masque ni flou CSS, est ancrée dans l'angle supérieur droit puis fondue vers la page par un voile progressif ;
 - l'ouverture du Profil devient un bandeau éditorial compact : l'accueil et l'aquarelle introduisent immédiatement la carte, les honneurs et les œuvres de chevet, sans hero surdimensionné ; listes et traces conservent ensuite leur respiration pleine largeur.
+- l'import fusionne les lectures et traces reconnues sans effacer l'historique local absent de l'archive ; une critique contenue dans l'archive devient un brouillon privé et sa trace est explicitement marquée `Critique importée · privée`. Elle reste absente des critiques publiques et du Profil jusqu'à une nouvelle publication volontaire ; une critique déjà publique dans la session n'est jamais remplacée par l'import.
 
 ## Données et limites
 
-Les effets sont simulés dans la session frontend. L'export est réellement téléchargé par le navigateur et son import reconnaît le format `chapter-export` version 1, mais aucun stockage distant n'est impliqué. La réauthentification de suppression est représentée par une vérification locale ; son contrôle serveur, les délais de conservation et la migration depuis des services tiers relèvent du lot 2. Les cas de fichiers extrêmes, erreurs réseau, audit exhaustif d'accessibilité et robustesse responsive relèvent de P6.
+Les effets sont simulés dans la session frontend. L'export est réellement téléchargé par le navigateur et son import reconnaît le format `chapter-export` version 1, mais aucun stockage distant n'est impliqué. L'import ne restaure ni l'identité publique, ni les relations, ni les blocages : ces données sont présentes dans l'archive complète mais leur réactivation pourrait produire des effets publics ou relationnels sans geste actuel. La réauthentification de suppression est représentée par une vérification locale ; son contrôle serveur, les délais de conservation et la migration depuis des services tiers relèvent du lot 2. Les cas de fichiers extrêmes, erreurs réseau, audit exhaustif d'accessibilité et robustesse responsive relèvent de P6.
 
 ## Preuves avant recette
 
 - tests P5 dédiés sur la composition, les frontières de confidentialité, le blocage transversal et le retour public après suppression ;
 - non-régression P0 à P4 et historique lot 1 ;
-- lint et construction réussis, **146/146 tests automatisés** et `git diff --check` sans erreur ;
+- lint et construction réussis, **151/151 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 59 est publiée avec l'accès existant le 8 septembre 2026. Elle complète la colonne de la carte par un sommaire de navigation et propage immédiatement toute modification du nom public dans la coque personnelle. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
+La candidate publiée avec l'accès existant complète la colonne de la carte par un sommaire de navigation, propage immédiatement toute modification du nom public dans la coque personnelle et garantit désormais qu'un contenu importé reste privé jusqu'à une nouvelle publication volontaire. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.

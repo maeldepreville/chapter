@@ -51,7 +51,7 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 | Parcours de recommandation, œuvre d'ancrage et liste mise en avant | Moteur de recommandation et configuration éditoriale administrable. |
 | Critiques, réponses, états de suivi et dates sociales centralisés dans `social-data.ts` | Service social persistant avec profils navigables, modération et permissions côté serveur. |
 | Route historique `/profil/mael-depreville` et routes candidates `/lecteurs/:actorId`, `/listes/:listId` | Slugs publics durables résolus par les services de profils et de listes. |
-| Nom public modifiable, comptes bloqués et format d'archive `chapter-export` version 1 dans `page.tsx` / `p5-trust.tsx` | Réglages de compte persistés, blocage transversal côté serveur et service d'export/import contrôlé. Le prototype ne conserve ces effets que dans la session et ne republie jamais les contenus importés. |
+| Nom public modifiable, comptes bloqués, indicateur `reviewPublished` et format d'archive `chapter-export` version 1 dans `page.tsx` / `p5-trust.tsx` | Réglages de compte persistés, blocage transversal côté serveur et service d'export/import contrôlé. Le prototype ne conserve ces effets que dans la session ; une critique importée reste un brouillon privé jusqu'à sa republication volontaire. |
 
 Toute nouvelle donnée simulée doit rejoindre l'un de ces modules canoniques ou être ajoutée à ce tableau. Elle ne doit pas être recopiée dans un composant pour piloter une permission, une destination ou une relation.
 

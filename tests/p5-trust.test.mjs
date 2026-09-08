@@ -89,6 +89,62 @@ test("P5 settings open over the connected view and account deletion returns to p
   }
 });
 
+test("P5 import keeps imported reviews private and merges journal traces without erasing local history", () => {
+  const harness = hookHarness();
+  const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { pathname: "/reglages" }, history: { pushState() {}, replaceState() {} }, scrollTo() {}, requestAnimationFrame(callback) { callback(); return 1; }, addEventListener() {}, removeEventListener() {} };
+  const works = publicWorks.slice(0, 2);
+  const [firstWork, secondWork] = works;
+  const initialData = {
+    works,
+    view: "journal",
+    entries: {
+      [firstWork.id]: { readingStatus: "Lu", readingDate: "1 septembre 2026", note: "Note locale", review: "Critique déjà publique", reviewPublished: true, rating: 5, completedReadings: 1 },
+      [secondWork.id]: { readingStatus: null, readingDate: "", note: "", review: "", reviewPublished: false, rating: 0, completedReadings: 0 },
+    },
+    traces: [{ id: "trace-local", workId: firstWork.id, date: "Aujourd’hui", kind: "Note privée", text: "Trace locale", action: "note" }],
+  };
+  try {
+    const render = () => harness.render(Home, { refined: true, initialData, initialSettingsOpen: true });
+    let tree = render();
+    let settings = nodes(tree, (node) => node.type?.name === "TrustSettings")[0];
+    const result = settings.props.onImport({
+      format: "chapter-export",
+      version: 1,
+      exportedAt: "2026-09-08T08:00:00.000Z",
+      account: { publicName: "Autre nom" },
+      privacy: { journal: "private", library: "private", notes: "private" },
+      privateRecords: [
+        { workId: firstWork.id, readingStatus: "Lu", note: "Note restaurée", review: "Ne doit pas remplacer la publication", rating: 1, completedReadings: 2 },
+        { workId: secondWork.id, readingStatus: "À lire", review: "Critique importée", rating: 4, completedReadings: 0 },
+      ],
+      journalTraces: [{ id: "trace-imported-review", workId: secondWork.id, date: "Hier", kind: "Critique publique", text: "Critique importée", action: "review" }],
+      publications: [{ authorId: "self", workId: secondWork.id, rating: 4, date: "Hier", text: "Critique importée" }],
+      followingActorIds: ["lina"],
+      blockedActorIds: ["theo"],
+    });
+    assert.deepEqual(result, { records: 2, traces: 1 });
+
+    tree = render();
+    settings = nodes(tree, (node) => node.type?.name === "TrustSettings")[0];
+    const exported = settings.props.createExport();
+    const firstRecord = exported.privateRecords.find((record) => record.workId === firstWork.id);
+    const secondRecord = exported.privateRecords.find((record) => record.workId === secondWork.id);
+    assert.equal(firstRecord.note, "Note restaurée");
+    assert.equal(firstRecord.review, "Critique déjà publique");
+    assert.equal(firstRecord.rating, 5);
+    assert.equal(secondRecord.review, "Critique importée");
+    assert.equal(secondRecord.reviewPublished, false);
+    assert.deepEqual(exported.publications.map((publication) => publication.text), ["Critique déjà publique"]);
+    assert.deepEqual(exported.journalTraces.map((trace) => trace.id), ["trace-imported-review", "trace-local"]);
+    assert.equal(exported.journalTraces[0].kind, "Critique importée · privée");
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
+
 test("P5 has a direct modal route and dedicated responsive styling", async () => {
   const [route, css, globals] = await Promise.all([readFile(new URL("../app/reglages/page.tsx", import.meta.url), "utf8"), readFile(new URL("../app/p5-trust.css", import.meta.url), "utf8"), readFile(new URL("../app/globals.css", import.meta.url), "utf8")]);
   assert.match(route, /view: "journal"/);

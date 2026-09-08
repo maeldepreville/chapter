@@ -2,7 +2,7 @@ export type JournalTrace = {
   id: string;
   workId: string;
   date: string;
-  kind: "Note privée" | "Critique publique" | "Lecture commencée" | "Lecture terminée" | "Relecture commencée" | "Relecture terminée";
+  kind: "Note privée" | "Critique publique" | "Critique importée · privée" | "Lecture commencée" | "Lecture terminée" | "Relecture commencée" | "Relecture terminée";
   text?: string;
   action?: "note" | "review";
 };
