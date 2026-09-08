@@ -378,6 +378,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const openProfile = (owner: ProfileOwner) => {
     if (p1Public && publicActivated && owner === "self") {
+      if (keepCurrentDestination("profile", "self")) return;
       enterPersonalSpace("profile");
       return;
     }
@@ -644,6 +645,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     }
     setAccessMode("personal");
     setDestinationOverlay(null);
+    setAccountOpen(false);
+    setSearchOpen(false);
     if (destination === "profile") setProfileOwner("self");
     setCurrentView(destination);
     const path = destination === "journal" ? "/journal" : destination === "library" ? "/bibliotheque" : PUBLIC_PROFILE_PATH;

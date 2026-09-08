@@ -70,7 +70,6 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
 
   const importChapterData = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    event.target.value = "";
     if (!file) return;
     try {
       const snapshot = JSON.parse(await file.text()) as ChapterExportSnapshot;
@@ -81,6 +80,8 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
     } catch {
       setDataFeedback(null);
       setNotice("Ce fichier n’est pas une archive Chapter reconnue. Aucune donnée n’a été modifiée.");
+    } finally {
+      event.target.value = "";
     }
   };
 

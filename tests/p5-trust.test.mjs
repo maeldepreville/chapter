@@ -53,7 +53,13 @@ test("successful export and import use the same visible feedback surface as publ
     assert.equal(feedback.props.role, "status");
 
     const importInput = nodes(tree, (node) => node.type === "input" && node.props?.type === "file")[0];
-    await importInput.props.onChange({ target: { files: [{ text: async () => JSON.stringify(trustProps.createExport()) }], value: "archive.json" } });
+    const importTarget = { files: [], value: "archive.json" };
+    importTarget.files = [{ text: async () => {
+      assert.equal(importTarget.value, "archive.json", "the browser-backed file must be read before the chooser is reset");
+      return JSON.stringify(trustProps.createExport());
+    } }];
+    await importInput.props.onChange({ target: importTarget });
+    assert.equal(importTarget.value, "");
     tree = render();
     feedback = nodes(tree, (node) => node.props?.className === "temporary-feedback")[0];
     assert.match(textOf(feedback), /Import privé terminé/);
@@ -120,6 +126,12 @@ test("P5 settings open over the connected view and account deletion returns to p
     if (previousWindow === undefined) delete globalThis.window;
     else globalThis.window = previousWindow;
   }
+});
+
+test("opening the personal profile closes account overlays and does not stack the current profile", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /const enterPersonalSpace[\s\S]*?setAccountOpen\(false\);[\s\S]*?setSearchOpen\(false\);/);
+  assert.match(page, /if \(p1Public && publicActivated && owner === "self"\) \{\s*if \(keepCurrentDestination\("profile", "self"\)\) return;/);
 });
 
 test("P5 import keeps imported reviews private and merges journal traces without erasing local history", () => {

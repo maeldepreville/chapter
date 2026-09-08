@@ -7,7 +7,7 @@ Ce document résume l'état utile ; les journaux restent consultables à la dema
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — P5 sur le Site de recette. Profil recentré, nom public unifié et import séparant brouillons privés et critiques publiées. P0 à P4 validés ; P5 reste hors GitHub et `main` attend P7.
+- **Phase active :** refonte visible pré-lot 2 — P5 audité sur le Site : Profil recentré, identité unifiée, import privé et navigation sans superposition ni auto-empilement. P0 à P4 validés ; P5 reste hors GitHub et `main` attend P7.
 - **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
