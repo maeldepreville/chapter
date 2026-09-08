@@ -18,6 +18,8 @@ test("keeps the profile portrait coherent without an unnecessary local index", a
   assert.match(stylesheet, /\.profile-library-portrait\s*\{[^}]*grid-template-columns:/s);
   assert.match(stylesheet, /\.profile-library-portrait \.profile-honors-band\s*\{[^}]*border-left:/s);
   assert.match(stylesheet, /\.profile-library-portrait \.profile-honors-band \.profile-badge-row\s*\{[^}]*grid-template-columns:\s*1fr;[^}]*grid-template-rows:\s*repeat\(3,/s);
+  assert.match(stylesheet, /\.profile-library-portrait \.profile-honors-band \.profile-badge-row img\s*\{[^}]*width:\s*6\.5rem;/s);
+  assert.match(stylesheet, /\.destination-card\s*\{[^}]*overflow:\s*hidden auto;[^}]*scrollbar-gutter:\s*stable;/s);
   assert.match(stylesheet, /@media \(max-width: 899px\)[\s\S]*\.profile-library-portrait \.profile-honors-band\s*\{[^}]*order:\s*-1;/s);
   assert.match(stylesheet, /@media \(max-width: 899px\)[\s\S]*\.profile-opening\s*\{[^}]*grid-template-columns:\s*1fr;/s);
 });
