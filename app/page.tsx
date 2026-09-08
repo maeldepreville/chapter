@@ -53,6 +53,7 @@ type PersonalEntry = {
   readingDate: string;
   note: string;
   review: string;
+  reviewPublished: boolean;
   rating: number;
   progress?: OptionalProgress;
   completedReadings?: number;
@@ -62,6 +63,7 @@ const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 
 const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
 const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
+const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.review && (entry.reviewPublished ?? true));
 
 export const defaultWorks: readonly Work[] = [...coreWorks, ...denseWorks.slice(0, 494)];
 type WorkId = string;
@@ -213,7 +215,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const previousPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
+  const previousPublication = useRef({ workId: selectedWorkId, review: "", reviewPublished: false, rating: 0 });
   const latestPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
   const previousReviewTrace = useRef<{ trace: JournalTrace | undefined; index: number }>({ trace: undefined, index: -1 });
   const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
@@ -222,6 +224,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const navigationStack = useRef<NavigationSnapshot[]>([]);
   const selectedWork = works.find((work) => work.id === selectedWorkId);
   const entry = entries[selectedWorkId] ?? emptyEntry;
+  const reviewIsPublished = isReviewPublished(entry);
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
   const libraryWorks = works
     .filter((work) => entries[work.id]?.readingStatus)
@@ -453,7 +456,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const personalPublicReviews: readonly PrototypePublicReview[] = works.flatMap((work) => {
     const personalEntry = entries[work.id];
-    return personalEntry?.review ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
+    return personalEntry && isReviewPublished(personalEntry) ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
   });
 
   const createChapterExport = (): ChapterExportSnapshot => ({
@@ -470,30 +473,55 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   });
 
   const importChapterExport = (snapshot: ChapterExportSnapshot) => {
-    let records = 0;
+    const knownWorkIds = new Set(works.map((work) => work.id));
+    const importedRecords = snapshot.privateRecords.filter((record) => record && typeof record === "object" && typeof record.workId === "string" && knownWorkIds.has(record.workId));
     setEntries((current) => {
       const next = { ...current };
-      snapshot.privateRecords.forEach((record) => {
-        const workId = typeof record.workId === "string" ? record.workId : "";
-        if (!works.some((work) => work.id === workId)) return;
+      importedRecords.forEach((record) => {
+        const workId = record.workId as string;
+        const currentEntry = next[workId] ?? emptyEntry;
+        const currentReviewIsPublic = isReviewPublished(currentEntry);
         const status = record.readingStatus;
+        const progress = record.progress;
+        const importedProgress = progress && typeof progress === "object" && progress.kind === "bookmark" && typeof progress.page === "number" && Number.isFinite(progress.page) && progress.page >= 1
+          ? { kind: "bookmark" as const, page: Math.floor(progress.page), ...(typeof progress.totalPages === "number" && Number.isFinite(progress.totalPages) && progress.totalPages >= progress.page ? { totalPages: Math.floor(progress.totalPages) } : {}), updatedAt: typeof progress.updatedAt === "string" ? progress.updatedAt : snapshot.exportedAt }
+          : undefined;
+        const importedReview = typeof record.review === "string" ? record.review.trim() : "";
         next[workId] = {
           ...emptyEntry,
-          ...next[workId],
-          readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : null,
-          readingDate: typeof record.readingDate === "string" ? record.readingDate : "",
-          note: typeof record.note === "string" ? record.note : "",
-          review: typeof record.review === "string" ? record.review : "",
-          rating: typeof record.rating === "number" && record.rating >= 0 && record.rating <= 5 ? record.rating : 0,
-          completedReadings: typeof record.completedReadings === "number" ? record.completedReadings : 0,
+          ...currentEntry,
+          readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : currentEntry.readingStatus,
+          readingDate: typeof record.readingDate === "string" && record.readingDate ? record.readingDate : currentEntry.readingDate,
+          note: typeof record.note === "string" && record.note.trim() ? record.note.trim() : currentEntry.note,
+          review: currentReviewIsPublic || !importedReview ? currentEntry.review : importedReview,
+          reviewPublished: currentReviewIsPublic,
+          rating: currentReviewIsPublic || typeof record.rating !== "number" || !Number.isFinite(record.rating) || record.rating < 0 || record.rating > 5 ? currentEntry.rating : record.rating,
+          progress: importedProgress ?? currentEntry.progress,
+          completedReadings: typeof record.completedReadings === "number" && Number.isFinite(record.completedReadings) && record.completedReadings >= 0 ? Math.max(currentEntry.completedReadings ?? 0, Math.floor(record.completedReadings)) : currentEntry.completedReadings,
         };
-        records += 1;
       });
       return next;
     });
-    const importedTraces = snapshot.journalTraces.filter((trace): trace is unknown & JournalTrace => typeof trace.id === "string" && typeof trace.workId === "string" && typeof trace.date === "string" && typeof trace.kind === "string").map((trace) => ({ ...trace }));
-    if (importedTraces.length) setJournalTraces(importedTraces);
-    return { records, traces: importedTraces.length };
+    const allowedTraceKinds = new Set<JournalTrace["kind"]>(["Note privée", "Critique publique", "Critique importée · privée", "Lecture commencée", "Lecture terminée", "Relecture commencée", "Relecture terminée"]);
+    const importedTracesById = new Map<string, JournalTrace>();
+    snapshot.journalTraces.forEach((trace) => {
+      if (!trace || typeof trace !== "object" || typeof trace.id !== "string" || typeof trace.workId !== "string" || !knownWorkIds.has(trace.workId) || typeof trace.date !== "string" || typeof trace.kind !== "string" || !allowedTraceKinds.has(trace.kind as JournalTrace["kind"])) return;
+      const isImportedReview = trace.kind === "Critique publique" || trace.kind === "Critique importée · privée" || trace.action === "review";
+      importedTracesById.set(trace.id, {
+        id: trace.id,
+        workId: trace.workId,
+        date: trace.date,
+        kind: isImportedReview ? "Critique importée · privée" : trace.kind as JournalTrace["kind"],
+        ...(typeof trace.text === "string" ? { text: trace.text } : {}),
+        ...(trace.action === "note" || isImportedReview ? { action: isImportedReview ? "review" as const : "note" as const } : {}),
+      });
+    });
+    const importedTraces = [...importedTracesById.values()];
+    if (importedTraces.length) setJournalTraces((current) => {
+      const importedIds = new Set(importedTraces.map((trace) => trace.id));
+      return [...importedTraces, ...current.filter((trace) => !importedIds.has(trace.id))];
+    });
+    return { records: importedRecords.length, traces: importedTraces.length };
   };
 
   const deletePrototypeAccount = () => {
@@ -848,12 +876,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const publishReview = () => {
     const cleanReview = reviewDraft.trim();
     if (!cleanReview) return;
-    previousPublication.current = { workId: selectedWorkId, review: entry.review, rating: entry.rating };
+    previousPublication.current = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished, rating: entry.rating };
     latestPublication.current = { workId: selectedWorkId, review: cleanReview, rating: ratingDraft };
     const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
     previousReviewTrace.current = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
-    const publicationLabel = entry.review ? "Critique mise à jour" : "Critique publiée";
-    updateEntry({ review: cleanReview, rating: ratingDraft });
+    const publicationLabel = reviewIsPublished ? "Critique mise à jour" : "Critique publiée";
+    updateEntry({ review: cleanReview, reviewPublished: true, rating: ratingDraft });
     setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "review", cleanReview, "Aujourd’hui"));
     setReviewOpen(false);
     setReviewCloseConfirm(false);
@@ -863,7 +891,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (feedback?.kind === "publication") {
       const previous = previousPublication.current;
       setSelectedWorkId(previous.workId);
-      updateEntryFor(previous.workId, { review: previous.review, rating: previous.rating });
+      updateEntryFor(previous.workId, { review: previous.review, reviewPublished: previous.reviewPublished, rating: previous.rating });
       const { trace: restoredTrace, index } = previousReviewTrace.current;
       setJournalTraces((traces) => {
         const rest = traces.filter((trace) => trace.workId !== previous.workId || trace.action !== "review");
@@ -1096,8 +1124,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               social={(
                 <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
                   <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
-                  <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button></div>
-                  <SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
+                  <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Reprendre ma critique importée" : "Écrire une critique"}</button></div>
+                  <SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
                 </section>
               )}
             />
@@ -1306,7 +1334,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 </button>
                 {renderStatusPopover("opening", selectedWork.id)}
               </div>
-              <button className="quiet-action" type="button" onClick={openReview}>{entry.review ? "Modifier ma critique" : "Écrire une critique"}</button>
+              <button className="quiet-action" type="button" onClick={openReview}>{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Reprendre ma critique importée" : "Écrire une critique"}</button>
             </div>
             {renderDateInvitation("opening", selectedWork.id)}
             <div className="community-rating" aria-label={`Note moyenne de ${selectedWork.rating} sur 5`}>
@@ -1368,9 +1396,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               <div>
                 <p className="row-label">Ma critique</p>
                 <p className="row-value">{entry.review || "Vous n’avez pas encore publié de critique."}</p>
+                {entry.review && !reviewIsPublished && <p className="privacy-note">Importée · privée jusqu’à votre publication</p>}
                 {entry.review && entry.rating > 0 && <p className="privacy-note" aria-label={`${entry.rating} étoiles sur 5`}>{"★".repeat(entry.rating)}{"☆".repeat(5 - entry.rating)}</p>}
               </div>
-              <button className="text-action" type="button" onClick={openReview}>{entry.review ? "Modifier" : "Écrire une critique"}</button>
+              <button className="text-action" type="button" onClick={openReview}>{reviewIsPublished ? "Modifier" : entry.review ? "Relire et publier" : "Écrire une critique"}</button>
             </div>
           </section>
 
@@ -1400,7 +1429,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <p>Ce que les lecteurs retiennent de cette œuvre.</p>
               </div>
             </div>
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.review} personalRating={entry.rating} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
@@ -1564,7 +1593,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Publique</p>
-                <h2 id="review-title">{entry.review ? "Modifier ma critique" : "Écrire une critique"}</h2>
+                <h2 id="review-title">{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Publier ma critique importée" : "Écrire une critique"}</h2>
               </div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
             </div>
@@ -1622,7 +1651,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             ) : (
               <div className="modal-actions">
                 <button className="quiet-action" type="button" onClick={requestReviewClose}>Annuler</button>
-                <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{entry.review ? "Enregistrer les modifications" : "Publier la critique"}</button>
+                <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{reviewIsPublished ? "Enregistrer les modifications" : "Publier la critique"}</button>
               </div>
             )}
           </section>
