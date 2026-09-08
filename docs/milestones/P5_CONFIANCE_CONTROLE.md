@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 55**
+Statut : **candidate ajustée publiée pour recette sur la version Sites 56**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -40,7 +40,7 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - le Profil propriétaire reçoit un seuil d'accueil distinct, illustré comme un coin de lecture habité, tandis que le portrait public reste inchangé ; la carte de lecteur conserve son rôle signature et l'ouverture PDR1B validée ;
 - les listes et critiques du Profil propriétaire adoptent un rythme plus posé, avec des titres moins monumentaux et une lecture latérale sur desktop qui redevient linéaire sur mobile.
 - la barre personnelle reprend strictement la géométrie de la barre visiteur — hauteur, marges, espacement et centrage — afin que la création du compte ne produise plus aucune réduction perceptible des titres ;
-- l'illustration du Profil quitte la grande bannière : elle est désormais ancrée en haut à gauche, fondue dans la page par un masque irrégulier, translucide et sans bord rectangulaire, comme un lavis d'aquarelle.
+- l'illustration du Profil quitte la grande bannière : une véritable scène peinte à l'aquarelle, détourée sur transparence sans masque ni flou CSS, est désormais ancrée dans l'angle supérieur droit.
 
 ## Données et limites
 
@@ -53,4 +53,4 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 - lint et construction réussis, **146/146 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 55 est publiée avec l'accès existant le 7 septembre 2026. Elle corrige la géométrie restante de la navigation et remplace la bannière du Profil par une composition en lavis. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
+La version Sites 56 est publiée avec l'accès existant le 8 septembre 2026. Elle conserve la navigation validée et remplace le faux lavis photographique du Profil par une aquarelle transparente dans l'angle supérieur droit. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
