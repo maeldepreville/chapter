@@ -69,10 +69,11 @@
 
   /* AM1 / S2 / QRM1b. Le seuil responsive de référence est déclaré en TS. */
   --motion-instant: 0ms;
-  --motion-feedback: 120ms;
-  --motion-surface: 180ms;
+  --motion-press: 110ms;
+  --motion-feedback: 180ms;
+  --motion-surface: 260ms;
   --motion-card-turn: 440ms;
-  --ease-standard: ease;
+  --ease-standard: cubic-bezier(0.2, 0.72, 0.2, 1);
   --ease-surface: cubic-bezier(0.22, 1, 0.36, 1);
   --focus-ring: 3px solid var(--color-accent);
 }
@@ -81,6 +82,7 @@
   :root {
     --motion-feedback: 0ms;
     --motion-surface: 0ms;
+    --motion-press: 0ms;
     --motion-card-turn: 0ms;
   }
 }

@@ -32,7 +32,7 @@ body {
   line-height: 1.6;
 }
 button, input, select, textarea { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
+button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform var(--motion-press) var(--ease-standard); }
 button { color: inherit; }
 a { color: inherit; text-decoration: none; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -190,7 +190,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .book-cover .cover-copy > small { font-family: var(--font-editorial); font-size: 1rem; }
 .cover-image { background: #e8e1d7; }
-.cover-image img { object-fit: cover; }
+.cover-image img { object-fit: cover; transition: opacity var(--motion-surface) var(--ease-surface); }
 .cover-title-short { -webkit-line-clamp: 2; }
 .cover-title-medium { -webkit-line-clamp: 3; }
 .cover-title-long { -webkit-line-clamp: 4; }
@@ -926,6 +926,30 @@ dialog.chapter-modal::backdrop { background: transparent; }
 .title-link, .profile-section-link, .profile-card-turn-action,
 .library-status-trigger, .library-sort-trigger, .close-button,
 .account-menu button, .status-popover > button {
-  transition: color var(--motion-feedback) var(--ease-standard), background-color var(--motion-feedback) var(--ease-standard), border-color var(--motion-feedback) var(--ease-standard);
+  transition: color var(--motion-feedback) var(--ease-standard), background-color var(--motion-feedback) var(--ease-standard), border-color var(--motion-feedback) var(--ease-standard), opacity var(--motion-feedback) var(--ease-standard), transform var(--motion-feedback) var(--ease-standard);
 }
-button:active, a:active, button:focus-visible, a:focus-visible { transition-duration: 0ms; }
+button:not(.overlay-backdrop, .status-backdrop):active, a:active { transform: scale(0.985); transition-duration: var(--motion-press); }
+button:focus-visible, a:focus-visible { transition-duration: 0ms; }
+
+dialog.chapter-modal[open] > :not(.overlay-backdrop) { animation: chapter-surface-in var(--motion-surface) var(--ease-surface) both; }
+.account-menu, .status-popover, .library-sort-options, .p2-status-menu { transform-origin: top center; animation: chapter-menu-in var(--motion-feedback) var(--ease-surface) both; }
+.mobile-account-sheet { animation: chapter-sheet-in var(--motion-surface) var(--ease-surface) both; }
+.temporary-feedback, .p2-feedback, .conversation-notice { animation: chapter-toast-in var(--motion-surface) var(--ease-surface) both; }
+.fade-host[data-exiting] .mobile-account-sheet { opacity: 0; transform: translateY(0.75rem); transition: opacity var(--motion-feedback) var(--ease-standard), transform var(--motion-surface) var(--ease-surface); }
+
+@keyframes chapter-surface-in {
+  from { opacity: 0.9; transform: translateY(0.65rem) scale(0.992); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-menu-in {
+  from { opacity: 0; transform: translateY(-0.35rem) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-sheet-in {
+  from { opacity: 0.92; transform: translateY(1rem); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chapter-toast-in {
+  from { opacity: 0; transform: translateY(0.55rem) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}

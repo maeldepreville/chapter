@@ -190,6 +190,13 @@
   .p1-work-line:hover .p1-line-arrow { transform: translate(0.18rem, -0.18rem); }
 }
 
+@media (hover: none), (pointer: coarse) {
+  .p1-personal-intro-primary:active .p1-personal-intro-asset { transform: translateY(-0.2rem); }
+  .p1-personal-intro--journal .p1-personal-intro-primary:active .p1-personal-intro-asset { transform: rotate(-0.5deg) translateY(-0.2rem); }
+  .p1-work-line:active strong { color: var(--color-accent); }
+  .p1-work-line:active .p1-line-arrow { transform: translate(0.14rem, -0.14rem); }
+}
+
 @media (max-width: 899px) {
   .p1-public-header { grid-template-columns: 1fr auto; min-height: 4.25rem; padding: 0 var(--space-4); }
   .p1-public-header nav,
