@@ -237,28 +237,38 @@
   margin: 0 auto;
   padding: clamp(4rem, 8vw, 7rem) 3rem 7rem;
 }
-.profile-home { padding-top: clamp(2rem, 4vw, 3.5rem); }
+.profile-home { padding-top: clamp(1.75rem, 3vw, 2.75rem); }
 .profile-homecoming {
-  display: grid;
-  grid-template-columns: minmax(22rem, 0.9fr) minmax(24rem, 1.1fr);
-  grid-template-areas: "copy art";
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: start;
-  margin: -1rem clamp(-2rem, -2vw, -1rem) clamp(4rem, 7vw, 6rem) 0;
+  position: relative;
+  min-height: clamp(14.5rem, 22vw, 18.5rem);
+  margin: -0.75rem clamp(-2rem, -2vw, -1rem) clamp(2.75rem, 4vw, 3.75rem) 0;
+  padding: clamp(2rem, 4vw, 3.5rem) 0 2.5rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  isolation: isolate;
 }
 .profile-homecoming-art {
-  grid-area: art;
-  position: relative;
-  justify-self: end;
-  width: min(100%, 41rem);
-  min-height: clamp(18rem, 30vw, 25rem);
-  margin-top: clamp(-2.5rem, -3vw, -1.25rem);
-  opacity: 0.78;
+  position: absolute;
+  top: clamp(-2.5rem, -3vw, -1.25rem);
+  right: 0;
+  bottom: -0.75rem;
+  z-index: 0;
+  width: min(62%, 46rem);
+  opacity: 0.8;
+}
+.profile-homecoming-art::after {
+  position: absolute;
+  inset: -1px;
+  background:
+    linear-gradient(90deg, var(--paper) 0%, rgb(247 243 236 / 0.94) 20%, rgb(247 243 236 / 0.46) 48%, transparent 76%),
+    linear-gradient(180deg, transparent 48%, rgb(247 243 236 / 0.24) 68%, var(--paper) 100%);
+  pointer-events: none;
+  content: "";
 }
 .profile-homecoming-image { object-fit: contain; object-position: right top; }
-.profile-homecoming-copy { grid-area: copy; max-width: 31rem; padding-top: clamp(1.5rem, 4vw, 3.5rem); }
+.profile-homecoming-copy { position: relative; z-index: 1; max-width: 29rem; }
 .profile-homecoming-copy .eyebrow { margin-bottom: 0.65rem; color: var(--brick); }
-.profile-homecoming-title { margin: 0; font-family: var(--font-editorial); font-size: clamp(2.8rem, 5vw, 4.8rem); font-weight: 450; line-height: 0.94; letter-spacing: -0.045em; text-wrap: balance; }
+.profile-homecoming-title { margin: 0; font-family: var(--font-editorial); font-size: clamp(2.75rem, 4.3vw, 4rem); font-weight: 450; line-height: 0.96; letter-spacing: -0.04em; text-wrap: balance; }
 .profile-homecoming-copy > p:last-child { max-width: 25rem; margin: 1.2rem 0 0; color: #5d554d; font-family: var(--font-editorial); font-size: clamp(1rem, 1.45vw, 1.2rem); line-height: 1.45; }
 .profile-opening {
   display: grid;
@@ -266,7 +276,9 @@
   gap: clamp(4rem, 8vw, 8rem);
   align-items: start;
 }
+.profile-home .profile-opening { grid-template-columns: minmax(19rem, 0.82fr) minmax(0, 1.48fr); gap: clamp(4rem, 7vw, 7rem); }
 .profile-identity-column { min-width: 0; }
+.profile-home .profile-identity-column { width: min(100%, 26rem); }
 .profile-card-flip-shell { -webkit-perspective: 75rem; perspective: 75rem; }
 .profile-card-flip {
   display: grid;
@@ -389,7 +401,7 @@
 .profile-photo-remove-dialog { position: relative; z-index: 1; width: min(100%, 25rem); padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1.4rem 3.5rem rgb(36 33 31 / 0.2); }
 .profile-photo-remove-dialog h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
 .profile-photo-remove-dialog > p:not(.eyebrow) { margin: 0.7rem 0 1.4rem; color: var(--muted); font-family: var(--font-editorial); }
-.profile-honors { margin-top: 2.3rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+.profile-honors { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .profile-section-link { display: flex; justify-content: space-between; width: 100%; padding: 0 0 0.9rem; background: transparent; border: 0; font-family: var(--font-editorial); font-size: 1.2rem; cursor: pointer; }
 @media (hover: hover) and (pointer: fine) {
   .profile-section-link:hover { color: var(--brick); }
@@ -398,8 +410,8 @@
 .profile-badge-row > div { display: grid; justify-items: center; align-content: start; min-width: 0; text-align: center; }
 .profile-badge-row img { width: 100%; height: auto; }
 .profile-badge-row span { font-size: 0.68rem; line-height: 1.25; }
-.profile-section.profile-opening-favorites { align-self: center; min-width: 0; padding-top: 0; padding-bottom: 0; border-bottom: 0; }
-.profile-wide-content { min-width: 0; margin-top: clamp(4rem, 6vw, 5.5rem); border-top: 1px solid var(--line); }
+.profile-section.profile-opening-favorites { align-self: center; min-width: 0; padding: clamp(1rem, 3vw, 2.5rem) 0; border-bottom: 0; }
+.profile-wide-content { min-width: 0; margin-top: clamp(4.5rem, 7vw, 6.5rem); border-top: 1px solid var(--line); }
 .profile-wide-content > .profile-section:first-child { padding-top: clamp(3.5rem, 6vw, 5rem); }
 .profile-section { padding: 1rem 0 4.5rem; border-bottom: 1px solid var(--line); }
 .profile-section + .profile-section { padding-top: 4.5rem; }
@@ -583,13 +595,16 @@
   .exact-result-list { grid-template-columns: 1fr; }
   .compact-path .intent-panel { display: none; }
   .profile-page { min-height: auto; padding: 3rem 1.1rem 6rem; }
-  .profile-home { padding-top: 1.5rem; }
-  .profile-homecoming { grid-template-columns: minmax(0, 1fr); grid-template-areas: "art" "copy"; gap: 0.6rem; margin: -1rem -1rem 4rem 0; }
-  .profile-homecoming-art { width: min(calc(100% + 1rem), 38rem); min-height: clamp(17rem, 56vw, 24rem); margin-top: -1rem; }
-  .profile-homecoming-copy { max-width: 34rem; padding: 0 1rem; }
+  .profile-home { padding-top: 1.25rem; }
+  .profile-homecoming { min-height: clamp(14rem, 42vw, 17rem); margin: -0.5rem -1rem 3rem 0; padding: 1.8rem 0 2.2rem; }
+  .profile-homecoming-art { top: -1.5rem; right: -2rem; bottom: -0.5rem; width: min(67%, 31rem); }
+  .profile-homecoming-copy { max-width: min(67%, 27rem); padding: 0; }
+  .profile-homecoming-title { font-size: clamp(2.55rem, 8vw, 3.6rem); }
   .profile-home .profile-wide-content > .profile-section { grid-template-columns: 1fr; gap: 1.8rem; }
   .profile-opening { grid-template-columns: 1fr; gap: 4rem; }
+  .profile-home .profile-opening { grid-template-columns: 1fr; gap: 3.5rem; }
   .profile-identity-column { width: min(100%, 32rem); }
+  .profile-home .profile-identity-column { width: min(100%, 32rem); }
   .profile-card-front { grid-template-columns: 7.2rem minmax(0, 1fr); }
   .profile-card-name { font-size: clamp(2.6rem, 10vw, 3.5rem); }
   .profile-card-name.medium { font-size: clamp(2.15rem, 8vw, 2.9rem); }
@@ -626,11 +641,17 @@
 }
 
 @media (max-width: 560px) {
-  .profile-homecoming-art { min-height: 15rem; opacity: 0.72; }
+  .profile-homecoming { min-height: 16.5rem; margin-bottom: 2.75rem; padding-top: 1.5rem; }
+  .profile-homecoming-art { top: -0.5rem; right: -5.5rem; bottom: 0; width: 27rem; opacity: 0.68; }
+  .profile-homecoming-art::after {
+    background:
+      linear-gradient(90deg, var(--paper) 0%, rgb(247 243 236 / 0.96) 27%, rgb(247 243 236 / 0.64) 48%, transparent 78%),
+      linear-gradient(180deg, transparent 38%, rgb(247 243 236 / 0.38) 65%, var(--paper) 100%);
+  }
   .profile-homecoming-image { object-position: right top; }
-  .profile-homecoming-copy { width: 100%; padding: 0 1rem; }
-  .profile-homecoming-title { max-width: 18rem; font-size: clamp(2.65rem, 13vw, 3.65rem); }
-  .profile-homecoming-copy > p:last-child { max-width: 20rem; font-size: 0.98rem; }
+  .profile-homecoming-copy { max-width: 17.5rem; }
+  .profile-homecoming-title { max-width: 17rem; font-size: clamp(2.55rem, 12vw, 3.35rem); }
+  .profile-homecoming-copy > p:last-child { max-width: 16rem; margin-top: 0.9rem; font-size: 0.96rem; }
   .destination-heading h1,
   .discover-heading h1,
   .public-list-heading h1 { font-size: clamp(3rem, 16vw, 4rem); overflow-wrap: anywhere; }

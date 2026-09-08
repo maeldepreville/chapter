@@ -368,7 +368,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           <div className="profile-homecoming-copy">
             <p className="eyebrow">Votre espace</p>
             <p className="profile-homecoming-title">Bienvenue chez vous, {profile.firstName}.</p>
-            <p>Vos livres, vos traces et les chemins que vous choisissez de partager vivent ici, à leur rythme.</p>
+            <p>Ici vivent vos livres, vos traces et les chemins que vous choisissez d’ouvrir.</p>
           </div>
         </section>
       )}
