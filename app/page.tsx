@@ -323,6 +323,22 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     return fallback;
   };
 
+  const isCurrentDestination = (view: View, identity = "") => {
+    if (currentView !== view) return false;
+    if (view === "profile" || view === "honors") return profileOwner === identity;
+    if (view === "list") return `${publicListOwner}:${publicListId}` === identity;
+    if (view === "work") return selectedWorkId === identity;
+    return true;
+  };
+
+  const keepCurrentDestination = (view: View, identity = "") => {
+    if (!isCurrentDestination(view, identity)) return false;
+    setAccountOpen(false);
+    setSearchOpen(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
+    return true;
+  };
+
   const openView = (view: View) => {
     if (p1Public && publicActivated && (view === "journal" || view === "library")) {
       enterPersonalSpace(view);
@@ -356,6 +372,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       enterPersonalSpace("profile");
       return;
     }
+    const visibleOwner: ProfileOwner = p1Public && owner === "self" ? "public-self" : owner;
+    if (keepCurrentDestination("profile", visibleOwner)) return;
     rememberNavigation();
     restoreProfile(owner);
   };
@@ -372,6 +390,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
+    if (keepCurrentDestination("list", `${owner}:${listId}`)) return;
     rememberNavigation();
     setPublicListId(listId);
     setPublicListOrigin(origin);
@@ -510,6 +529,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const openPublicWork = (id: string, origin: PublicWorkOrigin = "discover") => {
     const work = works.find((candidate) => candidate.id === id);
     if (!work) return;
+    if (keepCurrentDestination("work", work.id)) return;
     rememberNavigation();
     setPublicWorkOrigin(origin);
     setSelectedWorkId(work.id);
@@ -532,6 +552,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const selectWork = (id: WorkId) => {
+    if (keepCurrentDestination("work", id)) return;
     rememberNavigation();
     if (["journal", "library", "discover", "search", "profile", "list"].includes(currentView)) {
       setPersonalWorkOrigin(currentView as PersonalWorkOrigin);
@@ -551,6 +572,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const personalWorkBackLabel = navigationBackLabel("Retour au Journal");
 
   const openHonors = () => {
+    if (keepCurrentDestination("honors", profileOwner)) return;
     rememberNavigation();
     setCurrentView("honors");
     window.scrollTo({ top: 0, behavior: "instant" });

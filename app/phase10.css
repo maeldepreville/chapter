@@ -456,17 +456,17 @@
 .profile-library-portrait .profile-honors-band { grid-column: auto; display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 2rem; margin: 0; padding: 0 0 0 clamp(2rem, 4vw, 4rem); border: 0; border-left: 1px solid var(--line); }
 .profile-library-portrait .profile-honors-band .profile-section-link { align-items: start; gap: 1.5rem; }
 .profile-library-portrait .profile-honors-band .profile-section-link > span:last-child { padding-top: 0.25rem; white-space: nowrap; }
-.profile-library-portrait .profile-honors-band .profile-badge-row { grid-template-columns: repeat(3, minmax(0, 1fr)); justify-self: stretch; width: 100%; gap: 0.7rem; }
-.profile-library-portrait .profile-honors-band .profile-badge-row img { width: min(100%, 5.4rem); }
-.profile-public-chapter { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-top: clamp(5rem, 9vw, 8rem); padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
-.profile-public-chapter .eyebrow { margin: 0 0 0.35rem; color: var(--brick); }
-.profile-public-chapter h2 { margin: 0; font-size: clamp(2.6rem, 4.8vw, 4.5rem); line-height: 0.94; }
+.profile-library-portrait .profile-honors-band .profile-badge-row { flex: 1; grid-template-columns: 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); align-content: stretch; justify-self: stretch; width: 100%; gap: 0; }
+.profile-library-portrait .profile-honors-band .profile-badge-row > div { grid-template-columns: 4.8rem minmax(0, 1fr); align-items: center; justify-items: start; gap: 1rem; padding: 0.8rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent); text-align: left; }
+.profile-library-portrait .profile-honors-band .profile-badge-row > div:last-child { border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent); }
+.profile-library-portrait .profile-honors-band .profile-badge-row img { width: 4.8rem; }
+.profile-library-portrait .profile-honors-band .profile-badge-row span { font-family: var(--font-editorial); font-size: 0.82rem; line-height: 1.25; }
 .profile-wide-content {
   display: grid;
   grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.18fr);
   gap: clamp(4rem, 8vw, 8rem);
   min-width: 0;
-  margin-top: clamp(2.5rem, 4vw, 4rem);
+  margin-top: clamp(5rem, 8vw, 7rem);
 }
 .profile-wide-content > .profile-section:first-child { padding-top: clamp(3.5rem, 6vw, 5rem); }
 .profile-section { padding: 1rem 0 4.5rem; border-bottom: 1px solid var(--line); }
@@ -674,10 +674,13 @@
   .profile-honors-band .profile-badge-row { justify-self: start; width: min(100%, 28rem); }
   .profile-library-portrait { display: flex; flex-direction: column; gap: 3.5rem; margin-top: 4rem; padding: 3rem 0 4rem; }
   .profile-library-portrait .profile-honors-band { order: -1; padding: 0 0 3rem; border-bottom: 1px solid var(--line); border-left: 0; }
+  .profile-library-portrait .profile-honors-band .profile-badge-row { flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto; gap: 1rem; }
+  .profile-library-portrait .profile-honors-band .profile-badge-row > div { display: grid; grid-template-columns: 1fr; justify-items: center; gap: 0.45rem; padding: 0; border: 0; text-align: center; }
+  .profile-library-portrait .profile-honors-band .profile-badge-row > div:last-child { border-bottom: 0; }
+  .profile-library-portrait .profile-honors-band .profile-badge-row img { width: min(100%, 5rem); }
   .profile-library-portrait .profile-section-heading { grid-template-columns: 1fr; gap: 0.7rem; }
   .profile-library-portrait .profile-section-heading .eyebrow { grid-column: auto; }
   .profile-library-portrait .profile-section.profile-opening-favorites { align-self: stretch; padding: 0; border: 0; }
-  .profile-public-chapter { display: block; margin-top: 4.5rem; }
   .profile-wide-content { grid-template-columns: 1fr; gap: 0; margin-top: 4.5rem; border-top: 0; }
   .profile-wide-content > .profile-section:first-child { padding-top: 0; }
   .profile-home .profile-wide-content .profile-section-heading { min-height: 0; }
