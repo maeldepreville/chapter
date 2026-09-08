@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 58**
+Statut : **candidate ajustée publiée pour recette sur la version Sites 59**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -40,6 +40,8 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - la carte de lecteur redevient l'objet principal de l'ouverture ; sa matière associe fibres, variations d'encre, double filet et profondeur légère pour évoquer un beau papier imprimé ;
 - l'accueil aquarellé devient une alcôve secondaire face à la carte ; les Chapitres d'honneur forment ensuite un registre transversal autonome, puis les œuvres de chevet retrouvent un rôle calme ;
 - listes et traces publiques partagent une composition éditoriale asymétrique : sommaire numéroté pour les chemins, fragments sur papier pour les critiques, puis empilement linéaire sur mobile.
+- l'espace sous la carte devient un sommaire du portrait, utile sur desktop et masqué sur mobile, avec accès fluide au chevet, aux honneurs, aux listes et aux traces ;
+- le nom public enregistré devient la source unique de la carte, des initiales de l'avatar, de ses libellés accessibles et des menus de compte desktop/mobile.
 - la barre personnelle reprend strictement la géométrie de la barre visiteur — hauteur, marges, espacement et centrage — afin que la création du compte ne produise plus aucune réduction perceptible des titres ;
 - l'illustration du Profil quitte la grande bannière : une véritable scène peinte à l'aquarelle, détourée sur transparence sans masque ni flou CSS, est ancrée dans l'angle supérieur droit puis fondue vers la page par un voile progressif ;
 - l'ouverture du Profil devient un bandeau éditorial compact : l'accueil et l'aquarelle introduisent immédiatement la carte, les honneurs et les œuvres de chevet, sans hero surdimensionné ; listes et traces conservent ensuite leur respiration pleine largeur.
@@ -55,4 +57,4 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 - lint et construction réussis, **146/146 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 58 est publiée avec l'accès existant le 8 septembre 2026. Elle conserve la navigation et le fondu validés, mais refond toute la hiérarchie du Profil autour de la carte, des honneurs et des publications publiques. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
+La version Sites 59 est publiée avec l'accès existant le 8 septembre 2026. Elle complète la colonne de la carte par un sommaire de navigation et propage immédiatement toute modification du nom public dans la coque personnelle. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
