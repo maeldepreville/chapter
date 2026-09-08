@@ -1,6 +1,6 @@
 # Chapter — P5 : confiance et contrôle
 
-Statut : **candidate ajustée publiée pour recette sur la version Sites 57**
+Statut : **candidate ajustée publiée pour recette sur la version Sites 58**
 
 Dernière mise à jour : 7 septembre 2026.
 
@@ -37,8 +37,9 @@ L'espace adopte une densité utilitaire dans une grande carte fermable posée au
 - l'index latéral colore en brique la section réellement visible, reprend ce signal au survol et anime nativement les déplacements demandés tout en respectant la réduction des mouvements ;
 - après enregistrement d'une photo recadrée, les boutons de compte desktop et mobile affichent immédiatement cette photo à la place des initiales.
 - la création du compte privé minimal révèle désormais la coque personnelle et son bouton de profil dès la validation, tout en conservant sur place l'étape du premier repère ; l'ouverture suivante du Journal ou de la Bibliothèque ne provoque plus de réduction tardive de la navigation ;
-- le Profil propriétaire reçoit un seuil d'accueil distinct, illustré comme un coin de lecture habité, tandis que le portrait public reste inchangé ; la carte de lecteur conserve son rôle signature et l'ouverture PDR1B validée ;
-- les listes et critiques du Profil propriétaire adoptent un rythme plus posé, avec des titres moins monumentaux et une lecture latérale sur desktop qui redevient linéaire sur mobile.
+- la carte de lecteur redevient l'objet principal de l'ouverture ; sa matière associe fibres, variations d'encre, double filet et profondeur légère pour évoquer un beau papier imprimé ;
+- l'accueil aquarellé devient une alcôve secondaire face à la carte ; les Chapitres d'honneur forment ensuite un registre transversal autonome, puis les œuvres de chevet retrouvent un rôle calme ;
+- listes et traces publiques partagent une composition éditoriale asymétrique : sommaire numéroté pour les chemins, fragments sur papier pour les critiques, puis empilement linéaire sur mobile.
 - la barre personnelle reprend strictement la géométrie de la barre visiteur — hauteur, marges, espacement et centrage — afin que la création du compte ne produise plus aucune réduction perceptible des titres ;
 - l'illustration du Profil quitte la grande bannière : une véritable scène peinte à l'aquarelle, détourée sur transparence sans masque ni flou CSS, est ancrée dans l'angle supérieur droit puis fondue vers la page par un voile progressif ;
 - l'ouverture du Profil devient un bandeau éditorial compact : l'accueil et l'aquarelle introduisent immédiatement la carte, les honneurs et les œuvres de chevet, sans hero surdimensionné ; listes et traces conservent ensuite leur respiration pleine largeur.
@@ -54,4 +55,4 @@ Les effets sont simulés dans la session frontend. L'export est réellement tél
 - lint et construction réussis, **146/146 tests automatisés** et `git diff --check` sans erreur ;
 - publication de la candidate sur le Site de recette existant sans synchronisation GitHub avant validation explicite.
 
-La version Sites 57 est publiée avec l'accès existant le 8 septembre 2026. Elle conserve la navigation validée et recompose le rythme du Profil autour d'un bandeau d'accueil compact et de l'aquarelle progressivement fondue dans l'angle supérieur droit. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
+La version Sites 58 est publiée avec l'accès existant le 8 septembre 2026. Elle conserve la navigation et le fondu validés, mais refond toute la hiérarchie du Profil autour de la carte, des honneurs et des publications publiques. Cette mise à disposition ne vaut ni validation de P5, ni synchronisation GitHub.
