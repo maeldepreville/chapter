@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type MouseEvent, type UIEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type MouseEvent, type UIEvent } from "react";
+import { Fade } from "./fade";
 import { Dialog, Input } from "./foundation/primitives";
 import { prototypeActors, type PrototypeActorId } from "./prototype-data";
 
@@ -18,6 +19,7 @@ export type ChapterExportSnapshot = {
 };
 
 type ImportResult = { records: number; traces: number };
+type DataFeedback = { label: string; detail: string };
 const trustSectionIds = ["identity", "privacy", "blocked", "data", "deletion"] as const;
 type TrustSectionId = typeof trustSectionIds[number];
 
@@ -41,9 +43,17 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
   const [nameDraft, setNameDraft] = useState(publicName);
   const [activeSection, setActiveSection] = useState<TrustSectionId>("identity");
   const [notice, setNotice] = useState("");
+  const [dataFeedback, setDataFeedback] = useState<DataFeedback | null>(null);
+  const [feedbackPaused, setFeedbackPaused] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [deletePhrase, setDeletePhrase] = useState("");
+
+  useEffect(() => {
+    if (!dataFeedback || feedbackPaused) return;
+    const timer = window.setTimeout(() => setDataFeedback(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [dataFeedback, feedbackPaused]);
 
   const exportChapterData = () => {
     const snapshot = createExport();
@@ -54,7 +64,8 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
     link.download = `chapter-export-${snapshot.exportedAt.slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    setNotice("Votre archive complète a été préparée.");
+    setNotice("");
+    setDataFeedback({ label: "Téléchargement lancé", detail: "Votre archive Chapter complète a été préparée." });
   };
 
   const importChapterData = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +76,10 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
       const snapshot = JSON.parse(await file.text()) as ChapterExportSnapshot;
       if (snapshot.format !== "chapter-export" || snapshot.version !== 1 || !Array.isArray(snapshot.privateRecords) || !Array.isArray(snapshot.journalTraces)) throw new Error("invalid");
       const result = onImport(snapshot);
-      setNotice(`Import privé terminé : ${result.records} lecture${result.records > 1 ? "s" : ""} et ${result.traces} trace${result.traces > 1 ? "s" : ""} reconnues.`);
+      setNotice("");
+      setDataFeedback({ label: "Import privé terminé", detail: `${result.records} lecture${result.records > 1 ? "s" : ""} et ${result.traces} trace${result.traces > 1 ? "s" : ""} reconnues.` });
     } catch {
+      setDataFeedback(null);
       setNotice("Ce fichier n’est pas une archive Chapter reconnue. Aucune donnée n’a été modifiée.");
     }
   };
@@ -182,6 +195,13 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
           <div className="modal-actions"><button className="chapter-button chapter-button--quiet" type="button" onClick={() => setDeleteOpen(false)}>Conserver mon compte</button><button className="chapter-button chapter-button--danger" type="button" disabled={password.length < 8 || deletePhrase !== "SUPPRIMER"} onClick={confirmDeletion}>Supprimer définitivement</button></div>
         </section>
       </Dialog>}
+
+      <Fade show={Boolean(dataFeedback)} kind="feedback" changeKey={dataFeedback}>{dataFeedback && (
+        <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
+          <span><strong>{dataFeedback.label}</strong><small>{dataFeedback.detail}</small></span>
+          <button className="feedback-close" type="button" aria-label="Fermer" onClick={() => setDataFeedback(null)}>×</button>
+        </div>
+      )}</Fade>
     </section>
   );
 }
