@@ -92,8 +92,10 @@ test("settings track their visible chapter and account controls reuse the saved 
   assert.match(settings, /onScroll=\{syncActiveSection\}/);
   assert.match(settings, /card\.scrollTo\(\{ top: Math\.max\(0, top\), behavior: reducedMotion \? "auto" : "smooth" \}\)/);
   assert.equal((settings.match(/aria-current=\{activeSection ===/g) ?? []).length, 5);
-  assert.equal((page.match(/<AccountAvatar photo=\{profilePhoto\} \/>/g) ?? []).length, 2);
+  assert.equal((page.match(/<AccountAvatar photo=\{profilePhoto\} publicName=\{publicProfileName\} \/>/g) ?? []).length, 2);
   assert.match(page, /<Image src=\{photo\.preview\} alt="" fill sizes="44px" unoptimized \/>/);
+  assert.match(page, /initialsFor\(publicName\)/);
+  assert.equal((page.match(/<strong>\{publicProfileName\}<\/strong>|<h2>\{publicProfileName\}<\/h2>/g) ?? []).length, 2);
   assert.match(globals, /\.account-button \{[^}]*position: relative;[^}]*overflow: hidden;/);
   assert.match(globals, /\.account-button img \{ object-fit: cover; \}/);
 });

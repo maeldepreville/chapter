@@ -90,10 +90,10 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
   );
 }
 
-function AccountAvatar({ photo }: { photo: ProfilePhoto | null }) {
+function AccountAvatar({ photo, publicName }: { photo: ProfilePhoto | null; publicName: string }) {
   return photo
     ? <Image src={photo.preview} alt="" fill sizes="44px" unoptimized />
-    : <>{currentReader.initials}</>;
+    : <>{initialsFor(publicName)}</>;
 }
 
 function renderReadingBookmark(progress: OptionalProgress, compact = false) {
@@ -200,6 +200,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicIdentityOpen, setPublicIdentityOpen] = useState(false);
   const [publicName, setPublicName] = useState("");
   const [publicProfileName, setPublicProfileName] = useState(currentReader.name);
+  const publicProfileFirstName = publicProfileName.trim().split(/\s+/)[0] || currentReader.firstName;
   const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
@@ -971,10 +972,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           />
         </label>}
         {!initialProfileOwner && <div className="account-control" ref={accountControlRef}>
-          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} /></button>
+          <button className="account-button" type="button" aria-label={`Ouvrir le compte de ${publicProfileFirstName}`} aria-expanded={accountOpen} aria-controls="desktop-account-menu" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} publicName={publicProfileName} /></button>
           <Fade show={accountOpen}>{accountOpen && (
             <div className="account-menu" id="desktop-account-menu">
-              <p><strong>{currentReader.name}</strong><span>{equippedTitle}</span></p>
+              <p><strong>{publicProfileName}</strong><span>{equippedTitle}</span></p>
               <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>
               <button type="button" onClick={openSettings}>Réglages et données</button>
               <button type="button" onClick={signOut}>Se déconnecter</button>
@@ -985,7 +986,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
       <header className="mobile-header">
         <button className="wordmark wordmark-button" type="button" onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
-        {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${currentReader.firstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} /></button></div>}
+        {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${publicProfileFirstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} publicName={publicProfileName} /></button></div>}
       </header></>}
 
       <main id="top">
@@ -1367,9 +1368,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       {!initialProfileOwner && <Fade show={accountOpen} kind="modal">{accountOpen && (
         <div className="mobile-account-overlay">
           <button className="overlay-backdrop" type="button" aria-label="Fermer le menu du compte" onClick={() => setAccountOpen(false)} />
-          <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label={`Compte de ${currentReader.firstName}`}>
+          <section ref={mobileAccountRef} className="mobile-account-sheet" id="mobile-account-sheet" aria-label={`Compte de ${publicProfileFirstName}`}>
             <div className="modal-heading">
-              <div><p className="eyebrow">Compte</p><h2>{currentReader.name}</h2><span className="account-title">{equippedTitle}</span></div>
+              <div><p className="eyebrow">Compte</p><h2>{publicProfileName}</h2><span className="account-title">{equippedTitle}</span></div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => setAccountOpen(false)}>×</button>
             </div>
             <button type="button" onClick={() => openProfile("self")}>Voir mon profil</button>

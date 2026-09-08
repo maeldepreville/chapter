@@ -345,6 +345,11 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
+  const openProfileSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+    section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  };
 
   useEffect(() => {
     if (!shareNotice) return;
@@ -409,6 +414,13 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               </div>
             </div>
           )}
+          {!blocked && <nav className="profile-card-index" aria-label="Sommaire du portrait">
+            <p className="eyebrow">{isOwnProfile ? "Dans votre portrait" : "Dans ce portrait"}</p>
+            <button type="button" onClick={() => openProfileSection("profile-favorites")}><span>01</span><strong>Œuvres de chevet</strong><i aria-hidden="true">→</i></button>
+            <button type="button" onClick={() => openProfileSection("profile-honors")}><span>02</span><strong>Chapitres d’honneur</strong><i aria-hidden="true">→</i></button>
+            <button type="button" onClick={() => openProfileSection("profile-lists")}><span>03</span><strong>Listes publiques</strong><i aria-hidden="true">→</i></button>
+            <button type="button" onClick={() => openProfileSection("profile-reviews")}><span>04</span><strong>Traces publiques</strong><i aria-hidden="true">→</i></button>
+          </nav>}
         </aside>
         <div className="profile-opening-companion">
           {isOwnProfile && (
@@ -423,22 +435,22 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
               </div>
             </section>
           )}
-          {blocked ? <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section> : <section className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
+          {blocked ? <section className="blocked-profile-notice" aria-labelledby="blocked-profile-title"><div><p className="eyebrow">Compte bloqué</p><h2 id="blocked-profile-title">Ses publications sont masquées.</h2><p>Cette personne ne peut plus interagir directement avec vous. Vous pouvez la débloquer depuis ici ou dans vos réglages.</p></div></section> : <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
             <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2></div>
             {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <p className="journal-empty">Les œuvres de chevet ne sont pas disponibles pour le moment.</p>}
           </section>}
         </div>
-        {!blocked && <section className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
+        {!blocked && <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
           <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
         </section>}
       </div>
       {!blocked && <div className="profile-wide-content">
-        <section className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
+        <section id="profile-lists" className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
           <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>
           {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
         </section>
-        <section className="profile-section profile-reviews-section" aria-labelledby="profile-reviews-title">
+        <section id="profile-reviews" className="profile-section profile-reviews-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Traces publiques</p><h2 id="profile-reviews-title">Des lectures laissées ouvertes</h2></div>
           {publicReviews.length ? publicReviews.map((review) => { const work = workById(review.workId)!; return <article className="profile-review" key={`${review.authorId}-${review.workId}`}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{review.text}</p></article>; }) : <p className="journal-empty">Aucune critique publiée pour le moment.</p>}
         </section>

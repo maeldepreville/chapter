@@ -408,6 +408,33 @@
 .profile-card-share-row.is-visible { visibility: visible; opacity: 1; pointer-events: auto; }
 .profile-card-share-row .text-action { font-size: 0.72rem; }
 .profile-card-share-notice { flex: 1 1 9rem; margin: 0; color: var(--muted); font-size: 0.7rem; }
+.profile-card-index { margin-top: clamp(2rem, 4vw, 3rem); padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.profile-card-index > p { margin: 0 0 0.7rem; color: var(--brick); }
+.profile-card-index button {
+  display: grid;
+  grid-template-columns: 1.8rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.8rem 0;
+  color: var(--ink);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  cursor: pointer;
+}
+.profile-card-index button > span { color: var(--brick); font-family: var(--font-editorial); font-size: 0.78rem; }
+.profile-card-index button > strong { font-family: var(--font-editorial); font-size: 1.02rem; font-weight: 450; }
+.profile-card-index button > i { color: var(--muted); font-size: 0.75rem; font-style: normal; }
+@media (hover: hover) and (pointer: fine) {
+  .profile-card-index button:hover strong,
+  .profile-card-index button:hover > i { color: var(--brick); }
+}
+#profile-favorites,
+#profile-honors,
+#profile-lists,
+#profile-reviews { scroll-margin-top: 7rem; }
 .profile-photo-remove-overlay { z-index: 120; }
 .profile-photo-remove-dialog { position: relative; z-index: 1; width: min(100%, 25rem); padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.4rem; box-shadow: 0 1.4rem 3.5rem rgb(36 33 31 / 0.2); }
 .profile-photo-remove-dialog h2 { margin: 0; font-family: var(--font-editorial); font-size: 2rem; font-weight: 500; }
@@ -644,6 +671,7 @@
   .profile-home .profile-opening { grid-template-columns: 1fr; grid-template-areas: "identity" "honors" "companion"; gap: 3.5rem; }
   .profile-identity-column { width: min(100%, 32rem); }
   .profile-home .profile-identity-column { width: min(100%, 32rem); }
+  .profile-card-index { display: none; }
   .profile-card-front { grid-template-columns: 7.2rem minmax(0, 1fr); }
   .profile-card-name { font-size: clamp(2.6rem, 10vw, 3.5rem); }
   .profile-card-name.medium { font-size: clamp(2.15rem, 8vw, 2.9rem); }
