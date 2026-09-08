@@ -240,30 +240,23 @@
 .profile-home { padding-top: clamp(2rem, 4vw, 3.5rem); }
 .profile-homecoming {
   display: grid;
-  grid-template-columns: minmax(19rem, 0.92fr) minmax(22rem, 1.08fr);
-  gap: clamp(3rem, 8vw, 8rem);
-  align-items: center;
-  margin: -1rem 0 clamp(4rem, 7vw, 6rem) clamp(-2rem, -2vw, -1rem);
+  grid-template-columns: minmax(22rem, 0.9fr) minmax(24rem, 1.1fr);
+  grid-template-areas: "copy art";
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+  margin: -1rem clamp(-2rem, -2vw, -1rem) clamp(4rem, 7vw, 6rem) 0;
 }
 .profile-homecoming-art {
+  grid-area: art;
   position: relative;
+  justify-self: end;
+  width: min(100%, 41rem);
   min-height: clamp(18rem, 30vw, 25rem);
-  opacity: 0.72;
-  filter: saturate(0.78) contrast(0.94);
-  mix-blend-mode: multiply;
-  -webkit-mask-image:
-    radial-gradient(ellipse 72% 66% at 47% 48%, #000 42%, rgb(0 0 0 / 0.76) 61%, transparent 82%),
-    radial-gradient(ellipse 28% 34% at 78% 38%, #000 20%, transparent 78%),
-    radial-gradient(ellipse 32% 30% at 28% 70%, #000 18%, transparent 76%);
-  mask-image:
-    radial-gradient(ellipse 72% 66% at 47% 48%, #000 42%, rgb(0 0 0 / 0.76) 61%, transparent 82%),
-    radial-gradient(ellipse 28% 34% at 78% 38%, #000 20%, transparent 78%),
-    radial-gradient(ellipse 32% 30% at 28% 70%, #000 18%, transparent 76%);
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
+  margin-top: clamp(-2.5rem, -3vw, -1.25rem);
+  opacity: 0.78;
 }
-.profile-homecoming-image { object-fit: cover; object-position: 66% center; }
-.profile-homecoming-copy { max-width: 31rem; padding-right: clamp(1rem, 4vw, 3rem); }
+.profile-homecoming-image { object-fit: contain; object-position: right top; }
+.profile-homecoming-copy { grid-area: copy; max-width: 31rem; padding-top: clamp(1.5rem, 4vw, 3.5rem); }
 .profile-homecoming-copy .eyebrow { margin-bottom: 0.65rem; color: var(--brick); }
 .profile-homecoming-title { margin: 0; font-family: var(--font-editorial); font-size: clamp(2.8rem, 5vw, 4.8rem); font-weight: 450; line-height: 0.94; letter-spacing: -0.045em; text-wrap: balance; }
 .profile-homecoming-copy > p:last-child { max-width: 25rem; margin: 1.2rem 0 0; color: #5d554d; font-family: var(--font-editorial); font-size: clamp(1rem, 1.45vw, 1.2rem); line-height: 1.45; }
@@ -591,8 +584,8 @@
   .compact-path .intent-panel { display: none; }
   .profile-page { min-height: auto; padding: 3rem 1.1rem 6rem; }
   .profile-home { padding-top: 1.5rem; }
-  .profile-homecoming { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; margin: -1rem 0 4rem -1rem; }
-  .profile-homecoming-art { width: min(100%, 38rem); min-height: clamp(17rem, 62vw, 24rem); }
+  .profile-homecoming { grid-template-columns: minmax(0, 1fr); grid-template-areas: "art" "copy"; gap: 0.6rem; margin: -1rem -1rem 4rem 0; }
+  .profile-homecoming-art { width: min(calc(100% + 1rem), 38rem); min-height: clamp(17rem, 56vw, 24rem); margin-top: -1rem; }
   .profile-homecoming-copy { max-width: 34rem; padding: 0 1rem; }
   .profile-home .profile-wide-content > .profile-section { grid-template-columns: 1fr; gap: 1.8rem; }
   .profile-opening { grid-template-columns: 1fr; gap: 4rem; }
@@ -633,8 +626,8 @@
 }
 
 @media (max-width: 560px) {
-  .profile-homecoming-art { min-height: 17rem; opacity: 0.66; }
-  .profile-homecoming-image { object-position: 70% center; }
+  .profile-homecoming-art { min-height: 15rem; opacity: 0.72; }
+  .profile-homecoming-image { object-position: right top; }
   .profile-homecoming-copy { width: 100%; padding: 0 1rem; }
   .profile-homecoming-title { max-width: 18rem; font-size: clamp(2.65rem, 13vw, 3.65rem); }
   .profile-homecoming-copy > p:last-child { max-width: 20rem; font-size: 0.98rem; }

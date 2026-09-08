@@ -20,10 +20,12 @@ test("mobile card back owns one centered body between masthead and URL", () => {
 
 test("the owner profile opens with a quiet reading-room welcome without changing the public portrait", () => {
   assert.match(component, /isOwnProfile \? "profile-home" : "profile-public"/);
-  assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room\.webp/);
+  assert.match(component, /isOwnProfile && \([\s\S]*profile-homecoming[\s\S]*p5-profile-reading-room-wash\.webp/);
   assert.match(component, /Bienvenue chez vous, \{profile\.firstName\}/);
-  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*grid-template-columns:/s);
-  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*opacity:\s*0\.72;[^}]*mask-image:/s);
+  assert.match(stylesheet, /\.profile-homecoming\s*\{[^}]*grid-template-columns:[^}]*grid-template-areas:\s*"copy art"/s);
+  assert.match(stylesheet, /\.profile-homecoming-art\s*\{[^}]*grid-area:\s*art;[^}]*justify-self:\s*end;[^}]*opacity:\s*0\.78;/s);
+  assert.doesNotMatch(stylesheet, /\.profile-homecoming-art\s*\{[^}]*mask-image:/s);
+  assert.match(stylesheet, /\.profile-homecoming-image\s*\{[^}]*object-fit:\s*contain;[^}]*object-position:\s*right top;/s);
   assert.match(stylesheet, /\.profile-home \.profile-wide-content > \.profile-section\s*\{[^}]*grid-template-columns:/s);
 });
 
