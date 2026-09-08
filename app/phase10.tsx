@@ -13,6 +13,7 @@ import { Fade, useSurfaceActive } from "./fade";
 import { actorIdForProfile, CURRENT_READER_ID, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import { prototypeReviewsForActor, prototypeReviewsForWork, type PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_URL } from "./site-config";
+import { staticAsset } from "./static-assets";
 
 export type { PublicListId } from "./catalogue";
 export type { ProfileOwner } from "./prototype-data";
@@ -308,7 +309,7 @@ export type BadgeId = keyof typeof badgeCatalog;
 
 function BadgeImage({ badgeId, locked = false }: { badgeId: BadgeId; locked?: boolean }) {
   const badge = badgeCatalog[badgeId];
-  return <img className={locked ? "locked" : ""} src={badge.src} alt="" width="220" height="220" loading="eager" decoding="async" />;
+  return <img className={locked ? "locked" : ""} src={staticAsset(badge.src)} alt="" width="220" height="220" loading="eager" decoding="async" />;
 }
 
 type ProfileProps = {
@@ -392,14 +393,14 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
                 </div>
                 <h1 id="profile-name" className={`profile-card-name ${nameScale}`}>{profile.name}</h1>
                 <p className="profile-intro">{profile.intro}</p>
-                <Image className="profile-card-seal" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
+                <Image className="profile-card-seal" src={staticAsset("/branding/chapter-profile-seal.webp")} alt="" width={512} height={603} sizes="48px" aria-hidden="true" unoptimized />
               </div>
               {isOwnProfile && (
                 <div className="profile-identity-card profile-card-back" aria-hidden={!cardFlipped} inert={!cardFlipped ? true : undefined}>
                   <div className="profile-card-masthead profile-card-back-masthead"><span>Chapter<span aria-hidden="true">.</span></span><small>Profil public</small></div>
                   <div className="profile-card-back-body">
                     <div className="profile-card-qr-field">
-                      <img src="/branding/chapter-profile-qr.svg" alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
+                      <img src={staticAsset("/branding/chapter-profile-qr.svg")} alt={`QR code vers le profil public de ${profile.name}`} width="168" height="168" />
                     </div>
                     <div className="profile-card-back-copy">
                       <p className={`profile-card-back-name ${nameScale}`}>{profile.name}</p>
@@ -428,7 +429,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         {isOwnProfile && (
           <section className="profile-homecoming" aria-label="Bienvenue dans votre espace de lecture">
             <div className="profile-homecoming-art">
-              <Image className="profile-homecoming-image" src="/editorial/p5-profile-reading-room-wash.webp" alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
+              <Image className="profile-homecoming-image" src={staticAsset("/editorial/p5-profile-reading-room-wash.webp")} alt="Une aquarelle représentant un fauteuil près d’une bibliothèque et d’un feu, avec quelques livres ouverts" fill sizes="(max-width: 899px) 92vw, 620px" priority unoptimized />
             </div>
             <div className="profile-homecoming-copy">
               <p className="eyebrow">Votre espace</p>

@@ -19,6 +19,7 @@ import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixture
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
+import { staticAsset, warmStaticAssets } from "./static-assets";
 
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
@@ -103,7 +104,7 @@ function renderReadingBookmark(progress: OptionalProgress, compact = false) {
   return (
     <span className={`reading-bookmark${compact ? " reading-bookmark--compact" : ""}`} role="img" aria-label={fullLabel}>
       <span className="reading-bookmark-object" aria-hidden="true">
-        <Image src="/editorial/p3-reading-bookmark.webp" alt="" width={420} height={640} sizes={compact ? "76px" : "104px"} unoptimized />
+        <Image src={staticAsset("/editorial/p3-reading-bookmark.webp")} alt="" width={420} height={640} sizes={compact ? "76px" : "104px"} unoptimized />
         <span className="reading-bookmark-page">p. {progress.page}</span>
       </span>
     </span>
@@ -633,6 +634,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
+  useEffect(() => warmStaticAssets(document), []);
+
   useEffect(() => {
     if (!p1Public) return;
     const syncPublicLocation = () => {
@@ -1044,6 +1047,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       </header></>}
 
       <main id="top">
+        <Fade show kind="page" changeKey={`${accessMode}:${currentView}:${currentView === "work" ? selectedWorkId : currentView === "profile" ? profileOwner : ""}`}>
         {p1Public ? (
           currentView === "journal" || currentView === "library" ? (
             <PublicPersonalIntro kind={currentView} onExplore={() => openPublicView("discover")} onSearch={() => openPublicView("search")} />
@@ -1401,6 +1405,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         </div>
           </>
         )}
+        </Fade>
       </main>
 
       {(statusMenuOpen || datePrompt) && (
@@ -1629,7 +1634,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)} />
           <section className="p4-identity-panel">
             <button className="close-button" type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)}>×</button>
-            <Image className="p4-identity-mark" src="/branding/chapter-profile-seal.webp" alt="" width={512} height={603} aria-hidden="true" unoptimized />
+            <Image className="p4-identity-mark" src={staticAsset("/branding/chapter-profile-seal.webp")} alt="" width={512} height={603} aria-hidden="true" unoptimized />
             <div><p className="eyebrow">Premier geste public</p><h2 id="p4-identity-title">Choisissez le nom qui signera vos traces.</h2><p id="p4-identity-description">Ce nom n’a pas besoin d’être unique. Il accompagne seulement ce que vous décidez de publier ; votre Journal et votre Bibliothèque restent privés.</p></div>
             <label htmlFor="p4-public-name"><span>Nom public</span><input id="p4-public-name" maxLength={60} value={publicName} onChange={(event) => setPublicName(event.target.value)} placeholder="Votre nom de lecteur" /></label>
             <p className="p4-identity-note">Photo facultative · modifiable plus tard</p>

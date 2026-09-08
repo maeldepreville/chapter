@@ -7,6 +7,7 @@ import { Button, Dialog, Field, Input, Textarea } from "./foundation/primitives"
 import type { ReadingStatus, Work } from "./foundation/contracts";
 import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
 import { profilePresentations, prototypeActors, type ProfileOwner } from "./prototype-data";
+import { staticAsset } from "./static-assets";
 
 type PublicViewProps = {
   works: readonly Work[];
@@ -64,7 +65,7 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
         </div>
         <figure className="p1-intro-illustration">
           <Image
-            src="/editorial/p1-reading-trace.webp"
+            src={staticAsset("/editorial/p1-reading-trace.webp")}
             alt="Un livre ouvert dont le marque-page rouge rejoint un autre ouvrage."
             width={1400}
             height={1050}
@@ -154,7 +155,7 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
           <p>Un titre, un auteur, un lecteur ou une liste suffit. Aucun compte n’est nécessaire pour consulter ces chemins publics.</p>
         </div>
         <figure className="p1-search-sketch" aria-hidden="true">
-          <Image src="/editorial/p2-search-atlas.webp" alt="" width={1440} height={960} sizes="(max-width: 899px) 92vw, 56vw" unoptimized priority />
+          <Image src={staticAsset("/editorial/p2-search-atlas.webp")} alt="" width={1440} height={960} sizes="(max-width: 899px) 92vw, 56vw" unoptimized priority />
         </figure>
         <p className="p1-search-margin-note" aria-hidden="true"><span>Index</span> Chercher par le texte,<br />retrouver par la trace.</p>
       </header>
@@ -236,8 +237,8 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   const content = personalIntroContent[kind];
   const titleId = `p1-${kind}-intro-title`;
   const asset = kind === "journal"
-    ? { src: "/editorial/p4-journal-threshold.webp", width: 600, height: 900 }
-    : { src: "/editorial/p4-library-threshold.webp", width: 1100, height: 733 };
+    ? { src: staticAsset("/editorial/p4-journal-threshold.webp"), width: 600, height: 900 }
+    : { src: staticAsset("/editorial/p4-library-threshold.webp"), width: 1100, height: 733 };
 
   return (
     <section className={`p1-public-page p1-personal-intro p1-personal-intro--${kind}`} aria-labelledby={titleId}>
