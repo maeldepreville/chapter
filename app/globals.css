@@ -176,11 +176,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   padding: 1.6rem;
   color: #f8efe7;
 }
 .book-cover .cover-copy strong {
+  min-height: 0;
   align-self: center;
   max-width: 12ch;
   font-family: var(--font-editorial);
@@ -188,7 +189,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 500;
   line-height: 0.98;
 }
-.book-cover .cover-copy > small { font-family: var(--font-editorial); font-size: 1rem; }
+.book-cover .cover-copy > small { min-width: 0; padding-top: 0.45rem; overflow: hidden; border-top: 1px solid rgb(255 255 255 / 0.38); font-family: var(--font-editorial); font-size: 1rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 .cover-image { background: #e8e1d7; }
 .cover-image img { object-fit: cover; transition: opacity var(--motion-surface) var(--ease-surface); }
 .cover-title-short { -webkit-line-clamp: 2; }
@@ -198,6 +199,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
 }
 .cover-title-long { font-size: 0.88em !important; line-height: 1.02 !important; }
 .cover-mark { font-size: 0.66rem; letter-spacing: 0.2em; }
@@ -409,7 +411,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .journal-cover .cover-copy { padding: 0.45rem; }
 .journal-cover .cover-mark { font-size: 0.36rem; letter-spacing: 0.13em; }
 .journal-cover strong { align-self: center; font-family: var(--font-editorial); font-size: 0.76rem; font-weight: 500; line-height: 0.95; }
-.journal-cover small { font-family: var(--font-editorial); font-size: 0.45rem; }
+.journal-cover small { padding-top: 0.2rem; font-family: var(--font-editorial); font-size: 0.45rem; }
 .current-reading-copy { display: grid; min-width: 0; }
 .current-reading-copy strong { font-family: var(--font-editorial); font-size: 1.08rem; font-weight: 500; line-height: 1.15; }
 .current-reading-copy small { color: var(--muted); }

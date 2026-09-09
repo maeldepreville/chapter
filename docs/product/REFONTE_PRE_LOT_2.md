@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 9 septembre 2026.
 
-Statut : **P0 à P5 validés ; candidate P6 complète pour recette sur Sites 67**.
+Statut : **P0 à P5 validés ; candidate P6 ajustée après recette sur Sites 68**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 

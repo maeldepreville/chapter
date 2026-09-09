@@ -54,3 +54,22 @@ test("keyboard bypass, current navigation and reduced motion remain explicit", (
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?animation: none/);
   assert.match(css, /\.p6-extreme-surface[\s\S]*?overflow-wrap: anywhere/);
 });
+
+test("typographic covers reserve separate title and author rows", () => {
+  const globals = readFileSync(source("globals.css"), "utf8");
+  const publicCss = readFileSync(source("p1-public.css"), "utf8");
+  const socialCss = readFileSync(source("phase10.css"), "utf8");
+  for (const css of [globals, publicCss, socialCss]) {
+    assert.match(css, /grid-template-rows:\s*(?:auto\s+)?minmax\(0, 1fr\)\s+auto/);
+    assert.match(css, /overflow-wrap:\s*anywhere/);
+    assert.match(css, /border-top:\s*1px solid rgb\(255 255 255 \/ 0\.38\)/);
+  }
+});
+
+test("profile public traces share the long-review expansion contract", () => {
+  const component = readFileSync(source("phase10.tsx"), "utf8");
+  assert.match(component, /expandedProfileReviews/);
+  assert.match(component, /profile-review-copy-/);
+  assert.match(component, /profile-review-text-toggle/);
+  assert.match(component, /expanded \? "Réduire" : "Lire la suite"/);
+});

@@ -44,6 +44,17 @@ test("AM1 uses only opacity with the approved timings and curve", async () => {
   }
 });
 
+test("a finished exit keeps its zero-opacity fill until the retained card unmounts", async () => {
+  const f = fixture();
+  f.controller.update(false, "menu");
+  f.animations[0].resolve(); await Promise.resolve();
+  assert.equal(f.exits(), 1);
+  assert.equal(f.animations[0].cancelled, false);
+  assert.equal(f.element.style.opacity, "0");
+  f.controller.dispose();
+  assert.equal(f.animations[0].cancelled, true);
+});
+
 test("close during entrance and reopen during exit continue from current opacity", async () => {
   const f = fixture(); f.controller.update(true, "modal");
   f.controller.update(false, "modal");

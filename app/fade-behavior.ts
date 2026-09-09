@@ -11,9 +11,14 @@ export function createFadeController(element: HTMLElement, onExit: () => void) {
   let generation = 0;
   let started = false;
   let shown = true;
-  const finish = () => {
-    animation?.cancel();
-    animation = undefined;
+  const finish = (preserveFinishedExit = false) => {
+    // A finished exit uses fill:"both" to keep opacity at zero until React
+    // removes the retained tree. Cancelling it first can expose a completed CSS
+    // entrance animation for one frame and make a closing card flash back.
+    if (!(preserveFinishedExit && !shown)) {
+      animation?.cancel();
+      animation = undefined;
+    }
     element.style.opacity = shown ? "1" : "0";
     if (!shown) onExit();
   };
@@ -33,7 +38,7 @@ export function createFadeController(element: HTMLElement, onExit: () => void) {
       if (preference?.matches || !element.animate || !element.getClientRects().length) { finish(); return; }
       try {
         animation = element.animate([{ opacity: current }, { opacity: next ? 1 : 0 }], { duration: fadeTiming[kind][next ? 0 : 1], easing: fadeEasing, fill: "both" });
-        animation.finished.then(() => { if (job === generation) finish(); }, () => { if (job === generation) finish(); });
+        animation.finished.then(() => { if (job === generation) finish(true); }, () => { if (job === generation) finish(); });
       } catch { finish(); }
     },
     dispose() {

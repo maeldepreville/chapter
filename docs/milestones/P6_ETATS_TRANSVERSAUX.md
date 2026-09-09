@@ -1,6 +1,6 @@
 # Chapter — P6 : états transversaux
 
-Statut : **candidate complète pour recette sur la version Sites 67**
+Statut : **candidate ajustée après recette sur la version Sites 68**
 
 Dernière mise à jour : 9 septembre 2026.
 
@@ -19,6 +19,12 @@ P6 rend les parcours P1 à P5 robustes lorsque les données manquent, arrivent, 
 - atelier isolé `/recette/p6`, absent de la navigation produit, pour observer les scénarios `Normal`, `Vide`, `Chargement`, `Erreur` et `Contenus extrêmes` sans altérer l'application normale ;
 - conservation des états vides déjà propres à Journal, Bibliothèque, Découvrir, Recherche, profils, listes, critiques et honneurs ;
 - conservation des 500 œuvres de la Bibliothèque, du chargement volontaire par lots et des comportements de couverture en chargement/échec.
+
+## Ajustements issus de la recette
+
+- les couvertures typographiques réservent des zones distinctes au titre et à l'auteur, avec césure et troncature bornées même dans les cartes compactes ;
+- la sortie partagée des menus, popovers, retours temporaires et modales conserve son opacité nulle jusqu'au démontage, supprimant la réapparition d'une trame observée à la fermeture ;
+- les traces publiques longues du Profil reprennent les actions accessibles `Lire la suite` et `Réduire` des critiques d'œuvre.
 
 ## Ce qui doit être visible
 
@@ -56,7 +62,7 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 
 - construction de production réussie avec `/recette/p6` et les frontières globales ;
 - lint réussi ;
-- **157/157 tests automatisés réussis**, dont quatre contrôles P6 dédiés et la non-régression P0 à P5 ainsi que du lot 1 ;
+- **160/160 tests automatisés réussis**, dont les contrôles P6 et les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
 - `git diff --check` sans erreur ;
 - aucune recette navigateur n'est revendiquée avant l'évaluation utilisateur.
 
