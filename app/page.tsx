@@ -1184,7 +1184,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             </header>
 
             {currentReadings.length === 0 && journalTraces.length === 0 ? (
-              <div className="journal-empty journal-empty-whole"><h2>Votre journal commence avec une œuvre</h2><button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button></div>
+              <div className="editorial-empty journal-empty-whole">
+                <p className="empty-kicker">Premier feuillet</p>
+                <h2>Votre journal commence avec une œuvre</h2>
+                <p>{works.length ? "Choisissez un livre : sa première étape ouvrira ici une page à reprendre plus tard." : "Aucune œuvre n’est disponible pour amorcer une trace. Votre Journal reste prêt à accueillir la première."}</p>
+                {works.length > 0 && <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>}
+              </div>
             ) : <div className="journal-opening-grid">
               <section className="current-readings" aria-labelledby="current-readings-title">
                 <div className="personal-section-heading">
@@ -1308,10 +1313,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 )}
               </>
             ) : (
-              <div className="library-empty library-empty-whole">
+              <div className="editorial-empty editorial-empty--centered library-empty-whole">
+                <p className="empty-kicker">Premier rayonnage</p>
                 <h2>Votre bibliothèque attend sa première œuvre</h2>
-                <p>Ajoutez une œuvre pour commencer à organiser vos lectures.</p>
-                <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>
+                <p>{works.length ? "Ajoutez une œuvre pour commencer à organiser vos lectures." : "Le catalogue est momentanément vide. Vos futurs choix trouveront leur place ici dès son retour."}</p>
+                {works.length > 0 && <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>}
               </div>
             )}
           </section>

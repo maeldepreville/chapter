@@ -7,14 +7,14 @@ Ce document résume l'état utile ; les journaux restent consultables à la dema
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — candidate P6 ajustée après recette sur Sites 69. `main` attend P7.
+- **Phase active :** refonte visible pré-lot 2 — candidate P6 auditée visuellement sur Sites 70. `main` attend P7.
 - **Branche active :** `refonte-pre-lot-2` ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé sur Sites 34 et synchronisé avec ses assets.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
 - **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
 - **Statut P5 :** validé sur Sites 66 et synchronisé : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée.
-- **Statut P6 :** candidate Sites 69 : atelier `/recette/p6`, couvertures typographiques hiérarchisées et contrastées partout, petites surfaces sans flash et aperçus de traces Profil bornés. Les 161 tests, lint, construction et diff réussissent ; validation requise avant synchronisation.
+- **Statut P6 :** candidate Sites 70 : états vides affinés après navigation complète, couvertures cohérentes, petites surfaces sans flash et débordement Recherche fermé. Les 162 tests, lint, construction, diff et audit navigateur réussissent ; validation requise avant synchronisation.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 

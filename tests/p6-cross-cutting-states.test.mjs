@@ -91,3 +91,17 @@ test("profile public traces stay concise and delegate expansion to the work page
   assert.doesNotMatch(component, /expandedProfileReviews|profile-review-text-toggle/);
   assert.match(component, /onClick=\{\(\) => onOpenWork\(review\.workId\)\}/);
 });
+
+test("empty catalogue states stay editorial without offering dead-end actions", () => {
+  const page = readFileSync(source("page.tsx"), "utf8");
+  const publicViews = readFileSync(source("p1-public.tsx"), "utf8");
+  const socialViews = readFileSync(source("phase10.tsx"), "utf8");
+  const globals = readFileSync(source("globals.css"), "utf8");
+  assert.match(page, /\{works\.length > 0 && <button className="primary-action"/);
+  assert.match(publicViews, /works\.length === 0 && !query/);
+  assert.match(publicViews, /Les chemins restent à tracer/);
+  assert.match(publicViews, /La recherche attend ses premières œuvres/);
+  assert.match(socialViews, /profile-empty-note/);
+  assert.match(socialViews, /public-list-empty/);
+  assert.match(globals, /\.editorial-empty\s*\{/);
+});

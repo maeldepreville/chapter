@@ -500,6 +500,12 @@
 .favorite-books button > span { display: grid; }
 .favorite-books strong { font-family: var(--font-editorial); font-weight: 500; line-height: 1.1; }
 .favorite-books small { color: var(--muted); }
+.profile-empty-note { position: relative; display: grid; align-content: start; gap: 0.55rem; min-height: 10rem; padding: 1.5rem 1.5rem 1.5rem 3.5rem; background: linear-gradient(110deg, color-mix(in srgb, var(--surface) 78%, transparent), transparent); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.profile-empty-note::before { position: absolute; top: 1.35rem; left: 1.25rem; width: 0.45rem; height: 0.45rem; background: var(--brick); border-radius: 50%; content: ""; }
+.profile-empty-note > span { color: var(--brick); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.profile-empty-note > p { max-width: 28rem; margin: 0; font-family: var(--font-editorial); font-size: 1.2rem; line-height: 1.3; }
+.profile-empty-note > small { max-width: 28rem; color: var(--muted); font-family: var(--font-editorial); font-size: 0.88rem; line-height: 1.45; }
+.profile-empty-note--review { min-height: 0; }
 .profile-list-entry { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 1rem; width: 100%; padding: 1.35rem 0; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--line); cursor: pointer; counter-increment: profile-path; }
 .profile-list-entry::before { color: var(--brick); font-family: var(--font-editorial); font-size: 0.9rem; content: counter(profile-path, decimal-leading-zero); }
 .profile-list-entry > span:first-child { display: grid; }
@@ -572,6 +578,9 @@
 .public-list-cover .compact-cover-copy { padding: 0.55rem; }
 .public-list-cover .compact-cover-copy strong { font-size: 0.9rem; }
 .public-list-cover .compact-cover-copy small { font-size: 0.5rem; }
+.public-list-empty { display: grid; gap: 0.7rem; max-width: 48rem; margin-top: 1rem; padding: clamp(2rem, 5vw, 3.5rem); background: linear-gradient(115deg, color-mix(in srgb, var(--surface) 82%, transparent), transparent); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.public-list-empty h2 { max-width: 18ch; margin: 0; font-family: var(--font-editorial); font-size: clamp(1.8rem, 3.4vw, 2.8rem); font-weight: 500; line-height: 1; }
+.public-list-empty > p:last-child { max-width: 38rem; margin: 0; color: var(--muted); font-family: var(--font-editorial); font-size: 1rem; line-height: 1.5; }
 
 .social-reviews { display: grid; gap: 4rem; }
 .review-group > h3 { margin: 0 0 0.7rem; color: var(--muted); font-size: 0.76rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }

@@ -51,7 +51,7 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
   const shelf = works.slice(4, 6);
 
   if (!featured) {
-    return <section className="p1-empty"><p className="eyebrow">Découvrir</p><h1>Aucune œuvre n’est disponible pour le moment.</h1></section>;
+    return <section className="p1-public-page p1-empty" aria-labelledby="p1-empty-title"><div className="editorial-empty editorial-empty--wide"><p className="empty-kicker">Découvrir · catalogue indisponible</p><h1 id="p1-empty-title">Les chemins restent à tracer.</h1><p>Aucune œuvre n’est disponible pour le moment. Dès que le catalogue revient, les lectures et les voix qui les entourent réapparaissent ici.</p></div></section>;
   }
 
   return (
@@ -169,7 +169,13 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
         <span>{query ? `${results.length} œuvre${results.length > 1 ? "s" : ""} · ${readerResults.length + listResults.length} chemin${readerResults.length + listResults.length > 1 ? "s" : ""}` : "Sélection de départ"}</span>
         <span>{works.length} œuvres disponibles</span>
       </div>
-      {results.length > 0 ? (
+      {works.length === 0 && !query ? (
+        <div className="p1-search-empty p1-search-catalogue-empty">
+          <p className="empty-kicker">Catalogue indisponible</p>
+          <h2>La recherche attend ses premières œuvres.</h2>
+          <p>Le champ reste prêt, mais aucun titre, auteur, lecteur ou liste ne peut être proposé pour le moment.</p>
+        </div>
+      ) : results.length > 0 ? (
         <div className="p1-search-results">
           {results.map((work, index) => (
             <article key={work.id}>

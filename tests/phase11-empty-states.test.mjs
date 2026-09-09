@@ -25,8 +25,8 @@ test("all principal views render an empty catalogue without substituting a work"
     assert.doesNotMatch(rendered, /class="(?:book-cover|favorite-cover|discovery-cover|public-list-cover)/);
   }
   assert.match(discover({ works: [] }), /Aucune œuvre disponible/);
-  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Aucune critique publiée pour le moment/);
-  assert.match(publicList([]), /Aucune œuvre de cette liste/);
+  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Les lectures sont encore gardées dans le cercle privé/);
+  assert.match(publicList([]), /Les choix restent visibles, pas leurs œuvres/);
 });
 
 test("partial lists show each available work once, keep order, and report correct counts", () => {
