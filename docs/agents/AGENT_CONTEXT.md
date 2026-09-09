@@ -1,19 +1,20 @@
 # Chapter — contexte courant compact
 
-Mise à jour : 8 septembre 2026.
+Mise à jour : 9 septembre 2026.
 
 Ce document résume l'état utile ; les journaux restent consultables à la demande.
 
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — P5 validé sur Sites 66 ; P6 — États transversaux est actif. `main` attend P7.
-- **Branche active :** `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté. P0 à P6 y sont isolés ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** validé le 5 septembre 2026 sur la version Sites 34 et synchronisé avec ses assets sur `refonte-pre-lot-2`.
+- **Phase active :** refonte visible pré-lot 2 — candidate P6 complète pour recette sur Sites 67. `main` attend P7.
+- **Branche active :** `refonte-pre-lot-2` ; aucune fusion vers `main` avant validation de P7.
+- **Statut P1 :** validé sur Sites 34 et synchronisé avec ses assets.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
 - **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
-- **Statut P5 :** validé le 8 septembre 2026 sur Sites 66 : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée. Synchronisation autorisée sur `refonte-pre-lot-2`.
+- **Statut P5 :** validé sur Sites 66 et synchronisé : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée.
+- **Statut P6 :** candidate Sites 67 : chargement, erreur, absence, routes inconnues exactes, lien d'évitement, contenus extrêmes et atelier `/recette/p6`. Les 157 tests, lint, construction et diff réussissent ; recette et validation restent requises avant synchronisation.
 - **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
 - **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
 
@@ -54,6 +55,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Implémenter ou évaluer P3 | `docs/milestones/P3_USAGE_PERSONNEL_QUOTIDIEN.md`, `docs/milestones/PHASE_09_COMPOSANTS_ESPACE_PERSONNEL.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P4 | `docs/milestones/P4_DIMENSION_SOCIALE.md`, `docs/milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P5 | `docs/milestones/P5_CONFIANCE_CONTROLE.md`, puis `docs/engineering/CODEMAP.md` |
+| Implémenter ou évaluer P6 | `docs/milestones/P6_ETATS_TRANSVERSAUX.md`, puis `docs/engineering/CODEMAP.md` |
 | Clôture du lot 1 | `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md` |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |

@@ -48,7 +48,7 @@ type Feedback = {
   detail: string;
 };
 
-type PersonalEntry = {
+export type PersonalEntry = {
   readingStatus: ReadingStatus | null;
   readingDate: string;
   note: string;
@@ -135,7 +135,7 @@ const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(default
 }));
 
 // Internal fixture injection only; no public switch, URL parameter or storage.
-type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
+export type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
 type HomeProps = {
   refined?: boolean;
   initialProfileOwner?: ProfileOwner | null;
@@ -1046,7 +1046,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>}
           {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>}
           <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => { setDiscoverInitialQuery(""); openView("discover"); }}>Découvrir</button>
-          {!initialProfileOwner && <button className={currentView === "search" ? "active" : ""} type="button" onClick={() => openView("search")}>Recherche</button>}{initialProfileOwner && <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button>}
+          {!initialProfileOwner && <button className={currentView === "search" ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openView("search")}>Recherche</button>}{initialProfileOwner && <button type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button>}
         </nav>
         {!initialProfileOwner && <label className="header-search">
           <span className="sr-only">Rechercher un livre ou un auteur</span>
@@ -1073,11 +1073,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       </header>
 
       <header className="mobile-header">
-        <button className="wordmark wordmark-button" type="button" onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
+        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
         {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${publicProfileFirstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} publicName={publicProfileName} /></button></div>}
       </header></>}
 
-      <main id="top">
+      <main id="main-content" tabIndex={-1}>
         <Fade show kind="page" changeKey={`${accessMode}:${currentView}:${currentView === "work" ? selectedWorkId : currentView === "profile" ? profileOwner : ""}`}>
         {p1Public ? (
           currentView === "journal" || currentView === "library" ? (

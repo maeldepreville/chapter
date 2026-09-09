@@ -6,6 +6,7 @@ import "./p1-public.css";
 import "./p2-first-marker.css";
 import "./p3-personal.css";
 import "./p4-social.css";
+import "./p6-states.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body><a className="skip-link" href="#main-content">Aller au contenu</a>{children}</body>
     </html>
   );
 }

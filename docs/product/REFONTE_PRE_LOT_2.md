@@ -1,8 +1,8 @@
 # Chapter — doctrine et feuille de route de la refonte pré-lot 2
 
-Dernière mise à jour : 8 septembre 2026.
+Dernière mise à jour : 9 septembre 2026.
 
-Statut : **P0 à P5 validés ; P6 — États transversaux devient la prochaine tranche**.
+Statut : **P0 à P5 validés ; candidate P6 complète pour recette sur Sites 67**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 
