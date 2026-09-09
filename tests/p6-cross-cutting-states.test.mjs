@@ -104,4 +104,6 @@ test("empty catalogue states stay editorial without offering dead-end actions", 
   assert.match(socialViews, /profile-empty-note/);
   assert.match(socialViews, /public-list-empty/);
   assert.match(globals, /\.editorial-empty\s*\{/);
+  assert.match(page, /className="editorial-empty editorial-empty--centered journal-empty-whole"/);
+  assert.match(page, /className="editorial-empty editorial-empty--centered library-empty-whole"/);
 });

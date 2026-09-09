@@ -201,6 +201,9 @@ test("P5 has a direct modal route and dedicated responsive styling", async () =>
   assert.match(css, /\.trust-card \{[^}]*scroll-behavior: smooth/);
   assert.match(css, /prefers-reduced-motion: reduce[\s\S]*?\.trust-card \{ scroll-behavior: auto; \}/);
   assert.match(css, /@media \(max-width: 899px\)/);
+  assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.overlay\.trust-overlay\s*\{[^}]*place-items:\s*center;[^}]*safe-area-inset-top[^}]*safe-area-inset-bottom/s);
+  assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.trust-card\s*\{[^}]*height:\s*100%;[^}]*max-height:\s*100%;[^}]*border:\s*1px solid var\(--line\);[^}]*border-radius:\s*0\.55rem;/s);
+  assert.doesNotMatch(css, /@media \(max-width: 899px\)[\s\S]*\.trust-card\s*\{[^}]*height:\s*100dvh;/s);
   assert.match(globals, /p5-trust\.css/);
 });
 

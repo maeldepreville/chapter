@@ -1,6 +1,6 @@
 # Chapter — P6 : états transversaux
 
-Statut : **candidate auditée visuellement sur la version Sites 70**
+Statut : **candidate auditée visuellement sur la version Sites 71**
 
 Dernière mise à jour : 9 septembre 2026.
 
@@ -27,6 +27,7 @@ P6 rend les parcours P1 à P5 robustes lorsque les données manquent, arrivent, 
 - les traces publiques longues du Profil restent des aperçus bornés sans commande de dépliage ; leur titre ouvre la fiche de l'œuvre, où la critique complète conserve `Lire la suite` et `Réduire`.
 - l'audit visuel navigué transforme les absences globales de Journal, Bibliothèque, Découvrir et Recherche en seuils éditoriaux contextualisés, sans proposer d'action quand le catalogue vide ne lui donnerait aucune issue ;
 - les absences secondaires du Profil et des listes publiques conservent l'intention de la section au lieu d'une ligne technique isolée ; le croquis de Recherche ne crée plus de débordement horizontal.
+- l'état vide global du Journal reprend le centrage de celui de la Bibliothèque ; sur mobile, les grandes cartes de Réglages, Chapitres d'honneur et listes publiques conservent désormais un retrait sûr, leur bord et leurs coins, au lieu de se confondre avec l'écran.
 
 ## Ce qui doit être visible
 
@@ -66,7 +67,7 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 - lint réussi ;
 - **162/162 tests automatisés réussis**, dont les contrôles P6 des états vides, de structure et de contraste, les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
 - `git diff --check` sans erreur ;
-- audit navigateur réalisé sur l'atelier P6 : Journal, Bibliothèque, Découvrir, Recherche, Profil, liste publique, chargement, erreur et page absente parcourus visuellement ; la validation utilisateur reste requise.
+- audit navigateur réalisé sur l'atelier P6 : Journal, Bibliothèque, Découvrir, Recherche, Profil, liste publique, chargement, erreur et page absente parcourus visuellement ; les familles de cartes mobiles ont aussi été inventoriées et leurs contrats responsifs contrôlés ; la validation utilisateur reste requise.
 
 ## Suite
 

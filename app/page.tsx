@@ -1184,7 +1184,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             </header>
 
             {currentReadings.length === 0 && journalTraces.length === 0 ? (
-              <div className="editorial-empty journal-empty-whole">
+              <div className="editorial-empty editorial-empty--centered journal-empty-whole">
                 <p className="empty-kicker">Premier feuillet</p>
                 <h2>Votre journal commence avec une œuvre</h2>
                 <p>{works.length ? "Choisissez un livre : sa première étape ouvrira ici une page à reprendre plus tard." : "Aucune œuvre n’est disponible pour amorcer une trace. Votre Journal reste prêt à accueillir la première."}</p>
