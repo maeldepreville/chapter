@@ -1,6 +1,6 @@
 # Chapter — P6 : états transversaux
 
-Statut : **candidate ajustée après recette sur la version Sites 68**
+Statut : **candidate ajustée après recette sur la version Sites 69**
 
 Dernière mise à jour : 9 septembre 2026.
 
@@ -22,9 +22,9 @@ P6 rend les parcours P1 à P5 robustes lorsque les données manquent, arrivent, 
 
 ## Ajustements issus de la recette
 
-- les couvertures typographiques réservent des zones distinctes au titre et à l'auteur, avec césure et troncature bornées même dans les cartes compactes ;
+- les couvertures typographiques de Journal, Bibliothèque, Profil et des parcours publics réservent des zones distinctes au titre et à l'auteur, avec césure et troncature bornées ; un voile commun garantit le contraste sur chacune des six teintes ;
 - la sortie partagée des menus, popovers, retours temporaires et modales conserve son opacité nulle jusqu'au démontage, supprimant la réapparition d'une trame observée à la fermeture ;
-- les traces publiques longues du Profil reprennent les actions accessibles `Lire la suite` et `Réduire` des critiques d'œuvre.
+- les traces publiques longues du Profil restent des aperçus bornés sans commande de dépliage ; leur titre ouvre la fiche de l'œuvre, où la critique complète conserve `Lire la suite` et `Réduire`.
 
 ## Ce qui doit être visible
 
@@ -62,7 +62,7 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 
 - construction de production réussie avec `/recette/p6` et les frontières globales ;
 - lint réussi ;
-- **160/160 tests automatisés réussis**, dont les contrôles P6 et les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
+- **161/161 tests automatisés réussis**, dont les contrôles P6 de structure et de contraste, les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
 - `git diff --check` sans erreur ;
 - aucune recette navigateur n'est revendiquée avant l'évaluation utilisateur.
 

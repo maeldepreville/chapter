@@ -5,6 +5,8 @@ import test from "node:test";
 import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-tsx.mjs";
 
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
+const luminance = (rgb) => rgb.map((channel) => channel / 255).map((channel) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+const contrast = (foreground, background) => (Math.max(luminance(foreground), luminance(background)) + 0.05) / (Math.min(luminance(foreground), luminance(background)) + 0.05);
 
 test("loading and error surfaces expose quiet, recoverable states", () => {
   const harness = hookHarness();
@@ -56,20 +58,36 @@ test("keyboard bypass, current navigation and reduced motion remain explicit", (
 });
 
 test("typographic covers reserve separate title and author rows", () => {
+  const page = readFileSync(source("page.tsx"), "utf8");
   const globals = readFileSync(source("globals.css"), "utf8");
   const publicCss = readFileSync(source("p1-public.css"), "utf8");
   const socialCss = readFileSync(source("phase10.css"), "utf8");
+  assert.match(page, /variant === "library" \? " cover-copy--without-mark"/);
+  assert.match(globals, /\.cover-copy--without-mark\s*\{\s*grid-template-rows:\s*minmax\(0, 1fr\) auto/);
+  assert.match(globals, /\.journal-cover \.cover-copy > small/);
+  assert.match(globals, /\.library-cover \.cover-copy > small/);
   for (const css of [globals, publicCss, socialCss]) {
     assert.match(css, /grid-template-rows:\s*(?:auto\s+)?minmax\(0, 1fr\)\s+auto/);
     assert.match(css, /overflow-wrap:\s*anywhere/);
-    assert.match(css, /border-top:\s*1px solid rgb\(255 255 255 \/ 0\.38\)/);
+    assert.match(css, /border-top:\s*1px solid rgb\(255 255 255 \/ 0\.58\)/);
+  }
+  assert.match(globals, /\.typographic-cover\s*\{[^}]*color:\s*#fffaf5;[^}]*linear-gradient\(rgb\(24 20 18 \/ 0\.2\)/);
+});
+
+test("every typographic cover tone keeps readable text contrast", () => {
+  const globals = readFileSync(source("globals.css"), "utf8");
+  const tones = [...globals.matchAll(/\.typographic-cover\.\w+\s*\{\s*background-color:\s*#([0-9a-f]{6})/gi)].map((match) => match[1]);
+  assert.equal(tones.length, 6);
+  const foreground = [255, 250, 245];
+  for (const tone of tones) {
+    const background = [0, 2, 4].map((index) => Math.round(Number.parseInt(tone.slice(index, index + 2), 16) * 0.8));
+    assert.ok(contrast(foreground, background) >= 4.5, `${tone} must retain AA text contrast after its overlay`);
   }
 });
 
-test("profile public traces share the long-review expansion contract", () => {
+test("profile public traces stay concise and delegate expansion to the work page", () => {
   const component = readFileSync(source("phase10.tsx"), "utf8");
-  assert.match(component, /expandedProfileReviews/);
-  assert.match(component, /profile-review-copy-/);
-  assert.match(component, /profile-review-text-toggle/);
-  assert.match(component, /expanded \? "Réduire" : "Lire la suite"/);
+  assert.match(component, /characters\.slice\(0, 280\)/);
+  assert.doesNotMatch(component, /expandedProfileReviews|profile-review-text-toggle/);
+  assert.match(component, /onClick=\{\(\) => onOpenWork\(review\.workId\)\}/);
 });

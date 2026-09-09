@@ -343,7 +343,6 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
   const [shareBusy, setShareBusy] = useState(false);
-  const [expandedProfileReviews, setExpandedProfileReviews] = useState<string[]>([]);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
   const publicProfileUrl = PUBLIC_PROFILE_URL;
   const profileName = isMael && displayName?.trim() ? displayName.trim() : actor.name;
@@ -461,11 +460,10 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           {publicReviews.length ? publicReviews.map((review) => {
             const work = workById(review.workId)!;
             const reviewKey = `${review.authorId}-${review.workId}`;
-            const expanded = expandedProfileReviews.includes(reviewKey);
             const characters = Array.from(review.text);
             const longText = characters.length > 280;
-            const visibleText = longText && !expanded ? `${characters.slice(0, 280).join("")}…` : review.text;
-            return <article className="profile-review" key={reviewKey}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p id={`profile-review-copy-${reviewKey}`}>{visibleText}</p>{longText && <button className="text-action profile-review-text-toggle" type="button" aria-expanded={expanded} aria-controls={`profile-review-copy-${reviewKey}`} onClick={() => setExpandedProfileReviews((current) => expanded ? current.filter((id) => id !== reviewKey) : [...current, reviewKey])}>{expanded ? "Réduire" : "Lire la suite"}</button>}</article>;
+            const visibleText = longText ? `${characters.slice(0, 280).join("")}…` : review.text;
+            return <article className="profile-review" key={reviewKey}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{visibleText}</p></article>;
           }) : <p className="journal-empty">Aucune critique publiée pour le moment.</p>}
         </section>
       </div>}

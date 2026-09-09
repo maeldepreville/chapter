@@ -166,12 +166,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   height: 100%;
   object-fit: cover;
 }
-.typographic-cover.brick { background: #94584e; }
-.typographic-cover.ochre { background: #9a7043; }
-.typographic-cover.sage { background: #596b5b; }
-.typographic-cover.petrol { background: #345c62; }
-.typographic-cover.plum { background: #694e60; }
-.typographic-cover.slate { background: #465868; }
+.typographic-cover { color: #fffaf5; background-image: linear-gradient(rgb(24 20 18 / 0.2), rgb(24 20 18 / 0.2)); }
+.typographic-cover.brick { background-color: #94584e; }
+.typographic-cover.ochre { background-color: #9a7043; }
+.typographic-cover.sage { background-color: #596b5b; }
+.typographic-cover.petrol { background-color: #345c62; }
+.typographic-cover.plum { background-color: #694e60; }
+.typographic-cover.slate { background-color: #465868; }
 .cover-copy {
   position: absolute;
   inset: 0;
@@ -180,6 +181,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   padding: 1.6rem;
   color: #f8efe7;
 }
+.cover-copy--without-mark { grid-template-rows: minmax(0, 1fr) auto; }
+.typographic-cover .cover-copy,
+.typographic-cover .compact-cover-copy,
+.typographic-cover .p1-cover-copy { color: #fffaf5; text-shadow: 0 1px 2px rgb(20 16 14 / 0.32); }
 .book-cover .cover-copy strong {
   min-height: 0;
   align-self: center;
@@ -189,7 +194,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 500;
   line-height: 0.98;
 }
-.book-cover .cover-copy > small { min-width: 0; padding-top: 0.45rem; overflow: hidden; border-top: 1px solid rgb(255 255 255 / 0.38); font-family: var(--font-editorial); font-size: 1rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.book-cover .cover-copy > small,
+.journal-cover .cover-copy > small,
+.library-cover .cover-copy > small { min-width: 0; padding-top: 0.45rem; overflow: hidden; border-top: 1px solid rgb(255 255 255 / 0.58); color: #fffaf5; font-family: var(--font-editorial); font-size: 1rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 .cover-image { background: #e8e1d7; }
 .cover-image img { object-fit: cover; transition: opacity var(--motion-surface) var(--ease-surface); }
 .cover-title-short { -webkit-line-clamp: 2; }
@@ -411,7 +418,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .journal-cover .cover-copy { padding: 0.45rem; }
 .journal-cover .cover-mark { font-size: 0.36rem; letter-spacing: 0.13em; }
 .journal-cover strong { align-self: center; font-family: var(--font-editorial); font-size: 0.76rem; font-weight: 500; line-height: 0.95; }
-.journal-cover small { padding-top: 0.2rem; font-family: var(--font-editorial); font-size: 0.45rem; }
+.journal-cover .cover-copy > small { padding-top: 0.2rem; font-size: 0.45rem; }
 .current-reading-copy { display: grid; min-width: 0; }
 .current-reading-copy strong { font-family: var(--font-editorial); font-size: 1.08rem; font-weight: 500; line-height: 1.15; }
 .current-reading-copy small { color: var(--muted); }
@@ -492,7 +499,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .library-cover { position: relative; display: block; aspect-ratio: 2 / 3; overflow: hidden; color: #fffaf5; }
 .library-cover .cover-copy { padding: 1.1rem; }
 .library-cover strong { align-self: center; font-family: var(--font-editorial); font-size: clamp(1.15rem, 2.2vw, 1.8rem); font-weight: 500; line-height: 1; }
-.library-cover small { color: #fffaf5; }
+.library-cover .cover-copy > small { font-size: 0.78rem; }
 .library-status-control { position: relative; justify-self: start; margin-top: 0.35rem; }
 .library-status-trigger { display: flex; align-items: center; gap: 0.3rem; min-height: 2.5rem; margin-left: -0.5rem; padding: 0.35rem 0.5rem; color: var(--brick); background: transparent; border: 0; border-radius: 0.375rem; cursor: pointer; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
 @media (hover: hover) and (pointer: fine) {

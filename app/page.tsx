@@ -84,7 +84,7 @@ function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" 
       {variant === "mini" ? (
         <strong aria-hidden="true">{work.title.slice(0, 1)}</strong>
       ) : (
-        <span className="cover-copy" aria-hidden="true">
+        <span className={`cover-copy${variant === "library" ? " cover-copy--without-mark" : ""}`} aria-hidden="true">
           {variant !== "library" && <span className="cover-mark">CHAPTER</span>}
           <strong className={coverTitleTier(work.title)}>{work.title}</strong>
           <small>{work.author}</small>

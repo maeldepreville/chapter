@@ -142,7 +142,7 @@
   line-height: 1;
 }
 
-.compact-cover-copy small { min-width: 0; padding-top: 0.4rem; overflow: hidden; border-top: 1px solid rgb(255 255 255 / 0.38); font-size: 0.75rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.compact-cover-copy small { min-width: 0; padding-top: 0.4rem; overflow: hidden; border-top: 1px solid rgb(255 255 255 / 0.58); font-size: 0.75rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 
 .discovery-feature-copy h2,
 .public-list-path h2,
@@ -511,7 +511,6 @@
 .profile-review button { padding: 0; color: var(--brick); background: transparent; border: 0; font-weight: 600; cursor: pointer; }
 .profile-review-rating { display: inline-block; margin-left: 0.8rem; color: var(--brick); font-size: 0.78rem; letter-spacing: 0.06em; }
 .profile-review p { max-width: 42rem; margin: 0.75rem 0 0; font-family: var(--font-editorial); font-size: clamp(1.08rem, 1.6vw, 1.25rem); line-height: 1.55; }
-.profile-review .profile-review-text-toggle { display: block; margin-top: 0.65rem; }
 
 .honors-page { max-width: 82rem; }
 .honors-heading { max-width: 56rem; }
