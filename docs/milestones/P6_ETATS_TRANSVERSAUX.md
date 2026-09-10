@@ -1,8 +1,8 @@
 # Chapter — P6 : états transversaux
 
-Statut : **candidate auditée visuellement sur la version Sites 71**
+Statut : **candidate auditée visuellement, prête pour la version Sites 72**
 
-Dernière mise à jour : 9 septembre 2026.
+Dernière mise à jour : 10 septembre 2026.
 
 ## Résultat à évaluer
 
@@ -17,7 +17,7 @@ P6 rend les parcours P1 à P5 robustes lorsque les données manquent, arrivent, 
 - chargement annoncé aux technologies d'assistance, squelette non verbal et animation supprimée avec `prefers-reduced-motion` ;
 - protection des titres, noms, textes, nombres et mots sans espace dans le scénario de contenus extrêmes ;
 - atelier isolé `/recette/p6`, absent de la navigation produit, pour observer les scénarios `Normal`, `Vide`, `Chargement`, `Erreur` et `Contenus extrêmes` sans altérer l'application normale ;
-- conservation des états vides déjà propres à Journal, Bibliothèque, Découvrir, Recherche, profils, listes, critiques et honneurs ;
+- composition partagée des états vides de Journal, Bibliothèque, Découvrir et Recherche, avec déclinaison compacte dans les profils, listes et critiques ;
 - conservation des 500 œuvres de la Bibliothèque, du chargement volontaire par lots et des comportements de couverture en chargement/échec.
 
 ## Ajustements issus de la recette
@@ -28,6 +28,9 @@ P6 rend les parcours P1 à P5 robustes lorsque les données manquent, arrivent, 
 - l'audit visuel navigué transforme les absences globales de Journal, Bibliothèque, Découvrir et Recherche en seuils éditoriaux contextualisés, sans proposer d'action quand le catalogue vide ne lui donnerait aucune issue ;
 - les absences secondaires du Profil et des listes publiques conservent l'intention de la section au lieu d'une ligne technique isolée ; le croquis de Recherche ne crée plus de débordement horizontal.
 - l'état vide global du Journal reprend le centrage de celui de la Bibliothèque ; sur mobile, les grandes cartes de Réglages, Chapitres d'honneur et listes publiques conservent désormais un retrait sûr, leur bord et leurs coins, au lieu de se confondre avec l'écran.
+- une famille de sept illustrations transparentes et incrustables distingue Journal, Bibliothèque, Découvrir, Recherche, Profil, listes et critiques sans changer de langage graphique ; leur boîte d’image est strictement bornée pour ne jamais recouvrir le titre ou le texte ;
+- lorsque le catalogue est réellement vide, Recherche ne conserve plus son ancien croquis, son champ ni son résumé inopérants. Les recherches et filtres locaux sans résultat gardent en revanche leurs contrôles de reprise ;
+- sur mobile, les cartes de Réglages, Chapitres d’honneur et listes publiques sont limitées à `88dvh` et `46rem`, avec un retrait sûr d’au moins `1rem` et un rayon de `1.1rem` : elles restent nettement plus courtes et plus arrondies que l’écran.
 
 ## Ce qui doit être visible
 
@@ -65,7 +68,7 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 
 - construction de production réussie avec `/recette/p6` et les frontières globales ;
 - lint réussi ;
-- **162/162 tests automatisés réussis**, dont les contrôles P6 des états vides, de structure et de contraste, les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
+- **163/163 tests automatisés réussis**, dont les contrôles P6 des états vides, de la famille d’assets, de structure et de contraste, les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
 - `git diff --check` sans erreur ;
 - audit navigateur réalisé sur l'atelier P6 : Journal, Bibliothèque, Découvrir, Recherche, Profil, liste publique, chargement, erreur et page absente parcourus visuellement ; les familles de cartes mobiles ont aussi été inventoriées et leurs contrats responsifs contrôlés ; la validation utilisateur reste requise.
 

@@ -24,8 +24,8 @@ test("all principal views render an empty catalogue without substituting a work"
     assert.match(rendered, /<h1/);
     assert.doesNotMatch(rendered, /class="(?:book-cover|favorite-cover|discovery-cover|public-list-cover)/);
   }
-  assert.match(discover({ works: [] }), /Aucune œuvre disponible/);
-  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Les lectures sont encore gardées dans le cercle privé/);
+  assert.match(discover({ works: [] }), /Les chemins restent à tracer/);
+  assert.match(html(ProfileView, { ...profileProps, works: [] }), /Les lectures restent encore privées/);
   assert.match(publicList([]), /Les choix restent visibles, pas leurs œuvres/);
 });
 

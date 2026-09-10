@@ -154,7 +154,9 @@ test("undoing a discovery save restores the previous empty Library", () => {
   ui.button("Bibliothèque").props.onClick();
   assert.match(textOf(ui.render()), /Les Cartographies du vent/);
   ui.button("Annuler").props.onClick();
-    assert.match(textOf(ui.render()), /Votre bibliothèque attend sa première œuvre/);
+    const emptyLibrary = ui.component("EmptyDestination");
+    assert.equal(emptyLibrary.props.section, "library");
+    assert.equal(emptyLibrary.props.title, "Votre bibliothèque attend sa première œuvre");
     assert.doesNotMatch(textOf(ui.render()), /Ajouté à « À lire »/);
   });
 });

@@ -8,6 +8,7 @@ import type { ReadingStatus, Work } from "./foundation/contracts";
 import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
 import { profilePresentations, prototypeActors, type ProfileOwner } from "./prototype-data";
 import { staticAsset } from "./static-assets";
+import { EmptyDestination } from "./empty-destination";
 
 type PublicViewProps = {
   works: readonly Work[];
@@ -51,7 +52,7 @@ export function PublicDiscover({ works, onOpenWork, onOpenSearch }: PublicViewPr
   const shelf = works.slice(4, 6);
 
   if (!featured) {
-    return <section className="p1-public-page p1-empty" aria-labelledby="p1-empty-title"><div className="editorial-empty editorial-empty--wide"><p className="empty-kicker">Découvrir · catalogue indisponible</p><h1 id="p1-empty-title">Les chemins restent à tracer.</h1><p>Aucune œuvre n’est disponible pour le moment. Dès que le catalogue revient, les lectures et les voix qui les entourent réapparaissent ici.</p></div></section>;
+    return <section className="p1-public-page p1-empty" aria-labelledby="p1-empty-title"><header className="destination-heading"><p className="eyebrow">Explorer le catalogue</p><h1 id="p1-empty-title">Découvrir</h1><p>Des œuvres choisies pour les chemins qu’elles ouvrent.</p></header><EmptyDestination section="discover" asset="/editorial/p6-empty-discover.webp" assetAlt="Une carte dépliée, une boussole et un fil rouge qui attendent le premier chemin." kicker="Catalogue en attente" title="Les chemins restent à tracer.">Aucune œuvre n’est disponible pour le moment. Dès que le catalogue revient, les lectures et les voix qui les entourent réapparaissent ici.</EmptyDestination></section>;
   }
 
   return (
@@ -146,6 +147,15 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
   }) : [];
   const listResults = socialQuery && onOpenList ? publicListIds.filter((id) => normalize(`${publicListCatalog[id].title} ${publicListCatalog[id].description}`).includes(socialQuery)) : [];
 
+  if (works.length === 0) {
+    return (
+      <section className="p1-public-page p1-search" aria-labelledby="p1-search-title">
+        <header className="destination-heading"><p className="eyebrow">Recherche publique</p><h1 id="p1-search-title">Recherche</h1><p>Retrouver une œuvre, un auteur, un lecteur ou une liste.</p></header>
+        <EmptyDestination section="search" asset="/editorial/p6-empty-search.webp" assetAlt="Une loupe posée sur des fiches d’index encore vierges, marquées d’un point rouge." kicker="Catalogue en attente" title="La recherche attend ses premières œuvres.">Aucun chemin public ne peut encore être proposé. Le champ de recherche apparaîtra avec les premiers titres.</EmptyDestination>
+      </section>
+    );
+  }
+
   return (
     <section className="p1-public-page p1-search" aria-labelledby="p1-search-title">
       <header className="p1-search-opening">
@@ -169,13 +179,7 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
         <span>{query ? `${results.length} œuvre${results.length > 1 ? "s" : ""} · ${readerResults.length + listResults.length} chemin${readerResults.length + listResults.length > 1 ? "s" : ""}` : "Sélection de départ"}</span>
         <span>{works.length} œuvres disponibles</span>
       </div>
-      {works.length === 0 && !query ? (
-        <div className="p1-search-empty p1-search-catalogue-empty">
-          <p className="empty-kicker">Catalogue indisponible</p>
-          <h2>La recherche attend ses premières œuvres.</h2>
-          <p>Le champ reste prêt, mais aucun titre, auteur, lecteur ou liste ne peut être proposé pour le moment.</p>
-        </div>
-      ) : results.length > 0 ? (
+      {results.length > 0 ? (
         <div className="p1-search-results">
           {results.map((work, index) => (
             <article key={work.id}>

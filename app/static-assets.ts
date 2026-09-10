@@ -1,4 +1,4 @@
-export const STATIC_ASSET_REVISION = "p5-20260908-1";
+export const STATIC_ASSET_REVISION = "p6-20260910-2";
 
 export function staticAsset(path: string): string {
   if (!path.startsWith("/") || path.startsWith("/_")) return path;
@@ -12,6 +12,13 @@ export const recurringStaticAssets = [
   "/editorial/p4-journal-threshold.webp",
   "/editorial/p4-library-threshold.webp",
   "/editorial/p5-profile-reading-room-wash.webp",
+  "/editorial/p6-empty-journal.webp",
+  "/editorial/p6-empty-library.webp",
+  "/editorial/p6-empty-discover.webp",
+  "/editorial/p6-empty-search.webp",
+  "/editorial/p6-empty-profile.webp",
+  "/editorial/p6-empty-list.webp",
+  "/editorial/p6-empty-trace.webp",
   "/branding/chapter-profile-seal.webp",
   "/branding/chapter-profile-qr.svg",
   "/badges/reading-02-complice-des-livres.webp",

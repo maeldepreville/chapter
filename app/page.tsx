@@ -20,6 +20,7 @@ import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type Fir
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 import { staticAsset, warmStaticAssets } from "./static-assets";
+import { EmptyDestination } from "./empty-destination";
 
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
@@ -1184,12 +1185,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             </header>
 
             {currentReadings.length === 0 && journalTraces.length === 0 ? (
-              <div className="editorial-empty editorial-empty--centered journal-empty-whole">
-                <p className="empty-kicker">Premier feuillet</p>
-                <h2>Votre journal commence avec une œuvre</h2>
-                <p>{works.length ? "Choisissez un livre : sa première étape ouvrira ici une page à reprendre plus tard." : "Aucune œuvre n’est disponible pour amorcer une trace. Votre Journal reste prêt à accueillir la première."}</p>
-                {works.length > 0 && <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>}
-              </div>
+              <EmptyDestination section="journal" asset="/editorial/p6-empty-journal.webp" assetAlt="Un journal ouvert, quelques feuillets vierges et un marque-page rouge prêts à recevoir une première trace." kicker="Premier feuillet" title="Votre journal commence avec une œuvre" action={works.length > 0 ? <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button> : undefined}>{works.length ? "Choisissez un livre : sa première étape ouvrira ici une page à reprendre plus tard." : "Aucune œuvre n’est disponible pour amorcer une trace. Votre Journal reste prêt à accueillir la première."}</EmptyDestination>
             ) : <div className="journal-opening-grid">
               <section className="current-readings" aria-labelledby="current-readings-title">
                 <div className="personal-section-heading">
@@ -1313,12 +1309,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 )}
               </>
             ) : (
-              <div className="editorial-empty editorial-empty--centered library-empty-whole">
-                <p className="empty-kicker">Premier rayonnage</p>
-                <h2>Votre bibliothèque attend sa première œuvre</h2>
-                <p>{works.length ? "Ajoutez une œuvre pour commencer à organiser vos lectures." : "Le catalogue est momentanément vide. Vos futurs choix trouveront leur place ici dès son retour."}</p>
-                {works.length > 0 && <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button>}
-              </div>
+              <EmptyDestination section="library" asset="/editorial/p6-empty-library.webp" assetAlt="Un rayonnage vide entre deux serre-livres, avec une fiche et un repère rouge." kicker="Premier rayonnage" title="Votre bibliothèque attend sa première œuvre" action={works.length > 0 ? <button className="primary-action" type="button" onClick={() => setSearchOpen(true)}>Rechercher une œuvre</button> : undefined}>{works.length ? "Ajoutez une œuvre pour commencer à organiser vos lectures." : "Le catalogue est momentanément vide. Vos futurs choix trouveront leur place ici dès son retour."}</EmptyDestination>
             )}
           </section>
         ) : !selectedWork ? (
