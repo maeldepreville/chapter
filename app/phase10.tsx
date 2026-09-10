@@ -14,6 +14,7 @@ import { actorIdForProfile, CURRENT_READER_ID, profilePresentations, prototypeAc
 import { prototypeReviewsForActor, prototypeReviewsForWork, type PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_URL } from "./site-config";
 import { staticAsset } from "./static-assets";
+import { EmptyDestination } from "./empty-destination";
 
 export type { PublicListId } from "./catalogue";
 export type { ProfileOwner } from "./prototype-data";
@@ -250,6 +251,16 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
     );
   };
 
+  if (works.length === 0) {
+    return (
+      <section className="destination-page discover-page" aria-labelledby="discover-title">
+        <header className="destination-heading discover-heading"><p className="eyebrow">Chercher ou explorer</p><h1 id="discover-title">Découvrir</h1><p>Des œuvres mises en relation avec vos lectures, vos envies du moment et les chemins ouverts par d’autres lecteurs.</p></header>
+        <EmptyDestination section="discover" asset="/editorial/p6-empty-discover.webp" assetAlt="Une carte dépliée, une boussole et un fil rouge qui attendent le premier chemin." kicker="Catalogue en attente" title="Les chemins restent à tracer.">Le catalogue ne contient aucune œuvre à explorer pour le moment.</EmptyDestination>
+        {onBackToJournal && <button className="text-action destination-empty-return" type="button" onClick={onBackToJournal}>Revenir au Journal</button>}
+      </section>
+    );
+  }
+
   return (
     <section className="destination-page discover-page" aria-labelledby="discover-title">
       <header className="destination-heading discover-heading">
@@ -268,7 +279,7 @@ export function DiscoverView({ works, statuses, onOpenWork, onAddToRead, onOpenP
         </div>
       </form>
 
-      {works.length === 0 ? <div className="journal-empty"><h2>Aucune œuvre disponible pour le moment</h2><p>Le catalogue ne contient pas d’œuvre à afficher.</p>{onBackToJournal && <button className="text-action" type="button" onClick={onBackToJournal}>Revenir au Journal</button>}</div> : submittedQuery ? (
+      {submittedQuery ? (
         <section className="discover-results" aria-live="polite">
           {exactResults.length > 0 ? (
             <>
@@ -443,7 +454,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       {!blocked && <section className="profile-library-portrait" aria-label={isOwnProfile ? "Votre bibliothèque personnelle" : "Sa bibliothèque personnelle"}>
         <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
           <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2><p>Trois présences qui racontent une sensibilité mieux qu’une longue biographie.</p></div>
-          {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <div className="profile-empty-note"><span aria-hidden="true">01 — 03</span><p>Aucune œuvre de chevet à présenter pour le moment.</p><small>Ces trois places raconteront bientôt une sensibilité de lecture.</small></div>}
+          {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <EmptyDestination compact headingLevel="h3" section="profile" asset="/editorial/p6-empty-profile.webp" assetAlt="Un ex-libris de lecteur encore vierge, accompagné de trois onglets et d’un ruban rouge." kicker="Œuvres de chevet" title="Trois places sont encore libres.">Elles raconteront bientôt une sensibilité de lecture.</EmptyDestination>}
         </section>
         <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
@@ -464,7 +475,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
             const longText = characters.length > 280;
             const visibleText = longText ? `${characters.slice(0, 280).join("")}…` : review.text;
             return <article className="profile-review" key={reviewKey}><button type="button" onClick={() => onOpenWork(review.workId)}>{work.title}</button>{review.rating > 0 && <span className="profile-review-rating" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>}<p>{visibleText}</p></article>;
-          }) : <div className="profile-empty-note profile-empty-note--review"><span aria-hidden="true">Aucune trace</span><p>Les lectures sont encore gardées dans le cercle privé.</p><small>Une critique publiée viendra ouvrir ici un chemin vers l’œuvre.</small></div>}
+          }) : <EmptyDestination compact headingLevel="h3" section="trace" asset="/editorial/p6-empty-trace.webp" assetAlt="Deux feuillets vierges, une plume et un trait rouge encore inachevé." kicker="Aucune trace" title="Les lectures restent encore privées.">Une critique publiée ouvrira ici un chemin vers l’œuvre.</EmptyDestination>}
         </section>
       </div>}
       <Fade show={isOwnProfile && removePhotoConfirm} kind="modal">{isOwnProfile && removePhotoConfirm && (
@@ -648,7 +659,7 @@ export function PublicListView({ owner, listId, works, following, blocked = fals
         {chosen.length < list.workIds.length && <p>{availableWorkCount(chosen.length, list.workIds.length)}.</p>}
         <div className="list-author-row"><button className="identity-link" type="button" onClick={onOpenProfile}><span className="avatar">{author.initials}</span><span><strong>{author.name}</strong><small>{blocked ? "Compte bloqué" : authorRelationship}</small></span></button>{!isOwnList && !blocked && <button className="primary-action profile-follow-action" type="button" aria-pressed={following} onClick={onToggleFollow}>{following ? "Suivi" : "Suivre"}</button>}</div>
       </header>
-      {blocked ? <p className="trust-empty">Cette liste est masquée parce que vous avez bloqué son auteur.</p> : chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <div className="public-list-empty"><p className="empty-kicker">Rayonnage en attente</p><h2>Les choix restent visibles, pas leurs œuvres.</h2><p>Les livres réunis dans cette liste ne sont pas disponibles pour le moment. Son intention et son auteur restent consultables.</p></div>}
+      {blocked ? <p className="trust-empty">Cette liste est masquée parce que vous avez bloqué son auteur.</p> : chosen.length ? <div className="public-list-works">{chosen.map((work, index) => <article key={work.id}><span className="list-index">{String(index + 1).padStart(2, "0")}</span><button type="button" className="public-list-work" onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="public-list-cover" /><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small><p>{list.workIds.findIndex((id) => id === work.id) % 2 === 0 ? "Un lieu qui agit sur la mémoire et oblige à regarder autrement ce qui semblait familier." : "Une géographie intime, traversée par les voix de celles et ceux qui y ont vécu."}</p></span></button></article>)}</div> : <EmptyDestination compact section="list" asset="/editorial/p6-empty-list.webp" assetAlt="Une pile de feuillets vierges reliée par un ruban rouge, prête à recevoir une sélection." kicker="Rayonnage en attente" title="Les choix restent visibles, pas leurs œuvres.">Les livres réunis dans cette liste ne sont pas disponibles pour le moment. Son intention et son auteur restent consultables.</EmptyDestination>}
     </section>
   );
 }
@@ -737,7 +748,7 @@ export function SocialReviews({ workId, personalReview, personalRating, followed
     <div className="social-reviews">
       <Fade show={Boolean(notice)} kind="feedback" changeKey={notice}>{notice && <div className="conversation-notice" role="status"><span>{notice}</span><button type="button" onClick={() => setNotice("")}>Fermer</button></div>}</Fade>
       {followedReviews.length > 0 && <section className="review-group followed-review-group" aria-labelledby="followed-reviews-title"><h3 id="followed-reviews-title">De personnes que vous suivez</h3>{followedReviews.map((review, index) => renderReview(review, index > 0))}</section>}
-      {(generalReviews.length > 0 || followedReviews.length === 0) && <section className="review-group" aria-labelledby="all-reviews-title"><h3 id="all-reviews-title">Toutes les critiques</h3>{generalReviews.length > 0 ? generalReviews.map((review) => renderReview(review)) : <div className="empty-reviews"><p>Aucune critique publiée.</p><button className="text-action" type="button" onClick={onWriteReview}>Écrire une critique</button></div>}</section>}
+      {(generalReviews.length > 0 || followedReviews.length === 0) && <section className="review-group" aria-labelledby="all-reviews-title"><h3 id="all-reviews-title">Toutes les critiques</h3>{generalReviews.length > 0 ? generalReviews.map((review) => renderReview(review)) : <EmptyDestination compact headingLevel="h4" section="trace" asset="/editorial/p6-empty-trace.webp" assetAlt="Deux feuillets vierges, une plume et un trait rouge encore inachevé." kicker="Première trace" title="Aucune critique publiée." action={<button className="text-action" type="button" onClick={onWriteReview}>Écrire une critique</button>}>Cette œuvre attend encore sa première lecture partagée.</EmptyDestination>}</section>}
     </div>
   );
 }

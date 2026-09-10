@@ -45,7 +45,7 @@ test("Discover replaces the native search cross with a Chapter text action", () 
   const harness = hookHarness();
   const { DiscoverView } = createSourceLoader({ react: harness.react })(source("phase10.tsx"));
   const props = {
-    works: [], statuses: {}, followingLina: false,
+    works: [{ id: "atlas", title: "Atlas", author: "A. Auteur", meta: "Roman", genre: "Roman", language: "Français", lede: "Une œuvre.", cover: false, coverTone: "slate" }], statuses: {}, followingLina: false,
     onOpenWork() {}, onAddToRead() {}, onOpenProfile() {}, onOpenList() {}, onToggleFollow() {},
   };
   const render = () => harness.render(DiscoverView, props);
