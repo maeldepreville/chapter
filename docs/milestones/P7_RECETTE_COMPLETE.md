@@ -55,6 +55,7 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - éprouver les erreurs d’import sans altérer la session ;
 - vérifier la confirmation de suppression, l’annulation et la sortie publique résultante ;
 - contrôler la fermeture des réglages, du menu de compte et des dialogues au clavier et au toucher.
+- enchaîner plusieurs actions à retour temporaire : les notifications restent empilées de la plus ancienne en haut à la plus récente en bas et leur réagencement est fluide ; vérifier aussi les cartes de réussite d'import et d'export et leurs destinations contextuelles.
 
 ### États, responsive et accessibilité
 

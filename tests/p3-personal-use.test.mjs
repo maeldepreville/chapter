@@ -52,7 +52,8 @@ test("P3 saves a manual private bookmark for a current reading", () => {
     assert.match(textOf(rendered), /p. 86/);
     assert.doesNotMatch(textOf(rendered), /sur 312|\/ 312/);
     assert.equal(nodes(rendered, (node) => node.props?.className === "reading-bookmark reading-bookmark--compact").length, 0);
-    assert.match(textOf(ui.render()), /Ce repère reste facultatif et privé/);
+    const toastStack = nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0];
+    assert.match(toastStack.props.toasts.at(-1).detail, /Ce repère reste facultatif et privé/);
   });
 });
 

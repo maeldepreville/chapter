@@ -285,7 +285,7 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   );
 }
 
-export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, activated = false, record, backLabel = "Retour à Découvrir", social }: {
+export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, onNotify, activated = false, record, backLabel = "Retour à Découvrir", social }: {
   work: Work;
   works: readonly Work[];
   onBack: () => void;
@@ -293,6 +293,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   onActivate: (status: ReadingStatus) => void;
   onSaveMarker: (marker: string) => void;
   onOpenJournal?: () => void;
+  onNotify?: (message: string) => void;
   activated?: boolean;
   record?: FirstMarkerRecord;
   backLabel?: string;
@@ -307,6 +308,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   const [markerDraft, setMarkerDraft] = useState(record?.marker ?? "");
   const [markerOpen, setMarkerOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const notify = (message: string) => onNotify ? onNotify(message) : setFeedback(message);
 
   const chooseStatus = (status: ReadingStatus) => {
     setStatusOpen(false);
@@ -314,7 +316,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
     if (activated) {
       onActivate(status);
       setMarkerOpen(!record?.marker);
-      setFeedback(`Statut « ${status} » enregistré en privé.`);
+      notify(`Statut « ${status} » enregistré en privé.`);
       return;
     }
     setAuthOpen(true);
@@ -325,7 +327,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
     onActivate(pendingStatus);
     setAuthOpen(false);
     setMarkerOpen(true);
-    setFeedback(`Votre compte est prêt. « ${pendingStatus} » a bien été conservé.`);
+    notify(`Votre compte est prêt. « ${pendingStatus} » a bien été conservé.`);
   };
 
   const saveMarker = () => {
@@ -333,7 +335,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
     if (!marker) return;
     onSaveMarker(marker);
     setMarkerOpen(false);
-    setFeedback("Votre premier repère privé est enregistré.");
+    notify("Votre premier repère privé est enregistré.");
   };
 
   return (
@@ -435,7 +437,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
           </section>
         </Dialog>
       )}
-      {feedback && <div className="p2-feedback" role="status" aria-live="polite"><span>{feedback}</span><button type="button" aria-label="Fermer" onClick={() => setFeedback("")}>×</button></div>}
+      {!onNotify && feedback && <div className="p2-feedback" role="status" aria-live="polite"><span>{feedback}</span><button type="button" aria-label="Fermer" onClick={() => setFeedback("")}>×</button></div>}
     </article>
   );
 }

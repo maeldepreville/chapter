@@ -149,14 +149,18 @@ test("undoing a discovery save restores the previous empty Library", () => {
   const ui = journey({ view: "discover", entries: {}, traces: [] });
   withWindow(() => {
   ui.component("DiscoverView").props.onAddToRead("cartographies");
-  assert.match(textOf(ui.render()), /Ajouté à « À lire »/);
+  let toastStack = nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0];
+  assert.match(toastStack.props.toasts.at(-1).label, /Ajouté à « À lire »/);
 
   ui.button("Bibliothèque").props.onClick();
   assert.match(textOf(ui.render()), /Les Cartographies du vent/);
-  ui.button("Annuler").props.onClick();
+  toastStack = nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0];
+  const savedToast = toastStack.props.toasts.at(-1);
+  savedToast.onAction();
+  toastStack.props.onDismiss(savedToast.id);
     const emptyLibrary = ui.component("EmptyDestination");
     assert.equal(emptyLibrary.props.section, "library");
     assert.equal(emptyLibrary.props.title, "Votre bibliothèque attend sa première œuvre");
-    assert.doesNotMatch(textOf(ui.render()), /Ajouté à « À lire »/);
+    assert.doesNotMatch(nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.map((toast) => toast.label).join(" "), /Ajouté à « À lire »/);
   });
 });

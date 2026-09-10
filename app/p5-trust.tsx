@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type ChangeEvent, type MouseEvent, type UIEvent } from "react";
-import { Fade } from "./fade";
+import Image from "next/image";
+import { useRef, useState, type ChangeEvent, type MouseEvent, type UIEvent } from "react";
 import { Dialog, Input } from "./foundation/primitives";
 import { prototypeActors, type PrototypeActorId } from "./prototype-data";
+import { staticAsset } from "./static-assets";
 
 export type ChapterExportSnapshot = {
   format: "chapter-export";
@@ -19,7 +20,7 @@ export type ChapterExportSnapshot = {
 };
 
 type ImportResult = { records: number; traces: number };
-type DataFeedback = { label: string; detail: string };
+type DataSuccess = { kind: "export" } | { kind: "import"; records: number; traces: number };
 const trustSectionIds = ["identity", "privacy", "blocked", "data", "deletion"] as const;
 type TrustSectionId = typeof trustSectionIds[number];
 
@@ -35,25 +36,19 @@ type TrustSettingsProps = {
   onToggleBlock: (actorId: PrototypeActorId) => void;
   createExport: () => ChapterExportSnapshot;
   onImport: (snapshot: ChapterExportSnapshot) => ImportResult;
+  onOpenDestination: (destination: "journal" | "library") => void;
   onDeleteAccount: () => void;
 };
 
-export function TrustSettings({ publicName, privateRecordCount, privateNoteCount, publicationCount, blockedActorIds, onClose, onSavePublicName, onEditPhoto, onToggleBlock, createExport, onImport, onDeleteAccount }: TrustSettingsProps) {
+export function TrustSettings({ publicName, privateRecordCount, privateNoteCount, publicationCount, blockedActorIds, onClose, onSavePublicName, onEditPhoto, onToggleBlock, createExport, onImport, onOpenDestination, onDeleteAccount }: TrustSettingsProps) {
   const cardRef = useRef<HTMLElement>(null);
   const [nameDraft, setNameDraft] = useState(publicName);
   const [activeSection, setActiveSection] = useState<TrustSectionId>("identity");
   const [notice, setNotice] = useState("");
-  const [dataFeedback, setDataFeedback] = useState<DataFeedback | null>(null);
-  const [feedbackPaused, setFeedbackPaused] = useState(false);
+  const [dataSuccess, setDataSuccess] = useState<DataSuccess | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [deletePhrase, setDeletePhrase] = useState("");
-
-  useEffect(() => {
-    if (!dataFeedback || feedbackPaused) return;
-    const timer = window.setTimeout(() => setDataFeedback(null), 5000);
-    return () => window.clearTimeout(timer);
-  }, [dataFeedback, feedbackPaused]);
 
   const exportChapterData = () => {
     const snapshot = createExport();
@@ -65,7 +60,7 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
     link.click();
     URL.revokeObjectURL(url);
     setNotice("");
-    setDataFeedback({ label: "Téléchargement lancé", detail: "Votre archive Chapter complète a été préparée." });
+    setDataSuccess({ kind: "export" });
   };
 
   const importChapterData = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -76,9 +71,9 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
       if (snapshot.format !== "chapter-export" || snapshot.version !== 1 || !Array.isArray(snapshot.privateRecords) || !Array.isArray(snapshot.journalTraces)) throw new Error("invalid");
       const result = onImport(snapshot);
       setNotice("");
-      setDataFeedback({ label: "Import privé terminé", detail: `${result.records} lecture${result.records > 1 ? "s" : ""} et ${result.traces} trace${result.traces > 1 ? "s" : ""} reconnues.` });
+      setDataSuccess({ kind: "import", records: result.records, traces: result.traces });
     } catch {
-      setDataFeedback(null);
+      setDataSuccess(null);
       setNotice("Ce fichier n’est pas une archive Chapter reconnue. Aucune donnée n’a été modifiée.");
     } finally {
       event.target.value = "";
@@ -197,12 +192,22 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
         </section>
       </Dialog>}
 
-      <Fade show={Boolean(dataFeedback)} kind="feedback" changeKey={dataFeedback}>{dataFeedback && (
-        <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
-          <span><strong>{dataFeedback.label}</strong><small>{dataFeedback.detail}</small></span>
-          <button className="feedback-close" type="button" aria-label="Fermer" onClick={() => setDataFeedback(null)}>×</button>
-        </div>
-      )}</Fade>
+      {dataSuccess && <Dialog titleId="data-success-title" descriptionId="data-success-description" initialFocus=".data-success-primary" onRequestClose={() => setDataSuccess(null)} className="data-success-overlay">
+        <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la confirmation" onClick={() => setDataSuccess(null)} />
+        <section className="data-success-card">
+          <button className="close-button" type="button" aria-label="Fermer" onClick={() => setDataSuccess(null)}>×</button>
+          <Image className="data-success-asset" src={staticAsset("/editorial/p7-data-success.webp")} alt="" width={768} height={512} aria-hidden="true" unoptimized />
+          <div className="data-success-copy">
+            <p className="eyebrow">{dataSuccess.kind === "import" ? "Import terminé" : "Archive prête"}</p>
+            <h2 id="data-success-title">{dataSuccess.kind === "import" ? "Vos traces ont retrouvé leur place." : "Vos lectures voyagent avec vous."}</h2>
+            <p id="data-success-description">{dataSuccess.kind === "import" ? `${dataSuccess.records} lecture${dataSuccess.records > 1 ? "s" : ""} et ${dataSuccess.traces} trace${dataSuccess.traces > 1 ? "s" : ""} reconnues. Tout reste privé tant que vous ne choisissez pas de publier.` : "Le téléchargement a démarré. Votre archive complète reste lisible, privée et prête à être conservée où vous le souhaitez."}</p>
+          </div>
+          <div className="modal-actions data-success-actions">
+            <button className="chapter-button chapter-button--quiet" type="button" onClick={() => setDataSuccess(null)}>Rester dans les réglages</button>
+            <button className="chapter-button chapter-button--primary data-success-primary" type="button" onClick={() => onOpenDestination(dataSuccess.kind === "import" ? "library" : "journal")}>{dataSuccess.kind === "import" ? "Voir la Bibliothèque" : "Retour au Journal"}</button>
+          </div>
+        </section>
+      </Dialog>}
     </section>
   );
 }

@@ -20,7 +20,7 @@ const trustProps = {
   blockedActorIds: ["theo"],
   onClose() {}, onSavePublicName() {}, onEditPhoto() {}, onToggleBlock() {},
   createExport() { return { format: "chapter-export", version: 1, exportedAt: "2026-09-07T00:00:00.000Z", account: { publicName: "Maël Depréville" }, privacy: { journal: "private", library: "private", notes: "private" }, privateRecords: [], journalTraces: [], publications: [], followingActorIds: [], blockedActorIds: [] }; },
-  onImport() { return { records: 0, traces: 0 }; }, onDeleteAccount() {},
+  onImport() { return { records: 0, traces: 0 }; }, onOpenDestination() {}, onDeleteAccount() {},
 };
 
 test("P5 exposes identity, immutable private spaces, blocking and data portability", () => {
@@ -33,7 +33,7 @@ test("P5 exposes identity, immutable private spaces, blocking and data portabili
   assert.match(markup, /Demander la suppression/);
 });
 
-test("successful export and import use the same visible feedback surface as public actions", async () => {
+test("successful export and import open a dismissible editorial confirmation with a contextual destination", async () => {
   const harness = hookHarness();
   const HarnessedTrustSettings = createSourceLoader({ react: harness.react })(source("p5-trust.tsx")).TrustSettings;
   const previousDocument = globalThis.document;
@@ -48,9 +48,10 @@ test("successful export and import use the same visible feedback surface as publ
     const exportButton = nodes(tree, (node) => node.type === "button" && textOf(node) === "Télécharger mon archive")[0];
     exportButton.props.onClick();
     tree = render();
-    let feedback = nodes(tree, (node) => node.props?.className === "temporary-feedback")[0];
-    assert.match(textOf(feedback), /Téléchargement lancé/);
-    assert.equal(feedback.props.role, "status");
+    let confirmation = nodes(tree, (node) => node.props?.className === "data-success-card")[0];
+    assert.match(textOf(confirmation), /Archive prête/);
+    assert.match(textOf(confirmation), /Retour au Journal/);
+    assert.ok(nodes(tree, (node) => node.props?.className === "overlay-backdrop" && node.props?.["aria-label"] === "Fermer la confirmation").length);
 
     const importInput = nodes(tree, (node) => node.type === "input" && node.props?.type === "file")[0];
     const importTarget = { files: [], value: "archive.json" };
@@ -61,9 +62,10 @@ test("successful export and import use the same visible feedback surface as publ
     await importInput.props.onChange({ target: importTarget });
     assert.equal(importTarget.value, "");
     tree = render();
-    feedback = nodes(tree, (node) => node.props?.className === "temporary-feedback")[0];
-    assert.match(textOf(feedback), /Import privé terminé/);
-    assert.doesNotMatch(textOf(feedback), /Annuler/);
+    confirmation = nodes(tree, (node) => node.props?.className === "data-success-card")[0];
+    assert.match(textOf(confirmation), /Import terminé/);
+    assert.match(textOf(confirmation), /Voir la Bibliothèque/);
+    assert.match(textOf(confirmation), /Tout reste privé/);
   } finally {
     if (previousDocument === undefined) delete globalThis.document;
     else globalThis.document = previousDocument;

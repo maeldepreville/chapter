@@ -210,7 +210,7 @@ test("removing a book with writing and undoing removal never erases the private 
   ui.button("Retirer de la bibliothèque").props.onClick();
   clickFirst(ui, "Journal");
   assert.match(textOf(ui.render()), /Une pensée personnelle à conserver/);
-  ui.button("Annuler").props.onClick();
+  nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.at(-1).onAction();
   assert.match(textOf(ui.render()), /Une pensée personnelle à conserver/);
   assert.doesNotMatch(textOf(ui.render()), /Aucune lecture en cours/);
 }));
@@ -222,7 +222,7 @@ test("undoing a first review removes only its new trace and keeps the draft", ()
   ui.button("Publier la critique").props.onClick();
   clickFirst(ui, "Journal");
   assert.match(textOf(ui.render()), /Une critique nouvelle/);
-  ui.button("Annuler").props.onClick();
+  nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.at(-1).onAction();
   const traces = nodes(ui.render(), (node) => node.type === "article" && node.props.className?.includes("personal-trace"));
   assert.equal(traces.length, 1);
   assert.match(textOf(traces), /Une pensée personnelle à conserver/);

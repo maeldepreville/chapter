@@ -21,6 +21,7 @@ import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 import { staticAsset, warmStaticAssets } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
+import { ToastStack, type StackToast } from "./toast-stack";
 
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
@@ -47,6 +48,7 @@ type Feedback = {
   kind: "publication" | "removal" | "saved";
   label: string;
   detail: string;
+  onAction?: () => void;
 };
 
 export type PersonalEntry = {
@@ -61,7 +63,6 @@ export type PersonalEntry = {
 };
 
 const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
-const UNDO_DURATION_MS = 5000;
 const currentReader = prototypeActors[CURRENT_READER_ID];
 const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
 const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.review && (entry.reviewPublished ?? true));
@@ -173,8 +174,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [ratingPreview, setRatingPreview] = useState<number | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewCloseConfirm, setReviewCloseConfirm] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
-  const [feedbackPaused, setFeedbackPaused] = useState(false);
+  const [feedbacks, setFeedbacks] = useState<StackToast[]>([]);
+  const feedbackId = useRef(0);
   const [activeSection, setActiveSection] = useState("journal");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -216,12 +217,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const previousPublication = useRef({ workId: selectedWorkId, review: "", reviewPublished: false, rating: 0 });
-  const latestPublication = useRef({ workId: selectedWorkId, review: "", rating: 0 });
-  const previousReviewTrace = useRef<{ trace: JournalTrace | undefined; index: number }>({ trace: undefined, index: -1 });
-  const removedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
-  const discoverySavedEntry = useRef<{ workId: WorkId; entry: PersonalEntry } | null>(null);
   const pendingPublicAction = useRef<(() => void) | null>(null);
+
+  const dismissFeedback = (id: number) => setFeedbacks((current) => current.filter((item) => item.id !== id));
+  const showFeedback = (feedback: Feedback) => {
+    const id = ++feedbackId.current;
+    setFeedbacks((current) => [...current.slice(-3), { id, label: feedback.label, detail: feedback.detail, actionLabel: feedback.onAction ? "Annuler" : undefined, onAction: feedback.onAction }]);
+  };
   const navigationStack = useRef<NavigationSnapshot[]>([]);
   const selectedWork = works.find((work) => work.id === selectedWorkId);
   const entry = entries[selectedWorkId] ?? emptyEntry;
@@ -450,7 +452,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setPublicProfileName(canonicalName);
     setPublicIdentityReady(true);
     setPublicIdentityOpen(false);
-    setFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
+    showFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
     const resume = pendingPublicAction.current;
     pendingPublicAction.current = null;
     if (resume) window.requestAnimationFrame(resume);
@@ -537,7 +539,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setPublicFirstMarkers({});
     setAccessMode("public");
     setCurrentView("discover");
-    setFeedback(null);
+    setFeedbacks([]);
     setSettingsOpen(false);
     window.history.pushState(null, "", "/decouvrir");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -598,9 +600,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const addDiscoveryToRead = (id: string) => {
     const workId = id as WorkId;
-    discoverySavedEntry.current = { workId, entry: entries[workId] ?? emptyEntry };
+    const previousEntry = entries[workId] ?? emptyEntry;
     updateEntryFor(workId, { readingStatus: "À lire", readingDate: "" });
-    setFeedback({ kind: "saved", label: "Ajouté à « À lire »", detail: "Aucune activité publique n’a été créée." });
+    showFeedback({ kind: "saved", label: "Ajouté à « À lire »", detail: "Aucune activité publique n’a été créée.", onAction: () => updateEntryFor(workId, previousEntry) });
   };
 
   const toggleShowcase = (id: BadgeId) => {
@@ -748,12 +750,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   }, [accountOpen]);
 
   useEffect(() => {
-    if (!feedback || feedbackPaused) return;
-    const timer = window.setTimeout(() => setFeedback(null), UNDO_DURATION_MS);
-    return () => window.clearTimeout(timer);
-  }, [feedback, feedbackPaused]);
-
-  useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("dialog[open]")) return;
       if (accountOpen) return setAccountOpen(false);
@@ -798,7 +794,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       progress: undefined,
     });
     setJournalTraces((traces) => saveReadingTrace(traces, workId, "En cours", "Aujourd’hui", true));
-    setFeedback({ kind: "saved", label: "Relecture commencée", detail: "L’œuvre reste réunie à votre trace précédente." });
+    showFeedback({ kind: "saved", label: "Relecture commencée", detail: "L’œuvre reste réunie à votre trace précédente." });
   };
 
   const openProgressEditor = (workId: WorkId) => {
@@ -812,7 +808,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!Number.isInteger(page) || page < 1) return;
     updateEntryFor(workId, { progress: { kind: "bookmark", page, updatedAt: new Date().toISOString() } });
     setProgressEditorWorkId(null);
-    setFeedback({ kind: "saved", label: `Marque-page posé à la page ${page}`, detail: "Ce repère reste facultatif et privé." });
+    showFeedback({ kind: "saved", label: `Marque-page posé à la page ${page}`, detail: "Ce repère reste facultatif et privé." });
   };
 
   const setToday = () => {
@@ -831,12 +827,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const removeFromLibrary = (workId: WorkId) => {
     const targetEntry = entries[workId] ?? emptyEntry;
-    removedEntry.current = { workId, entry: targetEntry };
     updateEntryFor(workId, { readingStatus: null, readingDate: "" });
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
-    setFeedback({ kind: "removal", label: "Œuvre retirée de la bibliothèque", detail: "Vos écrits et votre évaluation sont conservés." });
+    showFeedback({ kind: "removal", label: "Œuvre retirée de la bibliothèque", detail: "Vos écrits et votre évaluation sont conservés.", onAction: () => updateEntryFor(workId, targetEntry) });
   };
 
   const openNote = () => {
@@ -880,37 +875,28 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const publishReview = () => {
     const cleanReview = reviewDraft.trim();
     if (!cleanReview) return;
-    previousPublication.current = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished, rating: entry.rating };
-    latestPublication.current = { workId: selectedWorkId, review: cleanReview, rating: ratingDraft };
+    const previousPublication = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished, rating: entry.rating };
+    const latestPublication = { workId: selectedWorkId, review: cleanReview, rating: ratingDraft };
     const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
-    previousReviewTrace.current = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
+    const previousReviewTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
     const publicationLabel = reviewIsPublished ? "Critique mise à jour" : "Critique publiée";
     updateEntry({ review: cleanReview, reviewPublished: true, rating: ratingDraft });
     setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "review", cleanReview, "Aujourd’hui"));
     setReviewOpen(false);
     setReviewCloseConfirm(false);
-    setFeedback({ kind: "publication", label: publicationLabel, detail: "Elle est maintenant visible publiquement." });
-  };
-  const undoFeedback = () => {
-    if (feedback?.kind === "publication") {
-      const previous = previousPublication.current;
-      setSelectedWorkId(previous.workId);
-      updateEntryFor(previous.workId, { review: previous.review, reviewPublished: previous.reviewPublished, rating: previous.rating });
-      const { trace: restoredTrace, index } = previousReviewTrace.current;
+    showFeedback({ kind: "publication", label: publicationLabel, detail: "Elle est maintenant visible publiquement.", onAction: () => {
+      setSelectedWorkId(previousPublication.workId);
+      updateEntryFor(previousPublication.workId, { review: previousPublication.review, reviewPublished: previousPublication.reviewPublished, rating: previousPublication.rating });
+      const { trace: restoredTrace, index } = previousReviewTrace;
       setJournalTraces((traces) => {
-        const rest = traces.filter((trace) => trace.workId !== previous.workId || trace.action !== "review");
+        const rest = traces.filter((trace) => trace.workId !== previousPublication.workId || trace.action !== "review");
         if (restoredTrace) rest.splice(Math.min(index, rest.length), 0, restoredTrace);
         return rest;
       });
-      setReviewDraft(latestPublication.current.review);
-      setRatingDraft(latestPublication.current.rating);
+      setReviewDraft(latestPublication.review);
+      setRatingDraft(latestPublication.rating);
       setReviewOpen(true);
-    } else if (feedback?.kind === "removal" && removedEntry.current) {
-      updateEntryFor(removedEntry.current.workId, removedEntry.current.entry);
-    } else if (feedback?.kind === "saved" && discoverySavedEntry.current) {
-      updateEntryFor(discoverySavedEntry.current.workId, discoverySavedEntry.current.entry);
-    }
-    setFeedback(null);
+    } });
   };
 
   const dateLabel = datePrompt === "start" ? "date de début" : "date de fin";
@@ -1125,6 +1111,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
               onOpenJournal={() => enterPersonalSpace("journal")}
+              onNotify={(label) => showFeedback({ kind: "saved", label, detail: "Votre action a bien été prise en compte." })}
               social={(
                 <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
                   <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
@@ -1522,6 +1509,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             onToggleBlock={toggleBlock}
             createExport={createChapterExport}
             onImport={importChapterExport}
+            onOpenDestination={(destination) => { closeSettings(); openView(destination); }}
             onDeleteAccount={deletePrototypeAccount}
           />
         </Modal>
@@ -1674,14 +1662,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
       <Fade show={photoCropOpen} kind="modal">{photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}</Fade>
 
-      <Fade show={Boolean(feedback)} kind="feedback" changeKey={feedback}>{feedback && (
-        <div className="temporary-feedback" role="status" tabIndex={0} onMouseEnter={() => setFeedbackPaused(true)} onMouseLeave={() => setFeedbackPaused(false)} onFocus={() => setFeedbackPaused(true)} onBlur={() => setFeedbackPaused(false)}>
-          <span><strong>{feedback.label}</strong><small>{feedback.detail}</small></span>
-          <span className="feedback-separator" aria-hidden="true" />
-          <button className="feedback-undo" type="button" onClick={undoFeedback}>Annuler</button>
-          <button className="feedback-close" type="button" aria-label="Fermer" onClick={() => setFeedback(null)}>×</button>
-        </div>
-      )}</Fade>
+      <ToastStack toasts={feedbacks} onDismiss={dismissFeedback} />
     </div>
   );
 }

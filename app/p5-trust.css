@@ -43,6 +43,14 @@
 .data-actions p { flex: 1; color: var(--muted); }
 .import-control { position: relative; cursor: pointer; }
 .import-control input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.data-success-overlay { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; padding: 1rem; }
+.data-success-card { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr); gap: 1.25rem 2rem; align-items: center; width: min(42rem, 100%); padding: clamp(1.4rem, 4vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-radius: 0.7rem; box-shadow: 0 1.7rem 4.5rem rgb(36 33 31 / 0.24); }
+.data-success-card > .close-button { position: absolute; top: 0.85rem; right: 0.85rem; }
+.data-success-asset { width: 100%; height: auto; object-fit: contain; }
+.data-success-copy { padding-right: 1.6rem; }
+.data-success-copy h2 { margin: 0.25rem 0 0.8rem; font-family: var(--font-editorial); font-size: clamp(2rem, 5vw, 3rem); font-weight: 500; line-height: 0.98; letter-spacing: -0.035em; }
+.data-success-copy > p:last-child { margin: 0; color: var(--muted); }
+.data-success-actions { grid-column: 1 / -1; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .danger-zone { border-bottom: 0; }
 .danger-zone > p { max-width: 43rem; color: var(--muted); }
 .delete-account-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1rem; }
@@ -81,6 +89,17 @@
   .blocked-list button { grid-column: 2; justify-self: start; }
   .trust-notice { align-items: start; }
   .delete-account-dialog .modal-actions { display: grid; }
+  .data-success-card { grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; }
+  .data-success-copy { padding-right: 1rem; }
+  .data-success-actions { display: grid; }
+}
+
+@media (max-width: 520px) {
+  .data-success-card { grid-template-columns: 1fr; text-align: center; }
+  .data-success-asset { width: min(11rem, 55vw); margin: 0 auto -0.25rem; }
+  .data-success-copy { padding: 0; }
+  .data-success-actions { width: 100%; }
+  .data-success-actions .data-success-primary { grid-row: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
