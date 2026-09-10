@@ -7,6 +7,7 @@ import "./p2-first-marker.css";
 import "./p3-personal.css";
 import "./p4-social.css";
 import "./p6-states.css";
+import "./p7-recipe.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),

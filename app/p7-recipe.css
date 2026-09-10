@@ -1,0 +1,39 @@
+.p7-recipe { min-height: 100dvh; }
+.p7-recipe-toolbar {
+  display: grid;
+  grid-template-columns: minmax(19rem, 0.85fr) minmax(24rem, 1.15fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) clamp(1.1rem, 4vw, 3rem);
+  color: var(--color-on-accent);
+  background: var(--color-ink);
+}
+.p7-recipe-heading { display: grid; gap: var(--space-2); min-width: 0; }
+.p7-recipe-heading p { margin: 0; }
+.p7-recipe-heading > p:first-child { display: grid; }
+.p7-recipe-heading small { color: #d7cec4; }
+.p7-recipe-current { color: #eee6dc; font-size: 0.875rem; line-height: 1.35; }
+.p7-recipe-current span { margin-right: var(--space-2); color: #f4b9a6; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.p7-recipe-options { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+.p7-recipe-options :is(button, a) {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-3);
+  color: inherit;
+  background: transparent;
+  border: 1px solid #6f675f;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.p7-recipe-options button[aria-pressed="true"] { color: var(--ink); background: var(--surface); border-color: var(--surface); }
+.p7-recipe-options a { color: #d7cec4; border-style: dashed; }
+
+@media (max-width: 899px) {
+  .p7-recipe-toolbar { grid-template-columns: 1fr; }
+  .p7-recipe-options { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: var(--space-1); scrollbar-width: thin; }
+  .p7-recipe-options :is(button, a) { flex: none; }
+}

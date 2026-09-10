@@ -1,8 +1,8 @@
 # Chapter — carte compacte du code
 
-Dernière mise à jour : 9 septembre 2026.
+Dernière mise à jour : 10 septembre 2026.
 
-Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0 et les tranches P1 à P6 de la refonte au-dessus de la base acceptée du lot 1.
+Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0, les tranches P1 à P6 et leur recette complète P7 au-dessus de la base acceptée du lot 1.
 
 | Zone | Source principale | Modules ciblés | Tests principaux |
 | --- | --- | --- | --- |
@@ -22,6 +22,7 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | P4 : profils, listes, critiques et conversations publiques | `PublicListView` / `ProfileView` / `SocialReviews` dans `app/phase10.tsx` | `p1-public.tsx`, `p4-social.css`, `catalogue.ts`, `prototype-data.ts`, `social-data.ts`, `lecteurs/[actorId]/page.tsx`, `listes/[listId]/page.tsx` | `p4-social`, `social-controls`, `social-profiles`, `hardcoded-data`, `phase11-recovery`, `phase11-journeys` |
 | P5 : identité, confidentialité, blocage et données | `TrustSettings` dans `app/p5-trust.tsx` | `p5-trust.css`, `page.tsx`, `phase10.tsx`, `reglages/page.tsx` | `p5-trust`, `p4-social`, `social-controls`, `phase11-journeys` |
 | P6 : états transversaux et atelier de recette | `app/p6-states.tsx`, `app/recette/p6/p6-state-lab.tsx` | `p6-states.css`, `p6-fixtures.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`, routes dynamiques | `p6-cross-cutting-states`, `phase11-accessibility`, `phase11-empty-states`, `phase11-recovery`, `phase11-polish` |
+| P7 : recette complète P0 à P6 | `app/recette/p7/p7-journey-lab.tsx` | `p7-recipe.css`, `foundation/contracts.ts`, atelier P6 et routes publiques directes | `p7-complete-recipe`, puis suite complète |
 | Modales et focus | `modal.tsx` | `modal-behavior.ts` | `modal-behavior`, `phase11-accessibility` |
 | Styles globaux | `app/globals.css` | `foundation/tokens.css`, `foundation/primitives.css` | `p0-foundation`, `rendered-html`, `phase11-accessibility`, `phase11-polish` |
 | Styles sociaux/profil/honneurs | `app/phase10.css` | — | `profile-layout`, `profile-qr`, `phase11-polish` |

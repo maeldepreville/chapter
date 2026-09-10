@@ -1,6 +1,6 @@
 # Chapter — P6 : états transversaux
 
-Statut : **validé sur la version Sites 72 et synchronisé sur `refonte-pre-lot-2`**
+Statut : **validé sur Sites 72 ; synchronisation GitHub en attente d’authentification**
 
 Dernière mise à jour : 10 septembre 2026.
 
@@ -75,4 +75,4 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 
 ## Suite
 
-P6 est clôturé et synchronisé sur `refonte-pre-lot-2`. P7 porte maintenant la recette complète de la refonte, la correction de ses seules non-régressions et la décision explicite de fusion vers `main`.
+P6 est clôturé dans le commit local `a5ce28e`. Son envoi sur `refonte-pre-lot-2` reste en attente d’une authentification GitHub disponible ; aucun contournement ni historique divergent n’a été créé. P7 porte maintenant la recette complète de la refonte et la décision explicite de fusion vers `main`.

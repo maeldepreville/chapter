@@ -7,17 +7,18 @@ Ce document résume l'état utile ; les journaux restent consultables à la dema
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** P7 — recette complète de la refonte pré-lot 2. `main` reste inchangé jusqu'à sa validation explicite.
+- **Phase active :** refonte visible pré-lot 2 — candidate P7. `main` attend sa validation.
 - **Branche active :** `refonte-pre-lot-2` ; aucune fusion vers `main` avant validation de P7.
 - **Statut P1 :** validé sur Sites 34 et synchronisé avec ses assets.
 - **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
 - **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
 - **Statut P5 :** validé sur Sites 66 et synchronisé : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée.
-- **Statut P6 :** validé le 10 septembre 2026 sur Sites 72 et synchronisé sur `refonte-pre-lot-2` : sept états vides illustrés par une famille transparente cohérente, Recherche globale sans contrôles inopérants, couvertures cohérentes, petites surfaces sans flash et grandes cartes mobiles plus courtes et arrondies. Les 163 tests, lint, construction, diff et audit navigateur réussissent.
-- **Prochaine action unique :** exécuter P7 comme recette de bout en bout de P0 à P6, corriger uniquement les non-régressions constatées, publier sa candidate puis attendre l'accord explicite avant toute fusion vers `main`.
-- **Produit actuel :** prototype frontend sur données simulées et état local à la session. Le backend, l'authentification réelle, la persistance distante, la modération opérationnelle et la recommandation de production restent au lot 2.
-- **Publication :** toute candidate visuelle complète et vérifiée doit être mise directement à disposition sur le Site de recette avec son accès existant. Cela ne vaut ni validation du jalon, ni synchronisation GitHub, ni fusion.
+- **Statut P6 :** validé sur Sites 72 ; commit local `a5ce28e`, envoi GitHub bloqué par l’authentification HTTPS.
+- **Statut P7 :** six parcours ; 165 tests, lint, build et audit desktop réussis. Recette mobile côté utilisateur.
+- **Prochaine action unique :** publier P7 puis recueillir la recette desktop/mobile avant toute fusion vers `main`.
+- **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
+- **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
 
 ## Doctrine de la refonte
 
@@ -57,6 +58,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Implémenter ou évaluer P4 | `docs/milestones/P4_DIMENSION_SOCIALE.md`, `docs/milestones/PHASE_10_DECOUVERTE_INTERACTIONS_SOCIALES.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P5 | `docs/milestones/P5_CONFIANCE_CONTROLE.md`, puis `docs/engineering/CODEMAP.md` |
 | Implémenter ou évaluer P6 | `docs/milestones/P6_ETATS_TRANSVERSAUX.md`, puis `docs/engineering/CODEMAP.md` |
+| Cadrer ou exécuter P7 | `docs/milestones/P7_RECETTE_COMPLETE.md`, puis les checklists P1 à P6 ciblées par le parcours |
 | Clôture du lot 1 | `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md` |
 | Décision historique identifiée | `rg -n "CODE|expression exacte" docs/` puis ouvrir seulement le livrable trouvé |
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |
