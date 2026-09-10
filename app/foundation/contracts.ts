@@ -105,7 +105,7 @@ export const journeyContracts = {
   P4: { surface: "public-reviews-profiles-lists-and-conversations", primaryAction: "publish-visible-trace", observableResult: "public-trace-visible", requiresAccount: true },
   P5: { surface: "privacy-and-data-controls", primaryAction: "review-private-data", observableResult: "privacy-controls-visible", requiresAccount: true },
   P6: { surface: "cross-cutting-states", primaryAction: "exercise-extreme-state", observableResult: "resilient-state-visible", requiresAccount: false },
-  P7: { surface: "settings-and-migration", primaryAction: "reset-prototype-session", observableResult: "selected-session-restored", requiresAccount: true },
+  P7: { surface: "complete-refactor-recipe", primaryAction: "exercise-end-to-end-journeys", observableResult: "merge-decision-ready", requiresAccount: false },
 } as const satisfies Record<JourneyId, { surface: string; primaryAction: string; observableResult: string; requiresAccount: boolean }>;
 
 export function shellAttributes(mode: ShellMode) {

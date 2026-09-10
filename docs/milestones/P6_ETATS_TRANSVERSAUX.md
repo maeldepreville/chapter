@@ -1,6 +1,6 @@
 # Chapter — P6 : états transversaux
 
-Statut : **candidate auditée visuellement, prête pour la version Sites 72**
+Statut : **validé sur Sites 72 ; synchronisation GitHub en attente d’authentification**
 
 Dernière mise à jour : 10 septembre 2026.
 
@@ -70,8 +70,9 @@ Dans `/recette/p6`, un bandeau sombre de recette permet de changer de scénario 
 - lint réussi ;
 - **163/163 tests automatisés réussis**, dont les contrôles P6 des états vides, de la famille d’assets, de structure et de contraste, les régressions de transition, ainsi que la non-régression P0 à P5 et du lot 1 ;
 - `git diff --check` sans erreur ;
-- audit navigateur réalisé sur l'atelier P6 : Journal, Bibliothèque, Découvrir, Recherche, Profil, liste publique, chargement, erreur et page absente parcourus visuellement ; les familles de cartes mobiles ont aussi été inventoriées et leurs contrats responsifs contrôlés ; la validation utilisateur reste requise.
+- audit navigateur réalisé sur l'atelier P6 : Journal, Bibliothèque, Découvrir, Recherche, Profil, liste publique, chargement, erreur et page absente parcourus visuellement ; les familles de cartes mobiles ont aussi été inventoriées et leurs contrats responsifs contrôlés ;
+- validation utilisateur explicite le 10 septembre 2026 sur la version Sites 72, après clarification de la différence entre l'état `Vide` de recette et l'état introductif normal d'un espace personnel sans première interaction.
 
 ## Suite
 
-La candidate reste hors de GitHub tant que l'utilisateur ne valide pas explicitement P6. Après validation, son périmètre sera synchronisé sur `refonte-pre-lot-2`. P7 portera ensuite la recette complète et la décision de fusion vers `main`.
+P6 est clôturé dans le commit local `a5ce28e`. Son envoi sur `refonte-pre-lot-2` reste en attente d’une authentification GitHub disponible ; aucun contournement ni historique divergent n’a été créé. P7 porte maintenant la recette complète de la refonte et la décision explicite de fusion vers `main`.
