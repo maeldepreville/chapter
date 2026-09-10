@@ -76,7 +76,7 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 - construction de production réussie avec la route isolée `/recette/p7` ;
 - lint réussi ;
-- **165/165 tests automatisés réussis**, dont les deux contrôles propres à P7 et toute la non-régression P0 à P6 ;
+- **167/167 tests automatisés réussis**, dont les contrôles propres à P7, la pile de notifications et toute la non-régression P0 à P6 ;
 - `git diff --check` sans erreur ;
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;
