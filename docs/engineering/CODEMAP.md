@@ -25,6 +25,7 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | P7 : recette complète P0 à P6 | `app/recette/p7/p7-journey-lab.tsx` | `p7-recipe.css`, `foundation/contracts.ts`, atelier P6 et routes publiques directes | `p7-complete-recipe`, puis suite complète |
 | Modales et focus | `modal.tsx` | `modal-behavior.ts` | `modal-behavior`, `phase11-accessibility` |
 | Retours temporaires empilés | `app/toast-stack.tsx` | `page.tsx`, `globals.css`, `p1-public.tsx` | `toast-stack`, `p3-personal-use`, `phase11-empty-states`, `phase11-journeys` |
+| Création d’espace depuis un premier geste | `app/account-creation-dialog.tsx` | `p1-public.tsx`, `page.tsx`, `p2-first-marker.css` | `p2-first-marker`, `p4-social`, `modal-behavior` |
 | Styles globaux | `app/globals.css` | `foundation/tokens.css`, `foundation/primitives.css` | `p0-foundation`, `rendered-html`, `phase11-accessibility`, `phase11-polish` |
 | Styles sociaux/profil/honneurs | `app/phase10.css` | — | `profile-layout`, `profile-qr`, `phase11-polish` |
 | Build et hébergement | `vite.config.ts`, `worker/index.ts`, `.openai/hosting.json` | `build/sites-vite-plugin.ts`, `scripts/build-verified.sh` | construction via `npm test` |

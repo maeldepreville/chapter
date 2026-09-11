@@ -79,12 +79,12 @@ test("P4 restores a public review after the minimal identity step", () => {
     const social = nodes(work.props.social, (node) => node.type?.name === "SocialReviews")[0];
     social.props.onWriteReview();
     tree = render();
-    assert.match(textOf(tree), /Choisissez le nom qui signera vos traces/);
-    nodes(tree, (node) => node.type === "input" && node.props.id === "p4-public-name")[0].props.onChange({ target: { value: "Lectora" } });
+    const account = nodes(tree, (node) => node.type?.name === "AccountCreationDialog")[0];
+    assert.equal(account.props.title, "Créons votre espace de lecteur.");
+    assert.equal(account.props.submitLabel, "Continuer vers la critique");
+    account.props.onComplete({ readerName: "Lectora", email: "lectora@example.fr" });
     tree = render();
-    nodes(tree, (node) => node.type === "button" && textOf(node) === "Continuer vers la critique")[0].props.onClick();
-    tree = render();
-    assert.equal(tree.props["data-shell"], "public");
+    assert.equal(tree.props["data-shell"], "connected");
     assert.ok(publicDestinationLabels().includes("Journal"));
     assert.ok(publicDestinationLabels().includes("Bibliothèque"));
     assert.match(textOf(tree), /Visible par tous après publication/);
@@ -202,10 +202,15 @@ test("P4 public routes render profiles, lists, reviews and conversations directl
 test("P4 visual layer covers editorial publication, mobile reflow and reduced motion", async () => {
   const css = await readFile(source("p4-social.css"), "utf8");
   const page = await readFile(source("page.tsx"), "utf8");
+  const account = await readFile(source("account-creation-dialog.tsx"), "utf8");
   assert.match(css, /\.p4-public-reviews/);
   assert.match(css, /@media \(max-width: 899px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(page, /Visible par tous après publication/);
-  assert.match(page, /Nom public/);
+  assert.match(account, /Nom de lecteur/);
+  assert.match(account, /unique sur Chapter/);
+  assert.match(account, /Adresse e-mail/);
+  assert.match(account, /Mot de passe/);
+  assert.equal((page.match(/<AccountCreationDialog\b/g) ?? []).length, 1);
   assert.match(page, /Rien n’est publié avant votre confirmation explicite/);
 });

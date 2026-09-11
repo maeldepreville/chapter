@@ -2,20 +2,20 @@
 
 Mise à jour : 11 septembre 2026.
 
-Ce document résume l'état utile ; les journaux restent consultables à la demande.
+Ce document résume l'état utile.
 
 ## État actuel
 
 - **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
 - **Phase active :** refonte visible pré-lot 2 — candidate P7. `main` attend sa validation.
 - **Branche active :** `refonte-pre-lot-2` ; aucune fusion vers `main` avant validation de P7.
-- **Statut P1 :** validé sur Sites 34 et synchronisé avec ses assets.
-- **Statut P2 :** validé le 6 septembre 2026 sur la version Sites 38 et synchronisé sur `refonte-pre-lot-2`.
+- **Statut P1 :** validé sur Sites 34 et synchronisé.
+- **Statut P2 :** validé sur Sites 38 et synchronisé.
 - **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
-- **Statut P5 :** validé sur Sites 66 et synchronisé : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée.
+- **Statut P5 :** validé sur Sites 66 et synchronisé.
 - **Statut P6 :** validé sur Sites 72 et synchronisé sur `refonte-pre-lot-2`.
-- **Statut P7 :** Sites 79 publiée ; état vide éditorial des Chapitres d’honneur et notifications à durée/sortie indépendantes vérifiés, portabilité confirmée, sommaire mobile fixe, curation Bibliothèque et signature « Vous » ; 173 tests réussis. Recette en cours.
+- **Statut P7 :** Sites 80 publiée ; assets vides des Honneurs et œuvres de chevet dissociés, création d’espace unifiée avec « Nom de lecteur », notifications indépendantes, portabilité, sommaire mobile et curation vérifiés ; 174 tests réussis. Recette en cours.
 - **Prochaine action unique :** recueillir la recette desktop/mobile de P7 avant toute fusion vers `main`.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
@@ -29,7 +29,7 @@ Ce document résume l'état utile ; les journaux restent consultables à la dema
 - Journal, Bibliothèque et notes toujours privés. Une critique, une liste ou une conversation publique résulte d'un geste explicite et réversible.
 - Navigation principale : Journal, Bibliothèque, Découvrir et Recherche. Les œuvres, profils, listes, critiques et conversations publiques sont consultables sans compte.
 - Progression facultative et manuelle sous forme de marque-page ; aucun champ de possession.
-- Identité publique demandée à la première action visible : `Nom public` non unique, photo facultative, `user_id` interne stable.
+- Création d’espace demandée au premier geste personnel ou public : `Nom de lecteur` destiné à être unique, e-mail, mot de passe ; disponibilité et identité stable au backend.
 - Direction d'atelier éditorial contemporain ; Newsreader + Inter ; couvertures comme couleur principale ; densité adaptée au contexte ; microdesign et mouvement inclus dans la refonte.
 
 Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.

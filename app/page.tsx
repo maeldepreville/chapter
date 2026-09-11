@@ -17,6 +17,7 @@ import { shellAttributes, type OptionalProgress, type ReadingStatus, type Work a
 import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
+import { AccountCreationDialog } from "./account-creation-dialog";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 import { staticAsset, warmStaticAssets } from "./static-assets";
@@ -454,11 +455,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (requirePublicIdentity("review", openReview)) return openReview();
   };
 
-  const finishPublicIdentity = () => {
-    const canonicalName = publicName.trim();
+  const finishPublicIdentity = (readerName: string) => {
+    const canonicalName = readerName.trim();
     if (!canonicalName) return;
+    setPublicName(canonicalName);
     setPublicProfileName(canonicalName);
     setPublicIdentityReady(true);
+    setPublicActivated(true);
     setPublicIdentityOpen(false);
     showFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
     const resume = pendingPublicAction.current;
@@ -1121,6 +1124,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 setPublicActivated(true);
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
               }}
+              onCreateAccount={(readerName) => { setPublicName(readerName); setPublicProfileName(readerName); setPublicIdentityReady(true); }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
               onOpenJournal={() => enterPersonalSpace("journal")}
               onNotify={(label) => showFeedback({ kind: "saved", label, detail: "Votre action a bien été prise en compte." })}
@@ -1664,19 +1668,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         </Modal>
       )}</Fade>
 
-      <Fade show={publicIdentityOpen} kind="modal">{publicIdentityOpen && (
-        <Modal labelledBy="p4-identity-title" describedBy="p4-identity-description" initialFocus="#p4-public-name" onRequestClose={() => setPublicIdentityOpen(false)}>
-          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)} />
-          <section className="p4-identity-panel">
-            <button className="close-button" type="button" aria-label="Fermer" onClick={() => setPublicIdentityOpen(false)}>×</button>
-            <Image className="p4-identity-mark" src={staticAsset("/branding/chapter-profile-seal.webp")} alt="" width={512} height={603} aria-hidden="true" unoptimized />
-            <div><p className="eyebrow">Premier geste public</p><h2 id="p4-identity-title">Choisissez le nom qui signera vos traces.</h2><p id="p4-identity-description">Ce nom n’a pas besoin d’être unique. Il accompagne seulement ce que vous décidez de publier ; votre Journal et votre Bibliothèque restent privés.</p></div>
-            <label htmlFor="p4-public-name"><span>Nom public</span><input id="p4-public-name" maxLength={60} value={publicName} onChange={(event) => setPublicName(event.target.value)} placeholder="Votre nom de lecteur" /></label>
-            <p className="p4-identity-note">Photo facultative · modifiable plus tard</p>
-            <div className="modal-actions"><button className="quiet-action" type="button" onClick={() => setPublicIdentityOpen(false)}>Pas maintenant</button><button className="primary-action" type="button" disabled={!publicName.trim()} onClick={finishPublicIdentity}>{publicIntent === "review" ? "Continuer vers la critique" : publicIntent === "reply" ? "Continuer vers la réponse" : "Continuer"}</button></div>
-          </section>
-        </Modal>
-      )}</Fade>
+      <AccountCreationDialog open={publicIdentityOpen} eyebrow={publicIntent === "review" ? "Votre critique vous attend" : publicIntent === "reply" ? "Votre réponse vous attend" : "Votre chemin vous attend"} title="Créons votre espace de lecteur." description={<>Votre premier geste public restera en attente jusqu’à votre confirmation. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel={publicIntent === "review" ? "Continuer vers la critique" : publicIntent === "reply" ? "Continuer vers la réponse" : "Créer mon espace"} initialReaderName={publicName} onClose={() => setPublicIdentityOpen(false)} onComplete={({ readerName }) => finishPublicIdentity(readerName)} />
 
       <Fade show={photoCropOpen} kind="modal">{photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}</Fade>
 

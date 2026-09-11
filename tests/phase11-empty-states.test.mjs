@@ -81,6 +81,12 @@ test("a profile with no showcased honor keeps an editorial and actionable empty 
   assert.doesNotMatch(publicProfile, /Choisir mes badges/);
 });
 
+test("empty favorites and honors use distinct editorial assets", () => {
+  const own = html(ProfileView, { ...profileProps, works, favoriteWorkIds: [] });
+  assert.match(own, /p7-empty-favorites\.webp/);
+  assert.match(own, /p6-empty-profile\.webp/);
+});
+
 test("EH1 is editorial without history or with only a reading wish", () => {
   for (const statuses of [{}, { cartographies: "À lire" }, { atlas: "Lu" }]) {
     const rendered = discover({ statuses });

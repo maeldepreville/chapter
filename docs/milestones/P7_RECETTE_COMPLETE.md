@@ -49,6 +49,8 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - parcourir œuvre → critique → profil → liste → œuvre, puis vérifier tous les retours contextuels ;
 - ouvrir et fermer Profil, liste et Chapitres d’honneur sur desktop et mobile sans flash ni perte du cadre de carte.
 - retirer les trois badges mis en avant : le Profil doit afficher l’état vide illustré des Chapitres d’honneur et, pour son propriétaire seulement, l’action « Choisir mes badges ».
+- vider les Œuvres de chevet : leur illustration doit rester distincte de l’ex-libris des Chapitres d’honneur.
+- depuis une visite sans compte, initier une critique puis un ajout au Journal : les deux gestes doivent ouvrir la même carte « Nom de lecteur / Adresse e-mail / Mot de passe » et reprendre l’intention initiale après création.
 
 ### Confiance et données
 
@@ -80,7 +82,7 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 - construction de production réussie avec la route isolée `/recette/p7` ;
 - lint réussi ;
-- **173/173 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, l’état vide des Chapitres d’honneur, la curation du Profil et toute la non-régression P0 à P6 ;
+- **174/174 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, les états vides distincts des Chapitres d’honneur et des œuvres de chevet, la création d’espace unifiée, la curation du Profil et toute la non-régression P0 à P6 ;
 - `git diff --check` sans erreur ;
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;

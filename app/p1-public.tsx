@@ -3,12 +3,13 @@
 import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
 import { CoverFrame } from "./cover-frame";
-import { Button, Dialog, Field, Input, Textarea } from "./foundation/primitives";
+import { Button, Textarea } from "./foundation/primitives";
 import type { ReadingStatus, Work } from "./foundation/contracts";
 import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
 import { profilePresentations, prototypeActors, type ProfileOwner } from "./prototype-data";
 import { staticAsset } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
+import { AccountCreationDialog } from "./account-creation-dialog";
 
 type PublicViewProps = {
   works: readonly Work[];
@@ -285,7 +286,7 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   );
 }
 
-export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, onNotify, activated = false, record, backLabel = "Retour à Découvrir", social }: {
+export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", social }: {
   work: Work;
   works: readonly Work[];
   onBack: () => void;
@@ -294,6 +295,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   onSaveMarker: (marker: string) => void;
   onOpenJournal?: () => void;
   onNotify?: (message: string) => void;
+  onCreateAccount?: (readerName: string) => void;
   activated?: boolean;
   record?: FirstMarkerRecord;
   backLabel?: string;
@@ -303,8 +305,6 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   const [statusOpen, setStatusOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<ReadingStatus | null>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [markerDraft, setMarkerDraft] = useState(record?.marker ?? "");
   const [markerOpen, setMarkerOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -322,8 +322,9 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
     setAuthOpen(true);
   };
 
-  const finishAccount = () => {
-    if (!pendingStatus || !email.trim() || password.length < 8) return;
+  const finishAccount = (readerName: string) => {
+    if (!pendingStatus) return;
+    onCreateAccount?.(readerName);
     onActivate(pendingStatus);
     setAuthOpen(false);
     setMarkerOpen(true);
@@ -418,25 +419,7 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
       )}
 
       {statusOpen && <button className="p2-status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => setStatusOpen(false)} />}
-      {authOpen && pendingStatus && (
-        <Dialog titleId="p2-auth-title" descriptionId="p2-auth-description" onRequestClose={() => setAuthOpen(false)} className="p2-auth-dialog">
-          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer l’inscription" onClick={() => setAuthOpen(false)} />
-          <section className="p2-auth-panel">
-            <button className="p2-auth-close" type="button" aria-label="Fermer" onClick={() => setAuthOpen(false)}>×</button>
-            <div className="p2-auth-heading">
-              <p className="eyebrow">Votre geste vous attend</p>
-              <h2 id="p2-auth-title">Gardons ce premier repère.</h2>
-              <p id="p2-auth-description"><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création du compte, vous reviendrez exactement ici.</p>
-            </div>
-            <form onSubmit={(event) => { event.preventDefault(); finishAccount(); }}>
-              <Field label="Adresse e-mail"><Input required autoComplete="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></Field>
-              <Field label="Mot de passe" hint="8 caractères minimum"><Input required minLength={8} autoComplete="new-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></Field>
-              <p className="p2-auth-note">Aucun profil public n’est créé à cette étape.</p>
-              <div className="p2-auth-actions"><button type="button" onClick={() => setAuthOpen(false)}>Pas maintenant</button><Button type="submit" disabled={!email.trim() || password.length < 8}>Créer mon compte</Button></div>
-            </form>
-          </section>
-        </Dialog>
-      )}
+      <AccountCreationDialog open={authOpen && Boolean(pendingStatus)} eyebrow="Votre geste vous attend" title="Gardons ce premier repère." description={<><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel="Créer mon espace" onClose={() => setAuthOpen(false)} onComplete={({ readerName }) => finishAccount(readerName)} />
       {!onNotify && feedback && <div className="p2-feedback" role="status" aria-live="polite"><span>{feedback}</span><button type="button" aria-label="Fermer" onClick={() => setFeedback("")}>×</button></div>}
     </article>
   );

@@ -13,10 +13,12 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   const { PublicWork } = load(source("p1-public.tsx"));
   const activations = [];
   const markers = [];
+  const readerNames = [];
   let props = {
     work: publicWorks[0], works: publicWorks, activated: false,
     onBack() {}, onOpenWork() {},
     onActivate(status) { activations.push(status); },
+    onCreateAccount(readerName) { readerNames.push(readerName); },
     onSaveMarker(marker) { markers.push(marker); },
   };
   const render = () => harness.render(PublicWork, props);
@@ -26,22 +28,19 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   tree = render();
   nodes(tree, (node) => node.type === "button" && textOf(node) === "En cours")[0].props.onClick();
   tree = render();
-  assert.match(textOf(tree), /Gardons ce premier repère/);
-  assert.match(textOf(tree), /Atlas|Cartographies/);
+  let account = nodes(tree, (node) => node.type?.name === "AccountCreationDialog")[0];
+  assert.equal(account.props.title, "Gardons ce premier repère.");
+  assert.match(textOf(account.props.description), /Atlas|Cartographies/);
 
-  nodes(tree, (node) => node.type === "button" && textOf(node) === "Pas maintenant")[0].props.onClick();
+  account.props.onClose();
   tree = render();
   assert.match(textOf(tree), /Geste conservéEn cours/);
   nodes(tree, (node) => node.type === "button" && textOf(node) === "Reprendre l’inscription")[0].props.onClick();
   tree = render();
-
-  const email = nodes(tree, (node) => node.type?.name === "Input" && node.props.type === "email")[0];
-  const password = nodes(tree, (node) => node.type?.name === "Input" && node.props.type === "password")[0];
-  email.props.onChange({ target: { value: "lecteur@example.fr" } });
-  password.props.onChange({ target: { value: "chapitre8" } });
-  tree = render();
-  nodes(tree, (node) => node.type === "form")[0].props.onSubmit({ preventDefault() {} });
+  account = nodes(tree, (node) => node.type?.name === "AccountCreationDialog")[0];
+  account.props.onComplete({ readerName: "Lectora", email: "lecteur@example.fr" });
   assert.deepEqual(activations, ["En cours"]);
+  assert.deepEqual(readerNames, ["Lectora"]);
 
   props = { ...props, activated: true, record: { status: "En cours", marker: "" } };
   tree = render();
