@@ -103,9 +103,16 @@ test("the saved public identity is projected into reviews, replies, lists and th
   assert.match(listMarkup, /Lectora des Brumes/);
   assert.match(listMarkup, />LD</);
 
+  const photoSrc = "data:image/png;base64,cGhvdG8=";
+  const photoReviewMarkup = renderToStaticMarkup(React.createElement(SocialReviews, { workId: "cartographies", personalReview: "Une trace illustrée.", personalRating: 5, personalActor: { ...personalActor, avatarSrc: photoSrc }, onOpenProfile() {}, onWriteReview() {} }));
+  assert.match(photoReviewMarkup, /data:image\/png;base64,cGhvdG8=/);
+  const photoListMarkup = renderToStaticMarkup(React.createElement(PublicListView, { owner: "self", displayName: personalActor.name, photoSrc, listId: "places", works: publicWorks, following: false, onToggleFollow() {}, onOpenProfile() {}, onOpenWork() {}, onBack() {}, backLabel: "Retour" }));
+  assert.match(photoListMarkup, /data:image\/png;base64,cGhvdG8=/);
+
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
-  assert.match(page, /const publicActor = \{ name: publicProfileName, initials: initialsFor\(publicProfileName\) \}/);
+  assert.match(page, /const publicActor = \{ name: publicProfileName, initials: initialsFor\(publicProfileName\), avatarSrc: profilePhoto\?\.preview \}/);
   assert.equal((page.match(/personalActor=\{publicActor\}/g) ?? []).length, 2);
+  assert.equal((page.match(/photoSrc=\{actorIdForProfile\(publicListOwner\) === CURRENT_READER_ID \? profilePhoto\?\.preview : undefined\}/g) ?? []).length, 3);
   assert.doesNotMatch(page, /personalActor=\{publicName/);
 });
 

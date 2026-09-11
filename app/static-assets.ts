@@ -17,7 +17,7 @@ export const recurringStaticAssets = [
   "/editorial/p6-empty-discover.webp",
   "/editorial/p6-empty-search.webp",
   "/editorial/p6-empty-profile.webp",
-  "/editorial/p7-empty-favorites-v2.webp",
+  "/editorial/p7-empty-favorites-v3.webp",
   "/editorial/p6-empty-list.webp",
   "/editorial/p6-empty-trace.webp",
   "/branding/chapter-profile-seal.webp",

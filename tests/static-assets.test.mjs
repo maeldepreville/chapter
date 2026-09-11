@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import sharp from "sharp";
 import { createSourceLoader } from "./helpers/load-tsx.mjs";
 
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
@@ -37,4 +38,12 @@ test("the shared painted cover ships in a compact web format", async () => {
   assert.ok(webp.size < png.size / 8);
   const cover = await readFile(new URL("../app/cover-frame.tsx", import.meta.url), "utf8");
   assert.match(cover, /chapter-cover-art\.webp/);
+});
+
+test("the bedside-works empty state keeps a real alpha channel", async () => {
+  const asset = fileURLToPath(new URL("../public/editorial/p7-empty-favorites-v3.webp", import.meta.url));
+  const metadata = await sharp(asset).metadata();
+  assert.equal(metadata.hasAlpha, true);
+  assert.equal(metadata.width, 1189);
+  assert.equal(metadata.height, 800);
 });

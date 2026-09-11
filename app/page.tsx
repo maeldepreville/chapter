@@ -212,7 +212,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicName, setPublicName] = useState("");
   const [publicProfileName, setPublicProfileName] = useState(currentReader.name);
   const publicProfileFirstName = publicProfileName.trim().split(/\s+/)[0] || currentReader.firstName;
-  const publicActor = { name: publicProfileName, initials: initialsFor(publicProfileName) };
+  const publicActor = { name: publicProfileName, initials: initialsFor(publicProfileName), avatarSrc: profilePhoto?.preview };
   const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
@@ -1110,7 +1110,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : currentView === "honors" ? (
             <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
           ) : currentView === "list" ? (
-            <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+            <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} photoSrc={actorIdForProfile(publicListOwner) === CURRENT_READER_ID ? profilePhoto?.preview : undefined} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
@@ -1183,7 +1183,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+          <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} photoSrc={actorIdForProfile(publicListOwner) === CURRENT_READER_ID ? profilePhoto?.preview : undefined} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -1499,6 +1499,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               following={followingActors[actorIdForProfile(publicListOwner)]}
               blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))}
               displayName={publicProfileName}
+              photoSrc={actorIdForProfile(publicListOwner) === CURRENT_READER_ID ? profilePhoto?.preview : undefined}
               onToggleFollow={() => {
                 const actorId = actorIdForProfile(publicListOwner);
                 if (!p1Public || requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId);
