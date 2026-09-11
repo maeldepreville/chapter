@@ -12,27 +12,45 @@ export type StackToast = {
 
 function ToastItem({ toast, onDismiss, register }: { toast: StackToast; onDismiss: (id: number) => void; register: (id: number, node: HTMLDivElement | null) => void }) {
   const [paused, setPaused] = useState(false);
+  const [exiting, setExiting] = useState(false);
+  const dismissRef = useRef(onDismiss);
+  const remainingMs = useRef(5000);
+
+  useEffect(() => { dismissRef.current = onDismiss; }, [onDismiss]);
 
   useEffect(() => {
-    if (paused) return;
-    const timer = window.setTimeout(() => onDismiss(toast.id), 5000);
-    return () => window.clearTimeout(timer);
-  }, [onDismiss, paused, toast.id]);
+    if (paused || exiting) return;
+    const startedAt = Date.now();
+    const timer = window.setTimeout(() => setExiting(true), remainingMs.current);
+    return () => {
+      window.clearTimeout(timer);
+      remainingMs.current = Math.max(0, remainingMs.current - (Date.now() - startedAt));
+    };
+  }, [exiting, paused, toast.id]);
+
+  useEffect(() => {
+    if (!exiting) return;
+    const fallback = window.setTimeout(() => dismissRef.current(toast.id), 350);
+    return () => window.clearTimeout(fallback);
+  }, [exiting, toast.id]);
+
+  const finishExit = () => { if (exiting) dismissRef.current(toast.id); };
 
   return (
     <div
       ref={(node) => register(toast.id, node)}
-      className="temporary-feedback"
+      className={`temporary-feedback${exiting ? " is-exiting" : ""}`}
       role="status"
       tabIndex={0}
+      onAnimationEnd={(event) => { if (event.currentTarget === event.target) finishExit(); }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
       <span><strong>{toast.label}</strong>{toast.detail && <small>{toast.detail}</small>}</span>
-      {toast.onAction && <><span className="feedback-separator" aria-hidden="true" /><button className="feedback-undo" type="button" onClick={() => { toast.onAction?.(); onDismiss(toast.id); }}>{toast.actionLabel ?? "Annuler"}</button></>}
-      <button className="feedback-close" type="button" aria-label={`Fermer : ${toast.label}`} onClick={() => onDismiss(toast.id)}>×</button>
+      {toast.onAction && <><span className="feedback-separator" aria-hidden="true" /><button className="feedback-undo" type="button" disabled={exiting} onClick={() => { toast.onAction?.(); setExiting(true); }}>{toast.actionLabel ?? "Annuler"}</button></>}
+      <button className="feedback-close" type="button" disabled={exiting} aria-label={`Fermer : ${toast.label}`} onClick={() => setExiting(true)}>×</button>
     </div>
   );
 }

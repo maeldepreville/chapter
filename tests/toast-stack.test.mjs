@@ -30,3 +30,14 @@ test("the stack animates reordering while respecting reduced motion", async () =
   assert.match(css, /\.toast-stack[\s\S]*flex-direction: column/);
   assert.match(css, /pointer-events: none/);
 });
+
+test("each notification owns its remaining lifetime and exits through the reversed entrance", async () => {
+  const component = await readFile(source, "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(component, /const remainingMs = useRef\(5000\)/);
+  assert.match(component, /remainingMs\.current - \(Date\.now\(\) - startedAt\)/);
+  assert.match(component, /dismissRef\.current = onDismiss/);
+  assert.doesNotMatch(component, /\[onDismiss, paused, toast\.id\]/);
+  assert.match(component, /onAnimationEnd=/);
+  assert.match(css, /\.temporary-feedback\.is-exiting \{[^}]*animation: chapter-toast-in var\(--motion-surface\) var\(--ease-surface\) reverse both;/s);
+});

@@ -57,7 +57,7 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - éprouver les erreurs d’import sans altérer la session ;
 - vérifier la confirmation de suppression, l’annulation et la sortie publique résultante ;
 - contrôler la fermeture des réglages, du menu de compte et des dialogues au clavier et au toucher.
-- enchaîner plusieurs actions à retour temporaire : les notifications restent empilées de la plus ancienne en haut à la plus récente en bas et leur réagencement est fluide ; vérifier aussi les cartes de réussite d'import et d'export et leurs destinations contextuelles.
+- enchaîner plusieurs actions à retour temporaire : les notifications restent empilées de la plus ancienne en haut à la plus récente en bas, chacune conserve ses propres cinq secondes depuis son apparition et sort par l’animation d’entrée inversée ; vérifier aussi leur réagencement fluide, les cartes de réussite d'import et d'export et leurs destinations contextuelles.
 - sur mobile, faire défiler Réglages et données : le sommaire horizontal reste disponible sous la barre de fermeture et chaque ancre laisse son titre visible.
 
 ### États, responsive et accessibilité
@@ -79,7 +79,7 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 - construction de production réussie avec la route isolée `/recette/p7` ;
 - lint réussi ;
-- **171/171 tests automatisés réussis**, dont les contrôles propres à P7, la pile de notifications, la curation du Profil et toute la non-régression P0 à P6 ;
+- **172/172 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, la curation du Profil et toute la non-régression P0 à P6 ;
 - `git diff --check` sans erreur ;
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;

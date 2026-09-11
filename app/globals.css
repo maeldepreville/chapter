@@ -999,6 +999,7 @@ dialog.chapter-modal[open] > :not(.overlay-backdrop) { animation: chapter-surfac
 .account-menu, .status-popover, .library-sort-options, .p2-status-menu { transform-origin: top center; animation: chapter-menu-in var(--motion-feedback) var(--ease-surface) both; }
 .mobile-account-sheet { animation: chapter-sheet-in var(--motion-surface) var(--ease-surface) both; }
 .temporary-feedback, .p2-feedback, .conversation-notice { animation: chapter-toast-in var(--motion-surface) var(--ease-surface) both; }
+.temporary-feedback.is-exiting { pointer-events: none; animation: chapter-toast-in var(--motion-surface) var(--ease-surface) reverse both; }
 .fade-host[data-exiting] .mobile-account-sheet { opacity: 0; transform: translateY(0.75rem); transition: opacity var(--motion-feedback) var(--ease-standard), transform var(--motion-surface) var(--ease-surface); }
 
 @keyframes chapter-surface-in {
