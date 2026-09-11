@@ -15,6 +15,7 @@ import { prototypeReviewsForActor, prototypeReviewsForWork, type PrototypePublic
 import { PUBLIC_PROFILE_URL } from "./site-config";
 import { staticAsset } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
+import { FavoritesEditor, ListsEditor, type EditableProfileList } from "./profile-curation";
 
 export type { PublicListId } from "./catalogue";
 export type { ProfileOwner } from "./prototype-data";
@@ -38,7 +39,7 @@ type DiscoverProps = {
   onOpenWork: (id: string) => void;
   onAddToRead: (id: string) => void;
   onOpenProfile: (owner: "self" | "lina") => void;
-  onOpenList: (listId: PublicListId) => void;
+  onOpenList: (listId: string) => void;
   followingLina: boolean;
   onToggleFollow: () => void;
   initialQuery?: string;
@@ -330,7 +331,7 @@ type ProfileProps = {
   onToggleFollow: () => void;
   onOpenWork: (id: string) => void;
   onOpenHonors: () => void;
-  onOpenList: (listId: PublicListId) => void;
+  onOpenList: (listId: string) => void;
   photo: ProfilePhoto | null;
   onEditPhoto: () => void;
   onRemovePhoto: () => void;
@@ -342,9 +343,13 @@ type ProfileProps = {
   onToggleBlock?: () => void;
   onBack?: () => void;
   backLabel?: string;
+  favoriteWorkIds?: readonly string[];
+  personalLists?: readonly EditableProfileList[];
+  onSaveFavorites?: (ids: string[]) => void;
+  onSaveLists?: (lists: EditableProfileList[]) => void;
 };
 
-export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [], displayName, blocked = false, onToggleBlock, onBack, backLabel = "Retour" }: ProfileProps) {
+export function ProfileView({ owner, works, following, onToggleFollow, onOpenWork, onOpenHonors, onOpenList, photo, onEditPhoto, onRemovePhoto, equippedTitle, showcase, personalReviews = [], displayName, blocked = false, onToggleBlock, onBack, backLabel = "Retour", favoriteWorkIds, personalLists, onSaveFavorites, onSaveLists }: ProfileProps) {
   const isOwnProfile = owner === "self";
   const presentation = profilePresentations[owner];
   const actor = prototypeActors[presentation.actorId];
@@ -354,6 +359,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const [cardFlipped, setCardFlipped] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
   const [shareBusy, setShareBusy] = useState(false);
+  const [curationMode, setCurationMode] = useState<"favorites" | "lists" | null>(null);
   const [shareController] = useState(() => createProfileShareController(setShareBusy, setShareNotice));
   const publicProfileUrl = PUBLIC_PROFILE_URL;
   const profileName = isMael && displayName?.trim() ? displayName.trim() : actor.name;
@@ -366,7 +372,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
     title: isMael ? equippedTitle : presentation.defaultTitle,
   };
   const workById = (id: string) => works.find((work) => work.id === id);
-  const favorites = availableWorks(works, profile.favorites);
+  const favorites = availableWorks(works, isMael && favoriteWorkIds ? favoriteWorkIds : profile.favorites);
+  const profileLists: readonly EditableProfileList[] = isMael && personalLists ? personalLists : publicListIds.map((id) => ({ id, ...publicListCatalog[id], workIds: [...publicListCatalog[id].workIds] }));
   const publicReviews = (profile.actorId === CURRENT_READER_ID ? personalReviews : prototypeReviewsForActor(profile.actorId))
     .filter((review) => Boolean(workById(review.workId)))
     .slice(0, 2);
@@ -453,7 +460,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       </div>
       {!blocked && <section className="profile-library-portrait" aria-label={isOwnProfile ? "Votre bibliothèque personnelle" : "Sa bibliothèque personnelle"}>
         <section id="profile-favorites" className="profile-section favorites-section profile-opening-favorites" aria-labelledby="favorites-title">
-          <div className="profile-section-heading"><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2><p>Trois présences qui racontent une sensibilité mieux qu’une longue biographie.</p></div>
+          <div className="profile-section-heading profile-section-heading--editable"><div><p className="eyebrow">Œuvres de chevet</p><h2 id="favorites-title">Celles qui restent</h2><p>Trois présences qui racontent une sensibilité mieux qu’une longue biographie.</p></div>{isOwnProfile && onSaveFavorites && <button className="text-action" type="button" onClick={() => setCurationMode("favorites")}>Modifier</button>}</div>
           {favorites.length ? <div className="favorite-books">{favorites.map((work) => <button type="button" key={work.id} onClick={() => onOpenWork(work.id)}><CompactCover work={work} className="favorite-cover" /><span><strong>{work.title}</strong><small>{work.author}</small></span></button>)}</div> : <EmptyDestination compact headingLevel="h3" section="profile" asset="/editorial/p6-empty-profile.webp" assetAlt="Un ex-libris de lecteur encore vierge, accompagné de trois onglets et d’un ruban rouge." kicker="Œuvres de chevet" title="Trois places sont encore libres.">Elles raconteront bientôt une sensibilité de lecture.</EmptyDestination>}
         </section>
         <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
@@ -463,8 +470,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
       </section>}
       {!blocked && <div className="profile-wide-content">
         <section id="profile-lists" className="profile-section profile-lists-section" aria-labelledby="profile-lists-title">
-          <div className="profile-section-heading"><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>
-          {publicListIds.map((listId) => { const list = publicListCatalog[listId]; return <button className="profile-list-entry" type="button" key={listId} onClick={() => onOpenList(listId)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>; })}
+          <div className="profile-section-heading profile-section-heading--editable"><div><p className="eyebrow">Rayonnages publics</p><h2 id="profile-lists-title">Des chemins à parcourir</h2></div>{isOwnProfile && onSaveLists && <button className="text-action" type="button" onClick={() => setCurationMode("lists")}>Gérer mes listes</button>}</div>
+          {profileLists.length ? profileLists.map((list) => <button className="profile-list-entry" type="button" key={list.id} onClick={() => onOpenList(list.id)}><span><strong>{list.title}</strong><small>{availableWorkCount(availableWorks(works, list.workIds).length, list.workIds.length)} · {list.profileSummary}</small></span><span aria-hidden="true">→</span></button>) : <EmptyDestination compact section="list" asset="/editorial/p6-empty-list.webp" assetAlt="Une pile de feuillets vierges reliée par un ruban rouge, prête à recevoir une sélection." kicker="Aucun rayonnage" title="Votre première liste reste à composer.">{isOwnProfile ? "Créez un chemin public à partir des œuvres qui comptent pour vous." : "Ce lecteur n’a pas encore publié de liste."}</EmptyDestination>}
         </section>
         <section id="profile-reviews" className="profile-section profile-reviews-section" aria-labelledby="profile-reviews-title">
           <div className="profile-section-heading"><p className="eyebrow">Traces publiques</p><h2 id="profile-reviews-title">Des lectures laissées ouvertes</h2></div>
@@ -489,6 +496,8 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
           </section>
         </Modal>
       )}</Fade>
+      <Fade show={isOwnProfile && curationMode === "favorites"} kind="modal">{isOwnProfile && curationMode === "favorites" && onSaveFavorites && <FavoritesEditor works={works} selected={favoriteWorkIds ?? profile.favorites} onSave={onSaveFavorites} onClose={() => setCurationMode(null)} />}</Fade>
+      <Fade show={isOwnProfile && curationMode === "lists"} kind="modal">{isOwnProfile && curationMode === "lists" && onSaveLists && <ListsEditor works={works} lists={profileLists} onSave={onSaveLists} onClose={() => setCurationMode(null)} />}</Fade>
       <Fade show={blockConfirm} kind="modal">{blockConfirm && (
         <Modal className="profile-photo-remove-overlay" alert labelledBy="block-account-title" initialFocus="[data-cancel-block]" onRequestClose={() => setBlockConfirm(false)}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Annuler le blocage" onClick={() => setBlockConfirm(false)} />
@@ -641,8 +650,8 @@ export function HonorsView({ owner, equippedTitle, onEquip, showcase, onToggleSh
   );
 }
 
-export function PublicListView({ owner, listId, works, following, blocked = false, displayName, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: PublicListId; works: readonly SocialWork[]; following: boolean; blocked?: boolean; displayName?: string; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
-  const list = publicListCatalog[listId];
+export function PublicListView({ owner, listId, list: suppliedList, works, following, blocked = false, displayName, onToggleFollow, onOpenProfile, onOpenWork, onBack, backLabel }: { owner: ProfileOwner; listId: string; list?: EditableProfileList; works: readonly SocialWork[]; following: boolean; blocked?: boolean; displayName?: string; onToggleFollow: () => void; onOpenProfile: () => void; onOpenWork: (id: string) => void; onBack: () => void; backLabel: string }) {
+  const list = suppliedList ?? publicListCatalog[listId as PublicListId] ?? publicListCatalog.places;
   const chosen = availableWorks(works, list.workIds);
   const isOwnList = owner === "self";
   const actor = prototypeActors[actorIdForProfile(owner)];

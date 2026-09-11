@@ -9,8 +9,8 @@ import { Modal } from "./modal";
 import { Fade } from "./fade";
 import { lockBodyScroll } from "./modal-behavior";
 import { BadgeId, DiscoverView, HonorsView, PhotoCropper, ProfilePhoto, ProfileView, PublicListView, SocialReviews } from "./phase10";
-import type { PublicListId } from "./catalogue";
-import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
+import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
+import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
 import { shellAttributes, type OptionalProgress, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
@@ -22,6 +22,7 @@ import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 import { staticAsset, warmStaticAssets } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
 import { ToastStack, type StackToast } from "./toast-stack";
+import type { EditableProfileList } from "./profile-curation";
 
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
@@ -36,7 +37,7 @@ type NavigationSnapshot = {
   view: View;
   selectedWorkId: WorkId;
   profileOwner: ProfileOwner;
-  publicListId: PublicListId;
+  publicListId: string;
   publicListOwner: ProfileOwner;
   publicListOrigin: PublicListOrigin;
   publicWorkOrigin: PublicWorkOrigin;
@@ -64,6 +65,7 @@ export type PersonalEntry = {
 
 const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
 const currentReader = prototypeActors[CURRENT_READER_ID];
+const defaultProfileLists: readonly EditableProfileList[] = publicListIds.map((id) => ({ id, ...publicListCatalog[id], workIds: [...publicListCatalog[id].workIds] }));
 const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
 const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.review && (entry.reviewPublished ?? true));
 
@@ -201,7 +203,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicWorkOrigin, setPublicWorkOrigin] = useState<PublicWorkOrigin>("discover");
   const [publicActivated, setPublicActivated] = useState(false);
   const [publicFirstMarkers, setPublicFirstMarkers] = useState<Record<string, FirstMarkerRecord>>({});
-  const [publicListId, setPublicListId] = useState<PublicListId>(initialPublicListId ?? "places");
+  const [publicListId, setPublicListId] = useState<string>(initialPublicListId ?? "places");
   const [publicListOrigin, setPublicListOrigin] = useState<PublicListOrigin>("discover");
   const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>(initialPublicListOwner);
   const [publicIdentityReady, setPublicIdentityReady] = useState(false);
@@ -213,11 +215,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
   const [publicIntent, setPublicIntent] = useState<PublicIntent>("review");
   const [navigationSource, setNavigationSource] = useState<NavigationSnapshot | null>(null);
+  const [favoriteWorkIds, setFavoriteWorkIds] = useState<string[]>([...profilePresentations.self.favorites]);
+  const [personalLists, setPersonalLists] = useState<EditableProfileList[]>(defaultProfileLists.map((list) => ({ ...list, workIds: [...list.workIds] })));
   const privateScroll = useRef({ journal: 0, library: 0 });
   const accountControlRef = useRef<HTMLDivElement>(null);
   const mobileAccountRef = useRef<HTMLElement>(null);
   const ratingRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const pendingPublicAction = useRef<(() => void) | null>(null);
+  const selectedProfileList = actorIdForProfile(publicListOwner) === CURRENT_READER_ID
+    ? personalLists.find((list) => list.id === publicListId)
+    : defaultProfileLists.find((list) => list.id === publicListId);
 
   const dismissFeedback = (id: number) => setFeedbacks((current) => current.filter((item) => item.id !== id));
   const showFeedback = (feedback: Feedback) => {
@@ -402,7 +409,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setFollowingActors((current) => ({ ...current, [actorId]: false }));
   };
 
-  const openPublicList = (listId: PublicListId, origin: PublicListOrigin, owner: ProfileOwner) => {
+  const openPublicList = (listId: string, origin: PublicListOrigin, owner: ProfileOwner) => {
     if (destinationOverlay === "list" && publicListOwner === owner && publicListId === listId) return;
     setPublicListId(listId);
     setPublicListOrigin(origin);
@@ -534,6 +541,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setFollowingActors({ self: false, lina: false, theo: false, ines: false });
     setBlockedActorIds([]);
     setProfilePhoto(null);
+    setFavoriteWorkIds([]);
+    setPersonalLists([]);
     setPublicIdentityReady(false);
     setPublicActivated(false);
     setPublicFirstMarkers({});
@@ -1087,6 +1096,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               showcase={showcaseBadges}
               personalReviews={personalPublicReviews}
               displayName={publicProfileName}
+              favoriteWorkIds={favoriteWorkIds}
+              personalLists={personalLists}
               blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}
               onToggleBlock={actorIdForProfile(profileOwner) === CURRENT_READER_ID ? undefined : () => toggleBlock(actorIdForProfile(profileOwner))}
               onBack={returnFromProfile}
@@ -1095,7 +1106,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : currentView === "honors" ? (
             <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
           ) : currentView === "list" ? (
-            <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+            <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => { const actorId = actorIdForProfile(publicListOwner); if (requirePublicIdentity("follow", () => toggleFollow(actorId))) toggleFollow(actorId); }} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => openPublicWork(id, "list")} onBack={() => restoreNavigation(() => openPublicView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
@@ -1154,6 +1165,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             showcase={showcaseBadges}
             personalReviews={personalPublicReviews}
             displayName={publicProfileName}
+            favoriteWorkIds={favoriteWorkIds}
+            personalLists={personalLists}
+            onSaveFavorites={(ids) => { setFavoriteWorkIds(ids); showFeedback({ kind: "saved", label: "Œuvres de chevet mises à jour", detail: "Votre profil public reflète maintenant cette sélection." }); }}
+            onSaveLists={(lists) => { setPersonalLists(lists); showFeedback({ kind: "saved", label: "Listes publiques mises à jour", detail: "Vos rayonnages reflètent maintenant ces choix." }); }}
             blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}
             onToggleBlock={actorIdForProfile(profileOwner) === CURRENT_READER_ID ? undefined : () => toggleBlock(actorIdForProfile(profileOwner))}
             onBack={returnFromProfile}
@@ -1162,7 +1177,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         ) : currentView === "honors" ? (
           <HonorsView owner={profileOwner} equippedTitle={equippedTitle} onEquip={setEquippedTitle} showcase={showcaseBadges} onToggleShowcase={toggleShowcase} onBack={() => restoreNavigation(() => restoreProfile(profileOwner))} />
         ) : currentView === "list" ? (
-          <PublicListView owner={publicListOwner} listId={publicListId} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
+          <PublicListView owner={publicListOwner} listId={publicListId} list={selectedProfileList} works={works} following={followingActors[actorIdForProfile(publicListOwner)]} blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))} displayName={publicProfileName} onToggleFollow={() => toggleFollow(actorIdForProfile(publicListOwner))} onOpenProfile={() => openProfile(publicListOwner)} onOpenWork={(id) => selectWork(id as WorkId)} onBack={() => restoreNavigation(() => openView("discover"))} backLabel={navigationBackLabel("Retour à Découvrir")} />
         ) : currentView === "journal" ? (
           <section className="destination-page journal-page" aria-labelledby="personal-journal-title">
             <header className="destination-heading journal-heading">
@@ -1473,6 +1488,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <PublicListView
               owner={publicListOwner}
               listId={publicListId}
+              list={selectedProfileList}
               works={works}
               following={followingActors[actorIdForProfile(publicListOwner)]}
               blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))}

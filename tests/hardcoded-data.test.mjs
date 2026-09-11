@@ -19,7 +19,7 @@ test("identity, list routing and public URL use their canonical sources", async 
   assert.doesNotMatch(page, /onOpenList=\{\(\) => openPublicList\(/);
   assert.doesNotMatch(phase10, /review\.name ===|reply\.name ===/);
   assert.match(phase10, /reply\.authorId === CURRENT_READER_ID/);
-  assert.match(phase10, /publicListCatalog\[listId\]/);
+  assert.match(phase10, /suppliedList \?\? publicListCatalog\[listId as PublicListId\]/);
 
   for (const source of [page, phase10, layout, profileRoute, share]) {
     assert.doesNotMatch(source, /chapter-reading\.smrdsh\.chatgpt\.site/);

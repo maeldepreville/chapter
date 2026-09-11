@@ -78,9 +78,10 @@
   .trust-heading { padding-bottom: 2.5rem; }
   .trust-heading h1 { font-size: clamp(2.6rem, 13vw, 4.2rem); }
   .trust-layout { display: block; padding-top: 2rem; }
-  .trust-index { position: static; grid-template-columns: repeat(5, max-content); gap: 0.8rem; margin: 0 -1rem 3rem; padding: 0 1rem 0.75rem; overflow-x: auto; overscroll-behavior-inline: contain; }
+  .trust-index { position: sticky; top: 3.75rem; z-index: 4; grid-template-columns: repeat(5, max-content); gap: 0.8rem; margin: 0 -1rem 3rem; padding: 0.35rem 1rem 0.75rem; overflow-x: auto; overscroll-behavior-inline: contain; background: color-mix(in srgb, var(--surface) 96%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); scrollbar-width: none; }
+  .trust-index::-webkit-scrollbar { display: none; }
   .trust-index a { border-bottom: 0; white-space: nowrap; }
-  .trust-section { padding-bottom: 3rem; margin-bottom: 3rem; }
+  .trust-section { padding-bottom: 3rem; margin-bottom: 3rem; scroll-margin-top: 8rem; }
   .trust-form-row, .data-actions { grid-template-columns: 1fr; }
   .trust-form-row .chapter-button { justify-self: start; }
   .privacy-ledger > div { grid-template-columns: 2.3rem minmax(0, 1fr); }

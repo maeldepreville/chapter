@@ -1,6 +1,6 @@
 # Chapter — registre des données statiques du prototype
 
-Dernière mise à jour : 9 septembre 2026.
+Dernière mise à jour : 11 septembre 2026.
 
 Ce registre distingue les valeurs figées qui faussaient un parcours de celles qui constituent encore volontairement les données simulées du lot 1. Une chaîne visible n'est pas un identifiant : permissions, navigation et relations doivent toujours utiliser des identifiants stables, et les paramètres reçus par un callback doivent être transmis à la destination.
 
@@ -43,10 +43,10 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 | Zone statique actuelle | Remplacement attendu après le lot 1 |
 | --- | --- |
 | Lecteur courant et acteurs de démonstration de compatibilité dans `prototype-data.ts` | Session authentifiée et API de profils. |
-| Présentation, favoris et titre exposé des profils | Données de profil persistées et réglages du lecteur. |
+| Présentation, œuvres de chevet et titre exposé des profils | Données de profil persistées et réglages du lecteur. Les œuvres de chevet de Maël sont maintenant modifiables dans l’état React de session, avec une limite visible de trois. |
 | Œuvres cœur exportées par `foundation/fixtures.ts` et réexportées comme `defaultWorks` par `page.tsx` | Catalogue distant avec identifiants pérennes. |
 | Entrées de bibliothèque, traces du Journal et compteurs de lecteurs | Stockage utilisateur et agrégats du service. |
-| Deux listes publiques, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Le partage actuel du même catalogue de listes entre Maël et Lina est une limite de démonstration, pas le modèle métier final. |
+| Deux listes publiques initiales, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Maël peut maintenant créer, modifier et supprimer ses listes dans l’état React de session ; les portraits tiers continuent d’utiliser le catalogue fixture partagé, limite de démonstration qui n’est pas le modèle métier final. |
 | Badges, titres exposables et progression | Progression calculée et persistée par compte. |
 | Parcours de recommandation, œuvre d'ancrage et liste mise en avant | Moteur de recommandation et configuration éditoriale administrable. |
 | Critiques, réponses, états de suivi et dates sociales centralisés dans `social-data.ts` | Service social persistant avec profils navigables, modération et permissions côté serveur. |
