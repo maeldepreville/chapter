@@ -35,13 +35,13 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - retrouver le premier repère dans Journal et Bibliothèque ;
 - filtrer, trier, rechercher et charger progressivement la Bibliothèque dense ;
 - ouvrir une œuvre depuis chaque origine puis revenir à la destination et au contexte attendus ;
-- enregistrer, modifier et abandonner une progression ou une note ;
+- enregistrer, modifier, supprimer puis restaurer une progression ou une note ;
 - terminer une lecture, commencer une relecture et vérifier les traces chronologiques ;
 - contrôler l’état introductif public, l’état personnel sans activité et l’état de catalogue réellement vide sans les confondre.
 
 ### Parcours social
 
-- publier puis retirer une critique, développer son texte sur la fiche œuvre et vérifier son aperçu borné dans le Profil ;
+- publier puis retirer une critique depuis son éditeur, vérifier que l’évaluation privée est conservée, développer son texte sur la fiche œuvre et vérifier son aperçu borné dans le Profil ;
 - répondre à une conversation après création de l’identité minimale ;
 - suivre et ne plus suivre depuis Découvrir, un Profil et une liste ;
 - depuis son Profil, remplacer ou retirer les trois œuvres de chevet, puis créer, modifier et supprimer une liste publique ; vérifier que les deux sélecteurs ne proposent que les œuvres présentes dans la Bibliothèque ;
@@ -82,7 +82,7 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 - construction de production réussie avec la route isolée `/recette/p7` ;
 - lint réussi ;
-- **175/175 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, le canal alpha de l’asset des œuvres de chevet, la création d’espace unifiée, la cohérence des avatars, la curation du Profil et toute la non-régression P0 à P6 ;
+- **177/177 tests automatisés réussis**, dont les contrôles propres à P7, la suppression restaurable des notes privées et critiques publiques, le cycle indépendant des notifications, le canal alpha de l’asset des œuvres de chevet, la création d’espace unifiée, la cohérence des avatars, la curation du Profil et toute la non-régression P0 à P6 ;
 - `git diff --check` sans erreur ;
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;

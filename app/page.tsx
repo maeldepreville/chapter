@@ -172,11 +172,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [noteDraft, setNoteDraft] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteCloseConfirm, setNoteCloseConfirm] = useState(false);
+  const [noteDeleteConfirm, setNoteDeleteConfirm] = useState(false);
   const [reviewDraft, setReviewDraft] = useState("");
   const [ratingDraft, setRatingDraft] = useState(0);
   const [ratingPreview, setRatingPreview] = useState<number | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewCloseConfirm, setReviewCloseConfirm] = useState(false);
+  const [reviewDeleteConfirm, setReviewDeleteConfirm] = useState(false);
   const [feedbacks, setFeedbacks] = useState<StackToast[]>([]);
   const feedbackId = useRef(0);
   const [activeSection, setActiveSection] = useState("journal");
@@ -848,11 +850,15 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const openNote = () => {
+    setNoteDeleteConfirm(false);
+    setNoteCloseConfirm(false);
     setNoteDraft(entry.note);
     setNoteOpen(true);
   };
   const openNoteForWork = (id: WorkId) => {
     const targetEntry = entries[id] ?? emptyEntry;
+    setNoteDeleteConfirm(false);
+    setNoteCloseConfirm(false);
     setSelectedWorkId(id);
     setNoteDraft(targetEntry.note);
     setNoteOpen(true);
@@ -867,7 +873,30 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setNoteOpen(false);
   };
 
+  const deleteNote = () => {
+    const workId = selectedWorkId;
+    const previousNote = entry.note;
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === workId && trace.action === "note");
+    const previousNoteTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
+    updateEntry({ note: "" });
+    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== workId || trace.action !== "note"));
+    setNoteDraft("");
+    setNoteDeleteConfirm(false);
+    setNoteOpen(false);
+    showFeedback({ kind: "removal", label: "Note privée supprimée", detail: "Cette pensée a été retirée de votre Journal.", onAction: () => {
+      updateEntryFor(workId, { note: previousNote });
+      const { trace: restoredTrace, index } = previousNoteTrace;
+      if (restoredTrace) setJournalTraces((traces) => {
+        const rest = traces.filter((trace) => trace.workId !== workId || trace.action !== "note");
+        rest.splice(Math.min(index, rest.length), 0, restoredTrace);
+        return rest;
+      });
+    } });
+  };
+
   const openReview = () => {
+    setReviewDeleteConfirm(false);
+    setReviewCloseConfirm(false);
     setReviewDraft(entry.review);
     setRatingDraft(entry.rating);
     setRatingPreview(null);
@@ -875,6 +904,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
   const openReviewForWork = (id: WorkId) => {
     const targetEntry = entries[id] ?? emptyEntry;
+    setReviewDeleteConfirm(false);
+    setReviewCloseConfirm(false);
     setSelectedWorkId(id);
     setReviewDraft(targetEntry.review);
     setRatingDraft(targetEntry.rating);
@@ -909,6 +940,26 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       setReviewDraft(latestPublication.review);
       setRatingDraft(latestPublication.rating);
       setReviewOpen(true);
+    } });
+  };
+
+  const deletePublishedReview = () => {
+    const previousPublication = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished };
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
+    const previousReviewTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
+    updateEntry({ review: "", reviewPublished: false });
+    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== selectedWorkId || trace.action !== "review"));
+    setReviewDraft("");
+    setReviewDeleteConfirm(false);
+    setReviewOpen(false);
+    showFeedback({ kind: "removal", label: "Critique retirée", detail: "Elle n’est plus publique. Votre évaluation privée est conservée.", onAction: () => {
+      updateEntryFor(previousPublication.workId, { review: previousPublication.review, reviewPublished: previousPublication.reviewPublished });
+      const { trace: restoredTrace, index } = previousReviewTrace;
+      if (restoredTrace) setJournalTraces((traces) => {
+        const rest = traces.filter((trace) => trace.workId !== previousPublication.workId || trace.action !== "review");
+        rest.splice(Math.min(index, rest.length), 0, restoredTrace);
+        return rest;
+      });
     } });
   };
 
@@ -1565,21 +1616,29 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       )}</Fade>}
 
       <Fade show={noteOpen} kind="modal">{noteOpen && (
-        <Modal labelledBy={noteCloseConfirm ? "note-confirm-title" : "note-title"} describedBy={noteCloseConfirm ? "note-confirm-description" : undefined} alert={noteCloseConfirm} initialFocus={noteCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>
-          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la note" onClick={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()} />
-          <section className={`editor-modal private-editor ${noteCloseConfirm ? "editor-protected" : ""}`}>
+        <Modal labelledBy={noteDeleteConfirm ? "note-delete-title" : noteCloseConfirm ? "note-confirm-title" : "note-title"} describedBy={noteDeleteConfirm ? "note-delete-description" : noteCloseConfirm ? "note-confirm-description" : undefined} alert={noteCloseConfirm || noteDeleteConfirm} initialFocus={noteCloseConfirm || noteDeleteConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => noteDeleteConfirm ? setNoteDeleteConfirm(false) : noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la note" onClick={() => noteDeleteConfirm ? setNoteDeleteConfirm(false) : noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()} />
+          <section className={`editor-modal private-editor ${noteCloseConfirm || noteDeleteConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Privée · visible uniquement par vous</p>
                 <h2 id="note-title">Ma note</h2>
               </div>
-              <button className="close-button" type="button" aria-label="Fermer" onClick={() => noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>×</button>
+              <button className="close-button" type="button" aria-label="Fermer" onClick={() => noteDeleteConfirm ? setNoteDeleteConfirm(false) : noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>×</button>
             </div>
             <label className="editor-field">
               <span>Ce que vous souhaitez retenir</span>
-              <textarea readOnly={noteCloseConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
+              <textarea readOnly={noteCloseConfirm || noteDeleteConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
             </label>
-            {noteCloseConfirm ? (
+            {noteDeleteConfirm ? (
+              <div className="editor-confirmation">
+                <div><strong id="note-delete-title">Supprimer cette note privée ?</strong><p id="note-delete-description">Elle disparaîtra de votre Journal. Cette action pourra être annulée juste après.</p></div>
+                <div className="protection-actions">
+                  <button data-safe-return className="quiet-action" type="button" onClick={() => setNoteDeleteConfirm(false)}>Conserver la note</button>
+                  <button className="destructive-action" type="button" onClick={deleteNote}>Supprimer la note</button>
+                </div>
+              </div>
+            ) : noteCloseConfirm ? (
               <div className="editor-confirmation">
                 <div><strong id="note-confirm-title">Quitter sans enregistrer ?</strong><p id="note-confirm-description">Les modifications apportées à votre note seront perdues.</p></div>
                 <div className="protection-actions">
@@ -1589,6 +1648,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               </div>
             ) : (
               <div className="modal-actions">
+                {entry.note && <button className="destructive-action editor-delete-action" type="button" onClick={() => setNoteDeleteConfirm(true)}>Supprimer la note</button>}
                 <button className="quiet-action" type="button" onClick={requestNoteClose}>Annuler</button>
                 <button className="primary-action" type="button" onClick={saveNote}>Enregistrer</button>
               </div>
@@ -1598,20 +1658,20 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       )}</Fade>
 
       <Fade show={reviewOpen} kind="modal">{reviewOpen && (
-        <Modal labelledBy={reviewCloseConfirm ? "review-confirm-title" : "review-title"} describedBy={reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm} initialFocus={reviewCloseConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>
-          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()} />
-          <section className={`editor-modal review-editor ${reviewCloseConfirm ? "editor-protected" : ""}`}>
+        <Modal labelledBy={reviewDeleteConfirm ? "review-delete-title" : reviewCloseConfirm ? "review-confirm-title" : "review-title"} describedBy={reviewDeleteConfirm ? "review-delete-description" : reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm || reviewDeleteConfirm} initialFocus={reviewCloseConfirm || reviewDeleteConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()} />
+          <section className={`editor-modal review-editor ${reviewCloseConfirm || reviewDeleteConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Publique</p>
                 <h2 id="review-title">{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Publier ma critique importée" : "Écrire une critique"}</h2>
               </div>
-              <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
+              <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
             </div>
-            {!reviewCloseConfirm && <div className="p4-publication-contract"><span aria-hidden="true">●</span><p><strong>Visible par tous après publication</strong><small>Votre note privée reste séparée. Vous pourrez retirer cette critique sans rendre votre Journal public.</small></p></div>}
+            {!reviewCloseConfirm && !reviewDeleteConfirm && <div className="p4-publication-contract"><span aria-hidden="true">●</span><p><strong>Visible par tous après publication</strong><small>Votre note privée reste séparée. Vous pourrez retirer cette critique sans rendre votre Journal public.</small></p></div>}
             <label className="editor-field">
               <span>Votre critique</span>
-              <textarea readOnly={reviewCloseConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
+              <textarea readOnly={reviewCloseConfirm || reviewDeleteConfirm} rows={10} maxLength={3000} value={reviewDraft} onChange={(event) => setReviewDraft(event.target.value)} placeholder="Partagez ce que cette œuvre vous a laissé…" />
               <small>{reviewDraft.length.toLocaleString("fr-FR")} / 3 000 caractères</small>
             </label>
             <fieldset className="rating-field">
@@ -1626,7 +1686,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                     aria-checked={ratingDraft === value}
                     aria-label={`${value} étoile${value > 1 ? "s" : ""}`}
                     key={value}
-                    disabled={reviewCloseConfirm}
+                    disabled={reviewCloseConfirm || reviewDeleteConfirm}
                     onMouseEnter={() => setRatingPreview(value)}
                     onFocus={() => setRatingPreview(value)}
                     onBlur={() => setRatingPreview(null)}
@@ -1648,10 +1708,18 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                   </button>
                 ))}
                 <span>{ratingPreview ? `${ratingPreview} sur 5` : ratingDraft ? `${ratingDraft} sur 5` : "Aucune évaluation"}</span>
-                {ratingDraft > 0 && !reviewCloseConfirm && <button className="rating-remove" type="button" onClick={() => { setRatingDraft(0); setRatingPreview(null); }}>Retirer</button>}
+                {ratingDraft > 0 && !reviewCloseConfirm && !reviewDeleteConfirm && <button className="rating-remove" type="button" onClick={() => { setRatingDraft(0); setRatingPreview(null); }}>Retirer</button>}
               </div>
             </fieldset>
-            {reviewCloseConfirm ? (
+            {reviewDeleteConfirm ? (
+              <div className="editor-confirmation">
+                <div><strong id="review-delete-title">Retirer cette critique publique ?</strong><p id="review-delete-description">Elle disparaîtra de votre profil et de la page de l’œuvre. Votre évaluation privée sera conservée.</p></div>
+                <div className="protection-actions">
+                  <button data-safe-return className="quiet-action" type="button" onClick={() => setReviewDeleteConfirm(false)}>Conserver la critique</button>
+                  <button className="destructive-action" type="button" onClick={deletePublishedReview}>Retirer la critique</button>
+                </div>
+              </div>
+            ) : reviewCloseConfirm ? (
               <div className="editor-confirmation">
                 <div><strong id="review-confirm-title">Quitter sans enregistrer ?</strong><p id="review-confirm-description">Les modifications apportées à votre critique seront perdues.</p></div>
                 <div className="protection-actions">
@@ -1661,6 +1729,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               </div>
             ) : (
               <div className="modal-actions">
+                {reviewIsPublished && <button className="destructive-action editor-delete-action" type="button" onClick={() => setReviewDeleteConfirm(true)}>Supprimer ma critique</button>}
                 <button className="quiet-action" type="button" onClick={requestReviewClose}>Annuler</button>
                 <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{reviewIsPublished ? "Enregistrer les modifications" : "Publier la critique"}</button>
               </div>

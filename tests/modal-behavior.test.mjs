@@ -164,8 +164,8 @@ test("all blocking surfaces use the shared modal and NSV2 keeps one alert surfac
   assert.equal((profile.match(/<Modal\b/g) ?? []).length, 3);
   assert.equal((account.match(/<Dialog\b/g) ?? []).length, 1);
   for (const kind of ["note", "review"]) {
-    assert.ok(page.includes(`initialFocus={${kind}CloseConfirm ? "[data-safe-return]" : "textarea"}`));
-    assert.ok(page.includes(`onRequestClose={() => ${kind}CloseConfirm ? set${kind[0].toUpperCase() + kind.slice(1)}CloseConfirm(false) : request${kind[0].toUpperCase() + kind.slice(1)}Close()}`));
+    assert.ok(page.includes(`initialFocus={${kind}CloseConfirm || ${kind}DeleteConfirm ? "[data-safe-return]" : "textarea"}`));
+    assert.ok(page.includes(`onRequestClose={() => ${kind}DeleteConfirm ? set${kind[0].toUpperCase() + kind.slice(1)}DeleteConfirm(false) : ${kind}CloseConfirm ? set${kind[0].toUpperCase() + kind.slice(1)}CloseConfirm(false) : request${kind[0].toUpperCase() + kind.slice(1)}Close()}`));
   }
   assert.doesNotMatch(page, /className="editor-confirmation" role="alertdialog"/);
   assert.match(page, /event\.defaultPrevented \|\| document\.querySelector\("dialog\[open\]"\)/);

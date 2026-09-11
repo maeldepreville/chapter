@@ -246,6 +246,40 @@ test("undoing a first review removes only its new trace and keeps the draft", ()
   assert.equal(nodes(ui.render(), (node) => node.type === "textarea")[0].props.value, "Une critique nouvelle");
 }));
 
+test("a private note has an explicit confirmed deletion with undo", () => withWindow(() => {
+  const noteTrace = saveWrittenTrace([], "cartographies", "note", "Une note à retirer", "Aujourd’hui")[0];
+  const ui = interactiveHome({ view: "work", entries: { cartographies: { ...emptyEntry, note: "Une note à retirer" } }, traces: [noteTrace] });
+  const noteRow = nodes(ui.render(), (node) => node.props?.className === "journal-row" && textOf(node).includes("Ma note"))[0];
+  nodes(noteRow, (node) => node.type === "button")[0].props.onClick();
+  ui.button("Supprimer la note").props.onClick();
+  assert.match(textOf(ui.render()), /Supprimer cette note privée/);
+  ui.button("Supprimer la note").props.onClick();
+  assert.doesNotMatch(textOf(ui.render()), /Une note à retirer/);
+  const toast = nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.at(-1);
+  assert.equal(toast.label, "Note privée supprimée");
+  toast.onAction();
+  assert.match(textOf(ui.render()), /Une note à retirer/);
+}));
+
+test("a public review can be removed while its private rating is preserved", () => withWindow(() => {
+  const reviewTrace = saveWrittenTrace([], "cartographies", "review", "Une critique à retirer", "Aujourd’hui")[0];
+  const ui = interactiveHome({ view: "work", entries: { cartographies: { ...emptyEntry, review: "Une critique à retirer", reviewPublished: true, rating: 4 } }, traces: [reviewTrace] });
+  const reviewRow = nodes(ui.render(), (node) => node.props?.className === "journal-row" && textOf(node).includes("Ma critique"))[0];
+  nodes(reviewRow, (node) => node.type === "button")[0].props.onClick();
+  ui.button("Supprimer ma critique").props.onClick();
+  assert.match(textOf(ui.render()), /Retirer cette critique publique/);
+  ui.button("Retirer la critique").props.onClick();
+  assert.doesNotMatch(textOf(ui.render()), /Une critique à retirer/);
+  const emptyReviewRow = nodes(ui.render(), (node) => node.props?.className === "journal-row" && textOf(node).includes("Ma critique"))[0];
+  nodes(emptyReviewRow, (node) => node.type === "button")[0].props.onClick();
+  assert.match(textOf(ui.render()), /4 sur 5/);
+  ui.button("Annuler").props.onClick();
+  const toast = nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.at(-1);
+  assert.equal(toast.label, "Critique retirée");
+  toast.onAction();
+  assert.match(textOf(ui.render()), /Une critique à retirer/);
+}));
+
 test("Library empty filters and searches keep their independent recovery actions", () => {
   const ui = interactiveHome({ view: "library", entries: { cartographies: { ...emptyEntry, readingStatus: "En cours" } }, traces: [] });
   nodes(ui.render(), (node) => node.type === "button" && Array.isArray(node.props.children) && node.props.children[0] === "Lu")[0].props.onClick();

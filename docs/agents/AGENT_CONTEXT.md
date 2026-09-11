@@ -15,7 +15,7 @@ Ce document résume l'état utile.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
 - **Statut P5 :** validé sur Sites 66 et synchronisé.
 - **Statut P6 :** validé sur Sites 72 et synchronisé sur `refonte-pre-lot-2`.
-- **Statut P7 :** Sites 82 publiée ; asset vide des œuvres de chevet réellement détouré, avatar courant unifié dans navigation, Profil, critiques, réponses et listes, création d’espace et notifications vérifiées ; 175 tests réussis. Recette en cours.
+- **Statut P7 :** Sites 83 publiée ; suppression confirmée et annulable des notes privées et critiques publiques, évaluation privée conservée au retrait d’une critique ; asset vide des œuvres de chevet réellement détouré, avatar courant unifié ; 177 tests réussis. Recette en cours.
 - **Prochaine action unique :** recueillir la recette desktop/mobile de P7 avant toute fusion vers `main`.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.

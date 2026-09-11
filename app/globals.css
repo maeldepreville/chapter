@@ -718,6 +718,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .star-row .rating-remove:hover { color: var(--brick); text-decoration: underline; text-underline-offset: 0.2rem; }
 }
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem; }
+.modal-actions .editor-delete-action { margin-right: auto; }
 .editor-confirmation { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; margin-top: 1.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .editor-confirmation p { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; }
 .protection-actions { display: grid; justify-items: end; gap: 0.35rem; }
@@ -971,6 +972,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .work-facts { grid-template-columns: 1fr 1fr; }
   .modal-actions { display: grid; grid-template-columns: 1fr; }
   .modal-actions .primary-action { grid-row: 1; }
+  .modal-actions .editor-delete-action { margin-right: 0; }
   .modal-actions button { width: 100%; }
   .temporary-feedback { align-items: center; gap: 0.55rem; }
   .temporary-feedback small { display: none; }
