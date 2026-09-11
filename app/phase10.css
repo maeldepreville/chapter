@@ -467,6 +467,11 @@
 .profile-library-portrait .profile-honors-band .profile-badge-row > div:last-child { border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent); }
 .profile-library-portrait .profile-honors-band .profile-badge-row img { width: 6.5rem; filter: drop-shadow(0 0.5rem 0.75rem rgb(65 45 34 / 0.12)); }
 .profile-library-portrait .profile-honors-band .profile-badge-row span { max-width: 12rem; font-family: var(--font-editorial); font-size: 1rem; line-height: 1.18; }
+.profile-honors-empty { display: grid; flex: 1; align-items: stretch; }
+.profile-honors-empty .destination-empty--compact { min-height: 0; height: 100%; padding: 1rem 0 0; background: transparent; border: 0; }
+.profile-honors-empty .destination-empty-asset { width: min(11rem, 60vw); height: 5.75rem; }
+.profile-honors-empty .destination-empty--compact h3 { max-width: 14ch; font-size: clamp(1.4rem, 2.4vw, 1.85rem); }
+.profile-honors-empty .destination-empty--compact > p:not(.empty-kicker) { max-width: 23rem; font-size: 0.88rem; }
 
 .destination-overlay { position: fixed; inset: 0; z-index: 105; display: grid; place-items: center; padding: clamp(1rem, 4vw, 3rem); }
 .destination-card { --destination-card-padding: clamp(1.25rem, 4vw, 4rem); position: relative; z-index: 1; width: min(78rem, 100%); max-height: calc(100dvh - clamp(2rem, 8vw, 6rem)); overflow: hidden auto; overscroll-behavior: contain; scroll-behavior: smooth; scrollbar-gutter: stable; background: var(--paper); border: 1px solid var(--line); border-radius: 0.55rem; box-shadow: 0 1.8rem 5rem rgb(36 33 31 / 0.24); }
@@ -720,6 +725,7 @@
   .profile-library-portrait .profile-honors-band .profile-badge-row > div { display: grid; grid-template-columns: 1fr; justify-items: center; gap: 0.45rem; padding: 0; border: 0; text-align: center; }
   .profile-library-portrait .profile-honors-band .profile-badge-row > div:last-child { border-bottom: 0; }
   .profile-library-portrait .profile-honors-band .profile-badge-row img { width: min(100%, 6.25rem); }
+  .profile-honors-empty .destination-empty--compact { min-height: 14rem; padding-top: 1.25rem; }
   .profile-library-portrait .profile-section-heading { grid-template-columns: 1fr; gap: 0.7rem; }
   .profile-library-portrait .profile-section-heading .eyebrow { grid-column: auto; }
   .profile-library-portrait .profile-section.profile-opening-favorites { align-self: stretch; padding: 0; border: 0; }

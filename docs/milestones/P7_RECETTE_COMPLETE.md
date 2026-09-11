@@ -48,6 +48,7 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - sur une fiche œuvre, vérifier que sa propre critique et ses propres réponses sont signées « Vous », tandis que les autres lecteurs conservent leur nom public ;
 - parcourir œuvre → critique → profil → liste → œuvre, puis vérifier tous les retours contextuels ;
 - ouvrir et fermer Profil, liste et Chapitres d’honneur sur desktop et mobile sans flash ni perte du cadre de carte.
+- retirer les trois badges mis en avant : le Profil doit afficher l’état vide illustré des Chapitres d’honneur et, pour son propriétaire seulement, l’action « Choisir mes badges ».
 
 ### Confiance et données
 
@@ -79,7 +80,7 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 - construction de production réussie avec la route isolée `/recette/p7` ;
 - lint réussi ;
-- **172/172 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, la curation du Profil et toute la non-régression P0 à P6 ;
+- **173/173 tests automatisés réussis**, dont les contrôles propres à P7, le cycle indépendant des notifications, l’état vide des Chapitres d’honneur, la curation du Profil et toute la non-régression P0 à P6 ;
 - `git diff --check` sans erreur ;
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;

@@ -70,6 +70,17 @@ test("profile partial favorites and public reviews retain their real identities"
   assert.doesNotMatch(rendered, /Atlas des nuits calmes/);
 });
 
+test("a profile with no showcased honor keeps an editorial and actionable empty state", () => {
+  const own = html(ProfileView, { ...profileProps, works });
+  assert.match(own, /Votre constellation reste à composer/);
+  assert.match(own, /Choisir mes badges/);
+  assert.match(own, /p6-empty-profile\.webp/);
+
+  const publicProfile = html(ProfileView, { ...profileProps, owner: "public-self", works });
+  assert.match(publicProfile, /Aucun chapitre n’est encore affiché/);
+  assert.doesNotMatch(publicProfile, /Choisir mes badges/);
+});
+
 test("EH1 is editorial without history or with only a reading wish", () => {
   for (const statuses of [{}, { cartographies: "À lire" }, { atlas: "Lu" }]) {
     const rendered = discover({ statuses });

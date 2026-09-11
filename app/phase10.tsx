@@ -470,7 +470,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
         </section>
         <section id="profile-honors" className="profile-honors profile-honors-band" aria-labelledby="profile-honors-title">
           <button className="profile-section-link" type="button" onClick={onOpenHonors}><span><small>{isOwnProfile ? "Votre constellation" : "Sa constellation"}</small><strong id="profile-honors-title">Chapitres d’honneur</strong></span><span aria-hidden="true">Explorer →</span></button>
-          <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div>
+          {visibleBadges.length ? <div className="profile-badge-row">{visibleBadges.map((badgeId) => <div key={badgeId}><BadgeImage badgeId={badgeId} /><span>{badgeCatalog[badgeId].title}</span></div>)}</div> : <div className="profile-honors-empty"><EmptyDestination compact headingLevel="h3" section="profile" asset="/editorial/p6-empty-profile.webp" assetAlt="Un ex-libris de lecteur encore vierge, accompagné de trois onglets et d’un ruban rouge." kicker="Constellation en attente" title={isOwnProfile ? "Votre constellation reste à composer." : "Aucun chapitre n’est encore affiché."} action={isOwnProfile ? <button className="text-action" type="button" onClick={onOpenHonors}>Choisir mes badges</button> : undefined}>{isOwnProfile ? "Mettez en avant jusqu’à trois distinctions déjà acquises." : "Ce lecteur n’a pas encore choisi de distinction à montrer sur son profil."}</EmptyDestination></div>}
         </section>
       </section>}
       {!blocked && <div className="profile-wide-content">
