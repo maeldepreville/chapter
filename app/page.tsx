@@ -236,6 +236,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const entry = entries[selectedWorkId] ?? emptyEntry;
   const reviewIsPublished = isReviewPublished(entry);
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
+  const profileCurationWorks = works.filter((work) => entries[work.id]?.readingStatus);
   const libraryWorks = works
     .filter((work) => entries[work.id]?.readingStatus)
     .filter((work) => libraryFilter === "Toutes" || entries[work.id]?.readingStatus === libraryFilter)
@@ -1167,6 +1168,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             displayName={publicProfileName}
             favoriteWorkIds={favoriteWorkIds}
             personalLists={personalLists}
+            curationWorks={profileCurationWorks}
             onSaveFavorites={(ids) => { setFavoriteWorkIds(ids); showFeedback({ kind: "saved", label: "Œuvres de chevet mises à jour", detail: "Votre profil public reflète maintenant cette sélection." }); }}
             onSaveLists={(lists) => { setPersonalLists(lists); showFeedback({ kind: "saved", label: "Listes publiques mises à jour", detail: "Vos rayonnages reflètent maintenant ces choix." }); }}
             blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}

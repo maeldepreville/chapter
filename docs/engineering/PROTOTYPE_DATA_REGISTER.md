@@ -43,10 +43,10 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 | Zone statique actuelle | Remplacement attendu après le lot 1 |
 | --- | --- |
 | Lecteur courant et acteurs de démonstration de compatibilité dans `prototype-data.ts` | Session authentifiée et API de profils. |
-| Présentation, œuvres de chevet et titre exposé des profils | Données de profil persistées et réglages du lecteur. Les œuvres de chevet de Maël sont maintenant modifiables dans l’état React de session, avec une limite visible de trois. |
+| Présentation, œuvres de chevet et titre exposé des profils | Données de profil persistées et réglages du lecteur. Les œuvres de chevet de Maël sont maintenant modifiables dans l’état React de session, avec une limite visible de trois et un choix restreint aux œuvres possédant un statut dans la Bibliothèque. |
 | Œuvres cœur exportées par `foundation/fixtures.ts` et réexportées comme `defaultWorks` par `page.tsx` | Catalogue distant avec identifiants pérennes. |
 | Entrées de bibliothèque, traces du Journal et compteurs de lecteurs | Stockage utilisateur et agrégats du service. |
-| Deux listes publiques initiales, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Maël peut maintenant créer, modifier et supprimer ses listes dans l’état React de session ; les portraits tiers continuent d’utiliser le catalogue fixture partagé, limite de démonstration qui n’est pas le modèle métier final. |
+| Deux listes publiques initiales, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Maël peut maintenant créer, modifier et supprimer ses listes dans l’état React de session à partir de sa Bibliothèque ; les portraits tiers continuent d’utiliser le catalogue fixture partagé, limite de démonstration qui n’est pas le modèle métier final. |
 | Badges, titres exposables et progression | Progression calculée et persistée par compte. |
 | Parcours de recommandation, œuvre d'ancrage et liste mise en avant | Moteur de recommandation et configuration éditoriale administrable. |
 | Critiques, réponses, états de suivi et dates sociales centralisés dans `social-data.ts` | Service social persistant avec profils navigables, modération et permissions côté serveur. |

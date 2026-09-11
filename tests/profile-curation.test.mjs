@@ -40,19 +40,24 @@ test("profile curation opens dedicated favorites and lists editors", () => {
   const props = {
     ...profileProps,
     works: defaultWorks,
+    curationWorks: [defaultWorks[0]],
     favoriteWorkIds: ["cartographies", "atlas", "miroirs"],
-    personalLists: [],
+    personalLists: [{ id: "places", title: "Lieux", description: "Des paysages.", profileSummary: "Des paysages.", workIds: ["cartographies", "atlas"] }],
     onSaveFavorites() {},
     onSaveLists() {},
   };
   const render = () => harness.render(ProfileView, props);
 
   nodes(render(), (node) => node.type === "button" && textOf(node) === "Modifier")[0].props.onClick();
-  assert.equal(nodes(render(), (node) => node.type?.name === "FavoritesEditor").length, 1);
+  const favoritesEditor = nodes(render(), (node) => node.type?.name === "FavoritesEditor")[0];
+  assert.deepEqual(favoritesEditor.props.works.map((work) => work.id), ["cartographies"]);
+  assert.deepEqual(favoritesEditor.props.selected, ["cartographies"]);
 
-  nodes(render(), (node) => node.type?.name === "FavoritesEditor")[0].props.onClose();
+  favoritesEditor.props.onClose();
   nodes(render(), (node) => node.type === "button" && textOf(node) === "Gérer mes listes")[0].props.onClick();
-  assert.equal(nodes(render(), (node) => node.type?.name === "ListsEditor").length, 1);
+  const listsEditor = nodes(render(), (node) => node.type?.name === "ListsEditor")[0];
+  assert.deepEqual(listsEditor.props.works.map((work) => work.id), ["cartographies"]);
+  assert.deepEqual(listsEditor.props.lists[0].workIds, ["cartographies"]);
 });
 
 test("editors explain the three-work limit and support list creation, updates and deletion", () => {
@@ -73,6 +78,7 @@ test("editors explain the three-work limit and support list creation, updates an
   }));
 
   assert.match(favorites, /Jusqu’à trois livres/);
+  assert.match(favorites, /Rechercher dans ma Bibliothèque/);
   assert.match(favorites, /Enregistrer la sélection/);
   assert.match(lists, /Créer une liste/);
   assert.match(lists, />Modifier</);

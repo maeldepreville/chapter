@@ -92,6 +92,8 @@ test("the saved public identity is projected into reviews, replies, lists and th
   const reviewMarkup = renderToStaticMarkup(React.createElement(SocialReviews, { workId: "cartographies", personalReview: "Une trace personnelle.", personalRating: 4, personalActor, onOpenProfile() {}, onWriteReview() {} }));
   assert.match(reviewMarkup, /Lectora des Brumes/);
   assert.match(reviewMarkup, />LD</);
+  assert.match(reviewMarkup, /<strong>Vous<\/strong>/);
+  assert.doesNotMatch(reviewMarkup, /<strong>Lectora des Brumes<\/strong>/);
 
   const profileMarkup = renderToStaticMarkup(React.createElement(ProfileView, { owner: "self", displayName: personalActor.name, works: publicWorks, following: false, onToggleFollow() {}, onOpenWork() {}, onOpenHonors() {}, onOpenList() {}, photo: null, onEditPhoto() {}, onRemovePhoto() {}, equippedTitle: "Esprit nomade", showcase: [] }));
   assert.match(profileMarkup, /Lectora des Brumes/);

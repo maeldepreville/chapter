@@ -44,7 +44,8 @@ Changer de point d’entrée réinitialise uniquement la fixture de recette conc
 - publier puis retirer une critique, développer son texte sur la fiche œuvre et vérifier son aperçu borné dans le Profil ;
 - répondre à une conversation après création de l’identité minimale ;
 - suivre et ne plus suivre depuis Découvrir, un Profil et une liste ;
-- depuis son Profil, remplacer ou retirer les trois œuvres de chevet, puis créer, modifier et supprimer une liste publique ;
+- depuis son Profil, remplacer ou retirer les trois œuvres de chevet, puis créer, modifier et supprimer une liste publique ; vérifier que les deux sélecteurs ne proposent que les œuvres présentes dans la Bibliothèque ;
+- sur une fiche œuvre, vérifier que sa propre critique et ses propres réponses sont signées « Vous », tandis que les autres lecteurs conservent leur nom public ;
 - parcourir œuvre → critique → profil → liste → œuvre, puis vérifier tous les retours contextuels ;
 - ouvrir et fermer Profil, liste et Chapitres d’honneur sur desktop et mobile sans flash ni perte du cadre de carte.
 

@@ -15,7 +15,7 @@ Ce document résume l'état utile ; les journaux restent consultables à la dema
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
 - **Statut P5 :** validé sur Sites 66 et synchronisé : identité, Profil, confidentialité, blocage, portabilité privée et navigation auditée.
 - **Statut P6 :** validé sur Sites 72 et synchronisé sur `refonte-pre-lot-2`.
-- **Statut P7 :** Sites 76 publiée ; six parcours, pile de notifications, confirmations de portabilité, sommaire mobile persistant et curation des œuvres de chevet/listes ; 171 tests, lint et build réussis. Recette utilisateur en cours.
+- **Statut P7 :** Sites 77 publiée ; retours empilés, portabilité confirmée, sommaire mobile fixe, curation depuis la Bibliothèque et signature « Vous » ; 171 tests réussis. Recette en cours.
 - **Prochaine action unique :** recueillir la recette desktop/mobile de P7 avant toute fusion vers `main`.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.

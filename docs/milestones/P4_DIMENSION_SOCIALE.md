@@ -13,7 +13,7 @@ P4 transforme une trace volontairement publique en chemin continu entre une œuv
 - critiques et conversations intégrées aux fiches d’œuvre publiques, après « À propos » et avant les chemins voisins ;
 - auteur et avatar de chaque critique ou réponse ouvrant un profil public réel ;
 - profils de Maël, Lina, Théo et Inès consultables sans compte, avec œuvres de chevet, listes et traces publiques ;
-- sur son propre Profil, curation explicite de zéro à trois œuvres de chevet et gestion de listes publiques (création, modification, suppression et choix des œuvres), conservées dans l’état local de session du prototype ;
+- sur son propre Profil, curation explicite de zéro à trois œuvres de chevet et gestion de listes publiques (création, modification, suppression et choix des œuvres), uniquement depuis les œuvres déjà présentes dans la Bibliothèque et conservées dans l’état local de session du prototype ;
 - listes publiques autonomes, avec auteur, description, ordre éditorial et retour vers l’origine ;
 - Recherche étendue aux lecteurs et aux listes sans retirer les résultats d’œuvres ;
 - routes directes `/lecteurs/:actorId` et `/listes/:listId`, en complément des fiches `/oeuvres/:workId` et du profil public historique ;

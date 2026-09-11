@@ -29,10 +29,11 @@ function WorkPicker({ works, selected, limit, onChange }: { works: readonly Cura
     else if (!limit || selected.length < limit) onChange([...selected, id]);
   };
   return <div className="curation-work-picker">
-    <label><span>Rechercher une œuvre</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titre ou auteur" /></label>
+    <label><span>Rechercher dans ma Bibliothèque</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Titre ou auteur" /></label>
     <p className="curation-count">{selected.length}{limit ? ` sur ${limit}` : ""} sélectionnée{selected.length > 1 ? "s" : ""}</p>
     <div className="curation-work-results">
       {candidates.map((work) => { const checked = selected.includes(work.id); return <button type="button" key={work.id} aria-pressed={checked} disabled={!checked && Boolean(limit && selected.length >= limit)} onClick={() => toggle(work.id)}><span aria-hidden="true">{checked ? "✓" : "+"}</span><span><strong>{work.title}</strong><small>{work.author} · {work.meta}</small></span></button>; })}
+      {!candidates.length && <p className="curation-picker-empty">{works.length ? "Aucune œuvre de votre Bibliothèque ne correspond à cette recherche." : "Votre Bibliothèque est encore vide. Ajoutez-y d’abord une œuvre pour pouvoir la sélectionner ici."}</p>}
     </div>
   </div>;
 }
@@ -42,7 +43,7 @@ export function FavoritesEditor({ works, selected, onSave, onClose }: { works: r
   return <Modal className="curation-overlay" labelledBy="favorites-editor-title" initialFocus='input[type="search"]' onRequestClose={onClose}>
     <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
     <section className="curation-card">
-      <div className="curation-heading"><div><p className="eyebrow">Profil public</p><h2 id="favorites-editor-title">Choisir mes œuvres de chevet</h2><p>Jusqu’à trois livres qui resteront visibles dans votre portrait de lecteur.</p></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
+      <div className="curation-heading"><div><p className="eyebrow">Profil public</p><h2 id="favorites-editor-title">Choisir mes œuvres de chevet</h2><p>Jusqu’à trois livres de votre Bibliothèque qui resteront visibles dans votre portrait de lecteur.</p></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
       <WorkPicker works={works} selected={draft} limit={3} onChange={setDraft} />
       <div className="modal-actions"><button className="quiet-action" type="button" onClick={onClose}>Annuler</button><button className="primary-action" type="button" onClick={() => { onSave(draft); onClose(); }}>Enregistrer la sélection</button></div>
     </section>
@@ -83,7 +84,7 @@ export function ListsEditor({ works, lists, onSave, onClose }: { works: readonly
   return <Modal className="curation-overlay" labelledBy="lists-editor-title" initialFocus={editingId ? "#profile-list-title" : ".curation-new-list"} onRequestClose={onClose}>
     <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer sans enregistrer" onClick={onClose} />
     <section className="curation-card curation-card--lists">
-      <div className="curation-heading"><div><p className="eyebrow">Profil public</p><h2 id="lists-editor-title">Gérer mes listes</h2><p>Créez des chemins publics, puis choisissez les œuvres qui les composent.</p></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
+      <div className="curation-heading"><div><p className="eyebrow">Profil public</p><h2 id="lists-editor-title">Gérer mes listes</h2><p>Créez des chemins publics à partir des œuvres déjà présentes dans votre Bibliothèque.</p></div><button className="close-button" type="button" aria-label="Fermer" onClick={onClose}>×</button></div>
       {editingId ? <div className="curation-list-form">
         <button className="text-action back-action" type="button" onClick={() => setEditingId(null)}>← Revenir aux listes</button>
         <label htmlFor="profile-list-title"><span>Titre de la liste</span><input id="profile-list-title" maxLength={90} value={title} onChange={(event) => setTitle(event.target.value)} /></label>

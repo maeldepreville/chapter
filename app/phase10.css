@@ -851,6 +851,7 @@
 .curation-work-results button small { overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
 .curation-work-results button[aria-pressed="true"] { background: color-mix(in srgb, var(--brick) 7%, var(--surface)); border-color: color-mix(in srgb, var(--brick) 55%, var(--line)); }
 .curation-work-results button:disabled { opacity: 0.42; cursor: not-allowed; }
+.curation-picker-empty { grid-column: 1 / -1; margin: 0; padding: 1.4rem; color: var(--muted); background: color-mix(in srgb, var(--paper) 62%, var(--surface)); border: 1px solid var(--line); font-family: var(--font-editorial); }
 .curation-card .modal-actions { margin-top: 1.5rem; }
 .curation-list-index { display: grid; gap: 0; padding-top: 1.4rem; }
 .curation-new-list { justify-self: start; margin-bottom: 1.15rem; }
