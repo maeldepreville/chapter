@@ -83,7 +83,7 @@ test("a profile with no showcased honor keeps an editorial and actionable empty 
 
 test("empty favorites and honors use distinct editorial assets", () => {
   const own = html(ProfileView, { ...profileProps, works, favoriteWorkIds: [] });
-  assert.match(own, /p7-empty-favorites\.webp/);
+  assert.match(own, /p7-empty-favorites-v2\.webp/);
   assert.match(own, /p6-empty-profile\.webp/);
 });
 
