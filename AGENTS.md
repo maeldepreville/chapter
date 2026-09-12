@@ -20,8 +20,8 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 
 - Exécuter d'abord les tests ciblés, puis les vérifications complètes adaptées au périmètre. Distinguer preuve automatisée, inspection statique et recette navigateur réelle.
 - La mise à disposition des candidates sur le Site de recette est autorisée durablement ; préserver son accès existant et ne jamais en déduire une validation. Toute autre publication, modification de visibilité ou action destructive exige son autorisation propre.
-- La version Sites 84 clôt la refonte visible pré-lot 2 et constitue la base acceptée sur `main`.
-- P0 à P7 sont clos. Le lot 2 backend exige un cadrage séparé et une branche dédiée avant toute implémentation. Suivre `docs/agents/AGENT_WORKFLOW.md` pour les synchronisations futures.
+- La version Sites 84 clôt la recette de la refonte visible pré-lot 2. Sa fusion sur le `main` GitHub public attend une autorisation explicite de publication.
+- P0 à P7 sont validés. Après la fusion vérifiée, le lot 2 backend exige un cadrage séparé et une branche dédiée avant toute implémentation. Suivre `docs/agents/AGENT_WORKFLOW.md` pour les synchronisations futures.
 
 ## Références à la demande
 

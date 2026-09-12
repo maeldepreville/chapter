@@ -71,4 +71,4 @@ Fresh agent sessions start with `npm run context`, then retrieve only the releva
 
 ## Roadmap status
 
-Phases 1 through 11, lot 1 and the P0–P7 pre-lot-2 redesign are complete. Sites version 84 is the accepted live baseline on `main`. Backend lot 2 remains to be framed before implementation.
+Phases 1 through 11, lot 1 and the P0–P7 pre-lot-2 redesign are complete. Sites version 84 is the accepted live baseline; its GitHub `main` merge awaits explicit publication authorization. Backend lot 2 remains to be framed before implementation.
