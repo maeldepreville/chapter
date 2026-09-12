@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 12 septembre 2026.
 
-Statut : **P0 à P7 validés ; recette clôturée sur Sites 84, fusion GitHub vers `main` en attente d’autorisation explicite**.
+Statut : **P0 à P7 validés ; refonte clôturée sur Sites 84 et fusionnée vers le `main` GitHub**.
 
 Ce document est la source détaillée de la refonte visible qui précède le lot 2 backend. Il complète l'archive historique sans rouvrir le lot 1. Quand une ancienne décision de composition entre en conflit avec ce socle, le présent document gouverne la refonte ; les invariants de sécurité, de données et d'accessibilité restent applicables tant qu'ils ne sont pas révisés explicitement.
 
@@ -102,7 +102,7 @@ Chaque jalon est une tranche verticale testable. Les écrans ne doivent pas cont
 - Branche de refonte : `refonte-pre-lot-2`, créée depuis le `main` GitHub accepté du lot 1.
 - P0 à P6 : une candidate visuelle complète et vérifiée est mise directement à disposition sur le Site de recette. Elle reste hors de la branche GitHub de refonte jusqu'à validation explicite ; le jalon accepté et ses documents sont alors poussés sur cette branche, puis la référence distante est relue.
 - P7 : la recette complète et l'accord explicite de l'utilisateur sont requis avant toute fusion vers `main`.
-- Clôture du 12 septembre 2026 : P7 est validé sur Sites 84. La refonte complète est prête à rejoindre `main` sans réécriture des historiques existants dès autorisation explicite de la synchronisation GitHub.
+- Clôture du 12 septembre 2026 : P7 est validé sur Sites 84 et la refonte complète rejoint le `main` GitHub sans réécriture des historiques existants après autorisation explicite de l’utilisateur.
 - Aucun force-push, aucune réécriture d'historique et aucun déploiement implicite.
 - Un nouveau chat peut être utilisé par jalon. Il commence par `npm run context`, vérifie la branche active, lit ce document puis le contrat du jalon concerné. Le chat précédent n'est jamais la seule mémoire.
 - À la fin d'un jalon, `docs/agents/AGENT_CONTEXT.md` précise le statut, les preuves, les reports et l'unique prochaine action. Le document du jalon conserve le détail.

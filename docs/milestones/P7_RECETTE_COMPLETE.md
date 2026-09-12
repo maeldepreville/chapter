@@ -1,6 +1,6 @@
 # Chapter — P7 : recette complète
 
-Statut : **validé le 12 septembre 2026 sur la version Sites 84 ; fusion GitHub en attente d’autorisation explicite**
+Statut : **validé le 12 septembre 2026 sur la version Sites 84 et fusionné vers le `main` GitHub**
 
 Dernière mise à jour : 12 septembre 2026.
 
@@ -92,4 +92,4 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 
 Le 12 septembre 2026, l’utilisateur valide explicitement la recette P7 après l’audit final. La dernière reprise aligne Réglages et création de compte sur le même concept de « Nom de lecteur », destiné à être unique sur Chapter et limité à 40 caractères ; elle est publiée sur Sites 84 avec 177/177 tests, lint, construction de production et `git diff --check` réussis.
 
-Cette validation clôt la recette de la refonte visible pré-lot 2 et prépare sa fusion vérifiée vers `main`. La publication du code sur le dépôt GitHub public reste en attente d’une autorisation explicite distincte. Le prochain travail est ensuite un cadrage séparé du lot 2 backend ; aucune technologie, architecture ou migration n’est retenue implicitement par la clôture de P7.
+Cette validation clôt la refonte visible pré-lot 2. L’utilisateur autorise explicitement sa publication et sa fusion vérifiée vers le `main` GitHub le 12 septembre 2026. Le prochain travail est un cadrage séparé du lot 2 backend ; aucune technologie, architecture ou migration n’est retenue implicitement par la clôture de P7.
