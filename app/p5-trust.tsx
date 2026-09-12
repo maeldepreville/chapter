@@ -139,9 +139,9 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
         <div className="trust-sections">
           <section id="identity" className="trust-section" aria-labelledby="identity-title">
             <div className="trust-section-heading"><span>01</span><div><p className="eyebrow">Ce que les autres voient</p><h2 id="identity-title">Identité publique</h2></div></div>
-            <p className="trust-section-intro">Votre nom public signe vos critiques, listes et réponses. Il n’a pas besoin d’être unique ; votre compte reste relié par un identifiant interne.</p>
+            <p className="trust-section-intro">Votre nom de lecteur signe vos critiques, listes et réponses. Il est unique sur Chapter ; votre compte reste relié par un identifiant interne.</p>
             <div className="trust-form-row">
-              <label htmlFor="p5-public-name"><span>Nom public</span><Input id="p5-public-name" value={nameDraft} maxLength={60} onChange={(event) => setNameDraft(event.target.value)} /></label>
+              <label htmlFor="p5-public-name"><span>Nom de lecteur</span><Input id="p5-public-name" value={nameDraft} maxLength={40} onChange={(event) => setNameDraft(event.target.value)} /></label>
               <button className="chapter-button chapter-button--primary" type="button" disabled={!nameDraft.trim() || nameDraft.trim() === publicName} onClick={saveIdentity}>Enregistrer</button>
             </div>
             <button className="text-action" type="button" onClick={onEditPhoto}>Modifier ma photo facultative</button>

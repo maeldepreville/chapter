@@ -26,6 +26,10 @@ const trustProps = {
 test("P5 exposes identity, immutable private spaces, blocking and data portability", () => {
   const markup = renderToStaticMarkup(React.createElement(TrustSettings, trustProps));
   assert.match(markup, /Vos lectures vous appartiennent/);
+  assert.match(markup, /nom de lecteur signe vos critiques, listes et réponses/);
+  assert.match(markup, /unique sur Chapter/);
+  assert.doesNotMatch(markup, /pas besoin d’être unique/);
+  assert.match(markup, /Nom de lecteur/);
   assert.match(markup, /Journal[\s\S]*Privé, toujours/);
   assert.match(markup, /Bibliothèque[\s\S]*Privée, toujours/);
   assert.match(markup, /Importer en privé/);
