@@ -20,8 +20,8 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 
 - Exécuter d'abord les tests ciblés, puis les vérifications complètes adaptées au périmètre. Distinguer preuve automatisée, inspection statique et recette navigateur réelle.
 - La mise à disposition des candidates sur le Site de recette est autorisée durablement ; préserver son accès existant et ne jamais en déduire une validation. Toute autre publication, modification de visibilité ou action destructive exige son autorisation propre.
-- La version Sites 31 clôt la phase 11 et le lot 1. La refonte pré-lot 2 se développe sur `refonte-pre-lot-2`, jamais à moitié sur `main`.
-- Après validation explicite d'un jalon P0 à P6, synchroniser uniquement son périmètre accepté sur `refonte-pre-lot-2`, sans force-push ni réécriture, puis vérifier la référence distante. La fusion vers `main` attend la validation de la recette P7. Suivre `docs/agents/AGENT_WORKFLOW.md`.
+- La version Sites 84 clôt la refonte visible pré-lot 2 et constitue la base acceptée sur `main`.
+- P0 à P7 sont clos. Le lot 2 backend exige un cadrage séparé et une branche dédiée avant toute implémentation. Suivre `docs/agents/AGENT_WORKFLOW.md` pour les synchronisations futures.
 
 ## Références à la demande
 

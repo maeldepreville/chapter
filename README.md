@@ -2,7 +2,7 @@
 
 Chapter is a social reading platform where every book becomes part of your story — track what you read, share what you think, and connect with readers who inspire your next chapter.
 
-The current live baseline is the accepted Sites version 31, which closed phase 11 and lot 1. A user-visible redesign is being prepared on the dedicated `refonte-pre-lot-2` branch before backend lot 2 begins; P0 is validated and P1's public first-contact candidate is local pending review.
+The current accepted baseline is Sites version 84. It completes the P0–P7 user-visible redesign and precedes the separately scoped backend lot 2.
 
 ## Live version
 
@@ -59,7 +59,7 @@ Product, UX and visual decisions are versioned in [`docs/`](./docs/). Start with
 - [`AGENTS.md`](./AGENTS.md) — short mandatory rules and context-routing entry point;
 - [`AGENT_CONTEXT.md`](./docs/agents/AGENT_CONTEXT.md) — compact current state, invariants and next action;
 - [`REFONTE_PRE_LOT_2.md`](./docs/product/REFONTE_PRE_LOT_2.md) — validated product doctrine, visual principles and P0–P7 roadmap;
-- [`P1_PREMIER_CONTACT_PUBLIC.md`](./docs/milestones/P1_PREMIER_CONTACT_PUBLIC.md) — active milestone contract, exclusions and review checklist;
+- [`P7_RECETTE_COMPLETE.md`](./docs/milestones/P7_RECETTE_COMPLETE.md) — accepted redesign scope, final evidence and handoff to backend lot 2;
 - [`ASSET_SYSTEM.md`](./docs/design/ASSET_SYSTEM.md) — asset direction, scale, hierarchy and review checklist;
 - [`CODEMAP.md`](./docs/engineering/CODEMAP.md) — feature-to-source-and-test map;
 - [`PHASE_11_BILAN_ET_CLOTURE.md`](./docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md) — current milestone status and decisive evaluation order;
@@ -71,4 +71,4 @@ Fresh agent sessions start with `npm run context`, then retrieve only the releva
 
 ## Roadmap status
 
-Phases 1 through 11 and lot 1 are complete. Sites version 31 is the accepted live baseline. The pre-lot-2 redesign follows milestones P0 through P7 on `refonte-pre-lot-2`; `main` remains unchanged until the complete P7 review is explicitly accepted.
+Phases 1 through 11, lot 1 and the P0–P7 pre-lot-2 redesign are complete. Sites version 84 is the accepted live baseline on `main`. Backend lot 2 remains to be framed before implementation.

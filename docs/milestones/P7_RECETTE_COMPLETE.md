@@ -1,8 +1,8 @@
 # Chapter — P7 : recette complète
 
-Statut : **candidate vérifiée, prête pour la recette utilisateur**
+Statut : **validé le 12 septembre 2026 sur la version Sites 84**
 
-Dernière mise à jour : 11 septembre 2026.
+Dernière mise à jour : 12 septembre 2026.
 
 ## Résultat à évaluer
 
@@ -87,3 +87,9 @@ Une candidate P7 publiée ne vaut pas validation. Seul un accord explicite de l�
 - audit navigateur desktop des six points d’entrée sans débordement horizontal, avec activation complète `En cours`, restitution du premier geste, réglages superposés, contenus extrêmes, routes directes Recherche et œuvre, ainsi qu’une route d’œuvre absente ;
 - aucune erreur applicative relevée dans la console ; les seuls messages observés proviennent de l’extension du navigateur de recette ;
 - ce navigateur piloté ne permet pas de changer de viewport : les contrats et tests responsive réussissent, mais la passe visuelle P7 à 390 px et 320 px reste à effectuer dans la recette utilisateur et ne doit pas être confondue avec une preuve navigateur déjà acquise.
+
+## Clôture
+
+Le 12 septembre 2026, l’utilisateur valide explicitement la recette P7 après l’audit final. La dernière reprise aligne Réglages et création de compte sur le même concept de « Nom de lecteur », destiné à être unique sur Chapter et limité à 40 caractères ; elle est publiée sur Sites 84 avec 177/177 tests, lint, construction de production et `git diff --check` réussis.
+
+Cette validation clôt la refonte visible pré-lot 2 et autorise sa fusion vérifiée vers `main`. Le prochain travail est un cadrage séparé du lot 2 backend ; aucune technologie, architecture ou migration n’est retenue implicitement par la clôture de P7.

@@ -1,22 +1,22 @@
 # Chapter — contexte courant compact
 
-Mise à jour : 11 septembre 2026.
+Mise à jour : 12 septembre 2026.
 
 Ce document résume l'état utile.
 
 ## État actuel
 
-- **Base acceptée :** la version Sites 31 clôt le lot 1 ; voir `docs/milestones/PHASE_11_BILAN_ET_CLOTURE.md`.
-- **Phase active :** refonte visible pré-lot 2 — candidate P7. `main` attend sa validation.
-- **Branche active :** `refonte-pre-lot-2` ; aucune fusion vers `main` avant validation de P7.
+- **Base acceptée :** la version Sites 84 clôt la refonte visible pré-lot 2 ; voir `docs/milestones/P7_RECETTE_COMPLETE.md`.
+- **Phase active :** aucune implémentation active ; le lot 2 backend doit être cadré séparément.
+- **Branche active :** `main` après validation et fusion de la refonte ; créer une branche dédiée avant toute implémentation du lot 2.
 - **Statut P1 :** validé sur Sites 34 et synchronisé.
 - **Statut P2 :** validé sur Sites 38 et synchronisé.
 - **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
 - **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
 - **Statut P5 :** validé sur Sites 66 et synchronisé.
 - **Statut P6 :** validé sur Sites 72 et synchronisé sur `refonte-pre-lot-2`.
-- **Statut P7 :** Sites 83 publiée ; suppression confirmée et annulable des notes privées et critiques publiques, évaluation privée conservée au retrait d’une critique ; asset vide des œuvres de chevet réellement détouré, avatar courant unifié ; 177 tests réussis. Recette en cours.
-- **Prochaine action unique :** recueillir la recette desktop/mobile de P7 avant toute fusion vers `main`.
+- **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers `main` après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
+- **Prochaine action unique :** cadrer le lot 2 backend avant toute implémentation : périmètre, architecture, modèle de données, authentification, persistance, sécurité, migrations et stratégie de livraison.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
 
