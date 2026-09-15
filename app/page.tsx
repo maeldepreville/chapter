@@ -20,6 +20,7 @@ import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPers
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { WorkSectionNav, isWorkSectionLocation, workSectionIds } from "./work-section-nav";
+import { ChapterDatePicker, isoToDate } from "./chapter-date-picker";
 import { AccountCreationDialog } from "./account-creation-dialog";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
@@ -174,6 +175,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [statusWorkId, setStatusWorkId] = useState<WorkId>(works[0]?.id ?? "cartographies");
   const [datePrompt, setDatePrompt] = useState<DatePrompt>(null);
   const [customDateOpen, setCustomDateOpen] = useState(false);
+  const [dateDraft, setDateDraft] = useState("");
   const [removeConfirmWorkId, setRemoveConfirmWorkId] = useState<WorkId | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
@@ -817,6 +819,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setStatusMenuOpen(false);
     setRemoveConfirmWorkId(null);
     setCustomDateOpen(false);
+    setDateDraft("");
     setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
   };
 
@@ -1036,7 +1039,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!datePrompt || statusOrigin !== origin || statusWorkId !== workId) return null;
 
     return (
-      <div className="date-invitation" role="region" aria-label={`Ajouter une ${dateLabel}`}>
+      <div className={`date-invitation ${customDateOpen ? "date-invitation--calendar" : ""}`} role="region" aria-label={`Ajouter une ${dateLabel}`}>
         <div>
           <strong>Ajouter une {dateLabel} ?</strong>
           <span>Cette étape restera modifiable.</span>
@@ -1044,15 +1047,15 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         {!customDateOpen ? (
           <div className="date-invitation-actions">
             <button className="text-action" type="button" onClick={setToday}>Aujourd’hui</button>
-            <button className="text-action" type="button" onClick={() => setCustomDateOpen(true)}>Choisir</button>
+            <button className="text-action" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(true); }}>Choisir</button>
             <button className="text-action muted-action" type="button" onClick={() => setDatePrompt(null)}>Plus tard</button>
           </div>
         ) : (
-          <label className="date-field">
+          <div className="date-field">
             <span>{datePrompt === "start" ? "Début de lecture" : "Fin de lecture"}</span>
-            <input type="date" onChange={(event) => updateEntryFor(workId, { readingDate: event.target.value })} />
-            <button type="button" onClick={() => setDatePrompt(null)}>Enregistrer la date</button>
-          </label>
+            <ChapterDatePicker label={`Choisir une ${dateLabel}`} value={dateDraft} onChange={setDateDraft} />
+            <div className="date-field-actions"><button className="date-field-back" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(false); }}>Retour</button><button className="date-field-save" type="button" disabled={!isoToDate(dateDraft)} onClick={() => { if (!isoToDate(dateDraft)) return; updateEntryFor(workId, { readingDate: dateDraft }); setDatePrompt(null); }}>Enregistrer la date</button></div>
+          </div>
         )}
       </div>
     );

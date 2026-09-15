@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_ORIGIN } from "./site-config";
 import "./globals.css";
+import "./chapter-date-picker.css";
 import "./phase10.css";
 import "./p1-public.css";
 import "./p2-first-marker.css";

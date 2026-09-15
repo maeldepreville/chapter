@@ -134,9 +134,9 @@ test("reading status, optional date and Journal traces remain continuous", () =>
   ui.button("Lu").props.onClick();
   assert.match(textOf(ui.render()), /Ajouter une date de fin/);
   ui.button("Choisir").props.onClick();
-  const date = nodes(ui.render(), (node) => node.type === "input" && node.props.type === "date")[0];
+  const date = nodes(ui.render(), (node) => node.type?.name === "ChapterDatePicker")[0];
   assert.ok(date);
-  date.props.onChange({ target: { value: "2026-09-01" } });
+  date.props.onChange("2026-09-01");
   ui.button("Enregistrer la date").props.onClick();
   assert.match(textOf(ui.render()), /Date enregistrée · 1 septembre 2026/);
 

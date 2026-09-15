@@ -1,0 +1,52 @@
+.date-invitation--calendar {
+  display: grid;
+  width: min(24rem, 100%);
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  box-shadow: 0 1.2rem 2.5rem rgb(36 33 31 / 0.13);
+}
+.date-invitation--calendar > div:first-child { padding-bottom: 0.7rem; border-bottom: 1px solid var(--line); }
+.date-invitation--calendar .date-field { min-width: 0; gap: 0.65rem; }
+.date-invitation--calendar .date-field > span { font-size: 0.78rem; font-weight: 600; }
+.chapter-date-picker { min-width: 0; color: var(--ink); }
+.chapter-date-picker-heading { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem; gap: 0.5rem; align-items: center; padding: 0.15rem 0 0.8rem; }
+.chapter-date-picker-arrow { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; background: transparent; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; font-size: 1rem; }
+.chapter-date-picker-arrow:disabled { opacity: 0.45; cursor: not-allowed; }
+.chapter-date-picker-period { display: flex; justify-content: center; gap: 0.4rem; align-items: center; min-width: 0; }
+.chapter-date-picker-month { position: relative; min-width: 0; }
+.chapter-date-picker-month::after { position: absolute; top: 50%; right: 0.3rem; content: "⌄"; color: var(--brick); font-family: var(--font-interface); font-size: 0.9rem; line-height: 1; transform: translateY(-58%); pointer-events: none; }
+.chapter-date-picker-month select { max-width: 100%; padding: 0.25rem 1.25rem 0.25rem 0.2rem; appearance: none; background: transparent; border: 0; cursor: pointer; color: var(--ink); font-family: var(--font-editorial); font-size: 1.35rem; line-height: 1.2; }
+.chapter-date-picker-period input { width: 4.1rem; padding: 0.3rem 0.15rem; background: var(--paper); border: 1px solid var(--line); border-radius: 0.25rem; color: var(--ink); font-size: 0.88rem; text-align: center; font-variant-numeric: tabular-nums; }
+.chapter-date-picker-period input::-webkit-inner-spin-button, .chapter-date-picker-period input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.chapter-date-picker-period input[type="number"] { appearance: textfield; }
+.chapter-date-picker-weekdays, .chapter-date-picker-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.12rem; }
+.chapter-date-picker-weekdays { padding: 0.2rem 0 0.45rem; border-bottom: 1px solid var(--line); }
+.chapter-date-picker-weekdays span { color: var(--muted); font-size: 0.76rem; text-align: center; }
+.chapter-date-picker-days { padding-top: 0.55rem; }
+.chapter-date-picker-days button { position: relative; display: grid; place-items: center; width: 100%; min-height: 2rem; aspect-ratio: 1; padding: 0; background: transparent; border: 0; border-radius: 0.35rem; cursor: pointer; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.chapter-date-picker-days button.outside { color: var(--muted); opacity: 0.58; }
+.chapter-date-picker-days button:disabled { opacity: 0.35; cursor: not-allowed; }
+.chapter-date-picker-days button.today::after { position: absolute; bottom: 0.15rem; width: 0.22rem; height: 0.22rem; background: var(--brick); border-radius: 50%; content: ""; }
+.chapter-date-picker-days button.selected { color: #fffaf5; background: var(--brick); }
+.chapter-date-picker-days button.selected.today::after { background: #fffaf5; }
+.chapter-date-picker-selection { min-height: 1.75rem; margin: 0.7rem 0 0; padding-top: 0.55rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; }
+.chapter-date-picker-selection strong { margin-left: 0.3rem; color: var(--ink); font-family: var(--font-interface); font-size: 0.8rem; font-weight: 600; }
+.date-invitation--calendar .date-field-actions { display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; }
+.date-invitation--calendar .date-field-actions button { min-height: 2.5rem; padding: 0.6rem 0.75rem; border-radius: 0.35rem; font-size: 0.875rem; font-weight: 600; }
+.date-invitation--calendar .date-field-back { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.date-invitation--calendar .date-field-save { background: var(--brick); border: 1px solid var(--brick); color: #fffaf5; }
+.date-invitation--calendar .date-field-save:disabled { background: var(--paper); border-color: var(--line); color: var(--muted); cursor: not-allowed; }
+@media (hover: hover) and (pointer: fine) {
+  .chapter-date-picker-arrow:not(:disabled):hover, .chapter-date-picker-days button:not(.selected, :disabled):hover, .date-invitation--calendar .date-field-back:hover { background: var(--paper); color: var(--brick); }
+  .date-invitation--calendar .date-field-save:not(:disabled):hover { background: var(--brick-dark); }
+}
+@media (max-width: 899px) {
+  .date-invitation--calendar { width: 100%; max-height: calc(100dvh - 8rem); overflow-y: auto; padding: 1rem 1.1rem calc(1rem + env(safe-area-inset-bottom)); border-radius: 0.7rem 0.7rem 0 0; }
+  .chapter-date-picker { width: min(21rem, 100%); margin-inline: auto; }
+  .date-invitation--calendar .date-field-actions { width: min(21rem, 100%); margin-inline: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapter-date-picker-arrow, .chapter-date-picker-days button { transition: none; }
+}

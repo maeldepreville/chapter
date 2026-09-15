@@ -292,8 +292,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .date-field { display: grid; gap: 0.5rem; padding: 0.45rem 0.7rem 0.7rem; }
 .date-field span { color: var(--muted); font-size: 0.78rem; }
-.date-field input { padding: 0.6rem; background: var(--surface); border: 1px solid var(--control-line); border-radius: 0.3rem; }
-.date-field button { padding: 0.65rem; color: #fffaf5; background: var(--brick); border: 0; border-radius: 0.3rem; cursor: pointer; }
 .date-invitation {
   position: relative;
   z-index: 50;
