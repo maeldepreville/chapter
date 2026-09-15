@@ -43,7 +43,7 @@ test("P4 work page composes public traces before neighboring paths", () => {
   }));
   assert.ok(markup.indexOf("Traces publiques") > markup.indexOf("À propos"));
   assert.ok(markup.indexOf("Traces publiques") < markup.indexOf("Chemins voisins"));
-  assert.match(markup, />03<\/span><h2[^>]*>Chemins voisins/);
+  assert.match(markup, />04<\/span><h2[^>]*>Chemins voisins/);
 });
 
 test("P4 conversations retain the explicit identity gate", () => {

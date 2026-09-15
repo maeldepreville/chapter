@@ -1,0 +1,9 @@
+.work-recipe-toolbar { position: relative; z-index: 70; display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: center; padding: 0.8rem clamp(1rem, 3vw, 2rem); color: #fff9f2; background: #302b28; }
+.work-recipe-toolbar > div { display: grid; gap: 0.1rem; }
+.work-recipe-toolbar strong { font-family: var(--font-editorial); font-size: 1.22rem; font-weight: 500; }
+.work-recipe-toolbar span { color: #d7c8b9; font-size: 0.78rem; }
+.work-recipe-toolbar nav { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.work-recipe-toolbar button { min-height: 2.5rem; padding: 0.45rem 0.8rem; color: inherit; background: transparent; border: 1px solid #8a786c; border-radius: 0.4rem; cursor: pointer; }
+.work-recipe-toolbar button[aria-pressed="true"] { color: #302b28; background: #fff9f2; }
+.work-recipe-toolbar p { flex: 1 1 18rem; margin: 0; font-size: 0.9rem; }
+@media (max-width: 899px) { .work-recipe-toolbar { display: grid; gap: 0.6rem; } .work-recipe-toolbar nav { flex-wrap: nowrap; margin-inline: -1rem; padding-inline: 1rem; overflow-x: auto; } .work-recipe-toolbar button { flex: 0 0 auto; } }

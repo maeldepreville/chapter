@@ -62,6 +62,7 @@ export type PersonalEntry = {
   rating: number;
   progress?: OptionalProgress;
   completedReadings?: number;
+  pastNotes?: readonly { reading: number; text: string }[];
 };
 
 const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
@@ -181,7 +182,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [reviewDeleteConfirm, setReviewDeleteConfirm] = useState(false);
   const [feedbacks, setFeedbacks] = useState<StackToast[]>([]);
   const feedbackId = useRef(0);
-  const [activeSection, setActiveSection] = useState("journal");
+  const [activeSection, setActiveSection] = useState("about");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
@@ -515,6 +516,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           rating: currentReviewIsPublic || typeof record.rating !== "number" || !Number.isFinite(record.rating) || record.rating < 0 || record.rating > 5 ? currentEntry.rating : record.rating,
           progress: importedProgress ?? currentEntry.progress,
           completedReadings: typeof record.completedReadings === "number" && Number.isFinite(record.completedReadings) && record.completedReadings >= 0 ? Math.max(currentEntry.completedReadings ?? 0, Math.floor(record.completedReadings)) : currentEntry.completedReadings,
+          pastNotes: Array.isArray(record.pastNotes) ? record.pastNotes.filter((item): item is { reading: number; text: string } => Boolean(item && typeof item === "object" && typeof item.reading === "number" && Number.isInteger(item.reading) && item.reading > 0 && typeof item.text === "string" && item.text.trim())).map((item) => ({ reading: item.reading, text: item.text.trim() })) : currentEntry.pastNotes,
         };
       });
       return next;
@@ -720,7 +722,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   }, [p1Public, works]);
 
   useEffect(() => {
-    const sections = ["journal", "about", "reviews"]
+    const sections = ["about", "journal", "reviews"]
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
     if (!sections.length || currentView !== "work") return;
@@ -778,6 +780,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     return () => document.removeEventListener("keydown", onEscape);
   });
 
+  const archiveNoteForRereading = (workId: WorkId, targetEntry: PersonalEntry, reading: number): Partial<PersonalEntry> => {
+    if (!targetEntry.note.trim()) return {};
+    const pastNotes = [...(targetEntry.pastNotes ?? []), { reading, text: targetEntry.note }];
+    setJournalTraces((traces) => traces.map((trace) => trace.workId === workId && trace.action === "note" ? { ...trace, id: `trace-note-${workId}-reading-${reading}`, action: undefined } : trace));
+    return { note: "", pastNotes };
+  };
+
   const chooseStatus = (status: ReadingStatus) => {
     const targetEntry = entries[statusWorkId] ?? emptyEntry;
     const completedReadings = targetEntry.completedReadings ?? (targetEntry.readingStatus === "Lu" ? 1 : 0);
@@ -791,6 +800,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     updateEntryFor(statusWorkId, {
       readingStatus: status,
       completedReadings: completedAfterChange,
+      ...(status === "En cours" && targetEntry.readingStatus === "Lu" ? archiveNoteForRereading(statusWorkId, targetEntry, Math.max(1, completedReadings)) : {}),
       ...(status === "À lire" ? { readingDate: "", progress: undefined } : status === "Lu" ? { progress: undefined } : {}),
     });
     setStatusMenuOpen(false);
@@ -807,6 +817,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()),
       completedReadings,
       progress: undefined,
+      ...archiveNoteForRereading(workId, targetEntry, completedReadings),
     });
     setJournalTraces((traces) => saveReadingTrace(traces, workId, "En cours", "Aujourd’hui", true));
     showFeedback({ kind: "saved", label: "Relecture commencée", detail: "L’œuvre reste réunie à votre trace précédente." });
@@ -1393,8 +1404,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 </button>
                 {renderStatusPopover("opening", selectedWork.id)}
               </div>
-              <button className="quiet-action" type="button" onClick={openReview}>{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Reprendre ma critique importée" : "Écrire une critique"}</button>
             </div>
+            <p className="work-opening-privacy">Ma lecture · privée, visible uniquement par vous</p>
             {renderDateInvitation("opening", selectedWork.id)}
             <div className="community-rating" aria-label={`Note moyenne de ${selectedWork.rating} sur 5`}>
               <span aria-hidden="true">★★★★☆</span>
@@ -1405,18 +1416,38 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         </section>
 
         <nav className="section-nav" aria-label="Sections de l’œuvre">
-          <a className={activeSection === "journal" ? "active" : ""} href="#journal">Mon journal</a>
-          <a className={activeSection === "about" ? "active" : ""} href="#about">À propos</a>
-          <a className={activeSection === "reviews" ? "active" : ""} href="#reviews">Critiques</a>
+          <a className={activeSection === "about" ? "active" : ""} href="#about">L’œuvre</a>
+          <a className={activeSection === "journal" ? "active" : ""} href="#journal">Ma lecture</a>
+          <a className={activeSection === "reviews" ? "active" : ""} href="#reviews">Autour de l’œuvre</a>
         </nav>
 
         <div className="content-column">
-          <section id="journal" className="page-section journal-section" aria-labelledby="journal-title">
+          <section id="about" className="page-section work-chapter" aria-labelledby="about-title">
             <div className="section-heading">
               <p className="section-number">01</p>
               <div>
-                <h2 id="journal-title">Mon journal</h2>
-                <p>Votre relation avec cette œuvre, au même endroit.</p>
+                <p className="work-chapter-kicker">L’œuvre · ouvert à tous</p>
+                <h2 id="about-title">À propos</h2>
+                <p>Le récit et quelques repères essentiels.</p>
+              </div>
+            </div>
+            <div className="about-layout">
+              <div className="synopsis prose">{selectedWork.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+              <dl className="work-facts">
+                <div><dt>Première publication</dt><dd>{selectedWork.year}</dd></div>
+                <div><dt>Genre</dt><dd>{selectedWork.genre}</dd></div>
+                <div><dt>Langue originale</dt><dd>{selectedWork.language}</dd></div>
+              </dl>
+            </div>
+          </section>
+
+          <section id="journal" className="page-section journal-section" aria-labelledby="journal-title">
+            <div className="section-heading">
+              <p className="section-number">02</p>
+              <div>
+                <p className="work-chapter-kicker">Chez vous · privé</p>
+                <h2 id="journal-title">Ma lecture</h2>
+                <p>Statut, repère et note restent visibles uniquement par vous.</p>
               </div>
             </div>
 
@@ -1445,13 +1476,28 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             )}
             <div className="journal-row">
               <div>
-                <p className="row-label">Ma note</p>
+                <p className="row-label">Ma note de cette lecture</p>
                 <p className="row-value">{entry.note || "Aucune pensée consignée"}</p>
                 <p className="privacy-note">Privée · visible uniquement par vous</p>
               </div>
               <button className="text-action" type="button" onClick={openNote}>{entry.note ? "Modifier" : "Ajouter une note"}</button>
             </div>
-            <div className="journal-row">
+            {(entry.pastNotes ?? []).length > 0 && <div className="work-past-notes" aria-label="Notes des lectures précédentes">
+              <p className="row-label">Lectures précédentes · privées</p>
+              {[...(entry.pastNotes ?? [])].reverse().map((past, index) => <div key={`${past.reading}-${index}`}><strong>{past.reading === 1 ? "Première lecture" : `${past.reading}e lecture`}</strong><p>{past.text}</p></div>)}
+            </div>}
+          </section>
+
+          <section id="reviews" className="page-section reviews-section" aria-labelledby="reviews-title">
+            <div className="section-heading">
+              <p className="section-number">03</p>
+              <div>
+                <p className="work-chapter-kicker">Choisi par leurs auteurs · public</p>
+                <h2 id="reviews-title">Autour de l’œuvre</h2>
+                <p>Les critiques publiées sont distinctes de vos notes privées.</p>
+              </div>
+            </div>
+            <div className="journal-row work-publication-row">
               <div>
                 <p className="row-label">Ma critique</p>
                 <p className="row-value">{entry.review || "Vous n’avez pas encore publié de critique."}</p>
@@ -1459,34 +1505,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 {entry.review && entry.rating > 0 && <p className="privacy-note" aria-label={`${entry.rating} étoiles sur 5`}>{"★".repeat(entry.rating)}{"☆".repeat(5 - entry.rating)}</p>}
               </div>
               <button className="text-action" type="button" onClick={openReview}>{reviewIsPublished ? "Modifier" : entry.review ? "Relire et publier" : "Écrire une critique"}</button>
-            </div>
-          </section>
-
-          <section id="about" className="page-section" aria-labelledby="about-title">
-            <div className="section-heading">
-              <p className="section-number">02</p>
-              <div>
-                <h2 id="about-title">À propos</h2>
-                <p>Le récit et quelques repères essentiels.</p>
-              </div>
-            </div>
-            <div className="about-layout">
-              <div className="synopsis prose">{selectedWork.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-              <dl className="work-facts">
-                <div><dt>Première publication</dt><dd>{selectedWork.year}</dd></div>
-                <div><dt>Genre</dt><dd>{selectedWork.genre}</dd></div>
-                <div><dt>Langue originale</dt><dd>{selectedWork.language}</dd></div>
-              </dl>
-            </div>
-          </section>
-
-          <section id="reviews" className="page-section reviews-section" aria-labelledby="reviews-title">
-            <div className="section-heading">
-              <p className="section-number">03</p>
-              <div>
-                <h2 id="reviews-title">Critiques</h2>
-                <p>Ce que les lecteurs retiennent de cette œuvre.</p>
-              </div>
             </div>
             <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>

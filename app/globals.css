@@ -399,6 +399,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .personal-work-back:hover { color: var(--brick); }
 }
 .section-nav a.active { text-decoration: underline; text-underline-offset: 0.45rem; }
+.work-opening-privacy { margin: 0.8rem 0 0; color: var(--muted); font-size: 0.9rem; }
+.work-publication-row { max-width: 49rem; margin: 0 0 2rem 4rem; border-block: 1px solid var(--line); }
+.work-past-notes { display: grid; gap: 1rem; margin-top: 1.2rem; padding: 1.25rem 1.5rem; background: color-mix(in srgb, var(--surface) 80%, transparent); border-left: 3px solid var(--brick); }
+.work-past-notes > p { margin: 0; }
+.work-past-notes > div { padding-top: 0.7rem; border-top: 1px solid var(--line); }
+.work-past-notes strong { font-family: var(--font-editorial); font-size: 1.2rem; font-weight: 500; }
+.work-past-notes > div p { margin: 0.3rem 0 0; white-space: pre-wrap; }
 
 .content-column { max-width: 72rem; margin: 0 auto; padding: 0 3rem 6rem; }
 .destination-page { min-height: calc(100vh - 4.75rem); max-width: 76rem; margin: 0 auto; padding: clamp(4rem, 8vw, 7rem) 3rem 7rem; }
@@ -799,12 +806,13 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .eyebrow { margin-bottom: 0.45rem; }
   .book-lede, .opening-actions, .community-rating { grid-column: 1 / -1; }
   .book-lede { margin: 1.5rem 0 1rem; font-size: 1.08rem; }
-  .opening-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .opening-actions { display: grid; grid-template-columns: 1fr; }
   .opening-actions button { width: 100%; }
   .primary-action, .quiet-action, .destructive-action, .library-status-trigger { min-height: 2.75rem; }
   .community-rating { margin-top: 1rem; }
-  .section-nav { top: 3.75rem; justify-content: space-between; gap: 0; padding: 0.78rem 1.1rem; }
-  .section-nav a { font-size: 0.78rem; }
+  .section-nav { top: 3.75rem; justify-content: flex-start; gap: 1.35rem; padding: 0.78rem 1.1rem; overflow-x: auto; scrollbar-width: none; }
+  .section-nav::-webkit-scrollbar { display: none; }
+  .section-nav a { flex-shrink: 0; font-size: 0.83rem; white-space: nowrap; }
   .content-column { padding: 0 1.1rem 3rem; }
   .page-section { padding: 4rem 0; }
   .section-heading { grid-template-columns: 2rem 1fr; gap: 0.5rem; margin-bottom: 2rem; }
@@ -823,6 +831,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .work-facts div, .work-facts div:last-child { border-bottom: 0; }
   .work-facts dd { font-size: 0.96rem; }
   .reviews-list { margin-left: 0; }
+  .work-publication-row { margin-left: 0; }
   .review-header { grid-template-columns: auto 1fr; }
   .review-stars { grid-column: 2; }
   .review-copy { margin-left: 0; }

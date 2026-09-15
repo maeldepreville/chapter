@@ -349,6 +349,30 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
           <h1 id="p1-work-title">{work.title}</h1>
           <p className="p1-work-author">de {work.author}</p>
           <p className="p1-lede">{work.lede}</p>
+          <a className="work-opening-link" href="#work-personal">{record?.status ? "Voir ma lecture" : "Ajouter à ma lecture"}<span aria-hidden="true">↗</span></a>
+          <dl className="p1-work-facts">
+            <div><dt>Genre</dt><dd>{work.genre}</dd></div>
+            <div><dt>Langue</dt><dd>{work.language}</dd></div>
+            <div><dt>Première publication</dt><dd>{work.year}</dd></div>
+          </dl>
+        </div>
+      </header>
+
+      <nav className="work-chapters" aria-label="Sections de l’œuvre">
+        <a href="#work-about">L’œuvre</a>
+        <a href="#work-personal">Ma lecture</a>
+        <a href="#work-public">Autour de l’œuvre</a>
+      </nav>
+
+      <section id="work-about" className="p1-work-about work-chapter" aria-labelledby="p1-about-title">
+        <div className="p1-section-mark"><span>01</span><div><p className="work-chapter-kicker">L’œuvre · ouvert à tous</p><h2 id="p1-about-title">À propos</h2></div></div>
+        <div className="p1-work-prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+      </section>
+
+      <section id="work-personal" className="p1-work-personal work-chapter" aria-labelledby="p1-personal-title">
+        <div className="p1-section-mark"><span>02</span><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2></div></div>
+        <div className="p1-work-personal-content">
+          <p className="work-chapter-privacy">Votre statut et votre repère restent visibles uniquement par vous. Rien ici n’est publié avec les critiques.</p>
           <div className="p2-action-cluster">
             <div className={`p2-status-control ${statusOpen ? "open" : ""}`}>
               <Button aria-expanded={statusOpen} aria-controls="p2-status-menu" onClick={() => setStatusOpen((open) => !open)}>
@@ -396,27 +420,20 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
               )}
             </section>
           )}
-          <dl className="p1-work-facts">
-            <div><dt>Genre</dt><dd>{work.genre}</dd></div>
-            <div><dt>Langue</dt><dd>{work.language}</dd></div>
-            <div><dt>Première publication</dt><dd>{work.year}</dd></div>
-          </dl>
         </div>
-      </header>
-
-      <section className="p1-work-about" aria-labelledby="p1-about-title">
-        <div className="p1-section-mark"><span>01</span><h2 id="p1-about-title">À propos</h2></div>
-        <div className="p1-work-prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
       </section>
 
-      {social}
-
-      {related.length > 0 && (
-        <section className="p1-work-related" aria-labelledby="p1-related-title">
-          <div className="p1-section-mark"><span>{social ? "03" : "02"}</span><h2 id="p1-related-title">Chemins voisins</h2></div>
-          <div>{related.map((candidate) => <WorkTextButton key={candidate.id} work={candidate} onOpen={() => onOpenWork(candidate.id)} note={candidate.genre} />)}</div>
-        </section>
-      )}
+      <section id="work-public" className="p1-work-public work-chapter" aria-labelledby="p1-public-title">
+        <div className="p1-section-mark"><span>03</span><div><p className="work-chapter-kicker">Choisi par leurs auteurs · public</p><h2 id="p1-public-title">Autour de l’œuvre</h2></div></div>
+        <p className="work-chapter-public-note">Les critiques sont des publications distinctes : elles ne révèlent ni votre statut, ni votre repère privé.</p>
+        {social}
+        {related.length > 0 && (
+          <section className="p1-work-related" aria-labelledby="p1-related-title">
+            <div className="p1-section-mark"><span>04</span><h2 id="p1-related-title">Chemins voisins</h2></div>
+            <div>{related.map((candidate) => <WorkTextButton key={candidate.id} work={candidate} onOpen={() => onOpenWork(candidate.id)} note={candidate.genre} />)}</div>
+          </section>
+        )}
+      </section>
 
       {statusOpen && <button className="p2-status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => setStatusOpen(false)} />}
       <AccountCreationDialog open={authOpen && Boolean(pendingStatus)} eyebrow="Votre geste vous attend" title="Gardons ce premier repère." description={<><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel="Créer mon espace" onClose={() => setAuthOpen(false)} onComplete={({ readerName }) => finishAccount(readerName)} />

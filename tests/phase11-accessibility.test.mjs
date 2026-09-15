@@ -62,7 +62,7 @@ test("star rating uses one tab stop and moves selection with keyboard focus", ()
   const harness = hookHarness();
   const Home = createSourceLoader({ react: harness.react })(source("page.tsx")).default;
   const render = () => harness.render(Home, { initialData: { view: "work" } });
-  const open = nodes(render(), (node) => node.type === "button" && node.props.className === "quiet-action" && textOf(node) === "Écrire une critique")[0];
+  const open = nodes(render(), (node) => node.type === "button" && textOf(node) === "Écrire une critique")[0];
   assert.ok(open);
   open.props.onClick();
 
