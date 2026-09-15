@@ -19,6 +19,7 @@ import { shellAttributes, type OptionalProgress, type ReadingStatus, type Work a
 import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
+import { WorkSectionNav, isWorkSectionLocation, workSectionIds } from "./work-section-nav";
 import { AccountCreationDialog } from "./account-creation-dialog";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
@@ -165,6 +166,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [currentView, setCurrentView] = useState<View>(initialPublicListId ? "discover" : initialProfileOwner ? "profile" : initialPublicWorkId ? "work" : p1Public ? initialPublicView ?? "discover" : initialRequestedView === "list" ? "discover" : initialRequestedView === "honors" ? "profile" : initialRequestedView ?? "work");
   const [destinationOverlay, setDestinationOverlay] = useState<DestinationOverlay>(initialPublicListId || initialRequestedView === "list" ? "list" : initialRequestedView === "honors" ? "honors" : null);
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
+  const initialPublicWorkPath = useRef<string | null>(null);
   const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? (startsPublic ? {} : defaultEntries));
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
@@ -692,10 +694,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   useEffect(() => {
     if (!p1Public) return;
+    if (initialPublicWorkId && initialPublicWorkPath.current === null) initialPublicWorkPath.current = window.location.pathname;
     const syncPublicLocation = () => {
+      const path = window.location.pathname;
+      if (currentView === "work" && isWorkSectionLocation(path, window.location.hash, selectedWorkId, initialPublicWorkPath.current)) return;
       navigationStack.current = [];
       setNavigationSource(null);
-      const path = window.location.pathname;
       setDestinationOverlay(null);
       if (path === "/recherche") return setCurrentView("search");
       const readerId = path.match(/^\/lecteurs\/([^/]+)\/?$/)?.[1];
@@ -718,14 +722,18 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         setSelectedWorkId(workId as WorkId);
         return setCurrentView("work");
       }
+      if (initialPublicWorkId && path === initialPublicWorkPath.current && works.some((work) => work.id === initialPublicWorkId)) {
+        setSelectedWorkId(initialPublicWorkId);
+        return setCurrentView("work");
+      }
       setCurrentView("discover");
     };
     window.addEventListener("popstate", syncPublicLocation);
     return () => window.removeEventListener("popstate", syncPublicLocation);
-  }, [p1Public, works]);
+  }, [p1Public, works, currentView, selectedWorkId, initialPublicWorkId]);
 
   useEffect(() => {
-    const sections = ["about", "journal", "reviews"]
+    const sections = workSectionIds
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
     if (!sections.length || currentView !== "work") return;
@@ -1179,6 +1187,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
+              activeSection={activeSection}
               activated={publicActivated}
               record={publicFirstMarkers[selectedWork.id]}
               backLabel={navigationBackLabel("Retour à Découvrir")}
@@ -1415,11 +1424,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           </div>
         </section>
 
-        <nav className="section-nav" aria-label="Sections de l’œuvre">
-          <a className={activeSection === "about" ? "active" : ""} href="#about">L’œuvre</a>
-          <a className={activeSection === "journal" ? "active" : ""} href="#journal">Ma lecture</a>
-          <a className={activeSection === "reviews" ? "active" : ""} href="#reviews">Autour de l’œuvre</a>
-        </nav>
+        <WorkSectionNav activeSection={activeSection} />
 
         <div className="content-column">
           <section id="about" className="page-section work-chapter" aria-labelledby="about-title">

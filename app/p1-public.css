@@ -168,9 +168,6 @@
 .p1-public-work { width: 100%; }
 .p1-back { display: inline-flex; gap: var(--space-2); padding: var(--space-2) 0; background: transparent; border: 0; color: var(--color-ink-muted); cursor: pointer; }
 .p1-public-work .book-identity h1 { letter-spacing: -0.055em; }
-.p1-public-work .opening-actions .chapter-button { min-height: 2.75rem; }
-.p1-public-work .p2-status-control { position: relative; }
-.p1-public-work .p2-status-menu { z-index: 50; }
 .p1-section-mark { display: flex; gap: var(--space-5); align-items: baseline; }
 .p1-section-mark span { color: var(--color-ink-muted); font-size: var(--text-xs); letter-spacing: 0.12em; }
 .p1-section-mark h2 { margin: 0; font-size: 2.7rem; }

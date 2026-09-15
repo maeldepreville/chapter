@@ -24,7 +24,7 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   const render = () => harness.render(PublicWork, props);
 
   let tree = render();
-  nodes(tree, (node) => node.type?.name === "Button" && textOf(node).includes("Ajouter au journal"))[0].props.onClick();
+  nodes(tree, (node) => node.type === "button" && textOf(node).includes("Ajouter au journal"))[0].props.onClick();
   tree = render();
   nodes(tree, (node) => node.type === "button" && textOf(node) === "En cours")[0].props.onClick();
   tree = render();
@@ -58,13 +58,14 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   assert.match(textOf(tree), /Voir mon Journal/);
 });
 
-test("P2 styling provides desktop anchoring, a mobile bottom sheet and reduced motion", async () => {
+test("P2 styling keeps the first marker responsive and shares the reading-status sheet", async () => {
   const css = await readFile(source("p2-first-marker.css"), "utf8");
+  const sharedCss = await readFile(source("globals.css"), "utf8");
   assert.match(css, /position: sticky; top: 7\.5rem/);
-  assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.p2-status-menu \{ position: fixed/);
-  assert.match(css, /\.p2-status-control\.open \{ z-index: 62; \}/);
-  assert.match(css, /\.p2-status-backdrop \{ z-index: 60;/);
-  assert.match(css, /safe-area-inset-bottom/);
+  assert.match(sharedCss, /@media \(max-width: 899px\)[\s\S]*\.status-popover \{\s*position: fixed/);
+  assert.match(sharedCss, /\.status-backdrop \{ z-index: 60;/);
+  assert.match(sharedCss, /safe-area-inset-bottom/);
+  assert.doesNotMatch(css, /\.p2-status-menu|\.p2-status-control/);
   assert.match(css, /dialog\.p2-auth-dialog \{ place-items: end stretch; padding: 0; overflow: hidden; \}/);
   assert.match(css, /max-width: 100vw; max-height: 100vh; max-height: 100dvh/);
   assert.doesNotMatch(css, /width: calc\(100% \+ 2\.5rem\)/);

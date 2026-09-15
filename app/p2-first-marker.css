@@ -2,17 +2,6 @@
 .p2-work-opening .p1-work-cover-stage { position: sticky; top: 7.5rem; }
 .p2-action-cluster { display: grid; grid-template-columns: auto minmax(12rem, 1fr); gap: var(--space-4); align-items: center; margin-top: var(--space-6); }
 .p2-action-cluster > p { max-width: 24rem; margin: 0; color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.5; }
-.p2-status-control { position: relative; z-index: 22; }
-.p2-status-control > .chapter-button { gap: var(--space-3); min-width: 12rem; }
-.p2-status-control > .chapter-button span { font-size: var(--text-xs); }
-.p2-status-menu { position: absolute; top: calc(100% + var(--space-2)); left: 0; z-index: 31; width: 19rem; padding: var(--space-4); background: var(--color-surface); border: var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-menu); }
-.p2-status-menu > p { margin: 0 0 var(--space-3); font-family: var(--font-editorial); font-size: 1.25rem; }
-.p2-status-menu > div { display: grid; grid-template-columns: repeat(3, 1fr); border-block: var(--border-subtle); }
-.p2-status-menu > div button { min-height: 3rem; padding: var(--space-2); background: transparent; border: 0; cursor: pointer; text-align: center; }
-.p2-status-menu > div button + button { border-left: var(--border-subtle); }
-.p2-status-menu > div button.selected { color: var(--color-accent); background: var(--color-accent-soft); }
-.p2-status-menu small { display: block; margin-top: var(--space-3); color: var(--color-ink-muted); }
-.p2-status-backdrop { position: fixed; inset: 0; z-index: 20; width: 100%; height: 100%; background: transparent; border: 0; cursor: default; }
 .p2-pending { display: flex; justify-content: space-between; gap: var(--space-4); align-items: center; margin-top: var(--space-4); padding: var(--space-3) var(--space-4); background: var(--color-accent-soft); border-left: 2px solid var(--color-accent); }
 .p2-pending span { display: grid; }
 .p2-pending small { color: var(--color-ink-muted); }
@@ -49,7 +38,6 @@
 .p2-feedback button { padding: var(--space-1); color: inherit; background: transparent; border: 0; cursor: pointer; font-size: 1.25rem; }
 
 @media (hover: hover) and (pointer: fine) {
-  .p2-status-menu > div button:hover { color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
   .p2-pending button:hover,
   .p2-marker-editor button:first-child:hover,
   .p2-marker-saved button:hover,
@@ -60,14 +48,9 @@
 
 @media (max-width: 899px) {
   dialog.p2-auth-dialog { place-items: end stretch; padding: 0; overflow: hidden; }
-  .p2-status-control.open { z-index: 62; }
   .p2-work-opening .p1-work-cover-stage { position: static; }
   .p2-action-cluster { grid-template-columns: 1fr; }
   .p2-action-cluster > p { max-width: none; }
-  .p2-status-control > .chapter-button { width: 100%; }
-  .p2-status-menu { position: fixed; top: auto; right: 0; bottom: 0; left: 0; z-index: 61; width: auto; padding: var(--space-5) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom)); border: 0; border-top: var(--border-subtle); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-  .p2-status-menu > p { font-size: 1.55rem; }
-  .p2-status-backdrop { z-index: 60; background: rgb(36 33 31 / 0.35); }
   .p2-pending { align-items: start; }
   .p2-pending button { max-width: 9rem; text-align: right; }
   .p2-first-marker { margin-inline: calc(var(--space-4) * -1); padding-inline: var(--space-4); }
@@ -87,7 +70,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .p2-status-menu,
   .p2-auth-panel,
   .p2-feedback { transition: none; }
 }

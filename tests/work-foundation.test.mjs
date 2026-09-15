@@ -23,12 +23,34 @@ test("the public work gives every reader three explicit spaces", () => {
   const chapters = markup.slice(markup.indexOf('aria-label="Sections de l’œuvre"'), markup.indexOf("</nav>"));
   assert.ok(chapters.indexOf("L’œuvre") < chapters.indexOf("Ma lecture"));
   assert.ok(chapters.indexOf("Ma lecture") < chapters.indexOf("Autour de l’œuvre"));
-  assert.match(markup, /work-personal/);
+  assert.match(chapters, /href="#about"[\s\S]*href="#journal"[\s\S]*href="#reviews"/);
+  for (const id of ["about", "journal", "reviews"]) assert.match(markup, new RegExp(`id="${id}"`));
   assert.match(markup, /visibles uniquement par vous/);
   assert.match(markup, /Les critiques publiées sont distinctes/);
   assert.match(markup, /book-opening|about-layout/);
   assert.doesNotMatch(markup, /Traces publiques|Chemins voisins/);
   assert.doesNotMatch(markup, /Ma note de cette lecture|Ma critique/);
+});
+
+test("guest and personal work sections share their navigation and status-menu layers", () => {
+  const load = createSourceLoader();
+  const { WorkSectionNav, isWorkSectionLocation } = load(source("work-section-nav.tsx"));
+  const markup = renderToStaticMarkup(React.createElement(WorkSectionNav, { activeSection: "journal" }));
+  assert.match(markup, /href="#journal"[^>]*class="active"|class="active"[^>]*href="#journal"/);
+  assert.equal(isWorkSectionLocation("/recette/oeuvre", "#reviews", "cartographies", "/recette/oeuvre"), true);
+  assert.equal(isWorkSectionLocation("/oeuvres/cartographies", "#about", "cartographies", null), true);
+  assert.equal(isWorkSectionLocation("/decouvrir", "#about", "cartographies", "/recette/oeuvre"), false);
+  const publicSource = readFileSync(source("p1-public.tsx"), "utf8");
+  const personalSource = readFileSync(source("page.tsx"), "utf8");
+  assert.match(publicSource, /<WorkSectionNav activeSection=\{activeSection\}/);
+  assert.match(personalSource, /<WorkSectionNav activeSection=\{activeSection\}/);
+  assert.match(personalSource, /path === initialPublicWorkPath\.current/);
+  assert.match(publicSource, /className="status-control"[\s\S]*className="status-popover"/);
+  const css = readFileSync(source("globals.css"), "utf8");
+  assert.match(css, /\.status-control \{ position: relative; \}/);
+  assert.match(css, /\.section-nav \{[\s\S]*?z-index: 30;/);
+  assert.match(css, /\.status-popover \{[\s\S]*?z-index: 50;/);
+  assert.doesNotMatch(publicSource, /p2-status-control|p2-status-menu/);
 });
 
 test("a rereading keeps its previous private note instead of rewriting it", () => {
