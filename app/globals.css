@@ -581,6 +581,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   line-height: 1;
 }
 .section-heading > div > p { margin: 0.6rem 0 0; color: var(--muted); }
+.section-heading .work-chapter-kicker { margin: 0 0 0.85rem; color: var(--brick); }
 .journal-row {
   display: flex;
   align-items: center;

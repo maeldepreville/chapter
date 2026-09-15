@@ -2,10 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createSourceLoader, hookHarness, nodes, textOf } from "./helpers/load-tsx.mjs";
 
 const source = (name) => fileURLToPath(new URL(`../app/${name}`, import.meta.url));
+
+test("work chapter headings reserve space for accents above editorial titles", () => {
+  const css = readFileSync(source("globals.css"), "utf8");
+  assert.match(css, /\.section-heading \.work-chapter-kicker \{ margin: 0 0 0\.85rem;/);
+});
 
 test("the public work gives every reader three explicit spaces", () => {
   const load = createSourceLoader();
