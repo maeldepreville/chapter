@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
 import { CoverFrame } from "./cover-frame";
+import { BookWorkCover } from "./book-work-cover";
 import { Button, Textarea } from "./foundation/primitives";
 import type { ReadingStatus, Work } from "./foundation/contracts";
 import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue";
@@ -286,11 +287,9 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   );
 }
 
-export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", social }: {
+export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", social }: {
   work: Work;
-  works: readonly Work[];
   onBack: () => void;
-  onOpenWork: (id: string) => void;
   onActivate: (status: ReadingStatus) => void;
   onSaveMarker: (marker: string) => void;
   onOpenJournal?: () => void;
@@ -301,7 +300,6 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   backLabel?: string;
   social?: ReactNode;
 }) {
-  const related = works.filter((candidate) => candidate.id !== work.id).slice(0, 3);
   const [statusOpen, setStatusOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<ReadingStatus | null>(null);
@@ -340,54 +338,39 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
   };
 
   return (
-    <article className="p1-public-page p1-public-work" aria-labelledby="p1-work-title">
-      <button className="p1-back" type="button" onClick={onBack}><span aria-hidden="true">←</span> {backLabel}</button>
-      <header className="p1-work-opening p2-work-opening">
-        <div className="p1-work-cover-stage"><PublicCover work={work} className="p1-cover p1-cover--work" /></div>
-        <div className="p1-work-identity">
+    <article className="p1-public-work" aria-labelledby="p1-work-title">
+      <button className="personal-work-back" type="button" onClick={onBack}><span aria-hidden="true">←</span> {backLabel}</button>
+      <header className="book-opening p1-work-opening">
+        <div className="cover-stage"><BookWorkCover work={work} /></div>
+        <div className="book-identity">
           <p className="eyebrow">{work.meta}</p>
           <h1 id="p1-work-title">{work.title}</h1>
-          <p className="p1-work-author">de {work.author}</p>
-          <p className="p1-lede">{work.lede}</p>
-          <a className="work-opening-link" href="#work-personal">{record?.status ? "Voir ma lecture" : "Ajouter à ma lecture"}<span aria-hidden="true">↗</span></a>
-          <dl className="p1-work-facts">
-            <div><dt>Genre</dt><dd>{work.genre}</dd></div>
-            <div><dt>Langue</dt><dd>{work.language}</dd></div>
-            <div><dt>Première publication</dt><dd>{work.year}</dd></div>
-          </dl>
+          <p className="author">de {work.author}</p>
+          <p className="book-lede">{work.lede}</p>
+          <div className="opening-actions"><div className={`p2-status-control ${statusOpen ? "open" : ""}`}>
+            <Button aria-expanded={statusOpen} aria-controls="p2-status-menu" onClick={() => setStatusOpen((open) => !open)}>{record?.status ?? "Ajouter au journal"}<span aria-hidden="true">⌄</span></Button>
+            {statusOpen && <div className="p2-status-menu" id="p2-status-menu" role="dialog" aria-label="Choisir un statut de lecture"><p>Où en êtes-vous ?</p><div>{(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => <button className={record?.status === status ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>)}</div><small>Ce choix reste privé.</small></div>}
+          </div></div>
+          <p className="work-opening-privacy">Ma lecture · privée, visible uniquement par vous</p>
+          <div className="community-rating" aria-label={`Note moyenne de ${work.rating} sur 5`}><span aria-hidden="true">★★★★☆</span><strong>{work.rating}</strong><span>{work.ratingCount}</span></div>
         </div>
       </header>
 
-      <nav className="work-chapters" aria-label="Sections de l’œuvre">
+      <nav className="section-nav" aria-label="Sections de l’œuvre">
         <a href="#work-about">L’œuvre</a>
         <a href="#work-personal">Ma lecture</a>
         <a href="#work-public">Autour de l’œuvre</a>
       </nav>
 
-      <section id="work-about" className="p1-work-about work-chapter" aria-labelledby="p1-about-title">
-        <div className="p1-section-mark"><span>01</span><div><p className="work-chapter-kicker">L’œuvre · ouvert à tous</p><h2 id="p1-about-title">À propos</h2></div></div>
-        <div className="p1-work-prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-      </section>
+      <div className="content-column">
+        <section id="work-about" className="page-section work-chapter" aria-labelledby="p1-about-title">
+          <div className="section-heading"><p className="section-number">01</p><div><p className="work-chapter-kicker">L’œuvre · ouvert à tous</p><h2 id="p1-about-title">À propos</h2><p>Le récit et quelques repères essentiels.</p></div></div>
+          <div className="about-layout"><div className="synopsis prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div><dl className="work-facts"><div><dt>Première publication</dt><dd>{work.year}</dd></div><div><dt>Genre</dt><dd>{work.genre}</dd></div><div><dt>Langue originale</dt><dd>{work.language}</dd></div></dl></div>
+        </section>
 
-      <section id="work-personal" className="p1-work-personal work-chapter" aria-labelledby="p1-personal-title">
-        <div className="p1-section-mark"><span>02</span><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2></div></div>
-        <div className="p1-work-personal-content">
-          <p className="work-chapter-privacy">Votre statut et votre repère restent visibles uniquement par vous. Rien ici n’est publié avec les critiques.</p>
-          <div className="p2-action-cluster">
-            <div className={`p2-status-control ${statusOpen ? "open" : ""}`}>
-              <Button aria-expanded={statusOpen} aria-controls="p2-status-menu" onClick={() => setStatusOpen((open) => !open)}>
-                {record?.status ?? "Ajouter au journal"}<span aria-hidden="true">⌄</span>
-              </Button>
-              {statusOpen && (
-                <div className="p2-status-menu" id="p2-status-menu" role="dialog" aria-label="Choisir un statut de lecture">
-                  <p>Où en êtes-vous ?</p>
-                  <div>{(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => <button className={record?.status === status ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>)}</div>
-                  <small>Ce choix reste privé.</small>
-                </div>
-              )}
-            </div>
-            <p>Gardez cette œuvre et ce qu’elle vous laisse. Rien n’est publié.</p>
-          </div>
+        <section id="work-personal" className="page-section work-chapter" aria-labelledby="p1-personal-title">
+          <div className="section-heading"><p className="section-number">02</p><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2><p>Statut, repère et note restent visibles uniquement par vous.</p></div></div>
+          <div className="journal-row"><div><p className="row-label">Ma lecture</p><p className="row-value">{record?.status ?? "Pas encore ajoutée"}</p><p className="privacy-note">{activated ? "Votre repère est privé." : "Un espace sera créé au premier geste personnel."}</p></div><button className="text-action" type="button" onClick={() => { document.querySelector(".p1-public-work .opening-actions")?.scrollIntoView({ behavior: "smooth", block: "center" }); setStatusOpen(true); }}>{record?.status ? "Modifier" : "Ajouter au journal"}</button></div>
           {!activated && pendingStatus && !authOpen && (
             <div className="p2-pending" role="status">
               <span><small>Geste conservé</small><strong>{pendingStatus}</strong></span>
@@ -420,20 +403,13 @@ export function PublicWork({ work, works, onBack, onOpenWork, onActivate, onSave
               )}
             </section>
           )}
-        </div>
-      </section>
+        </section>
 
-      <section id="work-public" className="p1-work-public work-chapter" aria-labelledby="p1-public-title">
-        <div className="p1-section-mark"><span>03</span><div><p className="work-chapter-kicker">Choisi par leurs auteurs · public</p><h2 id="p1-public-title">Autour de l’œuvre</h2></div></div>
-        <p className="work-chapter-public-note">Les critiques sont des publications distinctes : elles ne révèlent ni votre statut, ni votre repère privé.</p>
-        {social}
-        {related.length > 0 && (
-          <section className="p1-work-related" aria-labelledby="p1-related-title">
-            <div className="p1-section-mark"><span>04</span><h2 id="p1-related-title">Chemins voisins</h2></div>
-            <div>{related.map((candidate) => <WorkTextButton key={candidate.id} work={candidate} onOpen={() => onOpenWork(candidate.id)} note={candidate.genre} />)}</div>
-          </section>
-        )}
-      </section>
+        <section id="work-public" className="page-section work-chapter" aria-labelledby="p1-public-title">
+          <div className="section-heading"><p className="section-number">03</p><div><p className="work-chapter-kicker">Choisi par leurs auteurs · public</p><h2 id="p1-public-title">Autour de l’œuvre</h2><p>Les critiques publiées sont distinctes de vos notes privées.</p></div></div>
+          {social}
+        </section>
+      </div>
 
       {statusOpen && <button className="p2-status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => setStatusOpen(false)} />}
       <AccountCreationDialog open={authOpen && Boolean(pendingStatus)} eyebrow="Votre geste vous attend" title="Gardons ce premier repère." description={<><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel="Créer mon espace" onClose={() => setAuthOpen(false)} onComplete={({ readerName }) => finishAccount(readerName)} />

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CoverFrame } from "./cover-frame";
+import { BookWorkCover } from "./book-work-cover";
+import { WorkPastNotes } from "./work-past-notes";
 import { JournalTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
 import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { Modal } from "./modal";
@@ -82,11 +84,12 @@ const coverTitleTier = (title: string) => {
 };
 
 function WorkCover({ work, variant }: { work: Work; variant: "book" | "library" | "journal" | "mini" }) {
-  const className = variant === "book" ? "book-cover" : `${variant}-cover`;
-  const sizes = variant === "book" ? "(max-width: 899px) 160px, 320px" : variant === "library" ? "(max-width: 899px) 45vw, 240px" : "96px";
+  if (variant === "book") return <BookWorkCover work={work} />;
+  const className = `${variant}-cover`;
+  const sizes = variant === "library" ? "(max-width: 899px) 45vw, 240px" : "96px";
 
   return (
-    <CoverFrame work={work} className={className} priority={variant === "book"} sizes={sizes}>
+    <CoverFrame work={work} className={className} sizes={sizes}>
       {variant === "mini" ? (
         <strong aria-hidden="true">{work.title.slice(0, 1)}</strong>
       ) : (
@@ -1096,8 +1099,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           <nav aria-label="Navigation principale">
             <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}>Journal</button>
             <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}>Bibliothèque</button>
-            <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
-            <button className={currentView === "search" || (currentView === "work" && publicWorkOrigin === "search") ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
+            <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}>Découvrir</button>
+            <button className={currentView === "search" ? "active" : ""} type="button" aria-current={currentView === "search" ? "page" : undefined} onClick={() => openPublicView("search")}>Recherche</button>
           </nav>
           <span className="p1-public-note">{publicActivated ? "Votre espace privé est prêt" : "Lire d’abord · créer un compte plus tard"}</span>
           <button className="p1-public-mobile-search" type="button" aria-label="Ouvrir Recherche" onClick={() => openPublicView("search")}>Recherche</button>
@@ -1176,12 +1179,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ) : currentView === "work" && selectedWork ? (
             <PublicWork
               work={selectedWork}
-              works={works}
               activated={publicActivated}
               record={publicFirstMarkers[selectedWork.id]}
               backLabel={navigationBackLabel("Retour à Découvrir")}
               onBack={() => restoreNavigation(() => openPublicView("discover"))}
-              onOpenWork={(id) => openPublicWork(id, publicWorkOrigin)}
               onActivate={(status) => {
                 setPublicActivated(true);
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
@@ -1191,11 +1192,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               onOpenJournal={() => enterPersonalSpace("journal")}
               onNotify={(label) => showFeedback({ kind: "saved", label, detail: "Votre action a bien été prise en compte." })}
               social={(
-                <section className="p4-public-reviews" aria-labelledby="p4-public-reviews-title">
-                  <div className="p1-section-mark"><span>02</span><h2 id="p4-public-reviews-title">Traces publiques</h2></div>
-                  <div className="p4-public-reviews-intro"><p>Des lectures rendues visibles par un geste explicite. Les réponses prolongent l’œuvre, sans transformer la page en fil d’actualité.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={beginPublicReview}>{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Reprendre ma critique importée" : "Écrire une critique"}</button></div>
+                <div className="work-public-reviews">
+                  {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={beginPublicReview}>{entry.review ? "Relire et publier mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon privé · non publié</span>}</div>}
                   <SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
-                </section>
+                </div>
               )}
             />
           ) : (
@@ -1273,7 +1273,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                         <span className="current-reading-copy">
                           <strong>{work.title}</strong>
                           <small>{work.author}</small>
-                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? `${(entries[work.id]?.completedReadings ?? 0) + 1}e lecture` : entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
+                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? "Relecture en cours" : entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
                         </span>
                         {entries[work.id]?.progress && renderReadingBookmark(entries[work.id].progress, true)}
                       </button>
@@ -1455,7 +1455,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               <div className="journal-reading-summary">
                 <p className="row-label">Ma lecture</p>
                 <p className="row-value">{entry.readingStatus ?? "Pas encore ajoutée"}</p>
-                {(entry.completedReadings ?? 0) > 0 && <p className="privacy-note">{entry.readingStatus === "En cours" ? `${(entry.completedReadings ?? 0) + 1}e lecture en cours` : `${entry.completedReadings} lecture${entry.completedReadings === 1 ? "" : "s"} terminée${entry.completedReadings === 1 ? "" : "s"}`}</p>}
+                {(entry.completedReadings ?? 0) > 0 && <p className="privacy-note">{entry.readingStatus === "En cours" ? "Relecture en cours" : "Œuvre déjà lue"}</p>}
                 {displayReadingDate && <p className="privacy-note">Date enregistrée · {displayReadingDate}</p>}
               </div>
               {entry.readingStatus === "En cours" && entry.progress && renderReadingBookmark(entry.progress)}
@@ -1482,10 +1482,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               </div>
               <button className="text-action" type="button" onClick={openNote}>{entry.note ? "Modifier" : "Ajouter une note"}</button>
             </div>
-            {(entry.pastNotes ?? []).length > 0 && <div className="work-past-notes" aria-label="Notes des lectures précédentes">
-              <p className="row-label">Lectures précédentes · privées</p>
-              {[...(entry.pastNotes ?? [])].reverse().map((past, index) => <div key={`${past.reading}-${index}`}><strong>{past.reading === 1 ? "Première lecture" : `${past.reading}e lecture`}</strong><p>{past.text}</p></div>)}
-            </div>}
+            <WorkPastNotes key={selectedWork.id} notes={entry.pastNotes ?? []} />
           </section>
 
           <section id="reviews" className="page-section reviews-section" aria-labelledby="reviews-title">
@@ -1497,15 +1494,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <p>Les critiques publiées sont distinctes de vos notes privées.</p>
               </div>
             </div>
-            <div className="journal-row work-publication-row">
-              <div>
-                <p className="row-label">Ma critique</p>
-                <p className="row-value">{entry.review || "Vous n’avez pas encore publié de critique."}</p>
-                {entry.review && !reviewIsPublished && <p className="privacy-note">Importée · privée jusqu’à votre publication</p>}
-                {entry.review && entry.rating > 0 && <p className="privacy-note" aria-label={`${entry.rating} étoiles sur 5`}>{"★".repeat(entry.rating)}{"☆".repeat(5 - entry.rating)}</p>}
-              </div>
-              <button className="text-action" type="button" onClick={openReview}>{reviewIsPublished ? "Modifier" : entry.review ? "Relire et publier" : "Écrire une critique"}</button>
-            </div>
+            {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={openReview}>{entry.review ? "Relire et publier mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon importé · privé jusqu’à publication</span>}</div>}
             <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
@@ -1521,7 +1510,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       {!personalShellReady ? (
         <nav className="p1-public-mobile-nav" aria-label="Navigation principale mobile">
           <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}><span aria-hidden="true">◫</span>Journal</button>
-          <button className={currentView === "discover" || (currentView === "work" && publicWorkOrigin === "discover") ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}><span aria-hidden="true">⌕</span>Découvrir</button>
+          <button className={currentView === "discover" ? "active" : ""} type="button" aria-current={currentView === "discover" ? "page" : undefined} onClick={() => openPublicView("discover")}><span aria-hidden="true">⌕</span>Découvrir</button>
           <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}><span aria-hidden="true">▥</span>Bibliothèque</button>
         </nav>
       ) : <nav className="mobile-nav" aria-label="Navigation principale mobile">

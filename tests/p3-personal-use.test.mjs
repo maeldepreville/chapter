@@ -79,7 +79,8 @@ test("P3 starts a rereading on the same work and records it in the Journal", () 
     ui.button("Journal").props.onClick();
     const rendered = textOf(ui.render());
     assert.match(rendered, /Relecture commencée/);
-    assert.match(rendered, /2e lecture/);
+    assert.match(rendered, /Relecture en cours/);
+    assert.doesNotMatch(rendered, /2e lecture/);
     assert.equal(nodes(ui.render(), (node) => node.props?.className === "current-reading").length, 1);
   });
 });

@@ -35,15 +35,14 @@ test("P4 search exposes public readers and lists without hiding work results", (
   assert.match(listMarkup, /Liste publique/);
 });
 
-test("P4 work page composes public traces before neighboring paths", () => {
-  const social = React.createElement("section", null, "Traces publiques");
+test("P4 work page keeps public reviews in the shared work chapter without legacy panels", () => {
+  const social = React.createElement("section", null, "Critiques des lecteurs");
   const markup = renderToStaticMarkup(React.createElement(PublicWork, {
     work: publicWorks[0], works: publicWorks, social,
     onBack() {}, onOpenWork() {}, onActivate() {}, onSaveMarker() {},
   }));
-  assert.ok(markup.indexOf("Traces publiques") > markup.indexOf("À propos"));
-  assert.ok(markup.indexOf("Traces publiques") < markup.indexOf("Chemins voisins"));
-  assert.match(markup, />04<\/span><h2[^>]*>Chemins voisins/);
+  assert.ok(markup.indexOf("Critiques des lecteurs") > markup.indexOf("Autour de l’œuvre"));
+  assert.doesNotMatch(markup, /Chemins voisins|Traces publiques/);
 });
 
 test("P4 conversations retain the explicit identity gate", () => {
@@ -187,7 +186,7 @@ test("P4 public routes render profiles, lists, reviews and conversations directl
   const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
   const context = { waitUntil() {}, passThroughOnException() {} };
   const routes = [
-    ["/oeuvres/cartographies", /Traces publiques/],
+    ["/oeuvres/cartographies", /Autour de l’œuvre/],
     ["/lecteurs/lina", /Lina Morel/],
     ["/listes/places", /Habiter les lieux qui nous quittent/],
   ];

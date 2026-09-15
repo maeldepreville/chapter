@@ -99,7 +99,6 @@
 .p1-folio { position: absolute; top: var(--space-4); left: var(--space-5); z-index: 1; color: var(--color-ink-muted); font-size: var(--text-xs); letter-spacing: 0.12em; }
 .p1-cover { position: relative; display: grid; place-items: stretch; width: 12rem; aspect-ratio: 2 / 3; overflow: hidden; box-shadow: var(--shadow-cover); }
 .p1-cover--featured { width: min(13rem, 48vw); }
-.p1-cover--work { width: min(19rem, 58vw); }
 .p1-cover-copy { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: 100%; height: 100%; padding: var(--space-5); background: linear-gradient(150deg, transparent, rgb(0 0 0 / 0.18)); color: var(--color-on-accent); }
 .p1-cover-copy small { font-size: 0.58rem; letter-spacing: 0.18em; }
 .p1-cover-copy strong { align-self: center; min-height: 0; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow-wrap: anywhere; font-family: var(--font-editorial); font-size: clamp(1.15rem, 2vw, 1.75rem); font-weight: 500; line-height: 1.05; }
@@ -166,51 +165,21 @@
 .p1-search-catalogue-empty h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); }
 .p1-search-catalogue-empty > p:last-child { max-width: 40rem; font-family: var(--font-editorial); font-size: 1.05rem; line-height: 1.5; }
 
-.p1-public-work { padding: var(--space-6) 0 var(--space-9); }
+.p1-public-work { width: 100%; }
 .p1-back { display: inline-flex; gap: var(--space-2); padding: var(--space-2) 0; background: transparent; border: 0; color: var(--color-ink-muted); cursor: pointer; }
-.p1-work-opening { display: grid; grid-template-columns: minmax(20rem, 0.8fr) minmax(0, 1.2fr); gap: clamp(3rem, 8vw, 8rem); align-items: center; padding: var(--space-7) 0 var(--space-9); }
-.p1-work-cover-stage { display: grid; place-items: center; min-height: 38rem; background: var(--color-surface-muted); }
-.p1-work-identity h1 { max-width: 12ch; margin: var(--space-3) 0; font-size: clamp(3.5rem, 7vw, 7rem); line-height: 0.9; }
-.p1-work-author { margin: 0 0 var(--space-7); color: var(--color-ink-muted); font-size: 1.1rem; }
-.work-opening-link { display: inline-flex; gap: var(--space-4); align-items: center; min-height: 2.75rem; padding: 0.4rem 0; color: var(--color-accent); border-bottom: 1px solid currentColor; font-weight: 600; }
-.work-opening-link span { font-size: 1.1rem; }
-.p1-work-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin: var(--space-7) 0 0; padding-top: var(--space-4); border-top: var(--border-subtle); }
-.p1-work-facts div { display: grid; gap: var(--space-1); }
-.p1-work-facts dt { color: var(--color-ink-muted); font-size: var(--text-xs); }
-.p1-work-facts dd { margin: 0; font-size: var(--text-sm); }
-.p1-work-about,
-.p1-work-related { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: var(--space-8); padding: var(--space-8) 0; border-top: var(--border-subtle); }
+.p1-public-work .book-identity h1 { letter-spacing: -0.055em; }
+.p1-public-work .opening-actions .chapter-button { min-height: 2.75rem; }
+.p1-public-work .p2-status-control { position: relative; }
+.p1-public-work .p2-status-menu { z-index: 50; }
 .p1-section-mark { display: flex; gap: var(--space-5); align-items: baseline; }
 .p1-section-mark span { color: var(--color-ink-muted); font-size: var(--text-xs); letter-spacing: 0.12em; }
 .p1-section-mark h2 { margin: 0; font-size: 2.7rem; }
-.p1-work-prose { max-width: var(--density-reading); font-family: var(--font-editorial); font-size: 1.25rem; line-height: 1.7; }
-.p1-work-prose p:first-child { margin-top: 0; }
-
-.work-chapters {
-  position: sticky;
-  top: 4.75rem;
-  z-index: 30;
-  display: flex;
-  justify-content: center;
-  gap: clamp(1.2rem, 6vw, 5rem);
-  padding: 0.9rem 1.25rem;
-  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
-  border-block: var(--border-subtle);
-  backdrop-filter: blur(12px);
-}
-.work-chapters a { color: var(--color-ink-muted); font-size: 0.92rem; font-weight: 600; white-space: nowrap; }
-.work-chapters a:focus-visible, .work-chapters a:hover { color: var(--color-accent); }
 .work-chapter { scroll-margin-top: 8.5rem; }
 .work-chapter-kicker { margin: 0 0 0.4rem; color: var(--color-accent); font-family: var(--font-interface); font-size: 0.83rem; font-weight: 600; }
-.p1-work-personal { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: var(--space-8); padding: var(--space-8) 0; border-top: var(--border-subtle); }
-.p1-work-personal-content { min-width: 0; padding: var(--space-5); background: color-mix(in srgb, var(--color-surface) 74%, transparent); border-left: 3px solid var(--color-accent); }
-.work-chapter-privacy { max-width: 39rem; margin: 0 0 var(--space-4); color: var(--color-ink-muted); font-size: 1rem; line-height: 1.55; }
-.p1-work-personal .p2-first-marker { margin-top: var(--space-5); }
-.p1-work-public { padding: var(--space-8) 0; border-top: var(--border-subtle); }
-.p1-work-public > .p1-section-mark { margin-bottom: var(--space-5); }
-.work-chapter-public-note { max-width: 41rem; margin: 0 0 var(--space-7); color: var(--color-ink-muted); font-size: 1rem; }
-.p1-work-public .p4-public-reviews { border-top: 0; }
-.p1-work-public .p1-work-related { margin-top: var(--space-8); }
+.p1-public-work .p2-first-marker { margin-top: var(--space-5); }
+.work-public-reviews, .work-review-action { max-width: 49rem; margin-left: 4rem; }
+.work-review-action { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+.work-review-action span { color: var(--color-ink-muted); font-size: 0.82rem; }
 
 @media (hover: hover) and (pointer: fine) {
   .p1-public-header nav button:hover,
@@ -247,10 +216,8 @@
   .p1-paths > header,
   .p1-shelf,
   .p1-search > header,
-  .p1-work-opening,
-  .p1-work-about,
-  .p1-work-personal,
-  .p1-work-related { grid-template-columns: 1fr; }
+  .p1-work-opening { grid-template-columns: minmax(7.5rem, 10rem) minmax(0, 1fr); }
+  .p1-public-work .section-nav { top: 4.25rem; }
   .p1-personal-intro { padding: var(--space-7) 0 var(--space-8); }
   .p1-personal-intro-opening { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
   .p1-personal-intro-copy h1 { max-width: 11ch; font-size: clamp(3.15rem, 14vw, 4.8rem); }
@@ -294,19 +261,8 @@
   .p1-search-field { padding-inline: var(--space-3); }
   .p1-search-summary { gap: var(--space-3); }
   .p1-search-results article { grid-template-columns: 2.4rem 1fr; }
-  .p1-public-work { padding-top: var(--space-4); }
-  .p1-work-opening { gap: var(--space-7); padding: var(--space-5) 0 var(--space-8); }
-  .p1-work-cover-stage { min-height: 30rem; }
-  .p1-work-identity h1 { font-size: clamp(3.4rem, 15vw, 5.4rem); }
-  .p1-work-facts { grid-template-columns: 1fr; gap: var(--space-3); }
-  .p1-work-facts div { grid-template-columns: 1fr 1fr; }
-  .p1-work-about,
-  .p1-work-personal,
-  .p1-work-related { gap: var(--space-5); padding: var(--space-7) 0; }
-  .work-chapters { justify-content: flex-start; gap: 1.4rem; margin-inline: -1rem; padding-inline: 1rem; overflow-x: auto; scrollbar-width: none; }
-  .work-chapters::-webkit-scrollbar { display: none; }
-  .work-chapters a { font-size: 0.85rem; }
-  .p1-work-personal-content { padding: var(--space-4); }
+  .work-public-reviews, .work-review-action { margin-left: 0; }
+  .work-review-action { flex-wrap: wrap; }
 }
 
 @media (prefers-reduced-motion: reduce) {

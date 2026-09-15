@@ -54,7 +54,8 @@ test("public search is immediate and work pages introduce only the P2 personal a
     work: publicWorks[0], works: publicWorks, onBack() {}, onOpenWork() {}, onActivate() {}, onSaveMarker() {},
   }));
   assert.match(workMarkup, /À propos/);
-  assert.match(workMarkup, /Chemins voisins/);
+  assert.match(workMarkup, /Autour de l’œuvre/);
+  assert.doesNotMatch(workMarkup, /Chemins voisins|Traces publiques/);
   assert.match(workMarkup, /Ajouter au journal/);
   assert.doesNotMatch(workMarkup, /Ma critique|Créer mon compte|Nom public|Suivre/);
 });

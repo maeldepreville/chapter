@@ -400,12 +400,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .section-nav a.active { text-decoration: underline; text-underline-offset: 0.45rem; }
 .work-opening-privacy { margin: 0.8rem 0 0; color: var(--muted); font-size: 0.9rem; }
-.work-publication-row { max-width: 49rem; margin: 0 0 2rem 4rem; border-block: 1px solid var(--line); }
+.work-review-action { max-width: 49rem; margin: 0 0 1rem 4rem; }
+.review-own-edit { margin: 0.25rem 0 0.9rem; }
 .work-past-notes { display: grid; gap: 1rem; margin-top: 1.2rem; padding: 1.25rem 1.5rem; background: color-mix(in srgb, var(--surface) 80%, transparent); border-left: 3px solid var(--brick); }
 .work-past-notes > p { margin: 0; }
-.work-past-notes > div { padding-top: 0.7rem; border-top: 1px solid var(--line); }
+.work-past-note { padding-top: 0.7rem; border-top: 1px solid var(--line); }
 .work-past-notes strong { font-family: var(--font-editorial); font-size: 1.2rem; font-weight: 500; }
-.work-past-notes > div p { margin: 0.3rem 0 0; white-space: pre-wrap; }
+.work-past-note p { margin: 0.3rem 0 0; white-space: pre-wrap; }
+.work-past-notes-more { justify-self: start; }
 
 .content-column { max-width: 72rem; margin: 0 auto; padding: 0 3rem 6rem; }
 .destination-page { min-height: calc(100vh - 4.75rem); max-width: 76rem; margin: 0 auto; padding: clamp(4rem, 8vw, 7rem) 3rem 7rem; }
@@ -831,7 +833,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
   .work-facts div, .work-facts div:last-child { border-bottom: 0; }
   .work-facts dd { font-size: 0.96rem; }
   .reviews-list { margin-left: 0; }
-  .work-publication-row { margin-left: 0; }
+  .work-review-action { margin-left: 0; }
   .review-header { grid-template-columns: auto 1fr; }
   .review-stars { grid-column: 2; }
   .review-copy { margin-left: 0; }

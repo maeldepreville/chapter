@@ -5,7 +5,7 @@ import Home, { type InitialData, type PersonalEntry } from "../../page";
 import { coreWorks } from "../../foundation/fixtures";
 import type { JournalTrace } from "../../journal-model";
 
-type WorkSituation = "visitor" | "to-read" | "reading" | "finished" | "rereading";
+type WorkSituation = "visitor" | "to-read" | "reading" | "finished" | "rereading" | "many-rereadings";
 
 const situations: readonly { id: WorkSituation; label: string; question: string }[] = [
   { id: "visitor", label: "Sans compte", question: "L’œuvre et les critiques sont publiques ; le futur espace personnel est-il compréhensible ?" },
@@ -13,6 +13,7 @@ const situations: readonly { id: WorkSituation; label: string; question: string 
   { id: "reading", label: "En cours", question: "Le statut, le marque-page et la note restent-ils clairement chez soi ?" },
   { id: "finished", label: "Lu", question: "Peut-on conserver sa lecture et reconnaître une critique comme publication distincte ?" },
   { id: "rereading", label: "Relecture", question: "La lecture précédente reste-t-elle visible sans être remplacée ?" },
+  { id: "many-rereadings", label: "Relectures nombreuses", question: "Seules trois notes sont visibles d’abord ; peut-on retrouver les suivantes sans encombrer la page ?" },
 ];
 
 const baseEntry: PersonalEntry = { readingStatus: null, readingDate: "", note: "", review: "", reviewPublished: false, rating: 0, completedReadings: 0 };
@@ -24,6 +25,7 @@ function situationData(situation: Exclude<WorkSituation, "visitor">): InitialDat
     reading: { ...baseEntry, readingStatus: "En cours", readingDate: "3 septembre 2026", note: "Les cartes d’Ana changent moins les lieux que la façon dont elle se souvient d’eux.", progress: { kind: "bookmark", page: 146, updatedAt: "2026-09-05T18:00:00.000Z" } },
     finished: { ...baseEntry, readingStatus: "Lu", readingDate: "12 septembre 2026", note: "Je voudrais retrouver cette douceur quand je reviendrai sur le roman.", completedReadings: 1, review: "Une histoire où les lieux ne sont jamais tout à fait ceux qu’on avait quittés.", reviewPublished: true, rating: 4 },
     rereading: { ...baseEntry, readingStatus: "En cours", readingDate: "15 septembre 2026", completedReadings: 1, pastNotes: [{ reading: 1, text: "Je voudrais retrouver cette douceur quand je reviendrai sur le roman." }] },
+    "many-rereadings": { ...baseEntry, readingStatus: "En cours", completedReadings: 12, pastNotes: Array.from({ length: 12 }, (_, index) => ({ reading: index + 1, text: index % 2 === 0 ? "Un détail du paysage s’éclaire à chaque retour dans ces pages." : "Je garde une autre voix de cette histoire, moins certaine qu’au premier passage." })) },
   };
   const traces: JournalTrace[] = situation === "rereading" ? [
     { id: "recipe-reread", workId: "cartographies", date: "Aujourd’hui", kind: "Relecture commencée" },

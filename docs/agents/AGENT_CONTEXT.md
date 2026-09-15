@@ -9,12 +9,7 @@ Ce document résume l'état utile.
 - **Base acceptée :** la version Sites 84 clôt la refonte visible pré-lot 2 ; voir `docs/milestones/P7_RECETTE_COMPLETE.md`.
 - **Phase active :** fondation de la page œuvre candidate sur Sites, sans validation ni backend ; voir `docs/milestones/FONDATION_PAGE_OEUVRE.md`.
 - **Branche active :** `fondations-page-oeuvre-2026-09-15` créée sur GitHub depuis `main`. La candidate est dans la source technique du Site, pas encore synchronisée sur cette branche GitHub.
-- **Statut P1 :** validé sur Sites 34 et synchronisé.
-- **Statut P2 :** validé sur Sites 38 et synchronisé.
-- **Statut P3 :** validé sur Sites 42 et synchronisé : routes personnelles, 500 œuvres par lots, marque-page, relecture et compositions finales.
-- **Statut P4 :** validé sur Sites 49 et synchronisé : dimension sociale, identité minimale, retours contextuels et navigation stable.
-- **Statut P5 :** validé sur Sites 66 et synchronisé.
-- **Statut P6 :** validé sur Sites 72 et synchronisé sur `refonte-pre-lot-2`.
+- **Statut P1–P6 :** validés, synchronisés ; voir leurs documents de jalon.
 - **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers le `main` GitHub après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
 - **Prochaine action unique :** recette visuelle de la fondation page œuvre (cinq situations). Après validation explicite, synchroniser la branche dédiée ; le lot 2 backend reste à cadrer séparément.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
