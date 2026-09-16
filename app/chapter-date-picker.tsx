@@ -19,6 +19,11 @@ export function isoToDate(value: string) {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : null;
 }
 
+export function formatReadingDate(value: string) {
+  const date = isoToDate(value);
+  return date ? longDate.format(date) : value;
+}
+
 export function calendarDays(year: number, month: number) {
   const mondayOffset = (new Date(year, month, 1).getDay() + 6) % 7;
   return Array.from({ length: 42 }, (_, index) => new Date(year, month, index + 1 - mondayOffset));

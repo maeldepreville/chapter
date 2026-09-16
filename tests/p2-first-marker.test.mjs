@@ -71,3 +71,46 @@ test("P2 styling keeps the first marker responsive and shares the reading-status
   assert.doesNotMatch(css, /width: calc\(100% \+ 2\.5rem\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });
+
+test("a first En cours or Lu gesture offers the shared optional date after signup and keeps it in the Journal", () => {
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { pathname: "/recette/oeuvre" }, history: { pushState(_state, _title, path) { globalThis.window.location.pathname = path; }, replaceState() {} }, scrollTo() {} };
+  try {
+    for (const [status, dateLabel] of [["En cours", "date de début"], ["Lu", "date de fin"], ["À lire", null]]) {
+      const homeHarness = hookHarness();
+      const guestHarness = hookHarness();
+      const Home = createSourceLoader({ react: homeHarness.react })(source("page.tsx")).default;
+      const { PublicWork } = createSourceLoader({ react: guestHarness.react })(source("p1-public.tsx"));
+      const home = () => homeHarness.render(Home, { initialPublicWorkId: "cartographies" });
+      const guestProps = () => nodes(home(), (node) => node.type?.name === "PublicWork")[0].props;
+      const guest = () => guestHarness.render(PublicWork, guestProps());
+
+      nodes(guest(), (node) => node.type === "button" && textOf(node) === "Ajouter au journal")[0].props.onClick();
+      nodes(guest(), (node) => node.type === "button" && textOf(node) === status)[0].props.onClick();
+      const account = nodes(guest(), (node) => node.type?.name === "AccountCreationDialog")[0];
+      account.props.onComplete({ readerName: "Lectora", email: "lecteur@example.fr" });
+
+      const invitation = guestProps().dateInvitation;
+      if (!dateLabel) { assert.equal(invitation, null); continue; }
+      assert.match(textOf(invitation), new RegExp(`Ajouter une ${dateLabel}`));
+      assert.equal(nodes(guest(), (node) => node.type?.name === "Textarea")[0].props.autoFocus, false);
+
+      if (status === "Lu") {
+        nodes(invitation, (node) => node.type === "button" && textOf(node) === "Plus tard")[0].props.onClick();
+        assert.equal(guestProps().dateInvitation, null);
+        assert.doesNotMatch(textOf(guest()), /Date enregistrée/);
+        continue;
+      }
+
+      nodes(invitation, (node) => node.type === "button" && textOf(node) === "Choisir")[0].props.onClick();
+      nodes(guestProps().dateInvitation, (node) => node.type?.name === "ChapterDatePicker")[0].props.onChange("2026-08-12");
+      nodes(guestProps().dateInvitation, (node) => node.type === "button" && textOf(node) === "Enregistrer la date")[0].props.onClick();
+      assert.match(textOf(guest()), /Date enregistrée · 12 août 2026/);
+      guestProps().onOpenJournal();
+      assert.match(textOf(home()), /Depuis le 12 août 2026/);
+    }
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});

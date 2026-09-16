@@ -20,7 +20,7 @@ import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPers
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { WorkSectionNav, isWorkSectionLocation, workSectionIds } from "./work-section-nav";
-import { ChapterDatePicker, isoToDate } from "./chapter-date-picker";
+import { ChapterDatePicker, formatReadingDate, isoToDate } from "./chapter-date-picker";
 import { AccountCreationDialog } from "./account-creation-dialog";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
@@ -603,6 +603,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setDestinationOverlay(null);
     setCurrentView(view);
     setSearchOpen(false);
+    setDatePrompt(null);
     if (window.location.pathname !== path) window.history.pushState(null, "", path);
     window.scrollTo({ top: 0, behavior: "instant" });
   };
@@ -617,6 +618,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setSelectedWorkId(work.id);
     setCurrentView("work");
     setSearchOpen(false);
+    setDatePrompt(null);
     const path = `/oeuvres/${work.id}`;
     if (window.location.pathname !== path) window.history.pushState(null, "", path);
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -674,6 +676,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setDestinationOverlay(null);
     setAccountOpen(false);
     setSearchOpen(false);
+    setDatePrompt(null);
     if (destination === "profile") setProfileOwner("self");
     setCurrentView(destination);
     const path = destination === "journal" ? "/journal" : destination === "library" ? "/bibliotheque" : PUBLIC_PROFILE_PATH;
@@ -989,9 +992,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const dateLabel = datePrompt === "start" ? "date de début" : "date de fin";
-  const displayReadingDate = entry.readingDate && /^\d{4}-\d{2}-\d{2}$/.test(entry.readingDate)
-    ? new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${entry.readingDate}T12:00:00`))
-    : entry.readingDate;
+  const displayReadingDate = formatReadingDate(entry.readingDate);
 
   const openStatusMenu = (origin: StatusOrigin, workId: WorkId) => {
     setStatusOrigin(origin);
@@ -1192,15 +1193,22 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               work={selectedWork}
               activeSection={activeSection}
               activated={publicActivated}
-              record={publicFirstMarkers[selectedWork.id]}
+              record={publicFirstMarkers[selectedWork.id] ? { ...publicFirstMarkers[selectedWork.id], readingDate: entries[selectedWork.id]?.readingDate ?? "" } : undefined}
+              dateInvitation={renderDateInvitation("opening", selectedWork.id)}
               backLabel={navigationBackLabel("Retour à Découvrir")}
-              onBack={() => restoreNavigation(() => openPublicView("discover"))}
+              onBack={() => { setDatePrompt(null); restoreNavigation(() => openPublicView("discover")); }}
               onActivate={(status) => {
                 setPublicActivated(true);
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
+                if (status === "À lire") updateEntryFor(selectedWork.id, { readingDate: "" });
+                setStatusOrigin("opening");
+                setStatusWorkId(selectedWork.id);
+                setCustomDateOpen(false);
+                setDateDraft("");
+                setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
               }}
               onCreateAccount={(readerName) => { setPublicName(readerName); setPublicProfileName(readerName); setPublicIdentityReady(true); }}
-              onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
+              onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { ...current[selectedWork.id], status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
               onOpenJournal={() => enterPersonalSpace("journal")}
               onNotify={(label) => showFeedback({ kind: "saved", label, detail: "Votre action a bien été prise en compte." })}
               social={(
@@ -1285,7 +1293,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                         <span className="current-reading-copy">
                           <strong>{work.title}</strong>
                           <small>{work.author}</small>
-                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? "Relecture en cours" : entries[work.id]?.readingDate ? `Depuis le ${entries[work.id]?.readingDate}` : "Lecture en cours"}</span>
+                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? "Relecture en cours" : entries[work.id]?.readingDate ? `Depuis le ${formatReadingDate(entries[work.id].readingDate)}` : "Lecture en cours"}</span>
                         </span>
                         {entries[work.id]?.progress && renderReadingBookmark(entries[work.id].progress, true)}
                       </button>

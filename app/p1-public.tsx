@@ -12,6 +12,7 @@ import { staticAsset } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
 import { AccountCreationDialog } from "./account-creation-dialog";
 import { WorkSectionNav } from "./work-section-nav";
+import { formatReadingDate } from "./chapter-date-picker";
 
 type PublicViewProps = {
   works: readonly Work[];
@@ -215,7 +216,7 @@ export function PublicSearch({ works, onOpenWork, query: controlledQuery, onQuer
   );
 }
 
-export type FirstMarkerRecord = { status: ReadingStatus; marker: string };
+export type FirstMarkerRecord = { status: ReadingStatus; marker: string; readingDate?: string };
 
 const personalIntroContent = {
   journal: {
@@ -288,7 +289,7 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   );
 }
 
-export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", activeSection = "about", social }: {
+export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", activeSection = "about", dateInvitation, social }: {
   work: Work;
   onBack: () => void;
   onActivate: (status: ReadingStatus) => void;
@@ -300,6 +301,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
   record?: FirstMarkerRecord;
   backLabel?: string;
   activeSection?: string;
+  dateInvitation?: ReactNode;
   social?: ReactNode;
 }) {
   const [statusOpen, setStatusOpen] = useState(false);
@@ -354,6 +356,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
             {statusOpen && <div className="status-popover" id="status-popover-opening-public" role="dialog" aria-label="Choisir un statut de lecture"><div className="popover-heading"><strong>Où en êtes-vous ?</strong><button type="button" aria-label="Fermer" onClick={() => setStatusOpen(false)}>×</button></div>{(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => <button className={record?.status === status ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>)}</div>}
           </div></div>
           <p className="work-opening-privacy">Ma lecture · privée, visible uniquement par vous</p>
+          {dateInvitation}
           <div className="community-rating" aria-label={`Note moyenne de ${work.rating} sur 5`}><span aria-hidden="true">★★★★☆</span><strong>{work.rating}</strong><span>{work.ratingCount}</span></div>
         </div>
       </header>
@@ -368,7 +371,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
 
         <section id="journal" className="page-section work-chapter" aria-labelledby="p1-personal-title">
           <div className="section-heading"><p className="section-number">02</p><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2><p>Statut, repère et note restent visibles uniquement par vous.</p></div></div>
-          <div className="journal-row"><div><p className="row-label">Ma lecture</p><p className="row-value">{record?.status ?? "Pas encore ajoutée"}</p><p className="privacy-note">{activated ? "Votre repère est privé." : "Un espace sera créé au premier geste personnel."}</p></div><button className="text-action" type="button" onClick={() => { document.querySelector(".p1-public-work .opening-actions")?.scrollIntoView({ behavior: "smooth", block: "center" }); setStatusOpen(true); }}>{record?.status ? "Modifier" : "Ajouter au journal"}</button></div>
+          <div className="journal-row"><div><p className="row-label">Ma lecture</p><p className="row-value">{record?.status ?? "Pas encore ajoutée"}</p>{record?.readingDate && <p className="privacy-note">Date enregistrée · {formatReadingDate(record.readingDate)}</p>}<p className="privacy-note">{activated ? "Votre repère est privé." : "Un espace sera créé au premier geste personnel."}</p></div><button className="text-action" type="button" onClick={() => { document.querySelector(".p1-public-work .opening-actions")?.scrollIntoView({ behavior: "smooth", block: "center" }); setStatusOpen(true); }}>{record?.status ? "Modifier" : "Ajouter au journal"}</button></div>
           {!activated && pendingStatus && !authOpen && (
             <div className="p2-pending" role="status">
               <span><small>Geste conservé</small><strong>{pendingStatus}</strong></span>
@@ -385,7 +388,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
               {markerOpen ? (
                 <div className="p2-marker-editor">
                   <label htmlFor="p2-marker">Qu’aimeriez-vous garder de cette lecture ?</label>
-                  <Textarea id="p2-marker" autoFocus maxLength={500} value={markerDraft} onChange={(event) => setMarkerDraft(event.target.value)} placeholder="Une phrase, une impression, une idée…" />
+                  <Textarea id="p2-marker" autoFocus={!dateInvitation} maxLength={500} value={markerDraft} onChange={(event) => setMarkerDraft(event.target.value)} placeholder="Une phrase, une impression, une idée…" />
                   <div><button type="button" onClick={() => { setMarkerDraft(record.marker); setMarkerOpen(false); }}>Plus tard</button><Button disabled={!markerDraft.trim()} onClick={saveMarker}>Enregistrer le repère</Button></div>
                 </div>
               ) : record.marker ? (
