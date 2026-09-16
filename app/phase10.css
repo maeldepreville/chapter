@@ -432,7 +432,7 @@
 }
 .profile-section-link { display: flex; justify-content: space-between; width: 100%; padding: 0 0 0.9rem; background: transparent; border: 0; font-family: var(--font-editorial); font-size: 1.2rem; cursor: pointer; }
 .profile-honors-band .profile-section-link { align-items: end; padding: 0; text-align: left; }
-.profile-honors-band .profile-section-link > span:first-child { display: grid; gap: 0.2rem; }
+.profile-honors-band .profile-section-link > span:first-child { display: grid; gap: 0.4rem; }
 .profile-honors-band .profile-section-link small { color: var(--brick); font-family: var(--font-interface); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.11em; text-transform: uppercase; }
 .profile-honors-band .profile-section-link strong { font-size: clamp(1.65rem, 2.4vw, 2.25rem); font-weight: 450; line-height: 1; }
 .profile-honors-band .profile-section-link > span:last-child { color: var(--brick); font-family: var(--font-interface); font-size: 0.75rem; font-weight: 600; }
@@ -490,9 +490,9 @@
   min-width: 0;
   margin-top: clamp(5rem, 8vw, 7rem);
 }
-.profile-wide-content > .profile-section:first-child { padding-top: clamp(3.5rem, 6vw, 5rem); }
 .profile-section { padding: 1rem 0 4.5rem; border-bottom: 1px solid var(--line); }
 .profile-section + .profile-section { padding-top: 4.5rem; }
+.profile-wide-content > .profile-section { padding-top: clamp(3.5rem, 6vw, 5rem); }
 .profile-section:last-child { border-bottom: 0; }
 .profile-section-heading { margin-bottom: 2rem; }
 .profile-section-heading .eyebrow { margin-bottom: 0.4rem; }
@@ -833,6 +833,7 @@
 .profile-section-heading--editable,
 .profile-library-portrait .profile-section-heading--editable { display: flex; grid-template-columns: none; align-items: flex-start; justify-content: space-between; gap: 1.25rem; }
 .profile-section-heading--editable > div { min-width: 0; }
+.profile-library-portrait .profile-section-heading--editable > div > .eyebrow { margin-bottom: 0.4rem; }
 .profile-library-portrait .profile-section-heading--editable > div > p:last-child { margin: 0 0 0.25rem; color: var(--muted); font-family: var(--font-editorial); font-size: 0.95rem; line-height: 1.45; }
 .profile-section-heading--editable > .text-action { flex: 0 0 auto; margin-top: 0.1rem; }
 
