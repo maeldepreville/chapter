@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 
 const monthNames = Array.from({ length: 12 }, (_, month) =>
   new Intl.DateTimeFormat("fr-FR", { month: "long" }).format(new Date(2026, month, 1)));
@@ -37,6 +37,12 @@ export function ChapterDatePicker({ value, onChange, label }: { value: string; o
   });
   const [yearDraft, setYearDraft] = useState(String(month.getFullYear()));
   const [focusDate, setFocusDate] = useState(value || dateToISO(today));
+  const [monthMenuOpen, setMonthMenuOpen] = useState(false);
+  const [activeMonth, setActiveMonth] = useState(month.getMonth());
+  const monthMenuId = useId();
+  const monthControlRef = useRef<HTMLSpanElement>(null);
+  const monthTriggerRef = useRef<HTMLButtonElement>(null);
+  const monthOptionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const gridRef = useRef<HTMLDivElement>(null);
   const keyboardMove = useRef(false);
   const selected = isoToDate(value);
@@ -47,6 +53,16 @@ export function ChapterDatePicker({ value, onChange, label }: { value: string; o
     gridRef.current?.querySelector<HTMLButtonElement>(`[data-date="${focusDate}"]`)?.focus();
     keyboardMove.current = false;
   }, [focusDate, month]);
+
+  useEffect(() => {
+    if (!monthMenuOpen) return;
+    monthOptionRefs.current[activeMonth]?.focus();
+    const closeOutside = (event: PointerEvent) => {
+      if (!monthControlRef.current?.contains(event.target as Node)) setMonthMenuOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, [activeMonth, monthMenuOpen]);
 
   const showMonth = (year: number, monthIndex: number, preserveFocus = false) => {
     const next = new Date(year, monthIndex, 1);
@@ -60,6 +76,30 @@ export function ChapterDatePicker({ value, onChange, label }: { value: string; o
     const year = Number(yearDraft);
     if (Number.isInteger(year) && year >= 100 && year <= 9999) showMonth(year, month.getMonth());
     else setYearDraft(String(month.getFullYear()));
+  };
+
+  const chooseMonth = (monthIndex: number) => {
+    showMonth(month.getFullYear(), monthIndex);
+    setActiveMonth(monthIndex);
+    setMonthMenuOpen(false);
+    monthTriggerRef.current?.focus();
+  };
+
+  const moveMonthChoice = (event: KeyboardEvent<HTMLButtonElement>, monthIndex: number) => {
+    let next: number | null = null;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (monthIndex + 11) % 12;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (monthIndex + 1) % 12;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = 11;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setMonthMenuOpen(false);
+      monthTriggerRef.current?.focus();
+      return;
+    }
+    if (next === null) return;
+    event.preventDefault();
+    setActiveMonth(next);
   };
 
   const moveFocus = (event: KeyboardEvent<HTMLButtonElement>, date: Date) => {
@@ -86,7 +126,39 @@ export function ChapterDatePicker({ value, onChange, label }: { value: string; o
     <div className="chapter-date-picker-heading">
       <button type="button" className="chapter-date-picker-arrow" aria-label="Mois précédent" disabled={month.getFullYear() === 100 && month.getMonth() === 0} onClick={() => showMonth(month.getFullYear(), month.getMonth() - 1)}>←</button>
       <div className="chapter-date-picker-period">
-        <span className="chapter-date-picker-month"><select aria-label="Mois" value={month.getMonth()} onChange={(event) => showMonth(month.getFullYear(), Number(event.target.value))}>{monthNames.map((name, index) => <option key={name} value={index}>{name}</option>)}</select></span>
+        <span className="chapter-date-picker-month" ref={monthControlRef} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setMonthMenuOpen(false); }}>
+          <button
+            ref={monthTriggerRef}
+            type="button"
+            className="chapter-date-picker-month-trigger"
+            aria-label={`Choisir le mois, ${monthNames[month.getMonth()]} sélectionné`}
+            aria-haspopup="listbox"
+            aria-expanded={monthMenuOpen}
+            aria-controls={monthMenuId}
+            onClick={() => { setActiveMonth(month.getMonth()); setMonthMenuOpen((open) => !open); }}
+            onKeyDown={(event) => {
+              if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+              event.preventDefault();
+              setActiveMonth(event.key === "ArrowUp" ? 11 : month.getMonth());
+              setMonthMenuOpen(true);
+            }}
+          >
+            <span>{monthNames[month.getMonth()]}</span><span aria-hidden="true">⌄</span>
+          </button>
+          {monthMenuOpen && <span className="chapter-date-picker-month-menu" id={monthMenuId} role="listbox" aria-label="Mois de l’année">
+            {monthNames.map((name, index) => <button
+              ref={(node) => { monthOptionRefs.current[index] = node; }}
+              type="button"
+              role="option"
+              aria-selected={index === month.getMonth()}
+              tabIndex={index === activeMonth ? 0 : -1}
+              className={index === month.getMonth() ? "selected" : ""}
+              key={name}
+              onClick={() => chooseMonth(index)}
+              onKeyDown={(event) => moveMonthChoice(event, index)}
+            >{name}</button>)}
+          </span>}
+        </span>
         <input aria-label="Année" type="number" inputMode="numeric" min="100" max="9999" value={yearDraft} onChange={(event) => setYearDraft(event.target.value)} onBlur={commitYear} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); commitYear(); event.currentTarget.blur(); } }} />
       </div>
       <button type="button" className="chapter-date-picker-arrow" aria-label="Mois suivant" disabled={month.getFullYear() === 9999 && month.getMonth() === 11} onClick={() => showMonth(month.getFullYear(), month.getMonth() + 1)}>→</button>

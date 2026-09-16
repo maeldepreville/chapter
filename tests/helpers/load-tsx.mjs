@@ -40,6 +40,10 @@ export function hookHarness() {
       const index = cursor++;
       if (!(index in slots)) slots[index] = typeof initial === "function" ? initial() : initial;
       return [slots[index], (next) => { slots[index] = typeof next === "function" ? next(slots[index]) : next; }];
+    }, useId() {
+      const index = cursor++;
+      if (!(index in slots)) slots[index] = `test-id-${index}`;
+      return slots[index];
     }, useRef(initial) {
       const index = cursor++;
       if (!(index in slots)) slots[index] = { current: initial };

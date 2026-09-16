@@ -16,8 +16,13 @@
 .chapter-date-picker-arrow:disabled { opacity: 0.45; cursor: not-allowed; }
 .chapter-date-picker-period { display: flex; justify-content: center; gap: 0.4rem; align-items: center; min-width: 0; }
 .chapter-date-picker-month { position: relative; min-width: 0; }
-.chapter-date-picker-month::after { position: absolute; top: 50%; right: 0.3rem; content: "⌄"; color: var(--brick); font-family: var(--font-interface); font-size: 0.9rem; line-height: 1; transform: translateY(-58%); pointer-events: none; }
-.chapter-date-picker-month select { max-width: 100%; padding: 0.25rem 1.25rem 0.25rem 0.2rem; appearance: none; background: transparent; border: 0; cursor: pointer; color: var(--ink); font-family: var(--font-editorial); font-size: 1.35rem; line-height: 1.2; }
+.chapter-date-picker-month-trigger { display: flex; gap: 0.42rem; align-items: center; max-width: 100%; padding: 0.25rem 0.2rem; background: transparent; border: 0; cursor: pointer; color: var(--ink); font-family: var(--font-editorial); font-size: 1.35rem; line-height: 1.2; }
+.chapter-date-picker-month-trigger > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chapter-date-picker-month-trigger > span:last-child { color: var(--brick); font-family: var(--font-interface); font-size: 0.9rem; line-height: 1; transform: translateY(-0.08rem); transition: transform 160ms ease; }
+.chapter-date-picker-month-trigger[aria-expanded="true"] > span:last-child { transform: rotate(180deg) translateY(0.08rem); }
+.chapter-date-picker-month-menu { position: absolute; z-index: 4; top: calc(100% + 0.55rem); left: 50%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.2rem; width: min(19rem, calc(100vw - 3rem)); padding: 0.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; box-shadow: 0 1.2rem 2.5rem rgb(36 33 31 / 0.16); transform: translateX(-50%); }
+.chapter-date-picker-month-menu button { min-height: 2.35rem; padding: 0.45rem 0.35rem; background: transparent; border: 1px solid transparent; border-radius: 0.3rem; cursor: pointer; color: var(--ink); font-family: var(--font-interface); font-size: 0.78rem; text-align: left; text-transform: capitalize; }
+.chapter-date-picker-month-menu button.selected { background: color-mix(in srgb, var(--brick) 11%, var(--surface)); border-color: color-mix(in srgb, var(--brick) 35%, var(--line)); color: var(--brick-dark); font-weight: 700; }
 .chapter-date-picker-period input { width: 4.1rem; padding: 0.3rem 0.15rem; background: var(--paper); border: 1px solid var(--line); border-radius: 0.25rem; color: var(--ink); font-size: 0.88rem; text-align: center; font-variant-numeric: tabular-nums; }
 .chapter-date-picker-period input::-webkit-inner-spin-button, .chapter-date-picker-period input::-webkit-outer-spin-button { appearance: none; margin: 0; }
 .chapter-date-picker-period input[type="number"] { appearance: textfield; }
@@ -39,7 +44,7 @@
 .date-invitation--calendar .date-field-save { background: var(--brick); border: 1px solid var(--brick); color: #fffaf5; }
 .date-invitation--calendar .date-field-save:disabled { background: var(--paper); border-color: var(--line); color: var(--muted); cursor: not-allowed; }
 @media (hover: hover) and (pointer: fine) {
-  .chapter-date-picker-arrow:not(:disabled):hover, .chapter-date-picker-days button:not(.selected, :disabled):hover, .date-invitation--calendar .date-field-back:hover { background: var(--paper); color: var(--brick); }
+  .chapter-date-picker-arrow:not(:disabled):hover, .chapter-date-picker-days button:not(.selected, :disabled):hover, .chapter-date-picker-month-menu button:not(.selected):hover, .date-invitation--calendar .date-field-back:hover { background: var(--paper); color: var(--brick); }
   .date-invitation--calendar .date-field-save:not(:disabled):hover { background: var(--brick-dark); }
 }
 @media (max-width: 899px) {
@@ -48,5 +53,5 @@
   .date-invitation--calendar .date-field-actions { width: min(21rem, 100%); margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .chapter-date-picker-arrow, .chapter-date-picker-days button { transition: none; }
+  .chapter-date-picker-arrow, .chapter-date-picker-days button, .chapter-date-picker-month-trigger > span:last-child { transition: none; }
 }

@@ -1591,7 +1591,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         </Modal>
       )}</Fade>
 
-      {!p1Public && <Fade show={settingsOpen} kind="modal">{settingsOpen && (
+      {personalShellReady && <Fade show={settingsOpen} kind="modal">{settingsOpen && (
         <Modal className="trust-overlay" labelledBy="trust-title" initialFocus=".trust-card-close" onRequestClose={closeSettings}>
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer les réglages" onClick={closeSettings} />
           <TrustSettings

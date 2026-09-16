@@ -114,3 +114,41 @@ test("a first En cours or Lu gesture offers the shared optional date after signu
     else globalThis.window = previousWindow;
   }
 });
+
+test("settings open immediately in the connected shell created from a public first gesture", () => {
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { pathname: "/recette/oeuvre" }, history: { pushState(_state, _title, path) { globalThis.window.location.pathname = path; }, replaceState() {} }, scrollTo() {} };
+  try {
+    const homeHarness = hookHarness();
+    const guestHarness = hookHarness();
+    const Home = createSourceLoader({ react: homeHarness.react })(source("page.tsx")).default;
+    const { PublicWork } = createSourceLoader({ react: guestHarness.react })(source("p1-public.tsx"));
+    const home = () => homeHarness.render(Home, { initialPublicWorkId: "cartographies" });
+    const guestProps = () => nodes(home(), (node) => node.type?.name === "PublicWork")[0].props;
+    const guest = () => guestHarness.render(PublicWork, guestProps());
+
+    nodes(guest(), (node) => node.type === "button" && textOf(node) === "Ajouter au journal")[0].props.onClick();
+    nodes(guest(), (node) => node.type === "button" && textOf(node) === "À lire")[0].props.onClick();
+    nodes(guest(), (node) => node.type?.name === "AccountCreationDialog")[0].props.onComplete({ readerName: "Lectora", email: "lecteur@example.fr" });
+
+    let tree = home();
+    nodes(tree, (node) => node.type === "button" && node.props?.["aria-label"]?.startsWith("Ouvrir le compte"))[0].props.onClick();
+    tree = home();
+    nodes(tree, (node) => node.type === "button" && textOf(node) === "Réglages et données")[0].props.onClick();
+    tree = home();
+    assert.equal(nodes(tree, (node) => node.type?.name === "TrustSettings").length, 1);
+
+    nodes(tree, (node) => node.type?.name === "TrustSettings")[0].props.onClose();
+    tree = home();
+    assert.equal(nodes(tree, (node) => node.type?.name === "TrustSettings").length, 0);
+    nodes(tree, (node) => node.type === "button" && node.props?.["aria-label"]?.startsWith("Ouvrir le compte"))[0].props.onClick();
+    tree = home();
+    nodes(tree, (node) => node.type === "button" && textOf(node) === "Voir mon profil")[0].props.onClick();
+    tree = home();
+    assert.equal(nodes(tree, (node) => node.type?.name === "ProfileView").length, 1);
+    assert.equal(nodes(tree, (node) => node.type?.name === "TrustSettings").length, 0);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+});
