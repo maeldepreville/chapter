@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 12 septembre 2026
+Dernière mise à jour : 16 septembre 2026
 
 ## Cadre de collaboration
 
@@ -17,6 +17,12 @@ Dernière mise à jour : 12 septembre 2026
 - Les choix produit et UI doivent rechercher un équilibre explicite entre valeur pour le lecteur, acquisition, activation et rétention. Les leviers de croissance doivent être étayés par des références crédibles et assortis de garde-fous contre les métriques trompeuses et les interfaces manipulatrices.
 - À chaque validation explicite d'un jalon, synchroniser dans le même tour le périmètre accepté et ses documents vers `maeldepreville/chapter`, puis vérifier le commit distant. La cible est `refonte-pre-lot-2` pour P0 à P6 ; `main` n'accueille la refonte qu'après recette et validation explicite de P7. Cette autorisation ne permet ni push forcé, ni contournement de protection, ni inclusion de travaux non validés. La publication Sites reste distincte.
 - Méthode confirmée le 27 août 2026 pour les prochains jalons : **synchronisation directe par l'agent**, via Git authentifié ou la connexion GitHub intégrée, sans bundle ni manipulation utilisateur par défaut. Le connecteur peut créer les nouveaux commits sur la référence distante vérifiée, puis l'agent récupère ces mêmes commits localement et contrôle la concordance. Le transfert manuel de phase 10 reste une exception liée à la préservation exacte d'historiques existants ; tout nouveau recours manuel nécessite un blocage explicite et l'accord de l'utilisateur. Les règles de `../../AGENTS.md` détaillent les contrôles et la protection des historiques.
+
+## Fondations avant première publication — 16 septembre 2026
+
+- Trois contrats seulement sont considérés comme structurels avant la première ouverture du produit : séparation `L’œuvre / Ma lecture / Autour de l’œuvre`, conservation de chaque expérience de lecture sans écrasement, puis séparation stricte entre mémoire privée et publication publique.
+- La fondation page œuvre est validée sur Sites 93. La conservation des expériences devient le prochain jalon ; le contrat de publication autonome vient ensuite, car Chapter doit d'abord savoir ce qu'il garde avant de décider ce qu'il fait circuler.
+- Ces deux étapes, leurs effets pour les personas, leurs invariants et leurs critères de sortie sont détaillés dans [`AVANT_PREMIERE_PUBLICATION.md`](./AVANT_PREMIERE_PUBLICATION.md). Elles doivent être terminées avant la première publication du produit, sans préjuger de la technologie du backend.
 
 ## Refonte visible pré-lot 2 — cadrage du 5 septembre 2026
 

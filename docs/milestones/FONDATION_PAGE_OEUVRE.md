@@ -1,6 +1,6 @@
 # Chapter — fondation de la page œuvre (validée)
 
-Statut : recette visuelle validée le 16 septembre 2026 et synchronisée sur la branche GitHub dédiée `fondations-page-oeuvre-2026-09-15`, sans fusion vers `main`. Candidate finale : Sites 93. Base acceptée : Sites 84 / `main`.
+Statut : recette visuelle validée le 16 septembre 2026, prête à être synchronisée sur la branche GitHub dédiée `fondations-page-oeuvre-2026-09-15`, sans fusion vers `main`. Candidate finale : Sites 93. Base acceptée : Sites 84 / `main`.
 
 ## Contrat produit de cette étape
 
@@ -32,4 +32,4 @@ Preuves automatisées de la candidate actuelle : 188 tests, lint et construction
 
 ## Hors périmètre et prochaine action
 
-Authentification, persistance serveur, permissions réelles, modération, migrations, et historique complet de chaque lecture sont différés. Ce périmètre est désormais figé sur la branche GitHub dédiée ; les évolutions ultérieures peuvent partir de cette fondation sans fusion automatique vers `main`.
+Authentification, persistance serveur, permissions réelles, modération, migrations, et historique complet de chaque lecture sont différés. Ce périmètre est validé et prêt pour la branche GitHub dédiée, sans fusion automatique vers `main`. Les deux fondations restantes avant première publication sont cadrées dans `docs/product/AVANT_PREMIERE_PUBLICATION.md`.

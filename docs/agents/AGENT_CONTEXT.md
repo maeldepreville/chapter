@@ -1,17 +1,17 @@
 # Chapter — contexte courant compact
 
-Mise à jour : 15 septembre 2026.
+Mise à jour : 16 septembre 2026.
 
 Ce document résume l'état utile.
 
 ## État actuel
 
 - **Base acceptée :** la version Sites 84 clôt la refonte visible pré-lot 2 ; voir `docs/milestones/P7_RECETTE_COMPLETE.md`.
-- **Phase active :** fondation de la page œuvre candidate sur Sites, sans validation ni backend ; voir `docs/milestones/FONDATION_PAGE_OEUVRE.md`.
+- **Phase active :** fondation de la page œuvre validée sur Sites 93, sans backend ; voir `docs/milestones/FONDATION_PAGE_OEUVRE.md`.
 - **Branche active :** `fondations-page-oeuvre-2026-09-15` créée sur GitHub depuis `main`. La candidate est dans la source technique du Site, pas encore synchronisée sur cette branche GitHub.
 - **Statut P1–P6 :** validés, synchronisés ; voir leurs documents de jalon.
 - **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers le `main` GitHub après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
-- **Prochaine action unique :** recette visuelle de la fondation page œuvre (cinq situations). Après validation explicite, synchroniser la branche dédiée ; le lot 2 backend reste à cadrer séparément.
+- **Prochaine action unique :** synchroniser la fondation page œuvre validée sur sa branche dédiée, puis ouvrir dans un nouveau jalon la fondation 2 « expériences de lecture conservées ». La fondation 3 « publication distincte de la mémoire privée » vient ensuite. Leur contrat est dans `docs/product/AVANT_PREMIERE_PUBLICATION.md`.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
 
@@ -59,6 +59,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Architecture ou fichiers à modifier | `docs/engineering/CODEMAP.md`, puis les symboles concernés avec `rg` |
 | Fixtures ou future source backend | `docs/engineering/PROTOTYPE_DATA_REGISTER.md` |
 | Acquisition et croissance | `docs/product/REFONTE_PRE_LOT_2.md`, puis `docs/product/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
+| Fondations restantes avant première publication | `docs/product/AVANT_PREMIERE_PUBLICATION.md`, puis le jalon actif |
 | Créer ou évaluer un asset | `docs/design/ASSET_SYSTEM.md`, puis la famille concernée dans `docs/product/REFONTE_PRE_LOT_2.md` |
 | Synchronisation GitHub ou publication | `docs/agents/AGENT_WORKFLOW.md` et l'état Git/Sites réel |
 | Optimisation des agents | `docs/agents/AI_AGENT_CONTEXT_STRATEGY.md` |
