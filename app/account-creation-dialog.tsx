@@ -8,20 +8,21 @@ type ChapterAccount = {
   email: string;
 };
 
-export function AccountCreationDialog({ open, eyebrow, title, description, submitLabel, initialReaderName = "", onClose, onComplete }: {
+export function AccountCreationDialog({ open, eyebrow, title, description, submitLabel, initialReaderName = "", requireReaderName = true, onClose, onComplete }: {
   open: boolean;
   eyebrow: string;
   title: string;
   description: ReactNode;
   submitLabel: string;
   initialReaderName?: string;
+  requireReaderName?: boolean;
   onClose: () => void;
   onComplete: (account: ChapterAccount) => void;
 }) {
   const [readerName, setReaderName] = useState(initialReaderName);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const valid = readerName.trim().length >= 2 && email.trim().length > 0 && password.length >= 8;
+  const valid = (!requireReaderName || readerName.trim().length >= 2) && email.trim().length > 0 && password.length >= 8;
 
   if (!open) return null;
 
@@ -31,7 +32,7 @@ export function AccountCreationDialog({ open, eyebrow, title, description, submi
   };
 
   return (
-    <Dialog titleId="chapter-account-title" descriptionId="chapter-account-description" initialFocus="#chapter-reader-name" onRequestClose={onClose} className="p2-auth-dialog">
+    <Dialog titleId="chapter-account-title" descriptionId="chapter-account-description" initialFocus={requireReaderName ? "#chapter-reader-name" : "#chapter-account-email"} onRequestClose={onClose} className="p2-auth-dialog">
       <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la création du compte" onClick={onClose} />
       <section className="p2-auth-panel">
         <button className="p2-auth-close" type="button" aria-label="Fermer" onClick={onClose}>×</button>
@@ -41,13 +42,29 @@ export function AccountCreationDialog({ open, eyebrow, title, description, submi
           <p id="chapter-account-description">{description}</p>
         </div>
         <form onSubmit={(event) => { event.preventDefault(); finish(); }}>
-          <Field label="Nom de lecteur" hint="Votre signature publique, unique sur Chapter"><Input id="chapter-reader-name" required minLength={2} maxLength={40} autoComplete="nickname" value={readerName} onChange={(event) => setReaderName(event.target.value)} placeholder="Ex. Maël des marges" /></Field>
-          <Field label="Adresse e-mail"><Input required autoComplete="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></Field>
+          {requireReaderName && <Field label="Nom de lecteur" hint="Votre signature publique, unique sur Chapter"><Input id="chapter-reader-name" required minLength={2} maxLength={40} autoComplete="nickname" value={readerName} onChange={(event) => setReaderName(event.target.value)} placeholder="Ex. Maël des marges" /></Field>}
+          <Field label="Adresse e-mail"><Input id="chapter-account-email" required autoComplete="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></Field>
           <Field label="Mot de passe" hint="8 caractères minimum"><Input required minLength={8} autoComplete="new-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></Field>
-          <p className="p2-auth-note">Ce nom signera votre profil et vos contributions publiques. Votre Journal et votre Bibliothèque restent privés.</p>
+          <p className="p2-auth-note">{requireReaderName ? "Ce nom signera votre profil et vos contributions publiques. Votre Journal et votre Bibliothèque restent privés." : "Votre Journal et votre Bibliothèque restent privés. Un Nom de lecteur sera demandé seulement si vous choisissez de publier ou d’interagir."}</p>
           <div className="p2-auth-actions"><button type="button" onClick={onClose}>Pas maintenant</button><Button type="submit" disabled={!valid}>{submitLabel}</Button></div>
         </form>
       </section>
     </Dialog>
   );
+}
+
+export function PublicNameDialog({ open, onClose, onComplete }: { open: boolean; onClose: () => void; onComplete: (name: string) => void }) {
+  const [name, setName] = useState("");
+  if (!open) return null;
+  return <Dialog titleId="public-name-title" descriptionId="public-name-description" initialFocus="#first-public-name" onRequestClose={onClose} className="p2-auth-dialog">
+    <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer le choix du nom" onClick={onClose} />
+    <section className="p2-auth-panel">
+      <button className="p2-auth-close" type="button" aria-label="Fermer" onClick={onClose}>×</button>
+      <div className="p2-auth-heading"><p className="eyebrow">Premier geste public</p><h2 id="public-name-title">Comment souhaitez-vous signer ?</h2><p id="public-name-description">Votre Nom de lecteur apparaîtra avec vos critiques et réponses. Vos notes et votre Journal resteront privés.</p></div>
+      <form onSubmit={(event) => { event.preventDefault(); if (name.trim().length >= 2) onComplete(name.trim()); }}>
+        <Field label="Nom de lecteur" hint="Signature publique, destinée à être unique sur Chapter"><Input id="first-public-name" required minLength={2} maxLength={40} autoComplete="nickname" value={name} onChange={(event) => setName(event.target.value)} placeholder="Ex. Maël des marges" /></Field>
+        <div className="p2-auth-actions"><button type="button" onClick={onClose}>Pas maintenant</button><Button type="submit" disabled={name.trim().length < 2}>Continuer</Button></div>
+      </form>
+    </section>
+  </Dialog>;
 }

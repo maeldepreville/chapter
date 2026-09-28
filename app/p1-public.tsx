@@ -419,7 +419,7 @@ export function PublicWork({ work, onBack, onActivate, onStopForNow, onSaveMarke
       </div>
 
       {statusOpen && <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => setStatusOpen(false)} />}
-      <AccountCreationDialog open={authOpen && Boolean(pendingStatus)} eyebrow="Votre geste vous attend" title="Gardons ce premier repère." description={<><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel="Créer mon espace" onClose={() => setAuthOpen(false)} onComplete={({ readerName }) => finishAccount(readerName)} />
+      <AccountCreationDialog open={authOpen && Boolean(pendingStatus)} eyebrow="Votre geste vous attend" title="Gardons ce premier repère." description={<><strong>{work.title}</strong> sera ajouté avec le statut <strong>{pendingStatus}</strong>. Après la création de votre espace privé, vous reviendrez exactement ici.</>} submitLabel="Créer mon espace" requireReaderName={false} onClose={() => setAuthOpen(false)} onComplete={({ readerName }) => finishAccount(readerName)} />
       {!onNotify && feedback && <div className="p2-feedback" role="status" aria-live="polite"><span>{feedback}</span><button type="button" aria-label="Fermer" onClick={() => setFeedback("")}>×</button></div>}
     </article>
   );

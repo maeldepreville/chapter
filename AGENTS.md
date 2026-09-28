@@ -21,7 +21,7 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 - Exécuter d'abord les tests ciblés, puis les vérifications complètes adaptées au périmètre. Distinguer preuve automatisée, inspection statique et recette navigateur réelle.
 - La mise à disposition des candidates sur le Site de recette est autorisée durablement ; préserver son accès existant et ne jamais en déduire une validation. Toute autre publication, modification de visibilité ou action destructive exige son autorisation propre.
 - La version Sites 84 clôt la refonte visible pré-lot 2 sur le `main` GitHub ; la fondation page œuvre est validée sur Sites 93.
-- P0 à P7 et les fondations 1 et 2 sont clos. La fondation 2 « expériences de lecture conservées » est synchronisée sur sa branche dédiée ; la fondation 3 est la prochaine étape avant publication. Le lot 2 backend exige toujours un cadrage séparé. Suivre `docs/agents/AGENT_WORKFLOW.md` pour les synchronisations futures.
+- P0 à P7 et les fondations 2 et 3 sont validés. La fondation 3 est synchronisée sur sa branche dédiée, `fondation-publication-distincte-2026-09-28`, fondée sur la branche validée de fondation 2 ; aucune fusion vers `main` n'a été demandée. Le lot 2 backend exige toujours un cadrage séparé. Suivre `docs/agents/AGENT_WORKFLOW.md` pour les synchronisations futures.
 
 ## Références à la demande
 
@@ -30,5 +30,5 @@ Ce fichier est chargé automatiquement. Il reste volontairement court : les dét
 - Contrat actif de P2 : `docs/milestones/P2_PREMIER_REPERE.md`
 - Procédures de travail, tests, GitHub et publication : `docs/agents/AGENT_WORKFLOW.md`
 - Carte du code : `docs/engineering/CODEMAP.md`
-- Fondation active : `docs/milestones/FONDATION_EXPERIENCES_LECTURE.md`
+- Fondation active : `docs/milestones/FONDATION_PUBLICATION_DISTINCTE.md`
 - Recherche et stratégie de tokens : `docs/agents/AI_AGENT_CONTEXT_STRATEGY.md`

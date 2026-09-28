@@ -1,11 +1,13 @@
 import type { PrototypeActorId } from "./prototype-data";
 
 export type PrototypePublicReview = {
+  id?: string;
   authorId: PrototypeActorId;
   workId: string;
   rating: number;
   date: string;
   text: string;
+  spoiler?: boolean;
 };
 
 export const prototypePublicReviews: readonly PrototypePublicReview[] = [

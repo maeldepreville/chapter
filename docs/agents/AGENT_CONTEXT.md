@@ -6,11 +6,10 @@ Ce document résume l'état utile.
 
 ## État actuel
 
-- **Base acceptée :** la version Sites 84 clôt la refonte visible pré-lot 2 ; voir `docs/milestones/P7_RECETTE_COMPLETE.md`.
-- **Fondation 2 :** « expériences de lecture conservées » validée le 28 septembre 2026 et synchronisée sur la branche dédiée `fondation-experiences-lecture-2026-09-23`, fondée sur `fondations-page-oeuvre-2026-09-15` ; voir `docs/milestones/FONDATION_EXPERIENCES_LECTURE.md`.
+- **Fondations :** la fondation 2 est validée sur `fondation-experiences-lecture-2026-09-23`. La fondation 3 « publication distincte de la mémoire privée » est validée et synchronisée le 28 septembre 2026 sur `fondation-publication-distincte-2026-09-28`, depuis la branche de fondation 2 ; voir `docs/milestones/FONDATION_PUBLICATION_DISTINCTE.md`.
 - **Statut P1–P6 :** validés, synchronisés ; voir leurs documents de jalon.
 - **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers le `main` GitHub après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
-- **Prochaine action unique :** cadrer la fondation 3 « publication publique distincte de la mémoire privée » avant sa candidate ; voir `docs/product/AVANT_PREMIERE_PUBLICATION.md`. Le lot 2 backend reste à cadrer séparément.
+- **Prochaine action unique :** cadrer séparément le lot 2 backend, sans déduire de cette synchronisation son ouverture ou ses choix techniques.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
 
@@ -23,7 +22,7 @@ Ce document résume l'état utile.
 - Journal, Bibliothèque et notes toujours privés. Une critique, une liste ou une conversation publique résulte d'un geste explicite et réversible.
 - Navigation principale : Journal, Bibliothèque, Découvrir et Recherche. Les œuvres, profils, listes, critiques et conversations publiques sont consultables sans compte.
 - Progression facultative et manuelle sous forme de marque-page ; aucun champ de possession.
-- Création d’espace demandée au premier geste personnel ou public : `Nom de lecteur` destiné à être unique, e-mail, mot de passe ; disponibilité et identité stable au backend.
+- Création d’espace au premier geste personnel : e-mail et mot de passe. Le `Nom de lecteur` public est demandé au premier geste public ; son unicité et l'identité stable relèvent du backend.
 - Direction d'atelier éditorial contemporain ; Newsreader + Inter ; couvertures comme couleur principale ; densité adaptée au contexte ; microdesign et mouvement inclus dans la refonte.
 
 Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
@@ -60,6 +59,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Acquisition et croissance | `docs/product/REFONTE_PRE_LOT_2.md`, puis `docs/product/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
 | Fondations restantes avant première publication | `docs/product/AVANT_PREMIERE_PUBLICATION.md`, puis le jalon actif |
 | Fondation 2 — expériences de lecture | `docs/milestones/FONDATION_EXPERIENCES_LECTURE.md`, puis `app/reading-experience-model.ts` |
+| Fondation 3 — publication distincte | `docs/milestones/FONDATION_PUBLICATION_DISTINCTE.md`, puis `app/publication-model.ts` et `app/page.tsx` |
 | Créer ou évaluer un asset | `docs/design/ASSET_SYSTEM.md`, puis la famille concernée dans `docs/product/REFONTE_PRE_LOT_2.md` |
 | Synchronisation GitHub ou publication | `docs/agents/AGENT_WORKFLOW.md` et l'état Git/Sites réel |
 | Optimisation des agents | `docs/agents/AI_AGENT_CONTEXT_STRATEGY.md` |

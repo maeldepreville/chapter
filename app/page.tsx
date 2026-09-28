@@ -21,7 +21,8 @@ import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixture
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
 import { WorkSectionNav, isWorkSectionLocation, workSectionIds } from "./work-section-nav";
 import { ChapterDatePicker, formatReadingDate, isoToDate } from "./chapter-date-picker";
-import { AccountCreationDialog } from "./account-creation-dialog";
+import { AccountCreationDialog, PublicNameDialog } from "./account-creation-dialog";
+import { composePublication, hydratePublication, type Publication } from "./publication-model";
 import { publicWorks } from "./p1-public-fixtures";
 import { TrustSettings, type ChapterExportSnapshot } from "./p5-trust";
 import { staticAsset, warmStaticAssets } from "./static-assets";
@@ -63,7 +64,8 @@ export type PersonalEntry = {
   readingDate: string;
   note: string;
   review: string;
-  reviewPublished: boolean;
+  reviewPublished: boolean; // legacy fixture and import compatibility only
+  publicReview?: Publication;
   rating: number;
   progress?: OptionalProgress;
   completedReadings?: number;
@@ -77,7 +79,7 @@ const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 
 const currentReader = prototypeActors[CURRENT_READER_ID];
 const defaultProfileLists: readonly EditableProfileList[] = publicListIds.map((id) => ({ id, ...publicListCatalog[id], workIds: [...publicListCatalog[id].workIds] }));
 const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
-const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.review && (entry.reviewPublished ?? true));
+const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.publicReview?.text);
 const isInLibrary = (entry: PersonalEntry | undefined) => Boolean(entry?.readingStatus && !entry.libraryHidden);
 
 export const defaultWorks: readonly Work[] = [...coreWorks, ...denseWorks.slice(0, 494)];
@@ -114,6 +116,10 @@ function AccountAvatar({ photo, publicName }: { photo: ProfilePhoto | null; publ
   return photo
     ? <Image src={photo.preview} alt="" fill sizes="44px" unoptimized />
     : <>{initialsFor(publicName)}</>;
+}
+
+function ChapterBrandLogo() {
+  return <Image className="chapter-brand-logo" src="/branding/chapter-logo-horizontal.svg" alt="" width={194} height={58} unoptimized />;
 }
 
 function renderReadingBookmark(progress: OptionalProgress, compact = false) {
@@ -154,6 +160,7 @@ const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(default
 export type InitialData = { works?: readonly Work[]; entries?: Record<string, PersonalEntry>; traces?: readonly JournalTrace[]; view?: View };
 type HomeProps = {
   refined?: boolean;
+  profileCardMaterial?: "smooth" | "canson" | "embossed";
   initialProfileOwner?: ProfileOwner | null;
   initialPublicListId?: PublicListId | null;
   initialPublicListOwner?: ProfileOwner;
@@ -163,7 +170,7 @@ type HomeProps = {
   initialSettingsOpen?: boolean;
 };
 
-export default function Home({ refined = false, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null, initialSettingsOpen = false }: HomeProps) {
+export default function Home({ refined = false, profileCardMaterial, initialProfileOwner = null, initialPublicListId = null, initialPublicListOwner = "lina", initialData, initialPublicView, initialPublicWorkId = null, initialSettingsOpen = false }: HomeProps) {
   const startsPublic = !initialData;
   const [accessMode, setAccessMode] = useState<"public" | "personal">(startsPublic ? "public" : "personal");
   const p1Public = accessMode === "public";
@@ -173,7 +180,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [destinationOverlay, setDestinationOverlay] = useState<DestinationOverlay>(initialPublicListId || initialRequestedView === "list" ? "list" : initialRequestedView === "honors" ? "honors" : null);
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
   const initialPublicWorkPath = useRef<string | null>(null);
-  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(() => Object.fromEntries(Object.entries(initialData?.entries ?? (startsPublic ? {} : defaultEntries)).map(([workId, personalEntry]) => [workId, hydrateReadingMemory({ ...emptyEntry, ...personalEntry }, workId)])));
+  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(() => Object.fromEntries(Object.entries(initialData?.entries ?? (startsPublic ? {} : defaultEntries)).map(([workId, personalEntry]) => [workId, hydrateReadingMemory(hydratePublication({ ...emptyEntry, ...personalEntry }, workId), workId)])));
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [statusOrigin, setStatusOrigin] = useState<StatusOrigin>("opening");
@@ -193,6 +200,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewCloseConfirm, setReviewCloseConfirm] = useState(false);
   const [reviewDeleteConfirm, setReviewDeleteConfirm] = useState(false);
+  const [reviewPreviewOpen, setReviewPreviewOpen] = useState(false);
+  const [spoilerDraft, setSpoilerDraft] = useState(false);
   const [feedbacks, setFeedbacks] = useState<StackToast[]>([]);
   const feedbackId = useRef(0);
   const [activeSection, setActiveSection] = useState("about");
@@ -225,8 +234,9 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [publicListOwner, setPublicListOwner] = useState<ProfileOwner>(initialPublicListOwner);
   const [publicIdentityReady, setPublicIdentityReady] = useState(false);
   const [publicIdentityOpen, setPublicIdentityOpen] = useState(false);
+  const [publicNameOpen, setPublicNameOpen] = useState(false);
   const [publicName, setPublicName] = useState("");
-  const [publicProfileName, setPublicProfileName] = useState(currentReader.name);
+  const [publicProfileName, setPublicProfileName] = useState<string>(startsPublic ? "Mon espace" : currentReader.name);
   const publicProfileFirstName = publicProfileName.trim().split(/\s+/)[0] || currentReader.firstName;
   const publicActor = { name: publicProfileName, initials: initialsFor(publicProfileName), avatarSrc: profilePhoto?.preview };
   const [blockedActorIds, setBlockedActorIds] = useState<PrototypeActorId[]>([]);
@@ -436,6 +446,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setBlockedActorIds((current) => current.includes(actorId) ? current.filter((id) => id !== actorId) : [...current, actorId]);
     setFollowingActors((current) => ({ ...current, [actorId]: false }));
   };
+  const undoBlock = (actorId: PrototypeActorId, restoreFollowing: boolean) => {
+    setBlockedActorIds((current) => current.filter((id) => id !== actorId));
+    setFollowingActors((current) => ({ ...current, [actorId]: restoreFollowing }));
+  };
 
   const openPublicList = (listId: string, origin: PublicListOrigin, owner: ProfileOwner) => {
     if (destinationOverlay === "list" && publicListOwner === owner && publicListId === listId) return;
@@ -473,7 +487,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     if (!p1Public || publicIdentityReady) return true;
     setPublicIntent(intent);
     pendingPublicAction.current = resume ?? null;
-    setPublicIdentityOpen(true);
+    if (publicActivated) setPublicNameOpen(true);
+    else setPublicIdentityOpen(true);
     return false;
   };
 
@@ -489,6 +504,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setPublicIdentityReady(true);
     setPublicActivated(true);
     setPublicIdentityOpen(false);
+    setPublicNameOpen(false);
     showFeedback({ kind: "saved", label: "Identité publique prête", detail: "Rien n’est publié avant votre confirmation explicite." });
     const resume = pendingPublicAction.current;
     pendingPublicAction.current = null;
@@ -497,7 +513,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const personalPublicReviews: readonly PrototypePublicReview[] = works.flatMap((work) => {
     const personalEntry = entries[work.id];
-    return personalEntry && isReviewPublished(personalEntry) ? [{ authorId: CURRENT_READER_ID, workId: work.id, rating: personalEntry.rating, date: "Aujourd’hui", text: personalEntry.review }] : [];
+    return personalEntry?.publicReview ? [{ ...personalEntry.publicReview, authorId: CURRENT_READER_ID, date: "Aujourd’hui" }] : [];
   });
 
   const createChapterExport = (): ChapterExportSnapshot => ({
@@ -506,7 +522,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     exportedAt: new Date().toISOString(),
     account: { publicName: publicProfileName },
     privacy: { journal: "private", library: "private", notes: "private" },
-    privateRecords: Object.entries(entries).filter(([, personalEntry]) => personalEntry.readingStatus || personalEntry.experiences?.length || personalEntry.note || personalEntry.review || personalEntry.rating > 0).map(([workId, personalEntry]) => ({ workId, ...personalEntry })),
+    privateRecords: Object.entries(entries).filter(([, personalEntry]) => personalEntry.readingStatus || personalEntry.experiences?.length || personalEntry.note || personalEntry.review || personalEntry.rating > 0).map(([workId, personalEntry]) => { const { publicReview, ...privateEntry } = personalEntry; void publicReview; return { workId, ...privateEntry, reviewPublished: false }; }),
     journalTraces: journalTraces.map((trace) => ({ ...trace })),
     publications: personalPublicReviews.map((review) => ({ ...review })),
     followingActorIds: (Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId]),
@@ -516,6 +532,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const importChapterExport = (snapshot: ChapterExportSnapshot) => {
     const knownWorkIds = new Set(works.map((work) => work.id));
     const importedRecords = snapshot.privateRecords.filter((record) => record && typeof record === "object" && typeof record.workId === "string" && knownWorkIds.has(record.workId));
+    const importedPublicTexts = new Map<string, string>((snapshot.publications ?? []).filter((review) => review && typeof review.workId === "string" && knownWorkIds.has(review.workId) && typeof review.text === "string").map((review) => [review.workId as string, (review.text as string).trim()]));
     setEntries((current) => {
       const next = { ...current };
       importedRecords.forEach((record, importedRecordIndex) => {
@@ -527,7 +544,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         const importedProgress = progress && typeof progress === "object" && progress.kind === "bookmark" && typeof progress.page === "number" && Number.isFinite(progress.page) && progress.page >= 1
           ? { kind: "bookmark" as const, page: Math.floor(progress.page), ...(typeof progress.totalPages === "number" && Number.isFinite(progress.totalPages) && progress.totalPages >= progress.page ? { totalPages: Math.floor(progress.totalPages) } : {}), updatedAt: typeof progress.updatedAt === "string" ? progress.updatedAt : snapshot.exportedAt }
           : undefined;
-        const importedReview = typeof record.review === "string" ? record.review.trim() : "";
+        const importedReview = (typeof record.review === "string" ? record.review.trim() : "") || importedPublicTexts.get(workId) || "";
         const importedBase = hydrateReadingMemory({
           ...emptyEntry,
           readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : null,
@@ -557,10 +574,16 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ...currentEntry,
           ...mergedReading,
           libraryHidden: currentEntry.libraryHidden ?? (record.libraryHidden === true ? true : undefined),
-          review: currentReviewIsPublic || !importedReview ? currentEntry.review : importedReview,
-          reviewPublished: currentReviewIsPublic,
+          review: currentEntry.review || importedReview,
+          reviewPublished: false,
+          publicReview: currentEntry.publicReview,
           rating: currentReviewIsPublic || typeof record.rating !== "number" || !Number.isFinite(record.rating) || record.rating < 0 || record.rating > 5 ? currentEntry.rating : record.rating,
         };
+      });
+      // A publication in an archive becomes a private draft, even when the
+      // source archive has no corresponding private reading record.
+      importedPublicTexts.forEach((text, workId) => {
+        if (text && !next[workId]?.review) next[workId] = { ...emptyEntry, ...next[workId], review: text, reviewPublished: false };
       });
       return next;
     });
@@ -596,6 +619,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setFavoriteWorkIds([]);
     setPersonalLists([]);
     setPublicIdentityReady(false);
+    setPublicName("");
+    setPublicProfileName("Mon espace");
     setPublicActivated(false);
     setPublicFirstMarkers({});
     setAccessMode("public");
@@ -981,8 +1006,10 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const openReview = () => {
     setReviewDeleteConfirm(false);
     setReviewCloseConfirm(false);
-    setReviewDraft(entry.review);
-    setRatingDraft(entry.rating);
+    setReviewDraft(entry.publicReview?.text ?? entry.review);
+    setRatingDraft(entry.publicReview?.rating ?? entry.rating);
+    setSpoilerDraft(entry.publicReview?.spoiler ?? false);
+    setReviewPreviewOpen(false);
     setRatingPreview(null);
     setReviewOpen(true);
   };
@@ -991,56 +1018,66 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setReviewDeleteConfirm(false);
     setReviewCloseConfirm(false);
     setSelectedWorkId(id);
-    setReviewDraft(targetEntry.review);
-    setRatingDraft(targetEntry.rating);
+    setReviewDraft(targetEntry.publicReview?.text ?? targetEntry.review);
+    setRatingDraft(targetEntry.publicReview?.rating ?? targetEntry.rating);
+    setSpoilerDraft(targetEntry.publicReview?.spoiler ?? false);
+    setReviewPreviewOpen(false);
     setRatingPreview(null);
     setReviewOpen(true);
   };
   const requestReviewClose = () => {
-    if (reviewDraft !== entry.review || ratingDraft !== entry.rating) setReviewCloseConfirm(true);
+    if (reviewDraft !== (entry.publicReview?.text ?? entry.review) || ratingDraft !== (entry.publicReview?.rating ?? entry.rating) || spoilerDraft !== (entry.publicReview?.spoiler ?? false)) setReviewCloseConfirm(true);
     else setReviewOpen(false);
+  };
+  const saveReviewDraft = () => {
+    if (!reviewIsPublished) updateEntry({ review: reviewDraft, reviewPublished: false });
+    setReviewPreviewOpen(false);
+    setReviewOpen(false);
+    showFeedback({ kind: "saved", label: "Brouillon conservé", detail: "Il reste privé et n’apparaît pas sur votre profil." });
   };
   const publishReview = () => {
     const cleanReview = reviewDraft.trim();
-    if (!cleanReview) return;
-    const previousPublication = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished, rating: entry.rating };
-    const latestPublication = { workId: selectedWorkId, review: cleanReview, rating: ratingDraft };
-    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
+    if (!cleanReview || !reviewPreviewOpen || !selectedWork) return;
+    const previousPublication = entry.publicReview;
+    const nextPublication = composePublication(previousPublication, selectedWorkId, cleanReview, ratingDraft, spoilerDraft, editableExperience?.id);
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review" && trace.kind === "Critique publique");
     const previousReviewTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
-    const publicationLabel = reviewIsPublished ? "Critique mise à jour" : "Critique publiée";
-    updateEntry({ review: cleanReview, reviewPublished: true, rating: ratingDraft });
-    setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "review", cleanReview, "Aujourd’hui"));
+    updateEntry({ publicReview: nextPublication, reviewPublished: false });
+    setJournalTraces((traces) => saveWrittenTrace(traces.filter((trace) => trace.workId !== selectedWorkId || trace.action !== "review" || trace.kind !== "Critique publique"), selectedWorkId, "review", cleanReview, "Aujourd’hui"));
     setReviewOpen(false);
-    setReviewCloseConfirm(false);
-    showFeedback({ kind: "publication", label: publicationLabel, detail: "Elle est maintenant visible publiquement.", onAction: () => {
-      setSelectedWorkId(previousPublication.workId);
-      updateEntryFor(previousPublication.workId, { review: previousPublication.review, reviewPublished: previousPublication.reviewPublished, rating: previousPublication.rating });
+    setReviewPreviewOpen(false);
+    showFeedback({ kind: "publication", label: previousPublication ? "Critique mise à jour" : "Critique publiée", detail: "Elle est maintenant visible publiquement.", onAction: () => {
+      updateEntryFor(nextPublication.workId, { publicReview: previousPublication });
       const { trace: restoredTrace, index } = previousReviewTrace;
       setJournalTraces((traces) => {
-        const rest = traces.filter((trace) => trace.workId !== previousPublication.workId || trace.action !== "review");
+        const rest = traces.filter((trace) => trace.workId !== nextPublication.workId || trace.action !== "review" || trace.kind !== "Critique publique");
         if (restoredTrace) rest.splice(Math.min(index, rest.length), 0, restoredTrace);
         return rest;
       });
-      setReviewDraft(latestPublication.review);
-      setRatingDraft(latestPublication.rating);
+      setSelectedWorkId(nextPublication.workId);
+      setReviewDraft(nextPublication.text);
+      setRatingDraft(nextPublication.rating);
+      setSpoilerDraft(nextPublication.spoiler);
       setReviewOpen(true);
     } });
   };
 
   const deletePublishedReview = () => {
-    const previousPublication = { workId: selectedWorkId, review: entry.review, reviewPublished: reviewIsPublished };
-    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review");
+    const previousPublication = entry.publicReview;
+    if (!previousPublication) return;
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === selectedWorkId && trace.action === "review" && trace.kind === "Critique publique");
     const previousReviewTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
-    updateEntry({ review: "", reviewPublished: false });
-    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== selectedWorkId || trace.action !== "review"));
+    updateEntry({ publicReview: undefined, reviewPublished: false });
+    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== selectedWorkId || trace.action !== "review" || trace.kind !== "Critique publique"));
     setReviewDraft("");
     setReviewDeleteConfirm(false);
+    setReviewPreviewOpen(false);
     setReviewOpen(false);
-    showFeedback({ kind: "removal", label: "Critique retirée", detail: "Elle n’est plus publique. Votre évaluation privée est conservée.", onAction: () => {
-      updateEntryFor(previousPublication.workId, { review: previousPublication.review, reviewPublished: previousPublication.reviewPublished });
+    showFeedback({ kind: "removal", label: "Critique retirée", detail: "Elle n’est plus publique. Votre mémoire privée est conservée.", onAction: () => {
+      updateEntryFor(previousPublication.workId, { publicReview: previousPublication });
       const { trace: restoredTrace, index } = previousReviewTrace;
       if (restoredTrace) setJournalTraces((traces) => {
-        const rest = traces.filter((trace) => trace.workId !== previousPublication.workId || trace.action !== "review");
+        const rest = traces.filter((trace) => trace.workId !== previousPublication.workId || trace.action !== "review" || trace.kind !== "Critique publique");
         rest.splice(Math.min(index, rest.length), 0, restoredTrace);
         return rest;
       });
@@ -1188,7 +1225,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     <div {...rootShell} className={`${rootShell.className}${personalShellReady ? " p3-shell" : " p1-shell"}`}>
       {!personalShellReady ? (
         <header className="p1-public-header">
-          <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}>Chapter<span>.</span></button>
+          <button className="wordmark wordmark-button" type="button" aria-label="Chapter, ouvrir Découvrir" onClick={() => openPublicView("discover", "/")}><ChapterBrandLogo /></button>
           <nav aria-label="Navigation principale">
             <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openPublicPersonalView("journal")}>Journal</button>
             <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openPublicPersonalView("library")}>Bibliothèque</button>
@@ -1199,7 +1236,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           <button className="p1-public-mobile-search" type="button" aria-label="Ouvrir Recherche" onClick={() => openPublicView("search")}>Recherche</button>
         </header>
       ) : <><header className="desktop-header">
-        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
+        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}><ChapterBrandLogo /></button>
         <nav aria-label="Navigation principale">
           {!initialProfileOwner && <button className={currentView === "journal" ? "active" : ""} type="button" aria-current={currentView === "journal" ? "page" : undefined} onClick={() => openView("journal")}>Journal</button>}
           {!initialProfileOwner && <button className={currentView === "library" ? "active" : ""} type="button" aria-current={currentView === "library" ? "page" : undefined} onClick={() => openView("library")}>Bibliothèque</button>}
@@ -1231,7 +1268,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       </header>
 
       <header className="mobile-header">
-        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}>Chapter<span>.</span></button>
+        <button className="wordmark wordmark-button" type="button" aria-label={initialProfileOwner ? "Chapter, ouvrir Découvrir" : "Chapter, ouvrir le journal"} onClick={() => openView(initialProfileOwner ? "discover" : "journal")}><ChapterBrandLogo /></button>
         {initialProfileOwner ? <button className="quiet-action" type="button" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}>Recherche</button> : <div className="mobile-header-actions"><button className="text-action" type="button" onClick={() => openView("search")}>Recherche</button><button className="account-button" type="button" aria-label={`Ouvrir le compte de ${publicProfileFirstName}`} aria-expanded={accountOpen} aria-controls="mobile-account-sheet" onClick={() => setAccountOpen((open) => !open)}><AccountAvatar photo={profilePhoto} publicName={publicProfileName} /></button></div>}
       </header></>}
 
@@ -1258,6 +1295,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               showcase={showcaseBadges}
               personalReviews={personalPublicReviews}
               displayName={publicProfileName}
+              cardMaterial={profileCardMaterial}
               favoriteWorkIds={favoriteWorkIds}
               personalLists={personalLists}
               blocked={blockedActorIds.includes(actorIdForProfile(profileOwner))}
@@ -1300,14 +1338,14 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 stopReadingForNow(selectedWork.id);
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: "À lire", marker: "" } }));
               }}
-              onCreateAccount={(readerName) => { setPublicName(readerName); setPublicProfileName(readerName); setPublicIdentityReady(true); }}
+              onCreateAccount={() => { /* An initial private reading needs no public signature. */ }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { ...current[selectedWork.id], status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
               onOpenJournal={() => enterPersonalSpace("journal")}
               onNotify={(label) => showFeedback({ kind: "saved", label, detail: "Votre action a bien été prise en compte." })}
               social={(
                 <div className="work-public-reviews">
-                  {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={beginPublicReview}>{entry.review ? "Relire et publier mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon privé · non publié</span>}</div>}
-                  <SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
+                  {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={beginPublicReview}>{entry.review ? "Reprendre mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon privé · non publié</span>}</div>}
+                  <SocialReviews workId={selectedWork.id} personalReview={entry.publicReview?.text ?? ""} personalReviewId={entry.publicReview?.id} personalRating={entry.publicReview?.rating ?? 0} personalSpoiler={entry.publicReview?.spoiler ?? false} personalActor={publicActor} followedActorIds={[]} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onUndoBlockActor={undoBlock} onShowFeedback={(feedback) => showFeedback({ kind: "saved", ...feedback })} onOpenProfile={openActorProfile} onWriteReview={beginPublicReview} onBeforeReply={(resume) => requirePublicIdentity("reply", resume)} />
                 </div>
               )}
             />
@@ -1345,6 +1383,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             showcase={showcaseBadges}
             personalReviews={personalPublicReviews}
             displayName={publicProfileName}
+            cardMaterial={profileCardMaterial}
             favoriteWorkIds={favoriteWorkIds}
             personalLists={personalLists}
             curationWorks={profileCurationWorks}
@@ -1600,8 +1639,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <p>Les critiques publiées sont distinctes de vos notes privées.</p>
               </div>
             </div>
-            {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={openReview}>{entry.review ? "Relire et publier mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon importé · privé jusqu’à publication</span>}</div>}
-            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={reviewIsPublished ? entry.review : ""} personalRating={reviewIsPublished ? entry.rating : 0} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
+            {!reviewIsPublished && <div className="work-review-action"><button className="text-action" type="button" onClick={openReview}>{entry.review ? "Reprendre mon brouillon" : "Écrire une critique"}</button>{entry.review && <span>Brouillon privé · non publié</span>}</div>}
+            <div className="reviews-list"><SocialReviews workId={selectedWork.id} personalReview={entry.publicReview?.text ?? ""} personalReviewId={entry.publicReview?.id} personalRating={entry.publicReview?.rating ?? 0} personalSpoiler={entry.publicReview?.spoiler ?? false} personalActor={publicActor} followedActorIds={(Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId])} blockedActorIds={blockedActorIds} onBlockActor={toggleBlock} onUndoBlockActor={undoBlock} onShowFeedback={(feedback) => showFeedback({ kind: "saved", ...feedback })} onOpenProfile={openActorProfile} onWriteReview={openReview} /></div>
           </section>
         </div>
           </>
@@ -1663,6 +1702,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               following={followingActors[actorIdForProfile(publicListOwner)]}
               blocked={blockedActorIds.includes(actorIdForProfile(publicListOwner))}
               displayName={publicProfileName}
+              cardMaterial={profileCardMaterial}
               photoSrc={actorIdForProfile(publicListOwner) === CURRENT_READER_ID ? profilePhoto?.preview : undefined}
               onToggleFollow={() => {
                 const actorId = actorIdForProfile(publicListOwner);
@@ -1691,7 +1731,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             publicationCount={personalPublicReviews.length}
             blockedActorIds={blockedActorIds}
             onClose={closeSettings}
-            onSavePublicName={setPublicProfileName}
+            onSavePublicName={(name) => { setPublicProfileName(name); setPublicName(name); setPublicIdentityReady(true); }}
             onEditPhoto={() => { setSettingsOpen(false); setPhotoCropOpen(true); }}
             onToggleBlock={toggleBlock}
             createExport={createChapterExport}
@@ -1771,16 +1811,26 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       )}</Fade>
 
       <Fade show={reviewOpen} kind="modal">{reviewOpen && (
-        <Modal labelledBy={reviewDeleteConfirm ? "review-delete-title" : reviewCloseConfirm ? "review-confirm-title" : "review-title"} describedBy={reviewDeleteConfirm ? "review-delete-description" : reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm || reviewDeleteConfirm} initialFocus={reviewCloseConfirm || reviewDeleteConfirm ? "[data-safe-return]" : "textarea"} onRequestClose={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>
-          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()} />
+        <Modal labelledBy={reviewDeleteConfirm ? "review-delete-title" : reviewCloseConfirm ? "review-confirm-title" : reviewPreviewOpen ? "review-preview-title" : "review-title"} describedBy={reviewDeleteConfirm ? "review-delete-description" : reviewCloseConfirm ? "review-confirm-description" : undefined} alert={reviewCloseConfirm || reviewDeleteConfirm} initialFocus={reviewCloseConfirm || reviewDeleteConfirm ? "[data-safe-return]" : reviewPreviewOpen ? "[data-preview-back]" : "textarea"} onRequestClose={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : reviewPreviewOpen ? setReviewPreviewOpen(false) : requestReviewClose()}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer la critique" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : reviewPreviewOpen ? setReviewPreviewOpen(false) : requestReviewClose()} />
           <section className={`editor-modal review-editor ${reviewCloseConfirm || reviewDeleteConfirm ? "editor-protected" : ""}`}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Publique</p>
-                <h2 id="review-title">{reviewIsPublished ? "Modifier ma critique" : entry.review ? "Publier ma critique importée" : "Écrire une critique"}</h2>
+                <h2 id={reviewPreviewOpen ? "review-preview-title" : "review-title"}>{reviewPreviewOpen ? "Avant de publier" : reviewIsPublished ? "Modifier ma critique" : entry.review ? "Reprendre mon brouillon" : "Écrire une critique"}</h2>
               </div>
-              <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : requestReviewClose()}>×</button>
+              <button className="close-button" type="button" aria-label="Fermer" onClick={() => reviewDeleteConfirm ? setReviewDeleteConfirm(false) : reviewCloseConfirm ? setReviewCloseConfirm(false) : reviewPreviewOpen ? setReviewPreviewOpen(false) : requestReviewClose()}>×</button>
             </div>
+            {reviewPreviewOpen && !reviewCloseConfirm && !reviewDeleteConfirm ? <div className="publication-preview">
+              <p className="publication-preview-lead">Voici exactement ce qui paraîtra dans <strong>Autour de l’œuvre</strong>, sur la page de <strong>{selectedWork?.title}</strong>, et sur votre profil public.</p>
+              <article className="publication-preview-card" aria-label="Aperçu public de votre critique">
+                <header><strong>{publicProfileName}</strong><span>{ratingDraft > 0 ? `${"★".repeat(ratingDraft)}${"☆".repeat(5 - ratingDraft)}` : "Sans étoiles"}</span></header>
+                {spoilerDraft && <p className="publication-spoiler">Divulgâcheur · le texte sera masqué jusqu’à ce que le lecteur choisisse de le voir.</p>}
+                <p className="publication-preview-copy">{reviewDraft.trim()}</p>
+              </article>
+              <p className="publication-preview-scope">Les lecteurs pourront ouvrir votre profil, répondre à cette critique et signaler son contenu. Vous pourrez ensuite la modifier ou la retirer. Votre note privée et vos anciennes lectures resteront dans votre Journal.</p>
+              <div className="modal-actions"><button data-preview-back className="quiet-action" type="button" onClick={() => setReviewPreviewOpen(false)}>Modifier le texte</button><button className="primary-action" type="button" onClick={publishReview}>{reviewIsPublished ? "Confirmer la modification" : "Confirmer la publication"}</button></div>
+            </div> : <>
             {!reviewCloseConfirm && !reviewDeleteConfirm && <div className="p4-publication-contract"><span aria-hidden="true">●</span><p><strong>Visible par tous après publication</strong><small>Votre note privée reste séparée. Vous pourrez retirer cette critique sans rendre votre Journal public.</small></p></div>}
             <label className="editor-field">
               <span>Votre critique</span>
@@ -1824,6 +1874,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 {ratingDraft > 0 && !reviewCloseConfirm && !reviewDeleteConfirm && <button className="rating-remove" type="button" onClick={() => { setRatingDraft(0); setRatingPreview(null); }}>Retirer</button>}
               </div>
             </fieldset>
+            <label className="publication-spoiler-choice"><input type="checkbox" checked={spoilerDraft} disabled={reviewCloseConfirm || reviewDeleteConfirm} onChange={(event) => setSpoilerDraft(event.target.checked)} /><span><strong>Cette critique contient un divulgâcheur</strong><small>Son texte sera masqué dans les critiques publiques jusqu’à ce qu’un lecteur choisisse de l’afficher.</small></span></label>
             {reviewDeleteConfirm ? (
               <div className="editor-confirmation">
                 <div><strong id="review-delete-title">Retirer cette critique publique ?</strong><p id="review-delete-description">Elle disparaîtra de votre profil et de la page de l’œuvre. Votre évaluation privée sera conservée.</p></div>
@@ -1837,21 +1888,24 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                 <div><strong id="review-confirm-title">Quitter sans enregistrer ?</strong><p id="review-confirm-description">Les modifications apportées à votre critique seront perdues.</p></div>
                 <div className="protection-actions">
                   <button data-safe-return className="primary-action" type="button" onClick={() => setReviewCloseConfirm(false)}>Revenir à la critique</button>
-                  <button className="destructive-action" type="button" onClick={() => { setReviewCloseConfirm(false); setReviewOpen(false); setReviewDraft(entry.review); setRatingDraft(entry.rating); }}>Ignorer les modifications</button>
+                  <button className="destructive-action" type="button" onClick={() => { setReviewCloseConfirm(false); setReviewOpen(false); setReviewDraft(entry.publicReview?.text ?? entry.review); setRatingDraft(entry.publicReview?.rating ?? entry.rating); setSpoilerDraft(entry.publicReview?.spoiler ?? false); }}>Ignorer les modifications</button>
                 </div>
               </div>
             ) : (
               <div className="modal-actions">
                 {reviewIsPublished && <button className="destructive-action editor-delete-action" type="button" onClick={() => setReviewDeleteConfirm(true)}>Supprimer ma critique</button>}
+                {!reviewIsPublished && <button className="quiet-action" type="button" onClick={saveReviewDraft}>Garder en brouillon</button>}
                 <button className="quiet-action" type="button" onClick={requestReviewClose}>Annuler</button>
-                <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={publishReview}>{reviewIsPublished ? "Enregistrer les modifications" : "Publier la critique"}</button>
+                <button className="primary-action" type="button" disabled={!reviewDraft.trim()} onClick={() => setReviewPreviewOpen(true)}>{reviewIsPublished ? "Aperçu des modifications" : "Voir avant de publier"}</button>
               </div>
             )}
+            </>}
           </section>
         </Modal>
       )}</Fade>
 
       <AccountCreationDialog open={publicIdentityOpen} eyebrow={publicIntent === "review" ? "Votre critique vous attend" : publicIntent === "reply" ? "Votre réponse vous attend" : "Votre chemin vous attend"} title="Créons votre espace de lecteur." description={<>Votre premier geste public restera en attente jusqu’à votre confirmation. Après la création du compte, vous reviendrez exactement ici.</>} submitLabel={publicIntent === "review" ? "Continuer vers la critique" : publicIntent === "reply" ? "Continuer vers la réponse" : "Créer mon espace"} initialReaderName={publicName} onClose={() => setPublicIdentityOpen(false)} onComplete={({ readerName }) => finishPublicIdentity(readerName)} />
+      <PublicNameDialog open={publicNameOpen} onClose={() => setPublicNameOpen(false)} onComplete={finishPublicIdentity} />
 
       <Fade show={photoCropOpen} kind="modal">{photoCropOpen && <PhotoCropper currentPhoto={profilePhoto} onClose={() => setPhotoCropOpen(false)} onSave={setProfilePhoto} />}</Fade>
 

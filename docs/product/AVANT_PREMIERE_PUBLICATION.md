@@ -1,7 +1,7 @@
 # Chapter — fondations essentielles avant première publication
 
-Date : 28 septembre 2026
-Statut : feuille de route validée ; fondations 1 et 2 terminées, fondation 3 à traiter avant l'ouverture du produit au public.
+Date : 23 septembre 2026
+Statut : feuille de route validée ; fondations 1 et 2 validées, fondation 3 en candidate de recette avant l'ouverture du produit au public.
 
 ## Pourquoi seulement trois fondations
 
@@ -39,7 +39,7 @@ Le lecteur réflexif retrouve l'évolution de son regard. Le migrant peut import
 - Le Journal dérive de ces événements ; il ne devient pas une seconde source de vérité.
 - Import, export et suppression respectent les mêmes identifiants et ne fusionnent pas silencieusement deux expériences.
 
-La fondation 2 a été validée le 28 septembre 2026 et synchronisée sur sa branche dédiée. Elle consolide ce contrat dans le modèle de session, la page œuvre, le Journal, la Bibliothèque et l’import/export. Son périmètre, sa recette et ses limites sont consignés dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md).
+La fondation 2 a été validée puis synchronisée le 28 septembre 2026. Son périmètre et sa recette sont consignés dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md).
 
 ### Critères de sortie avant lancement
 
@@ -88,6 +88,8 @@ Le lecteur en construction peut écrire sans se mettre en scène. Le lecteur ré
 - Signalement, blocage, retrait, traitement et recours doivent exister avant l'ouverture à une communauté réelle.
 
 Le prototype sépare déjà `note` et `review`, protège les imports et conserve la note lors du retrait d'une critique. L'étape restante doit rendre cette séparation complète dans le parcours, la microcopie, l'identité en deux temps et les contrats de données.
+
+La candidate de fondation 3 rend cette séparation observable dans l'éditeur et le modèle de session. Son périmètre, sa checklist et ses limites sont dans [`FONDATION_PUBLICATION_DISTINCTE.md`](../milestones/FONDATION_PUBLICATION_DISTINCTE.md). Elle attend une recette utilisateur avant validation et synchronisation GitHub.
 
 ### Critères de sortie avant lancement
 

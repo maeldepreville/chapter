@@ -33,6 +33,10 @@ test("P5 exposes identity, immutable private spaces, blocking and data portabili
   assert.match(markup, /Journal[\s\S]*Privé, toujours/);
   assert.match(markup, /Bibliothèque[\s\S]*Privée, toujours/);
   assert.match(markup, /Importer en privé/);
+  assert.match(markup, /aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 3v11/);
+  assert.match(markup, /Télécharger mon archive/);
+  assert.match(markup, /Choisir une archive/);
+  assert.equal((markup.match(/data-action-button/g) ?? []).length, 2, "both data actions pair one decorative icon with a text label");
   assert.match(markup, /Théo Renaud/);
   assert.match(markup, /Demander la suppression/);
 });
@@ -89,6 +93,82 @@ test("P5 global blocking removes an actor from conversations and masks profile a
 
   const listMarkup = renderToStaticMarkup(React.createElement(PublicListView, { owner: "lina", listId: "places", works: publicWorks, following: false, blocked: true, onToggleFollow() {}, onOpenProfile() {}, onOpenWork() {}, onBack() {}, backLabel: "Retour" }));
   assert.match(listMarkup, /liste est masquée/);
+});
+
+test("public review reports collect a reason and blocking is confirmed with an undo action", () => {
+  const harness = hookHarness();
+  const HarnessedReviews = createSourceLoader({ react: harness.react })(source("phase10.tsx")).SocialReviews;
+  const blocked = [];
+  const undone = [];
+  let feedback;
+  const props = { workId: "cartographies", personalReview: "", personalRating: 0, followedActorIds: ["lina"], onOpenProfile() {}, onWriteReview() {}, onBlockActor(id) { blocked.push(id); }, onUndoBlockActor(id, restoreFollowing) { undone.push({ id, restoreFollowing }); }, onShowFeedback(item) { feedback = item; } };
+  const render = () => harness.render(HarnessedReviews, props);
+  let tree = render();
+  const openMenu = () => { nodes(tree, (node) => node.type === "button" && node.props?.className === "review-more-trigger")[0].props.onClick(); tree = render(); };
+  const chooseMenuAction = (label) => { nodes(tree, (node) => node.type === "button" && textOf(node) === label)[0].props.onClick(); tree = render(); };
+  openMenu();
+  chooseMenuAction("Signaler");
+  tree = render();
+  assert.match(textOf(tree), /Signaler cette critique/);
+  assert.match(textOf(tree), /Divulgâcheur non signalé/);
+  assert.match(textOf(tree), /ne sera pas transmis/);
+  const reason = nodes(tree, (node) => node.type === "input" && node.props.value === "Divulgâcheur non signalé")[0];
+  reason.props.onChange();
+  tree = render();
+  nodes(tree, (node) => node.type === "button" && textOf(node) === "Confirmer le signalement")[0].props.onClick();
+  tree = render();
+  assert.equal(feedback.label, "Signalement préparé");
+  assert.match(feedback.detail, /Divulgâcheur non signalé · reste local, aucun envoi au backend/);
+  assert.equal(typeof feedback.onAction, "function");
+  feedback.onAction();
+  tree = render();
+  assert.match(textOf(tree), /Signaler cette critique/);
+  nodes(tree, (node) => node.type === "button" && textOf(node) === "Annuler")[0].props.onClick();
+  tree = render();
+
+  openMenu();
+  chooseMenuAction("Signaler");
+  tree = render();
+  nodes(tree, (node) => node.type === "input" && node.props.value === "Autre motif")[0].props.onChange();
+  tree = render();
+  assert.ok(nodes(tree, (node) => node.type === "textarea" && node.props.placeholder === "Décrivez brièvement le problème…").length);
+  assert.equal(textOf(nodes(tree, (node) => node.props?.className === "report-details-count")[0]), "0 / 180");
+  assert.equal(nodes(tree, (node) => node.type === "button" && textOf(node) === "Confirmer le signalement")[0].props.disabled, true);
+  const details = nodes(tree, (node) => node.type === "textarea")[0];
+  const detailText = "Un motif complémentaire.";
+  details.props.onChange({ target: { value: detailText } });
+  tree = render();
+  assert.equal(textOf(nodes(tree, (node) => node.props?.className === "report-details-count")[0]), `${detailText.length} / 180`);
+  assert.equal(nodes(tree, (node) => node.type === "button" && textOf(node) === "Confirmer le signalement")[0].props.disabled, false);
+  nodes(tree, (node) => node.type === "button" && textOf(node) === "Confirmer le signalement")[0].props.onClick();
+  tree = render();
+  assert.match(feedback.detail, /Autre motif · Un motif complémentaire/);
+
+  openMenu();
+  chooseMenuAction("Bloquer");
+  tree = render();
+  assert.match(textOf(tree), /Masquer Lina Morel partout/);
+  nodes(tree, (node) => node.type === "button" && textOf(node) === "Bloquer ce compte")[0].props.onClick();
+  tree = render();
+  assert.deepEqual(blocked, ["lina"]);
+  assert.equal(feedback.label, "Lina Morel bloqué·e");
+  assert.equal(feedback.actionLabel, undefined);
+  assert.equal(typeof feedback.onAction, "function");
+  assert.doesNotMatch(textOf(tree), /Lina Morel est bloqué·e/);
+  feedback.onAction();
+  assert.deepEqual(undone, [{ id: "lina", restoreFollowing: true }]);
+});
+
+test("reply moderation menus appear in each reply header only after opening the conversation", () => {
+  const harness = hookHarness();
+  const HarnessedReviews = createSourceLoader({ react: harness.react })(source("phase10.tsx")).SocialReviews;
+  const render = () => harness.render(HarnessedReviews, { workId: "cartographies", personalReview: "", personalRating: 0, onOpenProfile() {}, onWriteReview() {} });
+  let tree = render();
+  assert.equal(nodes(tree, (node) => node.type === "button" && node.props?.className === "review-more-trigger" && /réponse de/.test(node.props["aria-label"])).length, 0);
+  nodes(tree, (node) => node.type === "button" && textOf(node) === "Voir la conversation · 2")[0].props.onClick();
+  tree = render();
+  const replyHeader = nodes(tree, (node) => node.type === "header" && nodes(node, (child) => child.type === "button" && /Autres actions pour la réponse de Théo Renaud/.test(child.props?.["aria-label"])).length > 0);
+  assert.equal(replyHeader.length, 1);
 });
 
 test("the saved public identity is projected into reviews, replies, lists and the profile card", async () => {
@@ -194,7 +274,8 @@ test("P5 import keeps imported reviews private and merges journal traces without
     assert.equal(firstRecord.note, "", "an imported past experience must not become the editable current note");
     assert.equal(firstRecord.experiences.filter((experience) => experience.imported).at(-1).note, "Note restaurée");
     assert.equal(firstRecord.experiences.filter((experience) => experience.state === "active").length, 0);
-    assert.equal(firstRecord.review, "Critique déjà publique");
+    assert.equal(firstRecord.review, "Ne doit pas remplacer la publication", "the imported text may be kept as a private draft");
+    assert.equal(firstRecord.publicReview, undefined, "a public review is exported separately");
     assert.equal(firstRecord.rating, 5);
     assert.equal(secondRecord.review, "Critique importée");
     assert.equal(secondRecord.reviewPublished, false);
@@ -208,7 +289,7 @@ test("P5 import keeps imported reviews private and merges journal traces without
 });
 
 test("P5 has a direct modal route and dedicated responsive styling", async () => {
-  const [route, css, globals] = await Promise.all([readFile(new URL("../app/reglages/page.tsx", import.meta.url), "utf8"), readFile(new URL("../app/p5-trust.css", import.meta.url), "utf8"), readFile(new URL("../app/globals.css", import.meta.url), "utf8")]);
+  const [route, css, globals, reviewCss] = await Promise.all([readFile(new URL("../app/reglages/page.tsx", import.meta.url), "utf8"), readFile(new URL("../app/p5-trust.css", import.meta.url), "utf8"), readFile(new URL("../app/globals.css", import.meta.url), "utf8"), readFile(new URL("../app/phase10.css", import.meta.url), "utf8")]);
   assert.match(route, /view: "journal"/);
   assert.match(route, /initialSettingsOpen/);
   assert.match(css, /\.trust-overlay \{ position: fixed/);
@@ -223,6 +304,9 @@ test("P5 has a direct modal route and dedicated responsive styling", async () =>
   assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.overlay\.trust-overlay\s*\{[^}]*place-items:\s*center;[^}]*safe-area-inset-top[^}]*safe-area-inset-bottom/s);
   assert.match(css, /@media \(max-width: 899px\)[\s\S]*\.trust-card\s*\{[^}]*height:\s*min\(88dvh, 46rem\);[^}]*max-height:\s*calc\(100% - 0\.5rem\);[^}]*border:\s*1px solid var\(--line\);[^}]*border-radius:\s*1\.1rem;/s);
   assert.doesNotMatch(css, /@media \(max-width: 899px\)[\s\S]*\.trust-card\s*\{[^}]*height:\s*100dvh;/s);
+  assert.match(reviewCss, /\.profile-photo-remove-overlay \{[^}]*overflow: hidden;/);
+  assert.match(reviewCss, /\.report-content-dialog \{[^}]*max-height: calc\(100dvh - 2\.5rem\);[^}]*overflow: hidden auto;/);
+  assert.match(reviewCss, /\.report-details-count \{[^}]*position: absolute;[^}]*right:[^}]*bottom:/);
   assert.match(globals, /p5-trust\.css/);
 });
 
@@ -238,7 +322,7 @@ test("settings track their visible chapter and account controls reuse the saved 
   assert.equal((page.match(/<AccountAvatar photo=\{profilePhoto\} publicName=\{publicProfileName\} \/>/g) ?? []).length, 2);
   assert.match(page, /<Image src=\{photo\.preview\} alt="" fill sizes="44px" unoptimized \/>/);
   assert.match(page, /initialsFor\(publicName\)/);
-  assert.equal((page.match(/<strong>\{publicProfileName\}<\/strong>|<h2>\{publicProfileName\}<\/h2>/g) ?? []).length, 2);
+  assert.equal((page.match(/<strong>\{publicProfileName\}<\/strong>|<h2>\{publicProfileName\}<\/h2>/g) ?? []).length, 3);
   assert.match(globals, /\.account-button \{[^}]*position: relative;[^}]*overflow: hidden;/);
   assert.match(globals, /\.account-button img \{ object-fit: cover; \}/);
 });

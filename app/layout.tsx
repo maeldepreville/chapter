@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/chapter-favicon-transparent.svg",
+    shortcut: "/chapter-favicon-transparent.svg",
   },
 };
 

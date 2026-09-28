@@ -89,8 +89,8 @@ test("the context helper returns compact state and supports targeted retrieval",
     encoding: "utf8",
   });
 
-  assert.match(summary, /Fondation 2.*expériences de lecture conservées.*validée/i);
-  assert.match(summary, /Fondation 2.*branche dédiée.*fondation-experiences-lecture-2026-09-23/i);
+  assert.match(summary, /Fondations.*fondation 3.*validée et synchronisée/i);
+  assert.match(summary, /fondation 2 est validée sur `fondation-experiences-lecture-2026-09-23`/i);
   assert.match(summary, /État Git dynamique/);
   assert.ok(Buffer.byteLength(summary) < 10_000, "startup summary must remain compact");
   assert.match(targeted, /P11-F32/);

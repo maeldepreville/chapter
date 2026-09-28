@@ -167,8 +167,8 @@ export function TrustSettings({ publicName, privateRecordCount, privateNoteCount
           <section id="data" className="trust-section" aria-labelledby="data-title">
             <div className="trust-section-heading"><span>04</span><div><p className="eyebrow">Portabilité</p><h2 id="data-title">Vos données</h2></div></div>
             <div className="data-actions">
-              <article><h3>Tout exporter</h3><p>Une archive lisible contenant votre bibliothèque, votre Journal, vos notes, vos publications et vos relations.</p><button className="chapter-button chapter-button--quiet" type="button" onClick={exportChapterData}>Télécharger mon archive</button></article>
-              <article><h3>Importer en privé</h3><p>Les lectures reconnues rejoignent votre espace privé. Rien n’est publié, même si l’archive contient des publications.</p><label className="chapter-button chapter-button--quiet import-control">Choisir une archive<input type="file" accept="application/json,.json" onChange={(event) => void importChapterData(event)} /></label></article>
+              <article><h3>Tout exporter</h3><p>Une archive lisible contenant votre bibliothèque, votre Journal, vos notes, vos publications et vos relations.</p><button className="chapter-button chapter-button--quiet data-action-button" type="button" onClick={exportChapterData}><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 16v4h14v-4" /></svg>Télécharger mon archive</button></article>
+              <article><h3>Importer en privé</h3><p>Les lectures reconnues rejoignent votre espace privé. Rien n’est publié, même si l’archive contient des publications.</p><label className="chapter-button chapter-button--quiet import-control data-action-button"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v7h14v-7" /></svg>Choisir une archive<input type="file" accept="application/json,.json" onChange={(event) => void importChapterData(event)} /></label></article>
             </div>
           </section>
 

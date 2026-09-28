@@ -1,0 +1,50 @@
+.profile-card-recipe { min-height: 100dvh; }
+.profile-card-recipe > .p3-shell > :is(.desktop-header, .mobile-header) { display: none; }
+.profile-card-recipe > .p3-shell > main { max-width: none; }
+.profile-card-recipe .profile-page.profile-home { min-height: 0; padding: clamp(1.75rem, 5vw, 4rem) 1rem 3rem; }
+.profile-card-recipe .profile-back-action,
+.profile-card-recipe .profile-homecoming,
+.profile-card-recipe .profile-library-portrait,
+.profile-card-recipe .profile-wide-content { display: none !important; }
+.profile-card-recipe .profile-home .profile-opening { display: block; width: min(100%, 48rem); margin: 0 auto; }
+.profile-card-recipe .profile-home .profile-identity-column { width: 100%; max-width: 100%; margin: 0 auto; }
+.profile-card-recipe-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.85fr) minmax(22rem, 1.15fr);
+  gap: 1rem 2rem;
+  align-items: center;
+  padding: 0.85rem clamp(1rem, 4vw, 3rem);
+  color: var(--color-on-accent);
+  background: var(--color-ink);
+}
+.profile-card-recipe-heading { display: grid; gap: 0.45rem; min-width: 0; }
+.profile-card-recipe-heading p { margin: 0; }
+.profile-card-recipe-heading > p:first-child { display: grid; gap: 0.18rem; }
+.profile-card-recipe-heading small { color: #d7cec4; font-size: 0.74rem; }
+.profile-card-recipe-current { color: #eee6dc; font-size: 0.8rem; line-height: 1.35; }
+.profile-card-recipe-current span { margin-right: 0.55rem; color: #f4b9a6; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.profile-card-recipe-options { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
+.profile-card-recipe-options button {
+  display: inline-flex;
+  min-height: 2.55rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid #6f675f;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+.profile-card-recipe-options button[aria-pressed="true"] { color: var(--ink); background: var(--surface); border-color: var(--surface); }
+.profile-card-recipe-options button:focus-visible { outline: 2px solid #f4b9a6; outline-offset: 3px; }
+
+@media (max-width: 899px) {
+  .profile-card-recipe-toolbar { grid-template-columns: 1fr; gap: 0.7rem; }
+  .profile-card-recipe-options { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.15rem; }
+  .profile-card-recipe-options button { flex: none; }
+}

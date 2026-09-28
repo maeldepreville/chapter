@@ -69,6 +69,8 @@ export type PublicReview = {
   rating: number;
   publishedAt: string;
   removedAt?: string;
+  spoiler?: boolean;
+  sourceExperienceId?: EntityId;
 };
 
 export type PublicReply = {

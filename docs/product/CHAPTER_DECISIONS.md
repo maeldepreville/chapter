@@ -20,14 +20,12 @@ Dernière mise à jour : 28 septembre 2026
 
 ## Fondations avant première publication — 16 septembre 2026
 
+- Le 28 septembre 2026, l'utilisateur valide la fondation 2 et sa synchronisation. La fondation 3 est ensuite validée après recette visuelle et synchronisée sur `fondation-publication-distincte-2026-09-28`, fondée sur la branche de fondation 2, sans fusion vers `main`. Son contrat sépare `publicReview` du brouillon privé, présente un aperçu exact et exige une confirmation de publication ; le nom public est demandé au premier geste public et les divulgâcheurs se révèlent volontairement. Voir [`FONDATION_PUBLICATION_DISTINCTE.md`](../milestones/FONDATION_PUBLICATION_DISTINCTE.md).
+- Recette fondation 3 : la critique « Vous » se distingue par une teinte de papier et un filet brique discrets ; le bloc divulgâcheur garde une marge de lecture aérée. Le signalement présente des motifs, une précision libre pour « Autre motif » avec compteur et une confirmation annulable. Le blocage passe par une confirmation avec annulation. Les actions de modération restent regroupées derrière les trois points.
+- Ajustements visuels transversaux validés durant la recette : icônes d'action auprès du téléchargement et de l'import dans « Réglages et données » ; la carte de lecteur conserve trois matières comparables, avec le grain embossé affiché par défaut et une impression des lettres, filets et poinçon légèrement pressée dans le papier.
 - Trois contrats seulement sont considérés comme structurels avant la première ouverture du produit : séparation `L’œuvre / Ma lecture / Autour de l’œuvre`, conservation de chaque expérience de lecture sans écrasement, puis séparation stricte entre mémoire privée et publication publique.
-- La fondation page œuvre est validée sur Sites 93. La fondation 2 a été validée le 28 septembre 2026 : `À lire` reste une intention, chaque début crée une expérience stable, une interruption la clôt sans jugement, une relecture n’écrase rien et import/export conservent les identifiants. Son contrat et les preuves de vérification vivent dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md) ; la fondation 3 devient la prochaine étape.
+- La fondation page œuvre est validée sur Sites 93. La conservation des expériences est implémentée en candidate le 23 septembre 2026 : `À lire` reste une intention, chaque début crée une expérience stable, une interruption la clôt sans jugement, une relecture n’écrase rien et import/export conservent les identifiants. La candidate doit encore être recettée et validée avant synchronisation GitHub ; le détail vit dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md).
 - Ces deux étapes, leurs effets pour les personas, leurs invariants et leurs critères de sortie sont détaillés dans [`AVANT_PREMIERE_PUBLICATION.md`](./AVANT_PREMIERE_PUBLICATION.md). Elles doivent être terminées avant la première publication du produit, sans préjuger de la technologie du backend.
-
-### Fondation 2 validée — 28 septembre 2026
-
-- La conservation de chaque expérience de lecture est validée après recette des parcours `À lire`, première lecture, interruption, fin et relecture, ainsi que des corrections apportées à la Bibliothèque. La branche dédiée `fondation-experiences-lecture-2026-09-23` est synchronisée sur GitHub depuis la branche validée de la page œuvre, sans fusion vers `main`.
-- Le prototype conserve les expériences en état de session ; persistance serveur, migrations et conflits multi-appareils restent différés au lot 2. La fondation 3 — critique publique autonome de la mémoire privée — est la prochaine étape avant publication.
 
 ## Refonte visible pré-lot 2 — cadrage du 5 septembre 2026
 

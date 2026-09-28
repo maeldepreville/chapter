@@ -1,6 +1,6 @@
-# Chapter — fondation des expériences de lecture (validée)
+# Chapter — fondation des expériences de lecture (candidate)
 
-Statut : fondation validée le 28 septembre 2026 après correction des parcours de lecture et de la Bibliothèque ; synchronisée sur la branche dédiée `fondation-experiences-lecture-2026-09-23`, sans fusion vers `main`. Base : fondation page œuvre validée, Sites 93.
+Statut : candidate corrigée le 26 septembre 2026 après les premiers retours de recette, en attente de validation explicite. Candidate visée : Sites 96. Base validée : fondation page œuvre, Sites 93. Branche de travail : `fondation-experiences-lecture-2026-09-23`.
 
 ## Contrat livré
 
@@ -27,7 +27,7 @@ Le prototype reste un état React de session : la persistance, les migrations, l
 - Après une première intention `À lire`, `Ma lecture` confirme simplement son caractère privé : aucun panneau de première trace ni raccourci vers un Journal encore vide n’est affiché. Les trois liens du sommaire ciblent directement les titres de chapitre, et l’action de critique conserve le même alignement avant et après la création de l’espace.
 - L’atelier `/recette/oeuvre` couvre huit situations : sans compte, à lire, en cours, interrompue, terminée, relecture, importée et nombreuses relectures.
 
-## Recette de validation
+## Recette avant validation
 
 À rejouer sur desktop puis mobile, avec clavier pour tous les contrôles :
 
@@ -42,8 +42,8 @@ Le prototype reste un état React de session : la persistance, les migrations, l
 
 ## Preuves automatisées
 
-Les tests ciblés couvrent l’intention sans expérience, la fin puis la relecture sans écrasement, l’interruption avec conservation du marque-page, le rattachement des dates et traces, le conflit d’expériences actives importées, l’historique long, l’interface publique et l’import privé. Vérification sur l’état synchronisé : `npm test` réussit avec **197/197 tests** et inclut le build de production ; `npm run lint` et `git diff --check` réussissent également.
+Les tests ciblés couvrent l’intention sans expérience, la fin puis la relecture sans écrasement, l’interruption avec conservation du marque-page, le rattachement des dates et traces, le conflit d’expériences actives importées, l’historique long, l’interface publique et l’import privé. La suite complète, le lint, la construction de production et `git diff --check` doivent être verts avant publication de la candidate.
 
 ## Suite
 
-La fondation 2 est validée. L'historique de lecture est conservé dans le prototype de session ; la persistance serveur, les migrations et les conflits multi-appareils restent au lot 2. La prochaine étape est la fondation 3 — publication publique distincte de la mémoire privée — à cadrer avant sa propre candidate.
+Cette candidate ne vaut ni validation ni synchronisation GitHub. Après recette et validation explicite, elle pourra être synchronisée sur sa branche dédiée. La fondation 3 — publication publique distincte de la mémoire privée — viendra ensuite.

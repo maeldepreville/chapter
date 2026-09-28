@@ -236,7 +236,9 @@ test("undoing a first review removes only its new trace and keeps the draft", ()
   const ui = interactiveHome({ view: "work", entries: {}, traces: [retainedTrace] });
   clickFirst(ui, "Écrire une critique");
   nodes(ui.render(), (node) => node.type === "textarea")[0].props.onChange({ target: { value: "Une critique nouvelle" } });
-  ui.button("Publier la critique").props.onClick();
+  ui.button("Voir avant de publier").props.onClick();
+  assert.match(textOf(ui.render()), /Avant de publier/);
+  ui.button("Confirmer la publication").props.onClick();
   clickFirst(ui, "Journal");
   assert.match(textOf(ui.render()), /Une critique nouvelle/);
   nodes(ui.render(), (node) => node.type?.name === "ToastStack")[0].props.toasts.at(-1).onAction();

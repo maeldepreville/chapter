@@ -41,6 +41,8 @@
 .data-actions article { display: flex; flex-direction: column; align-items: flex-start; padding: 1.5rem; background: var(--surface); border: 1px solid var(--line); }
 .data-actions h3 { margin: 0; font-family: var(--font-editorial); font-size: 1.55rem; font-weight: 500; }
 .data-actions p { flex: 1; color: var(--muted); }
+.data-action-button { display: inline-flex; align-items: center; gap: 0.6rem; }
+.data-action-button svg { flex: 0 0 1.1rem; width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .import-control { position: relative; cursor: pointer; }
 .import-control input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .data-success-overlay { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; padding: 1rem; }

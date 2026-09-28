@@ -287,9 +287,9 @@ test("long review expansion preserves paragraphs and stays separate from convers
   const harness = hookHarness();
   const { SocialReviews } = createSourceLoader({ react: harness.react })(source("phase10.tsx"));
   const text = "Premier paragraphe.\n\n" + "Unmottrèslong".repeat(30) + "\nDernière ligne.";
-  const props = { workId: "atlas", personalReview: text, personalRating: 4, onOpenProfile() {}, onWriteReview() {} };
+  const props = { workId: "cartographies", personalReview: text, personalRating: 4, onOpenProfile() {}, onWriteReview() {} };
   const render = () => harness.render(SocialReviews, props);
-  const reviewText = () => nodes(render(), (n) => n.props.id === "review-copy-atlas-self")[0];
+  const reviewText = () => nodes(render(), (n) => n.props.id === "review-copy-cartographies-self")[0];
   const toggle = () => nodes(render(), (n) => n.props.className === "text-action review-text-toggle")[0];
   assert.notEqual(textOf(reviewText()), text); assert.match(textOf(reviewText()), /\n\n/);
   toggle().props.onClick(); assert.equal(textOf(reviewText()), text);

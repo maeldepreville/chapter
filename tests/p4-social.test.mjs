@@ -87,7 +87,7 @@ test("P4 restores a public review after the minimal identity step", () => {
     assert.ok(publicDestinationLabels().includes("Journal"));
     assert.ok(publicDestinationLabels().includes("Bibliothèque"));
     assert.match(textOf(tree), /Visible par tous après publication/);
-    assert.match(textOf(tree), /Publier la critique/);
+    assert.match(textOf(tree), /Voir avant de publier/);
   } finally {
     if (previousWindow === undefined) delete globalThis.window;
     else globalThis.window = previousWindow;
@@ -204,6 +204,9 @@ test("P4 visual layer covers editorial publication, mobile reflow and reduced mo
   const account = await readFile(source("account-creation-dialog.tsx"), "utf8");
   assert.match(css, /\.p4-public-reviews/);
   assert.match(css, /@media \(max-width: 899px\)/);
+  assert.match(css, /\.p4-public-reviews \.social-review\.own-review[^}]*background:[^;]+;[^}]*border-left:/);
+  assert.match(css, /\.review-spoiler \{ display: grid; gap: 0\.7rem; margin: 1\.15rem 0 0 3\.35rem; padding: 1\.05rem 1\.2rem;/);
+  assert.match(css, /\.review-spoiler \{ margin-left: 0; \}/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(page, /Visible par tous après publication/);
   assert.match(account, /Nom de lecteur/);

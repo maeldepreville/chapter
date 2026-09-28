@@ -67,13 +67,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   backdrop-filter: blur(12px);
 }
 .wordmark {
-  font-family: var(--font-editorial);
-  font-size: 1.65rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  width: 7.65rem;
 }
-.wordmark-button { padding: 0; background: transparent; border: 0; cursor: pointer; }
-.wordmark span { color: var(--brick); }
+.chapter-brand-logo { display: block; width: 100%; height: auto; }
+.wordmark-button { padding: 0; background: transparent; border: 0; cursor: pointer; line-height: 0; }
 .desktop-header nav { display: flex; align-items: stretch; align-self: stretch; gap: var(--space-6); font-size: 1rem; }
 .desktop-header nav button { position: relative; padding: 0; color: var(--muted); background: transparent; border: 0; cursor: pointer; }
 .desktop-header nav button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--brick); content: ""; opacity: 0; transition: opacity var(--motion-feedback) var(--ease-standard); }
@@ -806,6 +806,7 @@ dialog.chapter-modal::backdrop { background: transparent; }
     border-bottom: 1px solid var(--line);
     backdrop-filter: blur(12px);
   }
+  .mobile-header .wordmark { width: 7rem; }
   .personal-work-back { width: auto; margin: 0.8rem 1.1rem -0.5rem; }
   .book-opening { grid-template-columns: minmax(7.5rem, 10rem) minmax(0, 1fr); gap: 1.4rem; min-height: auto; padding: 2rem 1.1rem 2.5rem; align-items: start; }
   .cover-stage { grid-column: 1; grid-row: 1 / 4; }
