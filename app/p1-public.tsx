@@ -289,10 +289,11 @@ export function PublicPersonalIntro({ kind, onExplore, onSearch }: {
   );
 }
 
-export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", activeSection = "about", dateInvitation, social }: {
+export function PublicWork({ work, onBack, onActivate, onStopForNow, onSaveMarker, onOpenJournal, onNotify, onCreateAccount, activated = false, record, backLabel = "Retour à Découvrir", activeSection = "about", dateInvitation, social }: {
   work: Work;
   onBack: () => void;
   onActivate: (status: ReadingStatus) => void;
+  onStopForNow?: () => void;
   onSaveMarker: (marker: string) => void;
   onOpenJournal?: () => void;
   onNotify?: (message: string) => void;
@@ -317,7 +318,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
     setPendingStatus(status);
     if (activated) {
       onActivate(status);
-      setMarkerOpen(!record?.marker);
+      setMarkerOpen(status !== "À lire" && !record?.marker);
       notify(`Statut « ${status} » enregistré en privé.`);
       return;
     }
@@ -329,7 +330,7 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
     onCreateAccount?.(readerName);
     onActivate(pendingStatus);
     setAuthOpen(false);
-    setMarkerOpen(true);
+    setMarkerOpen(pendingStatus !== "À lire");
     notify(`Votre compte est prêt. « ${pendingStatus} » a bien été conservé.`);
   };
 
@@ -353,7 +354,12 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
           <p className="book-lede">{work.lede}</p>
           <div className="opening-actions"><div className="status-control">
             <button className="primary-action" type="button" aria-expanded={statusOpen} aria-controls="status-popover-opening-public" onClick={() => setStatusOpen((open) => !open)}>{record?.status ?? "Ajouter au journal"}</button>
-            {statusOpen && <div className="status-popover" id="status-popover-opening-public" role="dialog" aria-label="Choisir un statut de lecture"><div className="popover-heading"><strong>Où en êtes-vous ?</strong><button type="button" aria-label="Fermer" onClick={() => setStatusOpen(false)}>×</button></div>{(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => <button className={record?.status === status ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>)}</div>}
+            {statusOpen && <div className="status-popover" id="status-popover-opening-public" role="dialog" aria-label="Choisir un statut de lecture"><div className="popover-heading"><strong>{record?.status ? "Votre lecture" : "Où en êtes-vous ?"}</strong><button type="button" aria-label="Fermer" onClick={() => setStatusOpen(false)}>×</button></div>
+              {!record?.status && (["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => <button type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>)}
+              {record?.status === "À lire" && <><button type="button" onClick={() => chooseStatus("En cours")}>Commencer la lecture</button><button type="button" onClick={() => chooseStatus("Lu")}>Marquer comme lue</button></>}
+              {record?.status === "En cours" && <><button type="button" onClick={() => chooseStatus("Lu")}>Terminer la lecture</button>{onStopForNow && <button type="button" onClick={() => { setStatusOpen(false); setMarkerOpen(false); onStopForNow(); }}>Arrêter pour l’instant</button>}</>}
+              {record?.status === "Lu" && <button type="button" onClick={() => chooseStatus("En cours")}>Relire</button>}
+            </div>}
           </div></div>
           <p className="work-opening-privacy">Ma lecture · privée, visible uniquement par vous</p>
           {dateInvitation}
@@ -364,21 +370,21 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
       <WorkSectionNav activeSection={activeSection} />
 
       <div className="content-column">
-        <section id="about" className="page-section work-chapter" aria-labelledby="p1-about-title">
-          <div className="section-heading"><p className="section-number">01</p><div><p className="work-chapter-kicker">L’œuvre · ouvert à tous</p><h2 id="p1-about-title">À propos</h2><p>Le récit et quelques repères essentiels.</p></div></div>
+        <section className="page-section work-chapter" aria-labelledby="p1-about-title">
+          <div id="about" className="section-heading"><p className="section-number">01</p><div><p className="work-chapter-kicker">L’œuvre · ouvert à tous</p><h2 id="p1-about-title">À propos</h2><p>Le récit et quelques repères essentiels.</p></div></div>
           <div className="about-layout"><div className="synopsis prose">{work.synopsis.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div><dl className="work-facts"><div><dt>Première publication</dt><dd>{work.year}</dd></div><div><dt>Genre</dt><dd>{work.genre}</dd></div><div><dt>Langue originale</dt><dd>{work.language}</dd></div></dl></div>
         </section>
 
-        <section id="journal" className="page-section work-chapter" aria-labelledby="p1-personal-title">
-          <div className="section-heading"><p className="section-number">02</p><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2><p>Statut, repère et note restent visibles uniquement par vous.</p></div></div>
-          <div className="journal-row"><div><p className="row-label">Ma lecture</p><p className="row-value">{record?.status ?? "Pas encore ajoutée"}</p>{record?.readingDate && <p className="privacy-note">Date enregistrée · {formatReadingDate(record.readingDate)}</p>}<p className="privacy-note">{activated ? "Votre repère est privé." : "Un espace sera créé au premier geste personnel."}</p></div><button className="text-action" type="button" onClick={() => { document.querySelector(".p1-public-work .opening-actions")?.scrollIntoView({ behavior: "smooth", block: "center" }); setStatusOpen(true); }}>{record?.status ? "Modifier" : "Ajouter au journal"}</button></div>
+        <section className="page-section work-chapter" aria-labelledby="p1-personal-title">
+          <div id="journal" className="section-heading"><p className="section-number">02</p><div><p className="work-chapter-kicker">Chez vous · privé</p><h2 id="p1-personal-title">Ma lecture</h2><p>Statut, repère et note restent visibles uniquement par vous.</p></div></div>
+          <div className="journal-row"><div><p className="row-label">Ma lecture</p><p className="row-value">{record?.status ?? "Pas encore ajoutée"}</p>{record?.readingDate && <p className="privacy-note">Date enregistrée · {formatReadingDate(record.readingDate)}</p>}<p className="privacy-note">{activated ? record?.status === "À lire" ? "Votre intention est privée." : "Votre repère est privé." : "Un espace sera créé au premier geste personnel."}</p></div><button className="text-action" type="button" onClick={() => { document.querySelector(".p1-public-work .opening-actions")?.scrollIntoView({ behavior: "smooth", block: "center" }); setStatusOpen(true); }}>{record?.status ? "Modifier" : "Ajouter au journal"}</button></div>
           {!activated && pendingStatus && !authOpen && (
             <div className="p2-pending" role="status">
               <span><small>Geste conservé</small><strong>{pendingStatus}</strong></span>
               <button type="button" onClick={() => setAuthOpen(true)}>Reprendre l’inscription</button>
             </div>
           )}
-          {activated && record && (
+          {activated && record && record.status !== "À lire" && (
             <section className="p2-first-marker" aria-labelledby="p2-marker-title">
               <div>
                 <p className="eyebrow">Votre premier repère</p>
@@ -406,8 +412,8 @@ export function PublicWork({ work, onBack, onActivate, onSaveMarker, onOpenJourn
           )}
         </section>
 
-        <section id="reviews" className="page-section work-chapter" aria-labelledby="p1-public-title">
-          <div className="section-heading"><p className="section-number">03</p><div><p className="work-chapter-kicker">Choisi par leurs auteurs · public</p><h2 id="p1-public-title">Autour de l’œuvre</h2><p>Les critiques publiées sont distinctes de vos notes privées.</p></div></div>
+        <section className="page-section work-chapter" aria-labelledby="p1-public-title">
+          <div id="reviews" className="section-heading"><p className="section-number">03</p><div><p className="work-chapter-kicker">Choisi par leurs auteurs · public</p><h2 id="p1-public-title">Autour de l’œuvre</h2><p>Les critiques publiées sont distinctes de vos notes privées.</p></div></div>
           {social}
         </section>
       </div>

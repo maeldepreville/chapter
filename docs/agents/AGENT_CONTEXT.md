@@ -1,17 +1,16 @@
 # Chapter — contexte courant compact
 
-Mise à jour : 16 septembre 2026.
+Mise à jour : 28 septembre 2026.
 
 Ce document résume l'état utile.
 
 ## État actuel
 
 - **Base acceptée :** la version Sites 84 clôt la refonte visible pré-lot 2 ; voir `docs/milestones/P7_RECETTE_COMPLETE.md`.
-- **Phase active :** fondation de la page œuvre validée sur Sites 93, sans backend ; voir `docs/milestones/FONDATION_PAGE_OEUVRE.md`.
-- **Branche active :** `fondations-page-oeuvre-2026-09-15` créée sur GitHub depuis `main`. La candidate est dans la source technique du Site, pas encore synchronisée sur cette branche GitHub.
+- **Fondation 2 :** « expériences de lecture conservées » validée le 28 septembre 2026 et synchronisée sur la branche dédiée `fondation-experiences-lecture-2026-09-23`, fondée sur `fondations-page-oeuvre-2026-09-15` ; voir `docs/milestones/FONDATION_EXPERIENCES_LECTURE.md`.
 - **Statut P1–P6 :** validés, synchronisés ; voir leurs documents de jalon.
 - **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers le `main` GitHub après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
-- **Prochaine action unique :** synchroniser la fondation page œuvre validée sur sa branche dédiée, puis ouvrir dans un nouveau jalon la fondation 2 « expériences de lecture conservées ». La fondation 3 « publication distincte de la mémoire privée » vient ensuite. Leur contrat est dans `docs/product/AVANT_PREMIERE_PUBLICATION.md`.
+- **Prochaine action unique :** cadrer la fondation 3 « publication publique distincte de la mémoire privée » avant sa candidate ; voir `docs/product/AVANT_PREMIERE_PUBLICATION.md`. Le lot 2 backend reste à cadrer séparément.
 - **Produit actuel :** prototype frontend sur données simulées et état de session local. Backend, authentification, persistance, modération et recommandation réels restent au lot 2.
 - **Publication :** toute candidate complète et vérifiée rejoint directement le Site de recette avec son accès existant. Cela ne vaut ni validation, ni synchronisation GitHub, ni fusion.
 
@@ -38,7 +37,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 - QRM1b : retournement de la carte autour de 440 ms.
 - PFP1 : JPEG/PNG/WebP, 8 Mo, petit côté minimal de 512 px ; gestes confinés à l'image.
 - Critiques publiques limitées à 3 000 caractères ; écrits complets conservés.
-- Une implémentation candidate ne vaut ni validation, ni synchronisation GitHub, ni déploiement.
+- Une implémentation candidate ne vaut ni validation ni synchronisation GitHub. Sa mise à disposition sur le Site de recette est automatique après vérification.
 
 ## Routage du contexte
 
@@ -60,6 +59,7 @@ Le détail et les justifications sont dans `docs/product/REFONTE_PRE_LOT_2.md`.
 | Fixtures ou future source backend | `docs/engineering/PROTOTYPE_DATA_REGISTER.md` |
 | Acquisition et croissance | `docs/product/REFONTE_PRE_LOT_2.md`, puis `docs/product/CHAPTER_PRODUCT_GROWTH_PRINCIPLES.md` |
 | Fondations restantes avant première publication | `docs/product/AVANT_PREMIERE_PUBLICATION.md`, puis le jalon actif |
+| Fondation 2 — expériences de lecture | `docs/milestones/FONDATION_EXPERIENCES_LECTURE.md`, puis `app/reading-experience-model.ts` |
 | Créer ou évaluer un asset | `docs/design/ASSET_SYSTEM.md`, puis la famille concernée dans `docs/product/REFONTE_PRE_LOT_2.md` |
 | Synchronisation GitHub ou publication | `docs/agents/AGENT_WORKFLOW.md` et l'état Git/Sites réel |
 | Optimisation des agents | `docs/agents/AI_AGENT_CONTEXT_STRATEGY.md` |

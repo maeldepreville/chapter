@@ -249,7 +249,7 @@ test("undoing a first review removes only its new trace and keeps the draft", ()
 test("a private note has an explicit confirmed deletion with undo", () => withWindow(() => {
   const noteTrace = saveWrittenTrace([], "cartographies", "note", "Une note à retirer", "Aujourd’hui")[0];
   const ui = interactiveHome({ view: "work", entries: { cartographies: { ...emptyEntry, note: "Une note à retirer" } }, traces: [noteTrace] });
-  const noteRow = nodes(ui.render(), (node) => node.props?.className === "journal-row" && textOf(node).includes("Ma note"))[0];
+  const noteRow = nodes(ui.render(), (node) => node.props?.className === "journal-row" && textOf(node).includes("Ma pensée"))[0];
   nodes(noteRow, (node) => node.type === "button")[0].props.onClick();
   ui.button("Supprimer la note").props.onClick();
   assert.match(textOf(ui.render()), /Supprimer cette note privée/);

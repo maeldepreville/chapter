@@ -1,6 +1,6 @@
 # Chapter — carte compacte du code
 
-Dernière mise à jour : 15 septembre 2026.
+Dernière mise à jour : 23 septembre 2026.
 
 Cette carte sert à ouvrir les bons symboles sans charger les deux grands composants applicatifs en entier. Elle décrit le socle P0, les tranches P1 à P6 et leur recette complète P7 au-dessus de la base acceptée du lot 1.
 
@@ -24,6 +24,7 @@ Cette carte sert à ouvrir les bons symboles sans charger les deux grands compos
 | P6 : états transversaux et atelier de recette | `app/p6-states.tsx`, `app/recette/p6/p6-state-lab.tsx` | `p6-states.css`, `p6-fixtures.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`, routes dynamiques | `p6-cross-cutting-states`, `phase11-accessibility`, `phase11-empty-states`, `phase11-recovery`, `phase11-polish` |
 | P7 : recette complète P0 à P6 | `app/recette/p7/p7-journey-lab.tsx` | `p7-recipe.css`, `foundation/contracts.ts`, atelier P6 et routes publiques directes | `p7-complete-recipe`, puis suite complète |
 | Fondation candidate de la page œuvre | `PublicWork` dans `app/p1-public.tsx`, vue œuvre dans `app/page.tsx` | `work-section-nav.tsx` (sommaire, ancres et garde des fragments communs), `chapter-date-picker.tsx` / `.css` (calendrier commun aux invitations de dates de lecture), `book-work-cover.tsx`, `work-past-notes.tsx`, `app/recette/oeuvre/work-recipe-lab.tsx`, `p1-public.css`, `globals.css` | `work-foundation`, `chapter-date-picker`, `p4-social`, `phase11-accessibility`, `phase11-empty-states` |
+| Fondation 2 : expériences de lecture | `app/reading-experience-model.ts` | `foundation/contracts.ts`, `page.tsx`, `p1-public.tsx`, `journal-model.ts`, `work-past-notes.tsx`, `app/recette/oeuvre/work-recipe-lab.tsx` | `reading-experience-model`, `work-foundation`, `p3-personal-use`, `p5-trust`, `chapter-date-picker` |
 | Modales et focus | `modal.tsx` | `modal-behavior.ts` | `modal-behavior`, `phase11-accessibility` |
 | Retours temporaires empilés | `app/toast-stack.tsx` | `page.tsx`, `globals.css`, `p1-public.tsx` | `toast-stack`, `p3-personal-use`, `phase11-empty-states`, `phase11-journeys` |
 | Création d’espace depuis un premier geste | `app/account-creation-dialog.tsx` | `p1-public.tsx`, `page.tsx`, `p2-first-marker.css` | `p2-first-marker`, `p4-social`, `modal-behavior` |

@@ -58,6 +58,23 @@ test("P2 keeps a selected status through signup and exposes a private first mark
   assert.match(textOf(tree), /Voir mon Journal/);
 });
 
+test("À lire stays a private intention without promising a Journal entry", () => {
+  const harness = hookHarness();
+  const load = createSourceLoader({ react: harness.react });
+  const { publicWorks } = load(source("p1-public-fixtures.ts"));
+  const { PublicWork } = load(source("p1-public.tsx"));
+  const tree = harness.render(PublicWork, {
+    work: publicWorks[0],
+    activated: true,
+    record: { status: "À lire", marker: "" },
+    onBack() {}, onActivate() {}, onSaveMarker() {}, onOpenJournal() {},
+  });
+
+  assert.match(textOf(tree), /À lireVotre intention est privée/);
+  assert.doesNotMatch(textOf(tree), /Votre intentionCette œuvre vous attend|Voir mon Journal|Cette œuvre est enregistrée dans votre Journal/);
+  assert.equal(nodes(tree, (node) => node.props?.className === "p2-first-marker").length, 0);
+});
+
 test("P2 styling keeps the first marker responsive and shares the reading-status sheet", async () => {
   const css = await readFile(source("p2-first-marker.css"), "utf8");
   const sharedCss = await readFile(source("globals.css"), "utf8");

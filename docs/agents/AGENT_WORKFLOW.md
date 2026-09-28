@@ -58,7 +58,8 @@ L'utilisateur a autorisé durablement une synchronisation directe après chaque 
 
 - lot 1 historique : `main` ;
 - refonte P0 à P6 : `refonte-pre-lot-2` ;
-- P7 : fusion vers `main` seulement après recette complète et accord explicite.
+- P7 : fusion vers `main` seulement après recette complète et accord explicite ;
+- fondations avant première publication : une branche dédiée par fondation, sans fusion automatique vers `main` (fondation 1 : `fondations-page-oeuvre-2026-09-15` ; fondation 2 : `fondation-experiences-lecture-2026-09-23`).
 
 1. Mettre à jour les documents de décision et de clôture du périmètre accepté.
 2. Vérifier le dépôt de travail, la référence GitHub distante et les éventuelles divergences.

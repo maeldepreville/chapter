@@ -191,7 +191,9 @@ test("P5 import keeps imported reviews private and merges journal traces without
     const exported = settings.props.createExport();
     const firstRecord = exported.privateRecords.find((record) => record.workId === firstWork.id);
     const secondRecord = exported.privateRecords.find((record) => record.workId === secondWork.id);
-    assert.equal(firstRecord.note, "Note restaurée");
+    assert.equal(firstRecord.note, "", "an imported past experience must not become the editable current note");
+    assert.equal(firstRecord.experiences.filter((experience) => experience.imported).at(-1).note, "Note restaurée");
+    assert.equal(firstRecord.experiences.filter((experience) => experience.state === "active").length, 0);
     assert.equal(firstRecord.review, "Critique déjà publique");
     assert.equal(firstRecord.rating, 5);
     assert.equal(secondRecord.review, "Critique importée");

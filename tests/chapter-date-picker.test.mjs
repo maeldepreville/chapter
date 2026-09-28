@@ -76,6 +76,10 @@ test("the Lu invitation records a chosen day only after explicit confirmation", 
   button("Lu").props.onClick();
   button("Choisir").props.onClick();
   let tree = render();
+  const dateDialog = nodes(tree, (node) => node.type?.name === "Modal" && node.props?.className === "date-invitation-modal")[0];
+  assert.ok(dateDialog);
+  assert.equal(dateDialog.props.describedBy, "date-invitation-description-opening-cartographies");
+  assert.match(textOf(dateDialog), /Les Cartographies du vent/);
   assert.equal(nodes(tree, (node) => node.type === "input" && node.props.type === "date").length, 0);
   assert.equal(button("Enregistrer la date").props.disabled, true);
   const picker = nodes(tree, (node) => node.type?.name === "ChapterDatePicker")[0];

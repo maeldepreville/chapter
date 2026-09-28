@@ -9,6 +9,7 @@ const globals = readFileSync(source("globals.css"), "utf8");
 const tokens = readFileSync(source("foundation/tokens.css"), "utf8");
 const phase10 = readFileSync(source("phase10.css"), "utf8");
 const phase10Component = readFileSync(source("phase10.tsx"), "utf8");
+const pageSource = readFileSync(source("page.tsx"), "utf8");
 
 const luminance = (hex) => hex.match(/[0-9a-f]{2}/gi)
   .map((part) => Number.parseInt(part, 16) / 255)
@@ -33,6 +34,11 @@ test("small screens keep text and form controls reflowable", () => {
   assert.match(globals, /\.text-action\s*\{[^}]*max-width: 100%;[^}]*white-space: normal;/s);
   assert.match(globals, /\.date-invitation-actions\s*\{[^}]*flex-wrap: wrap;/s);
   assert.match(globals, /\.date-invitation \.date-field\s*\{[^}]*min-width: min\(17rem, 100%\);/s);
+  const calendar = readFileSync(source("chapter-date-picker.css"), "utf8");
+  assert.match(pageSource, /<Modal className="date-invitation-modal"[^>]*labelledBy=\{titleId\}/);
+  assert.match(calendar, /\.date-invitation-modal \.date-invitation\s*\{[^}]*max-height: calc\(100dvh - 2\.5rem\);[^}]*overflow-y: auto;/s);
+  assert.match(calendar, /\.date-invitation-modal\.overlay\s*\{ align-items: end; padding: 0; \}/);
+  assert.match(calendar, /@media \(max-height: 640px\)[\s\S]*?\.date-invitation-modal \.date-field\s*\{ max-width: 18rem;/);
   assert.match(phase10, /@media \(max-width: 560px\)[\s\S]*?\.destination-heading h1,[\s\S]*?font-size: clamp\(3rem, 16vw, 4rem\);[^}]*overflow-wrap: anywhere;/);
   assert.match(phase10, /\.file-action:has\(input:focus-visible\)\s*\{[^}]*outline: 3px solid var\(--brick\);/s);
 });

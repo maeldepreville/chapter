@@ -2,7 +2,7 @@
 
 Ce document constitue la source de référence des décisions prises au cours de la conception de l’interface de Chapter. Il distingue les choix validés des sujets encore ouverts afin d’éviter les glissements de périmètre et les contradictions.
 
-Dernière mise à jour : 16 septembre 2026
+Dernière mise à jour : 28 septembre 2026
 
 ## Cadre de collaboration
 
@@ -21,8 +21,13 @@ Dernière mise à jour : 16 septembre 2026
 ## Fondations avant première publication — 16 septembre 2026
 
 - Trois contrats seulement sont considérés comme structurels avant la première ouverture du produit : séparation `L’œuvre / Ma lecture / Autour de l’œuvre`, conservation de chaque expérience de lecture sans écrasement, puis séparation stricte entre mémoire privée et publication publique.
-- La fondation page œuvre est validée sur Sites 93. La conservation des expériences devient le prochain jalon ; le contrat de publication autonome vient ensuite, car Chapter doit d'abord savoir ce qu'il garde avant de décider ce qu'il fait circuler.
+- La fondation page œuvre est validée sur Sites 93. La fondation 2 a été validée le 28 septembre 2026 : `À lire` reste une intention, chaque début crée une expérience stable, une interruption la clôt sans jugement, une relecture n’écrase rien et import/export conservent les identifiants. Son contrat et les preuves de vérification vivent dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md) ; la fondation 3 devient la prochaine étape.
 - Ces deux étapes, leurs effets pour les personas, leurs invariants et leurs critères de sortie sont détaillés dans [`AVANT_PREMIERE_PUBLICATION.md`](./AVANT_PREMIERE_PUBLICATION.md). Elles doivent être terminées avant la première publication du produit, sans préjuger de la technologie du backend.
+
+### Fondation 2 validée — 28 septembre 2026
+
+- La conservation de chaque expérience de lecture est validée après recette des parcours `À lire`, première lecture, interruption, fin et relecture, ainsi que des corrections apportées à la Bibliothèque. La branche dédiée `fondation-experiences-lecture-2026-09-23` est synchronisée sur GitHub depuis la branche validée de la page œuvre, sans fusion vers `main`.
+- Le prototype conserve les expériences en état de session ; persistance serveur, migrations et conflits multi-appareils restent différés au lot 2. La fondation 3 — critique publique autonome de la mémoire privée — est la prochaine étape avant publication.
 
 ## Refonte visible pré-lot 2 — cadrage du 5 septembre 2026
 

@@ -131,14 +131,14 @@ test("reading status, optional date and Journal traces remain continuous", () =>
   ui.button("Les Cartographies du ventCamille Maret").props.onClick();
 
   ui.button("En cours").props.onClick();
-  ui.button("Lu").props.onClick();
+  ui.button("Terminer la lecture").props.onClick();
   assert.match(textOf(ui.render()), /Ajouter une date de fin/);
   ui.button("Choisir").props.onClick();
   const date = nodes(ui.render(), (node) => node.type?.name === "ChapterDatePicker")[0];
   assert.ok(date);
   date.props.onChange("2026-09-01");
   ui.button("Enregistrer la date").props.onClick();
-  assert.match(textOf(ui.render()), /Date enregistrée · 1 septembre 2026/);
+  assert.match(textOf(ui.render()), /Terminée le 1 septembre 2026/);
 
     ui.button("Journal").props.onClick();
     assert.match(textOf(ui.render()), /Lecture terminée/);

@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CoverFrame } from "./cover-frame";
 import { BookWorkCover } from "./book-work-cover";
-import { WorkPastNotes } from "./work-past-notes";
-import { JournalTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
+import { WorkReadingHistory } from "./work-past-notes";
+import { JournalTrace, saveInterruptedTrace, saveReadingTrace, saveWrittenTrace } from "./journal-model";
 import { LibrarySort, LibrarySortControl } from "./library-sort";
 import { Modal } from "./modal";
 import { Fade } from "./fade";
@@ -15,7 +15,7 @@ import { publicListCatalog, publicListIds, type PublicListId } from "./catalogue
 import { actorIdForProfile, CURRENT_READER_ID, profileOwnerForActor, profilePresentations, prototypeActors, type ProfileOwner, type PrototypeActorId } from "./prototype-data";
 import type { PrototypePublicReview } from "./social-data";
 import { PUBLIC_PROFILE_PATH } from "./site-config";
-import { shellAttributes, type OptionalProgress, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
+import { shellAttributes, type OptionalProgress, type ReadingExperience, type ReadingStatus, type Work as FoundationWork } from "./foundation/contracts";
 import { coreActivityOrder, coreEntries, coreJournalTraces, coreWorks, emptyPersonalEntry } from "./foundation/fixtures";
 import { denseWorks, habitualPrototypeSession } from "./foundation/dense-fixtures";
 import { PublicDiscover, PublicPersonalIntro, PublicSearch, PublicWork, type FirstMarkerRecord } from "./p1-public";
@@ -28,6 +28,7 @@ import { staticAsset, warmStaticAssets } from "./static-assets";
 import { EmptyDestination } from "./empty-destination";
 import { ToastStack, type StackToast } from "./toast-stack";
 import type { EditableProfileList } from "./profile-curation";
+import { activeReadingExperience, completeReading, hasInterruptedReading, hydrateReadingMemory, interruptReading, keepToRead, latestReadingExperience, readingExperiences, readingMemoryPatch, startReading, updateExperienceDate, updateExperienceNote, updateExperienceProgress } from "./reading-experience-model";
 
 type DatePrompt = "start" | "finish" | null;
 type View = "work" | "journal" | "library" | "discover" | "search" | "profile" | "honors" | "list";
@@ -67,6 +68,9 @@ export type PersonalEntry = {
   progress?: OptionalProgress;
   completedReadings?: number;
   pastNotes?: readonly { reading: number; text: string }[];
+  readingIntent?: boolean;
+  experiences?: readonly ReadingExperience[];
+  libraryHidden?: boolean;
 };
 
 const emptyEntry: PersonalEntry = { ...emptyPersonalEntry, completedReadings: 0 };
@@ -74,6 +78,7 @@ const currentReader = prototypeActors[CURRENT_READER_ID];
 const defaultProfileLists: readonly EditableProfileList[] = publicListIds.map((id) => ({ id, ...publicListCatalog[id], workIds: [...publicListCatalog[id].workIds] }));
 const initialsFor = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("fr") ?? "").join("") || "L";
 const isReviewPublished = (entry: PersonalEntry) => Boolean(entry.review && (entry.reviewPublished ?? true));
+const isInLibrary = (entry: PersonalEntry | undefined) => Boolean(entry?.readingStatus && !entry.libraryHidden);
 
 export const defaultWorks: readonly Work[] = [...coreWorks, ...denseWorks.slice(0, 494)];
 type WorkId = string;
@@ -133,8 +138,8 @@ const denseRecords = new Map(habitualPrototypeSession.privateRecords.map((record
 const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(defaultWorks.map((work) => {
   const coreEntry = (coreEntries as Record<string, Partial<PersonalEntry>>)[work.id];
   const denseRecord = denseRecords.get(work.id);
-  if (coreEntry) return [work.id, { ...emptyEntry, ...coreEntry, completedReadings: coreEntry.readingStatus === "Lu" ? 1 : 0 }];
-  return [work.id, {
+  if (coreEntry) return [work.id, hydrateReadingMemory({ ...emptyEntry, ...coreEntry, completedReadings: coreEntry.readingStatus === "Lu" ? 1 : 0 }, work.id)];
+  return [work.id, hydrateReadingMemory({
     ...emptyEntry,
     readingStatus: denseRecord?.readingStatus ?? null,
     readingDate: denseRecord?.readingDate ?? "",
@@ -142,7 +147,7 @@ const defaultEntries: Record<string, PersonalEntry> = Object.fromEntries(default
     rating: denseRecord?.rating ?? 0,
     progress: denseRecord?.progress,
     completedReadings: denseRecord?.readingStatus === "Lu" ? 1 : 0,
-  }];
+  }, work.id)];
 }));
 
 // Internal fixture injection only; no public switch, URL parameter or storage.
@@ -168,7 +173,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [destinationOverlay, setDestinationOverlay] = useState<DestinationOverlay>(initialPublicListId || initialRequestedView === "list" ? "list" : initialRequestedView === "honors" ? "honors" : null);
   const [selectedWorkId, setSelectedWorkId] = useState<WorkId>(initialPublicWorkId ?? works[0]?.id ?? "cartographies");
   const initialPublicWorkPath = useRef<string | null>(null);
-  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(initialData?.entries ?? (startsPublic ? {} : defaultEntries));
+  const [entries, setEntries] = useState<Record<string, PersonalEntry>>(() => Object.fromEntries(Object.entries(initialData?.entries ?? (startsPublic ? {} : defaultEntries)).map(([workId, personalEntry]) => [workId, hydrateReadingMemory({ ...emptyEntry, ...personalEntry }, workId)])));
   const [journalTraces, setJournalTraces] = useState<readonly JournalTrace[]>(initialData?.traces ?? (startsPublic ? [] : defaultJournalTraces));
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [statusOrigin, setStatusOrigin] = useState<StatusOrigin>("opening");
@@ -176,6 +181,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const [datePrompt, setDatePrompt] = useState<DatePrompt>(null);
   const [customDateOpen, setCustomDateOpen] = useState(false);
   const [dateDraft, setDateDraft] = useState("");
+  const [dateExperienceId, setDateExperienceId] = useState<string | null>(null);
   const [removeConfirmWorkId, setRemoveConfirmWorkId] = useState<WorkId | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
@@ -245,12 +251,22 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const navigationStack = useRef<NavigationSnapshot[]>([]);
   const selectedWork = works.find((work) => work.id === selectedWorkId);
   const entry = entries[selectedWorkId] ?? emptyEntry;
+  const selectedExperiences = readingExperiences(entry, selectedWorkId);
+  const activeExperience = activeReadingExperience(entry, selectedWorkId);
+  const latestExperience = latestReadingExperience(entry, selectedWorkId);
+  const editableExperience = activeExperience ?? (!entry.readingIntent && (latestExperience?.state === "completed" || latestExperience?.state === "interrupted") && !latestExperience.imported ? latestExperience : undefined);
+  const writingIsBilan = editableExperience?.state === "completed";
+  const readingDetail = activeExperience
+    ? activeExperience.sequence > 1 ? "Relecture en cours" : "Lecture en cours"
+    : latestExperience?.state === "interrupted" ? "Lecture interrompue · à reprendre"
+      : entry.readingStatus === "Lu" ? "Dernière lecture terminée" : entry.readingStatus === "À lire" ? "Intention de lecture" : "Aucune lecture commencée";
   const reviewIsPublished = isReviewPublished(entry);
   const filteredWorks = works.filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(searchQuery.trim().toLocaleLowerCase("fr")));
-  const profileCurationWorks = works.filter((work) => entries[work.id]?.readingStatus);
+  const profileCurationWorks = works.filter((work) => isInLibrary(entries[work.id]));
+  const keepLibraryDateContext = statusOrigin === "library" && Boolean(datePrompt);
   const libraryWorks = works
-    .filter((work) => entries[work.id]?.readingStatus)
-    .filter((work) => libraryFilter === "Toutes" || entries[work.id]?.readingStatus === libraryFilter)
+    .filter((work) => isInLibrary(entries[work.id]))
+    .filter((work) => libraryFilter === "Toutes" || entries[work.id]?.readingStatus === libraryFilter || (keepLibraryDateContext && work.id === statusWorkId))
     .filter((work) => `${work.title} ${work.author}`.toLocaleLowerCase("fr").includes(libraryQuery.trim().toLocaleLowerCase("fr")))
     .sort((a, b) => {
       if (librarySort === "title") return a.title.localeCompare(b.title, "fr");
@@ -259,13 +275,13 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     });
   const visibleLibraryWorks = libraryWorks.slice(0, libraryVisibleCount);
   const libraryCounts = {
-    Toutes: works.filter((work) => entries[work.id]?.readingStatus).length,
-    "À lire": works.filter((work) => entries[work.id]?.readingStatus === "À lire").length,
-    "En cours": works.filter((work) => entries[work.id]?.readingStatus === "En cours").length,
-    Lu: works.filter((work) => entries[work.id]?.readingStatus === "Lu").length,
+    Toutes: works.filter((work) => isInLibrary(entries[work.id])).length,
+    "À lire": works.filter((work) => isInLibrary(entries[work.id]) && entries[work.id]?.readingStatus === "À lire").length,
+    "En cours": works.filter((work) => isInLibrary(entries[work.id]) && entries[work.id]?.readingStatus === "En cours").length,
+    Lu: works.filter((work) => isInLibrary(entries[work.id]) && entries[work.id]?.readingStatus === "Lu").length,
   } satisfies Record<LibraryFilter, number>;
   const currentReadings = works
-    .filter((work) => entries[work.id]?.readingStatus === "En cours")
+    .filter((work) => isInLibrary(entries[work.id]) && entries[work.id]?.readingStatus === "En cours")
     .sort((a, b) => activityOrder[b.id] - activityOrder[a.id])
     .slice(0, 3);
   const visibleTimelineTraces = olderJournalVisible ? journalTraces.slice(1) : journalTraces.slice(1, 4);
@@ -490,7 +506,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     exportedAt: new Date().toISOString(),
     account: { publicName: publicProfileName },
     privacy: { journal: "private", library: "private", notes: "private" },
-    privateRecords: Object.entries(entries).filter(([, personalEntry]) => personalEntry.readingStatus || personalEntry.note || personalEntry.review || personalEntry.rating > 0).map(([workId, personalEntry]) => ({ workId, ...personalEntry })),
+    privateRecords: Object.entries(entries).filter(([, personalEntry]) => personalEntry.readingStatus || personalEntry.experiences?.length || personalEntry.note || personalEntry.review || personalEntry.rating > 0).map(([workId, personalEntry]) => ({ workId, ...personalEntry })),
     journalTraces: journalTraces.map((trace) => ({ ...trace })),
     publications: personalPublicReviews.map((review) => ({ ...review })),
     followingActorIds: (Object.keys(followingActors) as PrototypeActorId[]).filter((actorId) => followingActors[actorId]),
@@ -502,7 +518,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     const importedRecords = snapshot.privateRecords.filter((record) => record && typeof record === "object" && typeof record.workId === "string" && knownWorkIds.has(record.workId));
     setEntries((current) => {
       const next = { ...current };
-      importedRecords.forEach((record) => {
+      importedRecords.forEach((record, importedRecordIndex) => {
         const workId = record.workId as string;
         const currentEntry = next[workId] ?? emptyEntry;
         const currentReviewIsPublic = isReviewPublished(currentEntry);
@@ -512,23 +528,43 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           ? { kind: "bookmark" as const, page: Math.floor(progress.page), ...(typeof progress.totalPages === "number" && Number.isFinite(progress.totalPages) && progress.totalPages >= progress.page ? { totalPages: Math.floor(progress.totalPages) } : {}), updatedAt: typeof progress.updatedAt === "string" ? progress.updatedAt : snapshot.exportedAt }
           : undefined;
         const importedReview = typeof record.review === "string" ? record.review.trim() : "";
+        const importedBase = hydrateReadingMemory({
+          ...emptyEntry,
+          readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : null,
+          readingDate: typeof record.readingDate === "string" ? record.readingDate : "",
+          note: typeof record.note === "string" ? record.note.trim() : "",
+          progress: importedProgress,
+          completedReadings: typeof record.completedReadings === "number" && Number.isFinite(record.completedReadings) && record.completedReadings >= 0 ? Math.floor(record.completedReadings) : 0,
+          pastNotes: Array.isArray(record.pastNotes) ? record.pastNotes.filter((item): item is { reading: number; text: string } => Boolean(item && typeof item === "object" && typeof item.reading === "number" && Number.isInteger(item.reading) && item.reading > 0 && typeof item.text === "string" && item.text.trim())).map((item) => ({ reading: item.reading, text: item.text.trim() })) : [],
+          readingIntent: typeof record.readingIntent === "boolean" ? record.readingIntent : status === "À lire",
+          experiences: Array.isArray(record.experiences) ? record.experiences as ReadingExperience[] : undefined,
+        }, workId);
+        const explicitExperiences = Array.isArray(record.experiences);
+        const importedExperiences = readingExperiences(importedBase, workId).map((experience) => ({
+          ...experience,
+          id: explicitExperiences ? experience.id : `imported-${importedRecordIndex + 1}-${experience.id}`,
+          imported: true,
+        }));
+        const mergedExperiences = new Map(readingExperiences(currentEntry, workId).map((experience) => [experience.id, experience]));
+        importedExperiences.forEach((experience) => { if (!mergedExperiences.has(experience.id)) mergedExperiences.set(experience.id, experience); });
+        const currentActiveId = activeReadingExperience(currentEntry, workId)?.id;
+        const preservedExperiences = [...mergedExperiences.values()].map((experience) => currentActiveId && experience.state === "active" && experience.id !== currentActiveId
+          ? { ...experience, state: "interrupted" as const }
+          : experience);
+        const mergedReading = readingMemoryPatch(currentEntry, workId, preservedExperiences, Boolean(currentEntry.readingIntent || importedBase.readingIntent));
         next[workId] = {
           ...emptyEntry,
           ...currentEntry,
-          readingStatus: status === "À lire" || status === "En cours" || status === "Lu" ? status : currentEntry.readingStatus,
-          readingDate: typeof record.readingDate === "string" && record.readingDate ? record.readingDate : currentEntry.readingDate,
-          note: typeof record.note === "string" && record.note.trim() ? record.note.trim() : currentEntry.note,
+          ...mergedReading,
+          libraryHidden: currentEntry.libraryHidden ?? (record.libraryHidden === true ? true : undefined),
           review: currentReviewIsPublic || !importedReview ? currentEntry.review : importedReview,
           reviewPublished: currentReviewIsPublic,
           rating: currentReviewIsPublic || typeof record.rating !== "number" || !Number.isFinite(record.rating) || record.rating < 0 || record.rating > 5 ? currentEntry.rating : record.rating,
-          progress: importedProgress ?? currentEntry.progress,
-          completedReadings: typeof record.completedReadings === "number" && Number.isFinite(record.completedReadings) && record.completedReadings >= 0 ? Math.max(currentEntry.completedReadings ?? 0, Math.floor(record.completedReadings)) : currentEntry.completedReadings,
-          pastNotes: Array.isArray(record.pastNotes) ? record.pastNotes.filter((item): item is { reading: number; text: string } => Boolean(item && typeof item === "object" && typeof item.reading === "number" && Number.isInteger(item.reading) && item.reading > 0 && typeof item.text === "string" && item.text.trim())).map((item) => ({ reading: item.reading, text: item.text.trim() })) : currentEntry.pastNotes,
         };
       });
       return next;
     });
-    const allowedTraceKinds = new Set<JournalTrace["kind"]>(["Note privée", "Critique publique", "Critique importée · privée", "Lecture commencée", "Lecture terminée", "Relecture commencée", "Relecture terminée"]);
+    const allowedTraceKinds = new Set<JournalTrace["kind"]>(["Note privée", "Critique publique", "Critique importée · privée", "Lecture commencée", "Lecture terminée", "Lecture interrompue", "Relecture commencée", "Relecture terminée"]);
     const importedTracesById = new Map<string, JournalTrace>();
     snapshot.journalTraces.forEach((trace) => {
       if (!trace || typeof trace !== "object" || typeof trace.id !== "string" || typeof trace.workId !== "string" || !knownWorkIds.has(trace.workId) || typeof trace.date !== "string" || typeof trace.kind !== "string" || !allowedTraceKinds.has(trace.kind as JournalTrace["kind"])) return;
@@ -536,6 +572,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
       importedTracesById.set(trace.id, {
         id: trace.id,
         workId: trace.workId,
+        ...(typeof trace.experienceId === "string" && trace.experienceId ? { experienceId: trace.experienceId } : {}),
         date: trace.date,
         kind: isImportedReview ? "Critique importée · privée" : trace.kind as JournalTrace["kind"],
         ...(typeof trace.text === "string" ? { text: trace.text } : {}),
@@ -627,7 +664,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const addDiscoveryToRead = (id: string) => {
     const workId = id as WorkId;
     const previousEntry = entries[workId] ?? emptyEntry;
-    updateEntryFor(workId, { readingStatus: "À lire", readingDate: "" });
+    updateEntryFor(workId, { ...keepToRead(previousEntry, workId), libraryHidden: false });
     showFeedback({ kind: "saved", label: "Ajouté à « À lire »", detail: "Aucune activité publique n’a été créée.", onAction: () => updateEntryFor(workId, previousEntry) });
   };
 
@@ -666,10 +703,19 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const enterPersonalSpace = (destination: "journal" | "library" | "profile" = "journal") => {
     const firstRecord = publicFirstMarkers[selectedWorkId];
     if (firstRecord) {
-      updateEntryFor(selectedWorkId, { readingStatus: firstRecord.status, note: firstRecord.marker });
+      const targetEntry = entries[selectedWorkId] ?? emptyEntry;
+      const transition = firstRecord.status === "À lire"
+        ? { patch: keepToRead(targetEntry, selectedWorkId), experience: undefined, rereading: false }
+        : firstRecord.status === "En cours"
+          ? startReading(targetEntry, selectedWorkId)
+          : completeReading(targetEntry, selectedWorkId);
+      const withMarker = firstRecord.marker && transition.experience
+        ? updateExperienceNote({ ...targetEntry, ...transition.patch }, selectedWorkId, firstRecord.marker)
+        : { patch: transition.patch, experience: transition.experience };
+      updateEntryFor(selectedWorkId, { ...withMarker.patch, libraryHidden: false });
       setJournalTraces((current) => {
-        const withReading = firstRecord.status === "À lire" ? [...current] : saveReadingTrace(current, selectedWorkId, firstRecord.status, "Aujourd’hui");
-        return firstRecord.marker ? saveWrittenTrace(withReading, selectedWorkId, "note", firstRecord.marker, "Aujourd’hui") : withReading;
+        const withReading = firstRecord.status === "À lire" || !transition.experience ? [...current] : saveReadingTrace(current, selectedWorkId, firstRecord.status, "Aujourd’hui", transition.rereading, transition.experience.id);
+        return firstRecord.marker && transition.experience ? saveWrittenTrace(withReading, selectedWorkId, "note", firstRecord.marker, "Aujourd’hui", transition.experience.id) : withReading;
       });
     }
     setAccessMode("personal");
@@ -796,29 +842,22 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     return () => document.removeEventListener("keydown", onEscape);
   });
 
-  const archiveNoteForRereading = (workId: WorkId, targetEntry: PersonalEntry, reading: number): Partial<PersonalEntry> => {
-    if (!targetEntry.note.trim()) return {};
-    const pastNotes = [...(targetEntry.pastNotes ?? []), { reading, text: targetEntry.note }];
-    setJournalTraces((traces) => traces.map((trace) => trace.workId === workId && trace.action === "note" ? { ...trace, id: `trace-note-${workId}-reading-${reading}`, action: undefined } : trace));
-    return { note: "", pastNotes };
-  };
-
   const chooseStatus = (status: ReadingStatus) => {
     const targetEntry = entries[statusWorkId] ?? emptyEntry;
-    const completedReadings = targetEntry.completedReadings ?? (targetEntry.readingStatus === "Lu" ? 1 : 0);
-    const isRereading = completedReadings > 0;
-    if (status !== "À lire" && targetEntry.readingStatus !== status) {
-      setJournalTraces((traces) => saveReadingTrace(traces, statusWorkId, status, "Aujourd’hui", isRereading));
+    if (status === "À lire") {
+      updateEntryFor(statusWorkId, { ...keepToRead(targetEntry, statusWorkId), libraryHidden: false });
+      setDateExperienceId(null);
+    } else if (status === "En cours") {
+      const result = startReading(targetEntry, statusWorkId);
+      updateEntryFor(statusWorkId, { ...result.patch, libraryHidden: false });
+      setJournalTraces((traces) => saveReadingTrace(result.rereading ? traces.map((trace) => trace.workId === statusWorkId && trace.action === "note" ? { ...trace, action: undefined } : trace) : traces, statusWorkId, "En cours", "Aujourd’hui", result.rereading, result.experience.id));
+      setDateExperienceId(result.experience.id);
+    } else {
+      const result = completeReading(targetEntry, statusWorkId);
+      updateEntryFor(statusWorkId, { ...result.patch, libraryHidden: false });
+      setJournalTraces((traces) => saveReadingTrace(traces, statusWorkId, "Lu", "Aujourd’hui", result.rereading, result.experience.id));
+      setDateExperienceId(result.experience.id);
     }
-    const completedAfterChange = status === "Lu"
-      ? targetEntry.readingStatus === "En cours" ? completedReadings + 1 : Math.max(1, completedReadings)
-      : completedReadings;
-    updateEntryFor(statusWorkId, {
-      readingStatus: status,
-      completedReadings: completedAfterChange,
-      ...(status === "En cours" && targetEntry.readingStatus === "Lu" ? archiveNoteForRereading(statusWorkId, targetEntry, Math.max(1, completedReadings)) : {}),
-      ...(status === "À lire" ? { readingDate: "", progress: undefined } : status === "Lu" ? { progress: undefined } : {}),
-    });
     setStatusMenuOpen(false);
     setRemoveConfirmWorkId(null);
     setCustomDateOpen(false);
@@ -826,18 +865,29 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
   };
 
-  const startRereading = (workId: WorkId) => {
+  const startRereading = (workId: WorkId, origin: StatusOrigin = "journal") => {
     const targetEntry = entries[workId] ?? emptyEntry;
-    const completedReadings = Math.max(1, targetEntry.completedReadings ?? 1);
-    updateEntryFor(workId, {
-      readingStatus: "En cours",
-      readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()),
-      completedReadings,
-      progress: undefined,
-      ...archiveNoteForRereading(workId, targetEntry, completedReadings),
-    });
-    setJournalTraces((traces) => saveReadingTrace(traces, workId, "En cours", "Aujourd’hui", true));
-    showFeedback({ kind: "saved", label: "Relecture commencée", detail: "L’œuvre reste réunie à votre trace précédente." });
+    const result = startReading(targetEntry, workId);
+    updateEntryFor(workId, { ...result.patch, libraryHidden: false });
+    setJournalTraces((traces) => saveReadingTrace(traces.map((trace) => trace.workId === workId && trace.action === "note" ? { ...trace, action: undefined } : trace), workId, "En cours", "Aujourd’hui", true, result.experience.id));
+    setStatusOrigin(origin);
+    setStatusWorkId(workId);
+    setDateExperienceId(result.experience.id);
+    setCustomDateOpen(false);
+    setDateDraft("");
+    setDatePrompt("start");
+    showFeedback({ kind: "saved", label: "Relecture commencée", detail: "La lecture précédente reste intacte dans votre histoire." });
+  };
+
+  const stopReadingForNow = (workId: WorkId) => {
+    const targetEntry = entries[workId] ?? emptyEntry;
+    const result = interruptReading(targetEntry, workId);
+    updateEntryFor(workId, result.patch);
+    if (result.experience) setJournalTraces((traces) => saveInterruptedTrace(traces.map((trace) => trace.workId === workId && trace.action === "note" && trace.experienceId === result.experience!.id ? { ...trace, action: undefined } : trace), workId, result.experience!.id, "Aujourd’hui"));
+    setStatusMenuOpen(false);
+    setDatePrompt(null);
+    setDateExperienceId(null);
+    showFeedback({ kind: "saved", label: "Lecture arrêtée pour l’instant", detail: "Son histoire reste conservée ; l’œuvre vous attend dans « À lire »." });
   };
 
   const openProgressEditor = (workId: WorkId) => {
@@ -849,19 +899,23 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   const saveProgress = (workId: WorkId) => {
     const page = Number(progressDraftPage);
     if (!Number.isInteger(page) || page < 1) return;
-    updateEntryFor(workId, { progress: { kind: "bookmark", page, updatedAt: new Date().toISOString() } });
+    updateEntryFor(workId, updateExperienceProgress(entries[workId] ?? emptyEntry, workId, { kind: "bookmark", page, updatedAt: new Date().toISOString() }));
     setProgressEditorWorkId(null);
     showFeedback({ kind: "saved", label: `Marque-page posé à la page ${page}`, detail: "Ce repère reste facultatif et privé." });
   };
 
   const setToday = () => {
-    updateEntryFor(statusWorkId, { readingDate: new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date()) });
+    const today = new Date().toISOString().slice(0, 10);
+    if (dateExperienceId) updateEntryFor(statusWorkId, updateExperienceDate(entries[statusWorkId] ?? emptyEntry, statusWorkId, dateExperienceId, datePrompt === "start" ? "startedAt" : "endedAt", today));
+    setJournalTraces((traces) => traces.map((trace) => trace.experienceId === dateExperienceId ? { ...trace, date: "Aujourd’hui" } : trace));
     setDatePrompt(null);
+    setDateExperienceId(null);
+    setCustomDateOpen(false);
   };
 
   const requestRemoval = (workId: WorkId) => {
     const targetEntry = entries[workId] ?? emptyEntry;
-    if (targetEntry.note || targetEntry.review) {
+    if (targetEntry.note || targetEntry.review || readingExperiences(targetEntry, workId).some((experience) => experience.note)) {
       setRemoveConfirmWorkId(workId);
       return;
     }
@@ -870,11 +924,11 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const removeFromLibrary = (workId: WorkId) => {
     const targetEntry = entries[workId] ?? emptyEntry;
-    updateEntryFor(workId, { readingStatus: null, readingDate: "" });
+    updateEntryFor(workId, { libraryHidden: true });
     setStatusMenuOpen(false);
     setDatePrompt(null);
     setRemoveConfirmWorkId(null);
-    showFeedback({ kind: "removal", label: "Œuvre retirée de la bibliothèque", detail: "Vos écrits et votre évaluation sont conservés.", onAction: () => updateEntryFor(workId, targetEntry) });
+    showFeedback({ kind: "removal", label: "Œuvre retirée de la bibliothèque", detail: "Vos écrits et votre évaluation sont conservés.", onAction: () => updateEntryFor(workId, { ...targetEntry, libraryHidden: false }) });
   };
 
   const openNote = () => {
@@ -896,26 +950,28 @@ export default function Home({ refined = false, initialProfileOwner = null, init
     else setNoteOpen(false);
   };
   const saveNote = () => {
-    updateEntry({ note: noteDraft.trim() });
-    if (noteDraft.trim() !== entry.note) setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "note", noteDraft, "Aujourd’hui"));
+    const result = updateExperienceNote(entry, selectedWorkId, noteDraft);
+    updateEntry(result.patch);
+    if (result.experience && noteDraft.trim() !== entry.note) setJournalTraces((traces) => saveWrittenTrace(traces, selectedWorkId, "note", noteDraft, "Aujourd’hui", result.experience!.id));
     setNoteOpen(false);
   };
 
   const deleteNote = () => {
     const workId = selectedWorkId;
-    const previousNote = entry.note;
-    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === workId && trace.action === "note");
+    const previousEntry = entry;
+    const currentExperience = activeReadingExperience(entry, workId) ?? (!entry.readingIntent ? latestReadingExperience(entry, workId) : undefined);
+    const previousTraceIndex = journalTraces.findIndex((trace) => trace.workId === workId && trace.action === "note" && trace.experienceId === currentExperience?.id);
     const previousNoteTrace = { trace: journalTraces[previousTraceIndex], index: previousTraceIndex };
-    updateEntry({ note: "" });
-    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== workId || trace.action !== "note"));
+    updateEntry(updateExperienceNote(entry, workId, "").patch);
+    setJournalTraces((traces) => traces.filter((trace) => trace.workId !== workId || trace.action !== "note" || trace.experienceId !== currentExperience?.id));
     setNoteDraft("");
     setNoteDeleteConfirm(false);
     setNoteOpen(false);
     showFeedback({ kind: "removal", label: "Note privée supprimée", detail: "Cette pensée a été retirée de votre Journal.", onAction: () => {
-      updateEntryFor(workId, { note: previousNote });
+      updateEntryFor(workId, previousEntry);
       const { trace: restoredTrace, index } = previousNoteTrace;
       if (restoredTrace) setJournalTraces((traces) => {
-        const rest = traces.filter((trace) => trace.workId !== workId || trace.action !== "note");
+        const rest = traces.filter((trace) => trace.id !== restoredTrace.id);
         rest.splice(Math.min(index, rest.length), 0, restoredTrace);
         return rest;
       });
@@ -992,12 +1048,18 @@ export default function Home({ refined = false, initialProfileOwner = null, init
   };
 
   const dateLabel = datePrompt === "start" ? "date de début" : "date de fin";
-  const displayReadingDate = formatReadingDate(entry.readingDate);
+  const displayReadingDate = formatReadingDate(activeExperience?.startedAt ?? (latestExperience?.state === "completed" ? latestExperience.endedAt : ""));
+  const closeDateInvitation = () => {
+    setDatePrompt(null);
+    setDateExperienceId(null);
+    setCustomDateOpen(false);
+  };
 
   const openStatusMenu = (origin: StatusOrigin, workId: WorkId) => {
     setStatusOrigin(origin);
     setStatusWorkId(workId);
     setDatePrompt(null);
+    setDateExperienceId(null);
     setCustomDateOpen(false);
     setRemoveConfirmWorkId(null);
     setStatusMenuOpen((open) => !(open && statusOrigin === origin && statusWorkId === workId));
@@ -1019,12 +1081,21 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         ) : (
           <>
             <div className="popover-heading">
-              <strong>Où en êtes-vous ?</strong>
+              <strong>{targetEntry.readingStatus ? "Votre lecture" : "Où en êtes-vous ?"}</strong>
               <button type="button" aria-label="Fermer" onClick={() => setStatusMenuOpen(false)}>×</button>
             </div>
-            {(["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => (
-              <button className={status === targetEntry.readingStatus ? "selected" : ""} type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>
+            {!targetEntry.readingStatus && (["À lire", "En cours", "Lu"] as ReadingStatus[]).map((status) => (
+              <button type="button" key={status} onClick={() => chooseStatus(status)}>{status}</button>
             ))}
+            {targetEntry.readingStatus === "À lire" && <>
+              <button type="button" onClick={() => chooseStatus("En cours")}>Commencer la lecture</button>
+              <button type="button" onClick={() => chooseStatus("Lu")}>Marquer comme lue</button>
+            </>}
+            {targetEntry.readingStatus === "En cours" && <>
+              <button type="button" onClick={() => chooseStatus("Lu")}>Terminer la lecture</button>
+              <button type="button" onClick={() => stopReadingForNow(workId)}>Arrêter pour l’instant</button>
+            </>}
+            {targetEntry.readingStatus === "Lu" && <button type="button" onClick={() => { setStatusMenuOpen(false); startRereading(workId, origin); }}>Relire</button>}
             {targetEntry.readingStatus && (
               <div className="popover-danger-zone">
                 <button className="destructive-action" type="button" onClick={() => requestRemoval(workId)}>Retirer de la bibliothèque</button>
@@ -1038,27 +1109,37 @@ export default function Home({ refined = false, initialProfileOwner = null, init
 
   const renderDateInvitation = (origin: StatusOrigin, workId: WorkId) => {
     if (!datePrompt || statusOrigin !== origin || statusWorkId !== workId) return null;
+    const work = works.find((candidate) => candidate.id === workId);
+    const titleId = `date-invitation-title-${origin}-${workId}`;
+    const descriptionId = `date-invitation-description-${origin}-${workId}`;
 
     return (
-      <div className={`date-invitation ${customDateOpen ? "date-invitation--calendar" : ""}`} role="region" aria-label={`Ajouter une ${dateLabel}`}>
-        <div>
-          <strong>Ajouter une {dateLabel} ?</strong>
-          <span>Cette étape restera modifiable.</span>
-        </div>
-        {!customDateOpen ? (
-          <div className="date-invitation-actions">
-            <button className="text-action" type="button" onClick={setToday}>Aujourd’hui</button>
-            <button className="text-action" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(true); }}>Choisir</button>
-            <button className="text-action muted-action" type="button" onClick={() => setDatePrompt(null)}>Plus tard</button>
-          </div>
-        ) : (
-          <div className="date-field">
-            <span>{datePrompt === "start" ? "Début de lecture" : "Fin de lecture"}</span>
-            <ChapterDatePicker label={`Choisir une ${dateLabel}`} value={dateDraft} onChange={setDateDraft} />
-            <div className="date-field-actions"><button className="date-field-back" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(false); }}>Retour</button><button className="date-field-save" type="button" disabled={!isoToDate(dateDraft)} onClick={() => { if (!isoToDate(dateDraft)) return; updateEntryFor(workId, { readingDate: dateDraft }); setDatePrompt(null); }}>Enregistrer la date</button></div>
-          </div>
-        )}
-      </div>
+      <Fade show={Boolean(datePrompt)} kind="modal" changeKey={`${origin}-${workId}`}>
+        {datePrompt && <Modal className="date-invitation-modal" labelledBy={titleId} describedBy={descriptionId} initialFocus={customDateOpen ? ".chapter-date-picker-days button[tabindex='0']" : ".date-invitation-actions button:first-child"} returnFocusSelector={`#status-trigger-${origin}-${workId}`} onRequestClose={closeDateInvitation}>
+          <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer l’ajout de date" onClick={closeDateInvitation} />
+          <section className="date-invitation" aria-labelledby={titleId} aria-describedby={descriptionId}>
+            <header className="date-invitation-heading">
+              <div>
+                <h2 id={titleId}>Ajouter une {dateLabel} ?</h2>
+                <span className="date-invitation-work">{work?.title} · Cette date pourra être modifiée plus tard.</span>
+              </div>
+              <button className="date-invitation-close" type="button" aria-label="Fermer" onClick={closeDateInvitation}>×</button>
+            </header>
+            {!customDateOpen ? (
+              <div className="date-invitation-actions">
+                <button className="text-action" type="button" onClick={setToday}>Aujourd’hui</button>
+                <button className="text-action" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(true); }}>Choisir</button>
+                <button className="text-action muted-action" type="button" onClick={closeDateInvitation}>Plus tard</button>
+              </div>
+            ) : (
+              <div className="date-field">
+                <ChapterDatePicker label={`Choisir une ${dateLabel}`} value={dateDraft} onChange={setDateDraft} />
+                <div className="date-field-actions"><button className="date-field-back" type="button" onClick={() => { setDateDraft(""); setCustomDateOpen(false); }}>Retour</button><button className="date-field-save" type="button" disabled={!isoToDate(dateDraft)} onClick={() => { if (!isoToDate(dateDraft) || !dateExperienceId) return; updateEntryFor(workId, updateExperienceDate(entries[workId] ?? emptyEntry, workId, dateExperienceId, datePrompt === "start" ? "startedAt" : "endedAt", dateDraft)); setJournalTraces((traces) => traces.map((trace) => trace.experienceId === dateExperienceId ? { ...trace, date: formatReadingDate(dateDraft) } : trace)); closeDateInvitation(); }}>Enregistrer la date</button></div>
+              </div>
+            )}
+          </section>
+        </Modal>}
+      </Fade>
     );
   };
 
@@ -1196,16 +1277,28 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               record={publicFirstMarkers[selectedWork.id] ? { ...publicFirstMarkers[selectedWork.id], readingDate: entries[selectedWork.id]?.readingDate ?? "" } : undefined}
               dateInvitation={renderDateInvitation("opening", selectedWork.id)}
               backLabel={navigationBackLabel("Retour à Découvrir")}
-              onBack={() => { setDatePrompt(null); restoreNavigation(() => openPublicView("discover")); }}
+              onBack={() => { closeDateInvitation(); restoreNavigation(() => openPublicView("discover")); }}
               onActivate={(status) => {
                 setPublicActivated(true);
                 setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status, marker: current[selectedWork.id]?.marker ?? "" } }));
-                if (status === "À lire") updateEntryFor(selectedWork.id, { readingDate: "" });
+                const targetEntry = entries[selectedWork.id] ?? emptyEntry;
+                if (status === "À lire") {
+                  updateEntryFor(selectedWork.id, { ...keepToRead(targetEntry, selectedWork.id), libraryHidden: false });
+                  setDateExperienceId(null);
+                } else {
+                  const transition = status === "En cours" ? startReading(targetEntry, selectedWork.id) : completeReading(targetEntry, selectedWork.id);
+                  updateEntryFor(selectedWork.id, { ...transition.patch, libraryHidden: false });
+                  setDateExperienceId(transition.experience.id);
+                }
                 setStatusOrigin("opening");
                 setStatusWorkId(selectedWork.id);
                 setCustomDateOpen(false);
                 setDateDraft("");
                 setDatePrompt(status === "En cours" ? "start" : status === "Lu" ? "finish" : null);
+              }}
+              onStopForNow={() => {
+                stopReadingForNow(selectedWork.id);
+                setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { status: "À lire", marker: "" } }));
               }}
               onCreateAccount={(readerName) => { setPublicName(readerName); setPublicProfileName(readerName); setPublicIdentityReady(true); }}
               onSaveMarker={(marker) => setPublicFirstMarkers((current) => ({ ...current, [selectedWork.id]: { ...current[selectedWork.id], status: current[selectedWork.id]?.status ?? "À lire", marker } }))}
@@ -1293,7 +1386,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                         <span className="current-reading-copy">
                           <strong>{work.title}</strong>
                           <small>{work.author}</small>
-                          <span>{(entries[work.id]?.completedReadings ?? 0) > 0 ? "Relecture en cours" : entries[work.id]?.readingDate ? `Depuis le ${formatReadingDate(entries[work.id].readingDate)}` : "Lecture en cours"}</span>
+                          <span>{(activeReadingExperience(entries[work.id] ?? emptyEntry, work.id)?.sequence ?? 1) > 1 ? "Relecture en cours" : entries[work.id]?.readingDate ? `Depuis le ${formatReadingDate(entries[work.id].readingDate)}` : "Lecture en cours"}</span>
                         </span>
                         {entries[work.id]?.progress && renderReadingBookmark(entries[work.id].progress, true)}
                       </button>
@@ -1361,10 +1454,6 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                   </div>
                 </div>
 
-                {statusOrigin === "library" && datePrompt && !libraryWorks.some((work) => work.id === statusWorkId) && (
-                  <div className="library-date-relay">{renderDateInvitation("library", statusWorkId)}</div>
-                )}
-
                 {libraryWorks.length > 0 ? (
               <><div className="library-grid" aria-live="polite">
               {visibleLibraryWorks.map((work) => (
@@ -1374,11 +1463,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
                     <span className="library-work-copy"><strong>{work.title}</strong><small>{work.author}</small></span>
                   </button>
                   <div className="library-status-control">
-                    <button className="library-status-trigger" type="button" aria-expanded={statusOrigin === "library" && statusWorkId === work.id && statusMenuOpen} aria-controls={`status-popover-library-${work.id}`} onClick={() => openStatusMenu("library", work.id)}>
+                  <button className="library-status-trigger" id={`status-trigger-library-${work.id}`} type="button" aria-expanded={statusOrigin === "library" && statusWorkId === work.id && statusMenuOpen} aria-controls={`status-popover-library-${work.id}`} onClick={() => openStatusMenu("library", work.id)}>
                       <span>{entries[work.id]?.readingStatus}</span><span aria-hidden="true">⌄</span>
                     </button>
                     {renderStatusPopover("library", work.id)}
                   </div>
+                  {hasInterruptedReading(entries[work.id] ?? emptyEntry, work.id) && <p className="library-reading-detail">À reprendre · lecture précédente conservée</p>}
                   {renderDateInvitation("library", work.id)}
                 </article>
               ))}
@@ -1419,7 +1509,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <p className="book-lede">{selectedWork.lede}</p>
             <div className="opening-actions">
               <div className="status-control">
-                <button className="primary-action" type="button" aria-expanded={statusOrigin === "opening" && statusMenuOpen} aria-controls={`status-popover-opening-${selectedWork.id}`} onClick={() => openStatusMenu("opening", selectedWork.id)}>
+                <button className="primary-action" id={`status-trigger-opening-${selectedWork.id}`} type="button" aria-expanded={statusOrigin === "opening" && statusMenuOpen} aria-controls={`status-popover-opening-${selectedWork.id}`} onClick={() => openStatusMenu("opening", selectedWork.id)}>
                   {entry.readingStatus ?? "Ajouter au journal"}
                 </button>
                 {renderStatusPopover("opening", selectedWork.id)}
@@ -1438,8 +1528,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         <WorkSectionNav activeSection={activeSection} />
 
         <div className="content-column">
-          <section id="about" className="page-section work-chapter" aria-labelledby="about-title">
-            <div className="section-heading">
+          <section className="page-section work-chapter" aria-labelledby="about-title">
+            <div id="about" className="section-heading">
               <p className="section-number">01</p>
               <div>
                 <p className="work-chapter-kicker">L’œuvre · ouvert à tous</p>
@@ -1457,8 +1547,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             </div>
           </section>
 
-          <section id="journal" className="page-section journal-section" aria-labelledby="journal-title">
-            <div className="section-heading">
+          <section className="page-section journal-section" aria-labelledby="journal-title">
+            <div id="journal" className="section-heading">
               <p className="section-number">02</p>
               <div>
                 <p className="work-chapter-kicker">Chez vous · privé</p>
@@ -1471,12 +1561,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
               <div className="journal-reading-summary">
                 <p className="row-label">Ma lecture</p>
                 <p className="row-value">{entry.readingStatus ?? "Pas encore ajoutée"}</p>
-                {(entry.completedReadings ?? 0) > 0 && <p className="privacy-note">{entry.readingStatus === "En cours" ? "Relecture en cours" : "Œuvre déjà lue"}</p>}
-                {displayReadingDate && <p className="privacy-note">Date enregistrée · {displayReadingDate}</p>}
+                {entry.readingStatus && <p className="privacy-note">{readingDetail}</p>}
+                {displayReadingDate && <p className="privacy-note">{activeExperience ? "Commencée" : "Terminée"} le {displayReadingDate}</p>}
               </div>
               {entry.readingStatus === "En cours" && entry.progress && renderReadingBookmark(entry.progress)}
               <div className="status-control journal-status-control">
-                <button className="text-action" type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} aria-controls={`status-popover-journal-${selectedWork.id}`} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Modifier" : "Ajouter au journal"}</button>
+                <button className="text-action" id={`status-trigger-journal-${selectedWork.id}`} type="button" aria-expanded={statusOrigin === "journal" && statusMenuOpen} aria-controls={`status-popover-journal-${selectedWork.id}`} onClick={() => openStatusMenu("journal", selectedWork.id)}>{entry.readingStatus ? "Gérer cette lecture" : "Ajouter au journal"}</button>
                 {entry.readingStatus === "En cours" && <button className="text-action" type="button" aria-expanded={progressEditorWorkId === selectedWork.id} onClick={() => progressEditorWorkId === selectedWork.id ? setProgressEditorWorkId(null) : openProgressEditor(selectedWork.id)}>{entry.progress ? "Déplacer le marque-page" : "Poser un marque-page"}</button>}
                 {entry.readingStatus === "Lu" && <button className="text-action" type="button" onClick={() => startRereading(selectedWork.id)}>Relire cette œuvre</button>}
                 {renderStatusPopover("journal", selectedWork.id)}
@@ -1492,17 +1582,17 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             )}
             <div className="journal-row">
               <div>
-                <p className="row-label">Ma note de cette lecture</p>
-                <p className="row-value">{entry.note || "Aucune pensée consignée"}</p>
+                <p className="row-label">{writingIsBilan ? "Mon bilan de cette lecture" : editableExperience ? "Ma pensée pour cette lecture" : "Écrire pendant une lecture"}</p>
+                <p className="row-value">{editableExperience ? entry.note || (writingIsBilan ? "Aucun bilan consigné" : "Aucune pensée consignée") : "Commencez ou terminez une lecture pour lui rattacher un écrit."}</p>
                 <p className="privacy-note">Privée · visible uniquement par vous</p>
               </div>
-              <button className="text-action" type="button" onClick={openNote}>{entry.note ? "Modifier" : "Ajouter une note"}</button>
+              {editableExperience && <button className="text-action" type="button" onClick={openNote}>{entry.note ? "Modifier" : writingIsBilan ? "Écrire un bilan" : "Ajouter une pensée"}</button>}
             </div>
-            <WorkPastNotes key={selectedWork.id} notes={entry.pastNotes ?? []} />
+            <WorkReadingHistory key={selectedWork.id} experiences={selectedExperiences} currentExperienceId={editableExperience?.id} />
           </section>
 
-          <section id="reviews" className="page-section reviews-section" aria-labelledby="reviews-title">
-            <div className="section-heading">
+          <section className="page-section reviews-section" aria-labelledby="reviews-title">
+            <div id="reviews" className="section-heading">
               <p className="section-number">03</p>
               <div>
                 <p className="work-chapter-kicker">Choisi par leurs auteurs · public</p>
@@ -1519,7 +1609,7 @@ export default function Home({ refined = false, initialProfileOwner = null, init
         </Fade>
       </main>
 
-      {(statusMenuOpen || datePrompt) && (
+      {statusMenuOpen && (
         <button className="status-backdrop" type="button" aria-label="Fermer le choix de statut" onClick={() => { setStatusMenuOpen(false); setDatePrompt(null); setRemoveConfirmWorkId(null); }} />
       )}
 
@@ -1596,8 +1686,8 @@ export default function Home({ refined = false, initialProfileOwner = null, init
           <button className="overlay-backdrop" tabIndex={-1} type="button" aria-label="Fermer les réglages" onClick={closeSettings} />
           <TrustSettings
             publicName={publicProfileName}
-            privateRecordCount={Object.values(entries).filter((personalEntry) => personalEntry.readingStatus).length}
-            privateNoteCount={Object.values(entries).filter((personalEntry) => personalEntry.note.trim()).length}
+            privateRecordCount={Object.entries(entries).reduce((count, [workId, personalEntry]) => count + readingExperiences(personalEntry, workId).length + (personalEntry.readingIntent && readingExperiences(personalEntry, workId).length === 0 ? 1 : 0), 0)}
+            privateNoteCount={Object.entries(entries).reduce((count, [workId, personalEntry]) => count + readingExperiences(personalEntry, workId).filter((experience) => experience.note.trim()).length, 0)}
             publicationCount={personalPublicReviews.length}
             blockedActorIds={blockedActorIds}
             onClose={closeSettings}
@@ -1645,12 +1735,12 @@ export default function Home({ refined = false, initialProfileOwner = null, init
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">Privée · visible uniquement par vous</p>
-                <h2 id="note-title">Ma note</h2>
+                <h2 id="note-title">{writingIsBilan ? "Mon bilan" : "Ma pensée"}</h2>
               </div>
               <button className="close-button" type="button" aria-label="Fermer" onClick={() => noteDeleteConfirm ? setNoteDeleteConfirm(false) : noteCloseConfirm ? setNoteCloseConfirm(false) : requestNoteClose()}>×</button>
             </div>
             <label className="editor-field">
-              <span>Ce que vous souhaitez retenir</span>
+              <span>{activeExperience ? "Ce que cette lecture vous fait penser" : "Ce que vous souhaitez retenir de cette lecture"}</span>
               <textarea readOnly={noteCloseConfirm || noteDeleteConfirm} rows={5} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Une pensée, une image, une phrase à garder…" />
             </label>
             {noteDeleteConfirm ? (

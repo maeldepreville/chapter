@@ -1,7 +1,7 @@
 # Chapter — fondations essentielles avant première publication
 
-Date : 16 septembre 2026  
-Statut : feuille de route validée ; fondation 1 terminée, fondations 2 et 3 à traiter avant l'ouverture du produit au public.
+Date : 28 septembre 2026
+Statut : feuille de route validée ; fondations 1 et 2 terminées, fondation 3 à traiter avant l'ouverture du produit au public.
 
 ## Pourquoi seulement trois fondations
 
@@ -39,7 +39,7 @@ Le lecteur réflexif retrouve l'évolution de son regard. Le migrant peut import
 - Le Journal dérive de ces événements ; il ne devient pas une seconde source de vérité.
 - Import, export et suppression respectent les mêmes identifiants et ne fusionnent pas silencieusement deux expériences.
 
-Le prototype possède déjà des éléments partiels (`completedReadings`, `pastNotes`, traces de début et de fin). Ils valident la direction visuelle mais ne constituent pas encore le contrat complet : l'étape doit consolider le modèle de session et toutes ses projections avant le backend.
+La fondation 2 a été validée le 28 septembre 2026 et synchronisée sur sa branche dédiée. Elle consolide ce contrat dans le modèle de session, la page œuvre, le Journal, la Bibliothèque et l’import/export. Son périmètre, sa recette et ses limites sont consignés dans [`FONDATION_EXPERIENCES_LECTURE.md`](../milestones/FONDATION_EXPERIENCES_LECTURE.md).
 
 ### Critères de sortie avant lancement
 

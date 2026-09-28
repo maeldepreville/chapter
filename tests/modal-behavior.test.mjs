@@ -159,7 +159,7 @@ test("all blocking surfaces use the shared modal and NSV2 keeps one alert surfac
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const profile = await readFile(new URL("../app/phase10.tsx", import.meta.url), "utf8");
   const account = await readFile(new URL("../app/account-creation-dialog.tsx", import.meta.url), "utf8");
-  assert.equal((page.match(/<Modal\b/g) ?? []).length, 6);
+  assert.equal((page.match(/<Modal\b/g) ?? []).length, 7);
   assert.equal((page.match(/className="destination-overlay"/g) ?? []).length, 2);
   assert.equal((profile.match(/<Modal\b/g) ?? []).length, 3);
   assert.equal((account.match(/<Dialog\b/g) ?? []).length, 1);

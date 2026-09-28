@@ -35,6 +35,19 @@ export type OptionalProgress = {
   updatedAt: string;
 };
 
+export type ReadingExperienceState = "active" | "completed" | "interrupted";
+
+export type ReadingExperience = {
+  id: EntityId;
+  sequence: number;
+  state: ReadingExperienceState;
+  startedAt: string;
+  endedAt: string;
+  note: string;
+  progress?: OptionalProgress;
+  imported?: boolean;
+};
+
 export type PrivateReadingRecord = {
   id: EntityId;
   readerId: EntityId;
@@ -44,6 +57,8 @@ export type PrivateReadingRecord = {
   privateNote: string;
   rating: number;
   progress?: OptionalProgress;
+  readingIntent?: boolean;
+  experiences?: readonly ReadingExperience[];
 };
 
 export type PublicReview = {

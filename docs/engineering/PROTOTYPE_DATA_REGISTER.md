@@ -1,6 +1,6 @@
 # Chapter — registre des données statiques du prototype
 
-Dernière mise à jour : 11 septembre 2026.
+Dernière mise à jour : 23 septembre 2026.
 
 Ce registre distingue les valeurs figées qui faussaient un parcours de celles qui constituent encore volontairement les données simulées du lot 1. Une chaîne visible n'est pas un identifiant : permissions, navigation et relations doivent toujours utiliser des identifiants stables, et les paramètres reçus par un callback doivent être transmis à la destination.
 
@@ -21,7 +21,7 @@ Ce registre distingue les valeurs figées qui faussaient un parcours de celles q
 | --- | --- | --- | --- |
 | Œuvres, auteurs, éditions | `app/foundation/fixtures.ts` | 6 œuvres cœur reliées par identifiants ; couverture absente incluse | Catalogue distant normalisé |
 | Lecteurs et profils publics | `app/foundation/fixtures.ts` | 32 lecteurs, 28 profils facultatifs, deux homonymes portant des identifiants distincts, une biographie longue | Comptes et service de profils |
-| États de lecture privés | `PrivateReadingRecord` dans `app/foundation/contracts.ts` | Statut, date, note, note chiffrée et progression facultative `bookmark` ; aucun champ de possession | Bibliothèque privée persistée |
+| États de lecture privés | `PrivateReadingRecord` et `ReadingExperience` dans `app/foundation/contracts.ts` | Intention `À lire` séparée ; expériences ordonnées `active`, `completed` ou `interrupted`, avec identifiant, dates, écrit, progression facultative `bookmark` et origine importée ; aucun champ de possession | Bibliothèque privée et expériences persistées, avec contrainte d’une seule expérience active par œuvre et lecteur |
 | Écrits et relations publics | `PublicReview`, `PublicReply`, `PublicList`, `Follow` | Critique, réponse, liste, suivi et contenu retiré reliés uniquement par identifiants | Services social et modération |
 | Sessions | `prototypeSessionSeeds` et `foundation/session.ts` | `blank`, `activated`, `habitual`, clonage et remise à zéro déterministes | Session authentifiée et stockage |
 | Densité | `foundation/dense-fixtures.ts` | 500 œuvres et 500 entrées privées générées de façon déterministe ; P3 monte six œuvres cœur et 494 notices de charge dans les routes personnelles, avec rendu initial par lots de 36 | Jeu de test/seed contrôlé puis catalogue et Bibliothèque persistants |
@@ -46,6 +46,7 @@ Le test `tests/hardcoded-data.test.mjs` protège ces règles et interdit notamme
 | Présentation, œuvres de chevet et titre exposé des profils | Données de profil persistées et réglages du lecteur. Les œuvres de chevet de Maël sont maintenant modifiables dans l’état React de session, avec une limite visible de trois et un choix restreint aux œuvres possédant un statut dans la Bibliothèque. |
 | Œuvres cœur exportées par `foundation/fixtures.ts` et réexportées comme `defaultWorks` par `page.tsx` | Catalogue distant avec identifiants pérennes. |
 | Entrées de bibliothèque, traces du Journal et compteurs de lecteurs | Stockage utilisateur et agrégats du service. |
+| Expériences générées par `reading-experience-model.ts` et huit situations de `/recette/oeuvre` | Entités persistées reliées à l’œuvre et au lecteur. Le backend devra conserver leurs identifiants, rattacher dates, progression, écrits et événements, et paginer l’historique sans fusion silencieuse. |
 | Deux listes publiques initiales, leurs descriptions et leurs œuvres | Entités de listes rattachées à leur propriétaire dans le backend. Maël peut maintenant créer, modifier et supprimer ses listes dans l’état React de session à partir de sa Bibliothèque ; les portraits tiers continuent d’utiliser le catalogue fixture partagé, limite de démonstration qui n’est pas le modèle métier final. |
 | Badges, titres exposables et progression | Progression calculée et persistée par compte. |
 | Parcours de recommandation, œuvre d'ancrage et liste mise en avant | Moteur de recommandation et configuration éditoriale administrable. |
