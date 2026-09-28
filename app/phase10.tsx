@@ -392,7 +392,7 @@ export function ProfileView({ owner, works, following, onToggleFollow, onOpenWor
   const visibleBadges = isMael ? showcase : (["reading3", "exploration2", "honor1"] as BadgeId[]);
   const nameLength = Array.from(profile.name.trim()).length;
   const nameScale = nameLength > 28 ? "long" : nameLength > 18 ? "medium" : "short";
-  const materialClass = cardMaterial ? ` profile-identity-card--${cardMaterial}` : "";
+  const materialClass = ` profile-identity-card--${cardMaterial ?? "embossed"}`;
   useEffect(() => {
     if (!shareNotice) return;
     const timer = window.setTimeout(() => setShareNotice(""), 5000);

@@ -15,11 +15,11 @@ const profileProps = {
   photo: null, onEditPhoto() {}, onRemovePhoto() {}, equippedTitle: "Esprit nomade", showcase: [], displayName: "Maël Depréville",
 };
 
-test("the material recipes style both real card faces while normal profiles keep their existing surface", () => {
+test("the approved embossed paper treatment is the default on both real profile-card faces", () => {
   const canson = renderToStaticMarkup(React.createElement(ProfileView, { ...profileProps, cardMaterial: "canson" }));
   assert.equal((canson.match(/profile-identity-card--canson/g) ?? []).length, 2);
   const regular = renderToStaticMarkup(React.createElement(ProfileView, profileProps));
-  assert.doesNotMatch(regular, /profile-identity-card--(?:smooth|canson|embossed)/);
+  assert.equal((regular.match(/profile-identity-card--embossed/g) ?? []).length, 2);
 });
 
 test("the profile-card recipe switches its real Home preview among all three paper treatments", async () => {

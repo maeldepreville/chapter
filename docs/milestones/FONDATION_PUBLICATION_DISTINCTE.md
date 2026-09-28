@@ -13,6 +13,10 @@ Dans la liste « Autour de l’œuvre », la critique du lecteur courant reçoit
 - « Bloquer » confirme l'action dans une fenêtre avec possibilité d'annuler ; les retours apparaissent au niveau de l'interaction, sans bandeau qui décale la liste.
 - Les espacements des divulgâcheurs, y compris quand « Autre motif » fait défiler le contenu de la fenêtre, ont été corrigés.
 
+### Carte de lecteur — application du rendu validé
+
+La recette comparait trois matières et affichait le relief embossé validé. La vérification du Site a révélé que ce choix n'était appliqué qu'à la route de recette ; les profils normaux gardaient leur ancienne surface. Le relief embossé devient donc la matière par défaut des faces réelles de la carte. Les autres matières restent accessibles dans la route de recette.
+
 ## Contrat de la candidate
 
 - `review` conserve exclusivement un brouillon privé. `publicReview` porte l'objet publié : identifiant stable, œuvre, auteur, texte, évaluation, date, divulgâcheur et lien facultatif vers une expérience. Les anciennes fixtures à `reviewPublished` sont converties une seule fois au chargement ; les nouvelles écritures ne partagent plus ce champ.
@@ -36,6 +40,6 @@ La recette visuelle a été conduite sur le Site de recette. L'utilisateur a val
 
 ## Preuves et limites
 
-Les tests ciblés couvrent la conversion héritée, l'identité de l'objet public, l'aperçu, la confirmation, l'annulation, la conservation d'une note privée et de l'évaluation personnelle, la révélation des divulgâcheurs et l'entrée personnelle sans nom public. La construction de production et la suite complète (202/202), le lint et `git diff --check` ont réussi avant la publication de recette. Ces preuves automatisées ne remplacent pas une recette visuelle et tactile réelle.
+Les tests ciblés couvrent la conversion héritée, l'identité de l'objet public, l'aperçu, la confirmation, l'annulation, la conservation d'une note privée et de l'évaluation personnelle, la révélation des divulgâcheurs, l'entrée personnelle sans nom public et l'application par défaut du relief embossé sur la carte réelle. Après la correction, la construction de production et la suite complète (206/206), le lint et `git diff --check` ont réussi. Ces preuves automatisées ne remplacent pas une recette visuelle et tactile réelle.
 
 Le prototype demeure un état React de session. Un service backend devra contrôler l'autorisation, l'unicité du Nom de lecteur, l'intégrité de l'aperçu face à une mutation concurrente, l'import privé, le signalement, le blocage, la modération et le recours avant l'ouverture à une vraie communauté. Ces garanties ne sont pas établies par cette candidate frontend.

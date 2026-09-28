@@ -6,7 +6,7 @@ Ce document résume l'état utile.
 
 ## État actuel
 
-- **Fondations :** la fondation 2 est validée sur `fondation-experiences-lecture-2026-09-23`. La fondation 3 « publication distincte de la mémoire privée » est validée et synchronisée le 28 septembre 2026 sur `fondation-publication-distincte-2026-09-28`, depuis la branche de fondation 2 ; voir `docs/milestones/FONDATION_PUBLICATION_DISTINCTE.md`.
+- **Fondations :** la fondation 2 est validée sur `fondation-experiences-lecture-2026-09-23`. La fondation 3 « publication distincte de la mémoire privée » est validée et synchronisée sur `fondation-publication-distincte-2026-09-28`, depuis la branche de fondation 2 ; le rendu embossé validé est aussi appliqué par défaut à la carte réelle du profil ; voir `docs/milestones/FONDATION_PUBLICATION_DISTINCTE.md`.
 - **Statut P1–P6 :** validés, synchronisés ; voir leurs documents de jalon.
 - **Statut P7 :** validé le 12 septembre 2026 sur Sites 84 et fusionné vers le `main` GitHub après audit final ; 177 tests, lint, construction de production et contrôle Git réussis.
 - **Prochaine action unique :** cadrer séparément le lot 2 backend, sans déduire de cette synchronisation son ouverture ou ses choix techniques.
